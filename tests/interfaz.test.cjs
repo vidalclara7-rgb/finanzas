@@ -39,13 +39,46 @@ t.test("ajustes desde el engranaje", async () => {
   assert.ok(await page.isVisible("#topeTarjeta"));
 });
 
+// Relación de contraste WCAG entre dos colores rgb()
+const contraste = (a, b) => {
+  const lum = (rgb) => { const v = rgb.match(/\d+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+};
+// Color del texto y fondo efectivo (el de la tarjeta que lo contiene)
+const colores = (page, sel) => page.$eval(sel, (el) => {
+  let f = el; while (f && getComputedStyle(f).backgroundColor === "rgba(0, 0, 0, 0)") f = f.parentElement;
+  return [getComputedStyle(el).color, getComputedStyle(f || document.body).backgroundColor];
+});
+
+// Escenario: títulos con la letra del texto
+t.test("títulos con la letra del texto", async () => {
+  const { page } = await abrir({ datos: A.datosEjemplo() });
+  const letra = (sel) => page.$eval(sel, (el) => getComputedStyle(el).fontFamily);
+  const cuerpo = await letra("body");
+  assert.equal(await letra("#title"), cuerpo);
+  await page.click("#fab");
+  assert.equal(await letra("#sheet h2"), cuerpo);
+});
+
+// Escenario: fondo blanco
+t.test("fondo blanco", async () => {
+  const { page } = await abrir({ datos: A.datosEjemplo() });
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(255, 255, 255)");
+  const [texto, fondo] = await colores(page, "#dispTarjeta");
+  assert.ok(luminancia(fondo) < 0.1, `tarjeta ${fondo}`);
+  assert.ok(luminancia(texto) > 0.9, `texto ${texto}`);
+});
+
 // Escenario: teléfono en modo oscuro
 t.test("teléfono en modo oscuro", async () => {
   const { page } = await abrir({ datos: A.datosEjemplo(), esquema: "dark" });
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  assert.ok(luminancia(fondo) < 0.2, `fondo ${fondo}`);
-  const tarjeta = await page.evaluate(() => getComputedStyle(document.getElementById("dispTarjeta")).color);
-  assert.ok(luminancia(tarjeta) < 0.2, `texto de Tarjeta ${tarjeta}`);
+  assert.ok(luminancia(fondo) < 0.1, `fondo ${fondo}`);
+  for (const sel of ["#dispTarjeta", "#dispRevolut", "#netoIni", "#fondoVal", "#torta .centro b"]) {
+    const [texto, detras] = await colores(page, sel);
+    assert.ok(contraste(texto, detras) >= 4.5, `${sel}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
+  }
 });
 
 // Escenario: abrir sin conexión

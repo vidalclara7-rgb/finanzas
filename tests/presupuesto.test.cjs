@@ -18,7 +18,14 @@ t.test("disponible con un reembolsable", async () => {
 t.test("tope superado", async () => {
   const { page } = await abrir({ datos: A.con({ gastos: [{ id: 1, fecha: "2026-10-03", importe: 320, cuenta: "revolut", cat: "Ocio", nota: "" }] }) });
   assert.equal(await A.texto(page, "#dispRevolut"), "-20 €");
-  assert.match(await page.getAttribute("#barRevolut", "class"), /\bbad\b/);
+  assert.match(await page.getAttribute("#ringRevolut", "class"), /\bbad\b/);
+});
+
+// Escenario: tope en aviso
+t.test("tope en aviso", async () => {
+  const { page } = await abrir({ datos: A.con({ gastos: [{ id: 1, fecha: "2026-10-03", importe: 400, cuenta: "tarjeta", cat: "Compras", nota: "" }] }) });
+  assert.equal(await A.texto(page, "#ringTarjeta b"), "80 %");
+  assert.match(await page.getAttribute("#ringTarjeta", "class"), /\bwarn\b/);
 });
 
 // Escenario: ajustes completos

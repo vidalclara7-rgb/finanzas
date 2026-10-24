@@ -40,7 +40,7 @@ t.test("nada sale del teléfono", async () => {
   const afuera = [];
   page.on("request", (r) => {
     const u = new URL(r.url());
-    if (u.hostname !== "127.0.0.1" && !/^fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) afuera.push(r.url());
+    if (u.hostname !== "127.0.0.1") afuera.push(r.url());
   });
   await A.nuevoGasto(page, { importe: 10 });
   await A.aviso(page, "Gasto guardado");

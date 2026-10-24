@@ -45,7 +45,8 @@ Se trabaja en una rama, nunca directo en `main`. Un cambio pequeño de texto o d
 - El plan del fondo se calcula en `planMap()` a partir de los ajustes: aporte mensual acumulado desde `inicio`, sin sumar en los meses de `saltos`, hasta llegar al objetivo.
 - Los gastos de la categoría "Trabajo (reembolsable)" no cuentan para los topes.
 - Pantallas: Inicio (disponible por cuenta, fondo, patrimonio neto, categorías), Gastos, Cuentas (patrimonio neto y cuentas por tipo), Mes (checklist, saldo del fondo, plan) y Ajustes (topes, plan, resumen para copiar, copia de seguridad), que se abre con el engranaje del encabezado. El botón "+" central agrega un gasto, o una cuenta si se está en Cuentas.
-- Estilo: fondo crema, tarjetas pastel (`p-yellow`, `p-pink`, `p-blue`, `p-green`, `p-lilac`, con texto oscuro fijo también en modo oscuro), forma decorativa con `deco`/`deco alt`, títulos en Instrument Serif (Google Fonts, con Georgia de respaldo), botones píldora negros y barra de navegación negra flotante. Colores definidos como variables en `:root`, con versión para modo oscuro.
+- Estilo: fondo blanco, tarjeta principal negra (`hero`), tarjetas de acento verde lima (`lime`) y lavanda (`lav`) que redefinen sus colores internos, una sola letra del sistema (los títulos en negrita), botones píldora negros y barra de navegación negra flotante con el «+» lima. Colores definidos como variables en `:root`, con versión para modo oscuro; cada categoría de gasto tiene su color fijo (`--cat1` a `--cat12`, en el orden de `CATS`). La app no carga nada de otros sitios.
+- Gráficos en SVG dibujado por la app, sin librerías: anillo del tope (`anillo()`), torta de gastos por categoría (`torta()`) y barras de gasto por semana (`barras()`).
 
 ## Reglas que no se rompen sin hablarlo
 

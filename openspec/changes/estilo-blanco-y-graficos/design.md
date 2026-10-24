@@ -31,3 +31,9 @@
 
 - Barras por día: ilegibles en el ancho de un iPhone.
 - Una librería de gráficos: agregaría una dependencia externa y peso para tres gráficos simples.
+
+## Ajuste al construir (2026-10-24)
+
+- La especificación viva decía que el disponible tiene una barra que se marca en aviso y excedida.
+  El preview aprobado en el Gate 2 reemplaza esa barra por el anillo, así que se sustituye el
+  requisito «disponible del mes por cuenta» para que lo diga el anillo, con el mismo umbral del 75 %.
