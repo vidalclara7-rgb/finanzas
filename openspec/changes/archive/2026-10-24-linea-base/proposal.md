@@ -1,8 +1,9 @@
 ---
 cambio: linea-base
-estado: construida
+estado: archivado
 datos: sin-cambios
 preview: no
+archivado: 2026-10-24
 ---
 # Línea base: lo que Mis finanzas hace hoy
 
