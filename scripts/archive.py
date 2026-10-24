@@ -4,7 +4,8 @@ mueve la carpeta a openspec/changes/archive/AAAA-MM-DD-<cambio>/.
 Por cada openspec/changes/<cambio>/specs/<capacidad>/spec.md:
   ## Requisito: X   → si X ya existe en la viva, se sustituye; si no, se añade
   ## Retirado: X    → se quita X de la viva
-Si la capacidad no existía, la viva se crea con la cabecera del delta.
+Si la capacidad no existía, la viva se crea con la cabecera del delta; si se queda
+sin requisitos, se borra (la historia queda en el archivo).
 
 Sin --aplicar sólo enseña qué se movería. No borra nada: la carpeta del cambio
 entera (propuesta, diseño, tareas, preview) queda en el archivo.
@@ -39,6 +40,8 @@ def plan(c: Path) -> list[tuple[Path, os_.Spec, list[str]]]:
             else:
                 viva.requisitos.append(r)
                 movimientos.append(f"+ añadido: {r.nombre}")
+        if not viva.requisitos:
+            movimientos.append(f"− capacidad retirada «{delta.capacidad}» (se quedó sin requisitos)")
         resultado.append((viva_ruta, viva, movimientos))
     return resultado
 
@@ -73,6 +76,11 @@ def main() -> int:
         print(f"\n✗ Ya existe {destino.name} en el archivo; no se sobrescribe.")
         return 1
     for viva_ruta, viva, _ in movimientos:
+        if not viva.requisitos:  # capacidad retirada entera: su historia queda en el archivo
+            if viva_ruta.exists():
+                viva_ruta.unlink()
+                viva_ruta.parent.rmdir()
+            continue
         viva_ruta.parent.mkdir(parents=True, exist_ok=True)
         viva_ruta.write_text(os_.escribir_spec(viva), encoding="utf-8")
     os_.fijar_estado(c, "archivado", archivado=date.today().isoformat())
