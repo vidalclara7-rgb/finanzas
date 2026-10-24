@@ -1,6 +1,6 @@
 ---
 cambio: estilo-blanco-y-graficos
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Estilo blanco y gráficos de gastos
