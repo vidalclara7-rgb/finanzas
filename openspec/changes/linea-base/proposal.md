@@ -1,6 +1,6 @@
 ---
 cambio: linea-base
-estado: propuesta
+estado: aprobada
 datos: sin-cambios
 preview: no
 ---
