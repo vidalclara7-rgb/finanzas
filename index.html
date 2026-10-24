@@ -63,7 +63,12 @@ textarea{font-family:var(--mono);font-size:12px;min-height:120px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 13px}
 .seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 6px) max(8px,env(safe-area-inset-left,0px))}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none}
+.item .v small{font-size:13px}
+.pos{color:var(--accent)} .neg{color:var(--bad)}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 6px) max(8px,env(safe-area-inset-left,0px))}
 nav button{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button svg{width:24px;height:24px}
 nav button[aria-current=page]{color:var(--accent);font-weight:600}
@@ -97,6 +102,11 @@ nav button[aria-current=page]{color:var(--accent);font-weight:600}
       <div class="bar"><i id="fondoBar"></i></div>
       <span class="sub" id="fondoSub"></span>
     </div>
+    <div class="card" id="netoCard" hidden>
+      <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
+      <span class="big" id="netoIni">–</span>
+      <span class="sub" id="netoIniSub"></span>
+    </div>
     <div class="card"><span class="lbl">Por categoría</span><div class="list" id="cats"></div></div>
     <div class="card"><span class="lbl">Últimos gastos</span><div class="list" id="ultimos"></div></div>
   </section>
@@ -117,6 +127,22 @@ nav button[aria-current=page]{color:var(--accent);font-weight:600}
       <button class="btn" id="guardarFondo">Guardar saldo</button>
     </div>
     <div class="card"><span class="lbl">Plan del fondo</span><div class="list" id="plan"></div></div>
+  </section>
+
+  <!-- CUENTAS -->
+  <section id="v-cuentas" hidden style="flex-direction:column;gap:14px">
+    <div class="card" id="cuentasVacio">
+      <span class="lbl">Tu foto financiera</span>
+      <span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span>
+    </div>
+    <div class="card" id="netoBox" hidden>
+      <span class="lbl">Patrimonio neto</span>
+      <span class="big" id="neto">–</span>
+      <div class="row sub"><span>Tenés <span class="num" id="activos"></span></span><span>Debés <span class="num" id="deudas"></span></span></div>
+      <span class="sub" id="cuotasSub"></span>
+    </div>
+    <div id="grupos" style="display:flex;flex-direction:column;gap:14px"></div>
+    <button class="btn" id="addCuenta">Agregar cuenta</button>
   </section>
 
   <!-- AJUSTES -->
@@ -152,6 +178,7 @@ nav button[aria-current=page]{color:var(--accent);font-weight:600}
 <nav>
   <button data-v="inicio" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
   <button data-v="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Gastos</button>
+  <button data-v="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
   <button data-v="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mes</button>
   <button data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
 </nav>
@@ -167,6 +194,20 @@ nav button[aria-current=page]{color:var(--accent);font-weight:600}
   <button class="btn" type="submit">Guardar gasto</button>
 </form>
 
+<form id="sheetC" class="sheet" hidden autocomplete="off">
+  <div class="row"><h2 id="cTitulo">Nueva cuenta</h2><button type="button" class="btn sec" id="cCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div><span class="lbl">Tipo</span><div class="seg" id="segTipo" style="margin-top:8px"></div></div>
+  <label class="f" for="cNombre">Nombre<input type="text" id="cNombre"></label>
+  <div data-t="compartida"><div class="seg" id="segSigno"></div></div>
+  <label class="f" for="cSaldo"><span id="cSaldoLbl">Saldo (€)</span><input type="number" inputmode="decimal" step="0.01" id="cSaldo" placeholder="0"></label>
+  <label class="f" for="cAportado" data-t="inversion">Total aportado (€, opcional, para ver la ganancia)<input type="number" inputmode="decimal" step="0.01" id="cAportado"></label>
+  <label class="f" for="cLimite" data-t="tarjeta">Límite de la tarjeta (€, opcional)<input type="number" inputmode="decimal" step="0.01" id="cLimite"></label>
+  <label class="f" for="cCuota" data-t="financiacion">Cuota mensual (€)<input type="number" inputmode="decimal" step="0.01" id="cCuota"></label>
+  <label class="f" for="cCuotas" data-t="financiacion">Cuotas que faltan (opcional)<input type="number" inputmode="numeric" step="1" id="cCuotas"></label>
+  <button class="btn" type="submit">Guardar cuenta</button>
+  <button class="btn danger" type="button" id="cBorrar" hidden>Borrar cuenta</button>
+</form>
+
 <script>
 const KEY="finanzas-v1";
 const CUENTAS=[["tarjeta","Tarjeta"],["revolut","Revolut"],["santander","Débito/efectivo"]];
@@ -179,7 +220,17 @@ function checksList(){const st=S.settings;return [["tr",`Transferir ${st.aporte?
 const configurado=()=>{const st=S.settings;return st.topeTarjeta>0&&st.topeRevolut>0&&st.aporte>0&&st.objetivoFondo>0&&!!st.inicio;};
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.gastos)return s;}catch(e){}return {settings:{},gastos:[],meses:{}};}
+// Tipos de cuenta: [tipo, título del grupo, etiqueta del importe, ejemplo de nombre, es deuda]
+const TIPOS=[["liquidez","Bancos y efectivo","Saldo actual (€)","Ej: Santander, Revolut, efectivo",false],
+  ["inversion","Inversiones","Valor actual (€)","Ej: Revolut inversiones, fondo indexado",false],
+  ["tarjeta","Tarjetas de crédito","Deuda actual (€)","Ej: Visa del banco",true],
+  ["financiacion","Financiaciones","Deuda pendiente (€)","Ej: Klarna, Cetelem, préstamo",true],
+  ["compartida","Deudas compartidas","Importe neto (€)","Ej: Splitwise, gastos del piso",null]];
+const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
+// Valor con signo para el patrimonio: positivo es lo que tenés, negativo lo que debés
+const valorCuenta=c=>c.tipo==="compartida"?c.saldo:tipoDe(c.tipo)[4]?-c.saldo:c.saldo;
+function norm(s){if(!Array.isArray(s.cuentas))s.cuentas=[];if(!s.meses)s.meses={};if(!s.settings)s.settings={};return s;}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.gastos)return norm(s);}catch(e){}return norm({settings:{},gastos:[],meses:{}});}
 let S=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
 const $=id=>document.getElementById(id);
@@ -227,18 +278,57 @@ function render(){
   $("fondoInput").value=md.fondo??"";
   $("plan").innerHTML=Object.keys(PLAN).length===0?`<div class="empty">Cargá el aporte, el objetivo y el mes de inicio en Ajustes.</div>`:Object.entries(PLAN).map(([k,v])=>{const real=S.meses[k]&&S.meses[k].fondo;const cls=real==null?"idle":real>=v?"ok":"warnc";const txt=real==null?(k<=id?"Sin dato":"Pendiente"):eur(real);
     return `<div class="item"><span>${mesDe(k)}</span><div class="row"><span class="num sub">${eur(v)}</span><span class="chip ${cls}">${txt}</span></div></div>`;}).join("");
+  renderCuentas();
   $("topeTarjeta").value=st.topeTarjeta??"";$("topeRevolut").value=st.topeRevolut??"";$("objFondo").value=st.objetivoFondo??"";$("aporte").value=st.aporte??"";$("inicio").value=st.inicio||"";$("saltos").value=st.saltos||"";
 }
+
+function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota)q+=c.cuota;});return {activos:a,deudas:d,neto:a-d,cuotas:q};}
+const fechaCorta=f=>f?f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(2,4):"";
+function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
+function detalleCuenta(c){
+  if(c.tipo==="inversion"&&c.aportado>0){const g=c.saldo-c.aportado;return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
+  if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite-c.saldo)} de ${eur(c.limite)}`;
+  if(c.tipo==="financiacion"&&c.cuota>0)return `${eur(c.cuota)}/mes`+(c.cuotas>0?` · faltan ${c.cuotas} (hasta ${mesMas(c.cuotas)})`:"");
+  if(c.tipo==="compartida")return c.saldo>=0?"Te deben":"Debés";
+  return "";}
+function renderCuentas(){
+  const hay=S.cuentas.length>0, t=totales();
+  $("cuentasVacio").hidden=hay;$("netoBox").hidden=!hay;$("netoCard").hidden=!hay;
+  const cls=t.neto<0?"big neg":"big";
+  $("neto").textContent=eur(t.neto);$("neto").className=cls;$("netoIni").textContent=eur(t.neto);$("netoIni").className=cls;
+  $("activos").textContent=eur(t.activos);$("deudas").textContent=eur(t.deudas);
+  $("cuotasSub").textContent=t.cuotas>0?`Cuotas de financiaciones: ${eur(t.cuotas)} por mes`:"";
+  $("netoIniSub").textContent=`Tenés ${eur(t.activos)} · debés ${eur(t.deudas)}`+(t.cuotas>0?` · cuotas ${eur(t.cuotas)}/mes`:"");
+  $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
+    const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
+    return `<div class="card"><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=detalleCuenta(c);
+      return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${det?esc(det)+" · ":""}act. ${fechaCorta(c.actualizado)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span></div></button>`;}).join("")}</div></div>`;}).join("");
+}
+
+// Hoja de cuenta
+let selTipo="liquidez", selSigno="mas", editId=null;
+function tipoUI(){const t=tipoDe(selTipo);$("cSaldoLbl").textContent=t[2];$("cNombre").placeholder=t[3];
+  document.querySelectorAll("#sheetC [data-t]").forEach(el=>el.hidden=el.dataset.t!==selTipo);}
+function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));editId=c?c.id:null;
+  selTipo=c?c.tipo:"liquidez";selSigno=c&&c.tipo==="compartida"&&c.saldo<0?"menos":"mas";
+  seg($("segTipo"),TIPOS.map(x=>[x[0],x[1]]),selTipo,v=>{selTipo=v;tipoUI();});
+  seg($("segSigno"),[["mas","Me deben"],["menos","Debo"]],selSigno,v=>selSigno=v);
+  $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;
+  $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
+  $("cNombre").value=c?c.nombre:"";$("cSaldo").value=c?Math.abs(c.saldo):"";
+  $("cAportado").value=c&&c.aportado||"";$("cLimite").value=c&&c.limite||"";$("cCuota").value=c&&c.cuota||"";$("cCuotas").value=c&&c.cuotas||"";
+  tipoUI();$("sheetC").hidden=false;$("sheetBg").hidden=false;setTimeout(()=>$(c?"cSaldo":"cNombre").focus(),50);}
+function guardarNeto(){mesData(mesId()).neto=Math.round(totales().neto*100)/100;}
 
 function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800);}
 async function copiar(txt,ok){try{await navigator.clipboard.writeText(txt);toast(ok);}catch(e){$("backupIn").value=txt;$("backupIn").select();toast("Seleccionado: copialo a mano");}}
 
 // Navegación
-const titles={inicio:"Este mes",movs:"Gastos",mes:"Cierre del mes",ajustes:"Ajustes"};
+const titles={inicio:"Este mes",movs:"Gastos",cuentas:"Mis cuentas",mes:"Cierre del mes",ajustes:"Ajustes"};
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","page");
-  ["inicio","movs","mes","ajustes"].forEach(v=>{const s=$("v-"+v);s.hidden=v!==b.dataset.v;if(!s.hidden)s.style.display="flex";});
-  $("title").textContent=titles[b.dataset.v];window.scrollTo(0,0);
+  ["inicio","movs","cuentas","mes","ajustes"].forEach(v=>{const s=$("v-"+v);s.hidden=v!==b.dataset.v;if(!s.hidden)s.style.display="flex";});
+  $("title").textContent=titles[b.dataset.v];$("fab").hidden=b.dataset.v==="cuentas";window.scrollTo(0,0);
 }));
 
 // Hoja de nuevo gasto
@@ -247,8 +337,25 @@ function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="butto
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
 function abrir(){selCuenta="tarjeta";selCat="Súper";seg($("segCuenta"),CUENTAS,selCuenta,v=>selCuenta=v);seg($("segCat"),CATS.map(c=>[c,c]),selCat,v=>selCat=v);
   $("gImporte").value="";$("gNota").value="";$("gFecha").value=hoy();$("sheet").hidden=false;$("sheetBg").hidden=false;setTimeout(()=>$("gImporte").focus(),50);}
-function cerrar(){$("sheet").hidden=true;$("sheetBg").hidden=true;}
-$("fab").onclick=abrir;$("cerrar").onclick=cerrar;$("sheetBg").onclick=cerrar;
+function cerrar(){$("sheet").hidden=true;$("sheetC").hidden=true;$("sheetBg").hidden=true;}
+$("fab").onclick=abrir;$("cerrar").onclick=cerrar;$("cCerrar").onclick=cerrar;$("sheetBg").onclick=cerrar;
+$("addCuenta").onclick=()=>abrirCuenta(null);
+$("irCuentas").onclick=()=>document.querySelector('nav button[data-v="cuentas"]').click();
+document.addEventListener("click",e=>{const b=e.target.closest("[data-cta]");if(b)abrirCuenta(b.dataset.cta);});
+$("sheetC").addEventListener("submit",e=>{e.preventDefault();
+  const n=id=>{const v=parseFloat(String($(id).value).replace(",","."));return isNaN(v)?0:Math.round(v*100)/100;};
+  const nombre=$("cNombre").value.trim(), saldo=n("cSaldo");
+  if(!nombre){toast("Ponele un nombre a la cuenta");return;}
+  if(saldo<0){toast("Poné el importe en positivo");return;}
+  const c={id:editId||Date.now(),tipo:selTipo,nombre,saldo:selTipo==="compartida"&&selSigno==="menos"?-saldo:saldo,actualizado:hoy()};
+  if(selTipo==="inversion"&&n("cAportado")>0)c.aportado=n("cAportado");
+  if(selTipo==="tarjeta"&&n("cLimite")>0)c.limite=n("cLimite");
+  if(selTipo==="financiacion"){if(n("cCuota")>0)c.cuota=n("cCuota");if(n("cCuotas")>0)c.cuotas=Math.round(n("cCuotas"));}
+  const i=S.cuentas.findIndex(x=>x.id===editId);if(i>=0)S.cuentas[i]=c;else S.cuentas.push(c);
+  guardarNeto();persist();cerrar();render();toast("Cuenta guardada");});
+$("cBorrar").onclick=()=>{const b=$("cBorrar");
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
+  S.cuentas=S.cuentas.filter(x=>x.id!==editId);guardarNeto();persist();cerrar();render();toast("Cuenta borrada");};
 $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const v=parseFloat(String($("gImporte").value).replace(",","."));
   if(!(v>0)){toast("Poné un importe mayor que 0");return;}
@@ -267,10 +374,12 @@ $("guardarAjustes").onclick=()=>{const n=id=>parseFloat($(id).value);const tt=n(
   S.settings={topeTarjeta:tt,topeRevolut:tr,objetivoFondo:of,aporte:ap,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
 $("copiarResumen").onclick=()=>{const id=mesId(),gs=gastosMes(id),st=S.settings,md=mesData(id),PLAN=planMap(),CHECKS=checksList();const sum=k=>gs.filter(g=>g.cuenta===k).reduce((a,g)=>a+g.importe,0);
   const porCat={};gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
-  const txt=[`Resumen ${mesDe(id)}`,`Tarjeta: ${eur(sum("tarjeta"))} de ${eur(st.topeTarjeta)}`,`Revolut: ${eur(sum("revolut"))} de ${eur(st.topeRevolut)}`,`Débito/efectivo: ${eur(sum("santander"))}`,`Fondo: ${md.fondo==null?"sin anotar":eur(md.fondo)} (plan ${PLAN[id]!=null?eur(PLAN[id]):"–"})`,`Checklist: ${CHECKS.filter(([k])=>md.checks[k]).length}/${CHECKS.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`)].join("\n");
-  copiar(txt,"Resumen copiado");};
+  const txt=[`Resumen ${mesDe(id)}`,`Tarjeta: ${eur(sum("tarjeta"))} de ${eur(st.topeTarjeta)}`,`Revolut: ${eur(sum("revolut"))} de ${eur(st.topeRevolut)}`,`Débito/efectivo: ${eur(sum("santander"))}`,`Fondo: ${md.fondo==null?"sin anotar":eur(md.fondo)} (plan ${PLAN[id]!=null?eur(PLAN[id]):"–"})`,`Checklist: ${CHECKS.filter(([k])=>md.checks[k]).length}/${CHECKS.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`)];
+  if(S.cuentas.length){const t=totales();txt.push(`Patrimonio neto: ${eur(t.neto)} (tengo ${eur(t.activos)}, debo ${eur(t.deudas)}${t.cuotas>0?`, cuotas ${eur(t.cuotas)}/mes`:""})`,"Cuentas:",
+    ...S.cuentas.map(c=>{const d=detalleCuenta(c);return `- ${c.nombre} (${tipoDe(c.tipo)[1]}): ${eur(valorCuenta(c))}${d?" · "+d:""} · act. ${fechaCorta(c.actualizado)}`;}));}
+  copiar(txt.join("\n"),"Resumen copiado");};
 $("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada");
-$("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!Array.isArray(d.gastos)||!d.settings)throw 0;S=d;persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
+$("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!Array.isArray(d.gastos)||!d.settings)throw 0;S=norm(d);persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
 
 $("irAjustes").onclick=()=>document.querySelector('nav button[data-v="ajustes"]').click();
 render();

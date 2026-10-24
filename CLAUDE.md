@@ -9,10 +9,11 @@ App web instalable (PWA) de presupuesto personal. Publicada con GitHub Pages des
 
 ## Cómo funciona
 - Los datos se guardan solo en el dispositivo (`localStorage`, clave `finanzas-v1`). No hay backend ni sincronización.
-- Modelo: `{settings:{topeTarjeta, topeRevolut, aporte, objetivoFondo, inicio:"AAAA-MM", saltos:"AAAA-MM, ..."}, gastos:[{id, fecha, importe, cuenta, cat, nota}], meses:{"AAAA-MM":{fondo, checks}}}`.
+- Modelo: `{settings:{topeTarjeta, topeRevolut, aporte, objetivoFondo, inicio:"AAAA-MM", saltos:"AAAA-MM, ..."}, gastos:[{id, fecha, importe, cuenta, cat, nota}], cuentas:[{id, tipo, nombre, saldo, actualizado, aportado?, limite?, cuota?, cuotas?}], meses:{"AAAA-MM":{fondo, checks, neto?}}}`.
+- `cuentas` las crea cada persona desde la pestaña Cuentas (nombre libre). Tipos: `liquidez`, `inversion` (activos), `tarjeta`, `financiacion` (deudas, `saldo` en positivo) y `compartida` (`saldo` con signo: positivo te deben, negativo debés). `norm()` agrega `cuentas: []` a datos y copias viejas. Al guardar una cuenta se anota el patrimonio neto del mes en `meses[mes].neto`.
 - El plan del fondo se calcula en `planMap()` a partir de los ajustes: aporte mensual acumulado desde `inicio`, sin sumar en los meses de `saltos`, hasta llegar al objetivo.
 - Los gastos de la categoría "Trabajo (reembolsable)" no cuentan para los topes.
-- Pantallas: Inicio (disponible por cuenta, fondo, categorías), Gastos, Mes (checklist, saldo del fondo, plan) y Ajustes (topes, plan, resumen para copiar, copia de seguridad).
+- Pantallas: Inicio (disponible por cuenta, fondo, patrimonio neto, categorías), Gastos, Cuentas (patrimonio neto y cuentas por tipo), Mes (checklist, saldo del fondo, plan) y Ajustes (topes, plan, resumen para copiar, copia de seguridad).
 
 ## Reglas
 - El repo es público: no poner importes, nombres ni datos personales en el código. Todo lo personal se carga desde Ajustes.
