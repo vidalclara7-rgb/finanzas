@@ -13,7 +13,8 @@ App web instalable (PWA) de presupuesto personal. Publicada con GitHub Pages des
 - `cuentas` las crea cada persona desde la pestaña Cuentas (nombre libre). Tipos: `liquidez`, `inversion` (activos), `tarjeta`, `financiacion` (deudas, `saldo` en positivo) y `compartida` (`saldo` con signo: positivo te deben, negativo debés). `norm()` agrega `cuentas: []` a datos y copias viejas. Al guardar una cuenta se anota el patrimonio neto del mes en `meses[mes].neto`.
 - El plan del fondo se calcula en `planMap()` a partir de los ajustes: aporte mensual acumulado desde `inicio`, sin sumar en los meses de `saltos`, hasta llegar al objetivo.
 - Los gastos de la categoría "Trabajo (reembolsable)" no cuentan para los topes.
-- Pantallas: Inicio (disponible por cuenta, fondo, patrimonio neto, categorías), Gastos, Cuentas (patrimonio neto y cuentas por tipo), Mes (checklist, saldo del fondo, plan) y Ajustes (topes, plan, resumen para copiar, copia de seguridad).
+- Pantallas: Inicio (disponible por cuenta, fondo, patrimonio neto, categorías), Gastos, Cuentas (patrimonio neto y cuentas por tipo), Mes (checklist, saldo del fondo, plan) y Ajustes (topes, plan, resumen para copiar, copia de seguridad), que se abre con el engranaje del encabezado. El botón "+" central agrega un gasto, o una cuenta si se está en Cuentas.
+- Estilo: fondo crema, tarjetas pastel (`p-yellow`, `p-pink`, `p-blue`, `p-green`, `p-lilac`, con texto oscuro fijo también en modo oscuro), forma decorativa con `deco`/`deco alt`, títulos en Instrument Serif (Google Fonts, con Georgia de respaldo), botones píldora negros y barra de navegación negra flotante. Colores definidos como variables en `:root`, con versión para modo oscuro.
 
 ## Reglas
 - El repo es público: no poner importes, nombres ni datos personales en el código. Todo lo personal se carga desde Ajustes.
