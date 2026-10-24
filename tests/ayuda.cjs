@@ -36,6 +36,13 @@ async function iniciar() {
 // `hoy` fija la fecha para que los meses sean previsibles. `sw: true` deja registrar el service worker.
 async function pagina(ent, { datos, esquema = "light", hoy = HOY, sw = false } = {}) {
   const ctx = await ent.browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: esquema, serviceWorkers: sw ? "allow" : "block" });
+  await ctx.grantPermissions(["clipboard-read", "clipboard-write"], { origin: ent.url });
+  // Registra cada aviso al aparecer: duran 1,8 s y con la máquina cargada se pueden perder
+  await ctx.addInitScript(() => {
+    window.__avisos = [];
+    new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.classList && n.classList.contains("toast")) window.__avisos.push(n.textContent); })
+      .observe(document, { childList: true, subtree: true });
+  });
   if (datos) {
     await ctx.addInitScript(([k, d]) => {
       if (!sessionStorage.getItem("sembrado")) { localStorage.setItem(k, JSON.stringify(d)); sessionStorage.setItem("sembrado", "1"); }
@@ -56,6 +63,34 @@ const guardados = (page) => page.evaluate((k) => JSON.parse(localStorage.getItem
 async function ir(page, vista) {
   await page.click(`nav [data-v="${vista}"], header [data-v="${vista}"]`);
 }
+
+// Espera a que haya aparecido un aviso con ese texto
+const aviso = (page, texto) => page.waitForFunction((t) => window.__avisos.some((a) => a.includes(t)), texto, { timeout: 5000 });
+const texto = (page, sel) => page.locator(sel).innerText();
+const portapapeles = (page) => page.evaluate(() => navigator.clipboard.readText());
+
+async function nuevoGasto(page, { importe, cuenta, cat, nota } = {}) {
+  await page.click("#fab");
+  if (importe !== undefined) await page.fill("#gImporte", String(importe));
+  if (cuenta) await page.click(`#segCuenta button[data-v="${cuenta}"]`);
+  if (cat) await page.click(`#segCat button[data-v="${cat}"]`);
+  if (nota) await page.fill("#gNota", nota);
+  await page.click('#sheet button[type="submit"]');
+}
+
+async function nuevaCuenta(page, { tipo, nombre, saldo, signo, extra = {} } = {}) {
+  await page.click("#addCuenta");
+  if (tipo) await page.click(`#segTipo button[data-v="${tipo}"]`);
+  if (signo) await page.click(`#segSigno button[data-v="${signo}"]`);
+  if (nombre) await page.fill("#cNombre", nombre);
+  if (saldo !== undefined) await page.fill("#cSaldo", String(saldo));
+  for (const [id, v] of Object.entries(extra)) await page.fill("#" + id, String(v));
+  await page.click('#sheetC button[type="submit"]');
+}
+
+const AJUSTES = { topeTarjeta: 500, topeRevolut: 300, aporte: 100, objetivoFondo: 1000, inicio: "2026-09", saltos: "" };
+// Datos mínimos: ajustes completos y lo que se pase encima
+const con = (extra = {}) => ({ settings: { ...AJUSTES }, gastos: [], meses: {}, cuentas: [], ...extra });
 
 function datosEjemplo() {
   const f = "2026-10-";
@@ -79,4 +114,13 @@ function datosEjemplo() {
   };
 }
 
-module.exports = { iniciar, pagina, guardados, ir, datosEjemplo, CLAVE, HOY, VISTAS, RAIZ };
+// Prepara un archivo de tests: un navegador para todos y un contexto nuevo por test
+function preparar(nodeTest) {
+  const estado = { ent: null, abiertos: [] };
+  nodeTest.before(async () => { estado.ent = await iniciar(); });
+  nodeTest.afterEach(async () => { for (const c of estado.abiertos.splice(0)) await c.close(); });
+  nodeTest.after(async () => { if (estado.ent) await estado.ent.cerrar(); });
+  return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
+}
+
+module.exports = { iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, nuevoGasto, nuevaCuenta, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };

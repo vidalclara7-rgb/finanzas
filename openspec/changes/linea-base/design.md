@@ -23,5 +23,8 @@
 
 - «Por categoría» y el total del mes incluyen los gastos reembolsables; los topes no.
 - El resumen para copiar no excluye los reembolsables de Tarjeta y Revolut, la pantalla de Inicio sí.
+- Con el importe vacío, el gasto no se guarda por la validación propia del navegador (su aviso, en
+  el idioma del teléfono), no por el aviso de la app. Con 0 sí sale «Poné un importe mayor que 0».
+  Lo destapó el test al construir este cambio (2026-10-24); la spec se corrigió para describirlo.
 - Los gastos sólo admiten tres cuentas fijas; las cuentas de la pestaña Cuentas no se usan al cargar
   un gasto.

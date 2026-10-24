@@ -23,7 +23,7 @@ CLAVE = 'const KEY="finanzas-v1"'
 ALLOW = re.compile(r"guard:allow\s+\S")
 # Un campo que escribe la persona, usado en una línea que arma HTML, sin pasar por esc()
 SIN_ESCAPAR = re.compile(r"(?<!esc\()\b[a-z]\.(nombre|nota|cat)\b(?!\s*[?=!<>|&])")
-CORREO = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b")
+CORREO = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")
 IBAN = re.compile(r"\b[A-Z]{2}\d{2}(?: ?\d{4}){4,}\b")
 
 

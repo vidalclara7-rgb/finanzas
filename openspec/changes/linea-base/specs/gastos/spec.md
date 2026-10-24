@@ -14,10 +14,16 @@ Casa/Splitwise, Salud, Viajes, Trabajo (reembolsable) y Otros.
 - **Y** el gasto aparece en Gastos y en «Últimos gastos» con la fecha 15/10
 - **Y** el total del mes es 12,5 €
 
-### Escenario: importe vacío o cero
+### Escenario: importe en cero
 - **Dado** el formulario de gasto abierto
-- **Cuando** la persona guarda con el importe vacío o en 0
+- **Cuando** la persona guarda con el importe en 0
 - **Entonces** la app avisa «Poné un importe mayor que 0»
+- **Y** no se guarda ningún gasto
+
+### Escenario: importe vacío
+- **Dado** el formulario de gasto abierto
+- **Cuando** la persona guarda con el importe vacío
+- **Entonces** el formulario sigue abierto con el aviso propio del teléfono de campo obligatorio
 - **Y** no se guarda ningún gasto
 
 ## Requisito: ver los gastos del mes en curso

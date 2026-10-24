@@ -1,6 +1,6 @@
 ---
 cambio: linea-base
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 preview: no
 ---
