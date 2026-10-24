@@ -30,10 +30,14 @@ comparar.
   el cierre del mes.
 - La pestaña Gastos pasa a llamarse **Movimientos** y Mes pasa a ser **Cierre**, con la conciliación
   arriba y el checklist debajo.
+- **Checklist propio**: cada persona agrega, edita y borra sus tareas del cierre. Quien ya usaba la
+  app conserva las cinco de antes como tareas propias.
+- **Gráficos**: barras de ingresos contra gastos de los últimos seis meses, y el anillo del tope pasa
+  a cada cuenta con tope.
 
 ## A quién afecta
 
-A todas las personas que usan el link. Al actualizar, la app convierte lo que tienen: crea las
+A todas las personas que usan el link. Se construye después de estilo-blanco-y-graficos. Al actualizar, la app convierte lo que tienen: crea las
 cuentas Tarjeta, Revolut y Débito/efectivo (las que tengan gastos o tope) con sus topes y les asigna
 los gastos, y crea «Fondo de emergencia» con el último saldo anotado. Esas cuentas arrancan con saldo
 inicial cero: **hasta la primera conciliación, sus saldos no son reales**. Nada se pierde.
@@ -41,7 +45,7 @@ inicial cero: **hasta la primera conciliación, sus saldos no son reales**. Nada
 ## Pantallas
 
 Inicio, Movimientos (antes Gastos), hoja de nuevo movimiento, Cuentas, hoja de cuenta, Cierre (antes
-Mes), hoja de conciliación y Ajustes.
+Mes), hoja de conciliación, hoja de tarea del checklist y Ajustes.
 
 ## Fuera de alcance
 
@@ -49,4 +53,3 @@ Mes), hoja de conciliación y Ajustes.
 - Importar el extracto del banco o cruzar movimiento a movimiento.
 - Movimientos que se repiten solos (el sueldo de cada mes).
 - Varias monedas.
-- Checklist editable por cada persona.

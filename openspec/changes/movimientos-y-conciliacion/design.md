@@ -7,6 +7,8 @@
 - Mes pasa a ser el cierre; el fondo pasa a ser una cuenta y su plan se conserva.
 - Los gastos viejos se asignan a cuentas creadas solas (Tarjeta, Revolut, Débito/efectivo).
 - Cambiar un movimiento de un mes conciliado se permite y devuelve la cuenta a «sin conciliar».
+- Checklist editable por cada persona (2026-10-24): las cinco tareas de antes pasan a ser propias.
+- Gráficos de ingresos contra gastos y anillo por cuenta, en este cambio (2026-10-24).
 - Categorías de ingreso: Sueldo, Reembolso, Venta o trabajo extra, Regalo, Intereses y rendimientos,
   Otros.
 
@@ -20,8 +22,6 @@
 - **Los ajustes no son gastos ni ingresos**: cambian el saldo, pero no cuentan en el resultado del
   mes, en las categorías ni en los topes.
 - **Fecha de cierre**: el último día del mes, o hoy si es el mes en curso.
-- **Checklist**: la tarea «Transferir … a Revolut» pasa a «Transferir el presupuesto del mes a tus
-  cuentas», porque los topes ya no son dos fijos. Las otras cuatro no cambian.
 - **Topes**: opcionales, sólo en Bancos y efectivo y en Tarjetas de crédito. El disponible se calcula
   como hoy (sin los gastos «Trabajo (reembolsable)»).
 - **«Gasto por categoría»** sigue sumando los reembolsables, como hoy: cambiarlo es otro cambio.
@@ -35,6 +35,7 @@ Modelo nuevo (versión 2 de los datos, marcada con `v: 2`; la clave de guardado 
   settings: { aporte, objetivoFondo, inicio, saltos },
   cuentas: [{ id, tipo, nombre, saldoInicial, desde: "AAAA-MM-DD", tope?, fondo?, aportado?, limite?, cuota?, cuotas? }],
   movs:    [{ id, tipo: "gasto"|"ingreso"|"transferencia"|"ajuste", fecha, importe, cuenta, destino?, cat?, nota }],
+  tareas:  [{ id, texto }],
   meses:   { "AAAA-MM": { checks, neto?, fondo?, conc?: { <idCuenta>: { real, fecha } } } } }
 ```
 
@@ -46,6 +47,7 @@ Modelo nuevo (versión 2 de los datos, marcada con `v: 2`; la clave de guardado 
 - Conciliada = existe `meses[m].conc[id]`. Al crear, editar o borrar un movimiento con fecha en un
   mes conciliado de esa cuenta (o de la de destino), se borra esa marca.
 - Registrar ajuste: un movimiento `ajuste` por `real − calculado`, con la fecha del cierre.
+- Gráficos en SVG, como los del cambio de estilo.
 - Pantallas: Gastos → Movimientos (`v-movs`), Mes → Cierre (`v-mes`). Hoja de movimiento con selector
   Gasto / Ingreso / Transferencia. Nueva hoja de conciliación.
 
@@ -59,7 +61,9 @@ Migración en `norm()` (se aplica al cargar y al restaurar una copia; sólo si `
 4. Si hay algún saldo del fondo anotado: se crea «Fondo de emergencia» (bancos, `fondo: true`) con
    saldo inicial = último saldo anotado, desde el primer día de ese mes. Los saldos anotados de meses
    anteriores se conservan para el plan.
-5. Se quitan `topeTarjeta` y `topeRevolut` de `settings` y se pone `v: 2`. Volver a abrir no repite
+5. Las cinco tareas fijas pasan a `tareas` con sus ids de antes (`tr`, `rev`, `total`, `empresa`,
+   `mitad`), así lo marcado en `checks` se conserva, y con el texto que mostraban (importes de hoy).
+6. Se quitan `topeTarjeta` y `topeRevolut` de `settings` y se pone `v: 2`. Volver a abrir no repite
    nada.
 
 Sube la versión de la caché del service worker. `CLAUDE.md` se actualiza con el modelo nuevo.
