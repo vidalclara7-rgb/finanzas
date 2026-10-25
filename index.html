@@ -84,6 +84,15 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
 .barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--lime)} .meses .gas{background:var(--lavender)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 .list{display:flex;flex-direction:column}
 .item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
 .item:last-child{border-bottom:0}
