@@ -46,3 +46,19 @@
   con su cuenta, su mes, nombre y tipo; en `S.adjuntos` sólo el índice.
 - Tests con extractos inventados que imitan los tres formatos, generados por los propios tests. Los
   extractos reales no entran nunca al repo.
+
+## Al empezar a construir (2026-10-25)
+
+- Gastos fijos (cambio archivado después de aprobar este): un borrador de gasto cuya categoría y
+  descripción coinciden con una regla `fijos[clave] === true` llega con «Fijo», como al anotarlo a
+  mano. La descripción del borrador es la nota del gasto. Decisión de la persona.
+
+## Gate 2 (2026-10-25)
+
+- Pantallas del preview: `movs` (botón «Importar extracto»), `hoja-importar` (revisión; en vacío,
+  elegir la cuenta la primera vez), `hoja-importar-conciliar` (después de guardar), `hoja-cuenta`
+  (adjuntos) y `ajustes` (aviso de adjuntos).
+- Cada borrador tiene un único selector que dice qué es: «Gasto · <categoría>», «Ingreso ·
+  <categoría>» o «Transferencia a/desde <cuenta>», según el signo del importe.
+- Clases nuevas: `.borradores`, `.borr` (y `.off` para los desmarcados), `.adj`. Arreglo general:
+  `.sheet>*{flex-shrink:0}`, porque en hojas largas las tarjetas se aplastaban y cortaban su contenido.

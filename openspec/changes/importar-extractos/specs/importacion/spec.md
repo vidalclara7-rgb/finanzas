@@ -111,3 +111,14 @@ la app ofrece conciliar la cuenta con ese importe a la fecha del último movimie
 - **Dado** un extracto de Banco A cuyo saldo final es 10 € menos que el calculado
 - **Cuando** la persona toca «Conciliar con el extracto»
 - **Entonces** se abre la conciliación de Banco A con ese saldo y la diferencia de -10 €
+
+## Requisito: gastos fijos al importar
+
+Un gasto del extracto cuya categoría y descripción coinciden con un gasto que la persona marcó como
+fijo llega en la revisión con la etiqueta «Fijo», y se guarda como fijo salvo que la persona la
+quite.
+
+### Escenario: alquiler importado
+- **Dado** un gasto fijo «alquiler» en Casa/Splitwise de septiembre 2026
+- **Cuando** la persona importa un extracto con un cargo «Alquiler» que llega en Casa/Splitwise
+- **Entonces** ese borrador dice «Fijo» y, al guardarlo, el gasto queda fijo

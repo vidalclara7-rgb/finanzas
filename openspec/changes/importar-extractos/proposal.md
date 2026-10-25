@@ -1,6 +1,6 @@
 ---
 cambio: importar-extractos
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Importar extractos del banco y adjuntar archivos
