@@ -70,14 +70,29 @@ t.test("títulos con la letra del texto", async () => {
   assert.equal(await letra("#sheet h2"), cuerpo);
 });
 
-// Escenario: fondo blanco
-t.test("fondo blanco", async () => {
+// Escenario: fondo gris claro con tarjetas blancas
+t.test("fondo gris claro con tarjetas blancas", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
-  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(255, 255, 255)");
+  const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  assert.notEqual(fondo, "rgb(255, 255, 255)");
+  assert.ok(luminancia(fondo) > 0.85, `fondo ${fondo}`);
+  const tarjeta = await page.$eval('[data-ui="gasto-categorias"]', (el) => getComputedStyle(el).backgroundColor);
+  assert.equal(tarjeta, "rgb(255, 255, 255)");
   assert.equal(await A.texto(page, "#resultado .dec"), ",7 €");
   const [entero] = await colores(page, "#resultado");
   const [dec] = await colores(page, "#resultado .dec");
   assert.ok(luminancia(dec) > luminancia(entero) + 0.2, `decimales ${dec} contra ${entero}`);
+});
+
+// Escenario: texto legible sobre colores oscuros
+t.test("texto legible sobre colores oscuros", async () => {
+  const datos = EJEMPLO();
+  datos.movs.push(A.gasto(9, "2026-10-06", 48, 1, "Compras", "zapatillas"));
+  const { page } = await abrir({ datos });
+  await A.ir(page, "movs");
+  const [texto, detras] = await colores(page, '[data-mov="9"] .linea');
+  assert.equal(texto, "rgb(255, 255, 255)");
+  assert.ok(contraste(texto, detras) >= 4.5, `contraste ${contraste(texto, detras).toFixed(2)}`);
 });
 
 // Escenario: mismo color por categoría

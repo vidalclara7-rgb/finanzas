@@ -53,7 +53,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 /* Sobre colores oscuros (oliva, cherry) el texto es blanco */
 .card.color.osc,.mov.osc{--on-color:#FFFFFF;color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.75);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
 .mov.osc .ico{background:rgba(255,255,255,.22);color:#FFFFFF}
-.ico.osc{color:#FFFFFF}
+.mini .ico{color:var(--on-color)} .ico.osc,.mini .ico.osc{color:#FFFFFF}
 /* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
 .mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
@@ -169,7 +169,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <main>
   <!-- INICIO -->
   <section id="v-inicio" data-pantalla="inicio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--cat5)" hidden>
+    <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--rosa)" hidden>
       <span class="lbl">Primer paso</span>
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
       <button class="btn" id="crearPrimera">Crear cuenta</button>
@@ -186,7 +186,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="lista-categorias"></div></div>
     <div class="card" id="barrasCard" data-ui="barras-semana" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
     <div class="card" id="mesesCard" data-ui="ingresos-gastos" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses" id="meses"></div></div>
-    <div class="card color" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--cat1)" hidden>
+    <div class="card color osc" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--cherry)" hidden>
       <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
       <span class="big" id="netoIni">–</span>
       <span class="sub" id="netoIniSub"></span>
@@ -208,7 +208,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
   <!-- CUENTAS -->
   <section id="v-cuentas" data-pantalla="cuentas" hidden style="flex-direction:column;gap:14px">
-    <div class="card color" id="cuentasVacio" style="--c:var(--cat5)">
+    <div class="card color" id="cuentasVacio" style="--c:var(--rosa)">
       <span class="lbl">Tu foto financiera</span>
       <span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span>
     </div>
@@ -260,7 +260,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <!-- Hoja de movimiento: gasto, ingreso o transferencia -->
 <form id="sheet" class="sheet" data-pantalla="hoja-movimiento" data-ui="hoja-movimiento" hidden autocomplete="off">
   <div class="row"><h2 id="mTitulo">Nuevo movimiento</h2><button type="button" class="btn sec" id="cerrar" style="padding:8px 12px">Cerrar</button></div>
-  <div class="card color" id="sinCuentas" data-ui="sin-cuentas" style="--c:var(--cat5)" hidden><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button type="button" class="btn" id="mCrearCuenta">Crear cuenta</button></div>
+  <div class="card color" id="sinCuentas" data-ui="sin-cuentas" style="--c:var(--rosa)" hidden><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button type="button" class="btn" id="mCrearCuenta">Crear cuenta</button></div>
   <div id="mCampos" style="display:flex;flex-direction:column;gap:14px">
     <div class="seg" id="segMov" data-ui="tipo-movimiento"></div>
     <input type="number" inputmode="decimal" step="0.01" id="mImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
@@ -320,6 +320,9 @@ const KEY="finanzas-v1";
 const CATS=["Súper","Comida fuera","Delivery","Transporte","Ocio","Compras","Belleza","Casa/Splitwise","Salud","Viajes","Trabajo (reembolsable)","Otros"];
 const INGRESOS=["Sueldo","Reembolso","Venta o trabajo extra","Regalo","Intereses y rendimientos","Otros"];
 const REEMB="Trabajo (reembolsable)";
+// Categorías de color oscuro: su tarjeta lleva texto blanco
+const CATS_OSC=["Transporte","Compras"];
+const osc=c=>CATS_OSC.includes(c)?" osc":"";
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 // Tipos de cuenta: [tipo, título del grupo, ejemplo de nombre, es deuda]
 const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",false],
@@ -328,7 +331,7 @@ const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",
   ["financiacion","Financiaciones","Ej: Klarna, Cetelem, préstamo",true],
   ["compartida","Deudas compartidas","Ej: Splitwise, gastos del piso",false]];
 // Color del punto de cada tipo de cuenta (variables --cat de la hoja de estilos)
-const COLOR={liquidez:"--cat1",inversion:"--cat9",tarjeta:"--cat3",financiacion:"--cat7",compartida:"--cat11"};
+const COLOR={liquidez:"--salvia",inversion:"--oliva",tarjeta:"--cherry",financiacion:"--fucsia",compartida:"--cat11"};
 const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
 
 const $=id=>document.getElementById(id);
@@ -448,9 +451,9 @@ function forma(ing,gas){const p=ing>0?gas/ing:0;$("formaCentro").setAttribute("r
 function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="−"+eur(m.importe);}
   else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eur(m.importe);}
-  else if(m.tipo==="transferencia"){c="var(--neutro)";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eur(m.importe);}
-  else{c="var(--neutro)";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
-  return `<div class="mov" style="--c:${c}" data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span><div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
+  else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eur(m.importe);}
+  else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
+  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span><div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 function render(){
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
@@ -460,7 +463,7 @@ function render(){
   forma(ing,gas);monto($("resultado"),r2(ing-gas));$("ingMes").textContent="Ingresos "+eur(ing);$("gasMes").textContent="Gastos "+eur(gas);
   const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
   const ult=ord.filter(m=>m.tipo==="gasto").slice(0,5);$("ultimos").hidden=!ult.length;
-  $("ultimos").innerHTML=ult.map(g=>`<div class="mini" data-mini="${g.id}"><span class="ico" style="background:${colorCat(g.cat)};color:var(--on-color)">${esc(g.cat[0])}</span><div><div class="sub">${esc(g.cat)} · ${esc(nombreDe(g.cuenta))}</div><b>-${esc(eur(g.importe).slice(0,-2))}</b></div></div>`).join("");
+  $("ultimos").innerHTML=ult.map(g=>`<div class="mini" data-mini="${g.id}"><span class="ico${osc(g.cat)}" style="background:${colorCat(g.cat)}">${esc(g.cat[0])}</span><div><div class="sub">${esc(g.cat)} · ${esc(nombreDe(g.cuenta))}</div><b>-${esc(eur(g.importe).slice(0,-2))}</b></div></div>`).join("");
   // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
   const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
   $("disponibles").innerHTML=conTope.map(c=>`<div class="card" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
