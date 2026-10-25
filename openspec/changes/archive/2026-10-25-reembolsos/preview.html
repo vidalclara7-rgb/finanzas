@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preview · reembolsos</title>
+<!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
+<style>
+:root{
+  --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
+  --ink-base:#121212; --muted-base:#77766F;
+  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
+  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --frambuesa:#D63C7A; --rosa-claro:#F8CDE6; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
+  --on-color:#121212;
+  --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
+  --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
+  --ingreso:#C8DDA6; --neutro:#FFFFFF;
+  --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
+  --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
+  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#D63C7A; --cat12:#E2DED3;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#101010; --surface:#1E1E1E; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2E2C;
+  --ink-base:#F2F1EC; --muted-base:#A3A19A;
+  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#2A2A28;
+  --hero:#1E1E1E; --nav:#1E1E1E; --nav-ink:#8E8C84; --nav-on:#F2F1EC; --neutro:#1E1E1E;
+  --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C; color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.num{font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
+.gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
+.gear svg{width:22px;height:22px}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+/* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
+.card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
+/* Sobre colores oscuros (oliva, cherry) el texto es blanco */
+.card.color.osc,.mov.osc{--on-color:#FFFFFF;color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.75);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
+.mov.osc .ico{background:rgba(255,255,255,.22);color:#FFFFFF}
+.mini .ico{color:var(--on-color)} .ico.osc,.mini .ico.osc{color:#FFFFFF}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
+.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
+.sub{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Forma del gasto del mes: tres círculos rojos, el del centro crece con lo gastado */
+.forma{display:block;width:100%;height:auto}
+.forma circle{fill:var(--rojo)}
+.forma.bad .centro{stroke:var(--ink);stroke-width:6}
+/* Anillo del tope */
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+/* Torta (dona) de categorías */
+.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
+.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
+.torta circle{fill:none;stroke-width:26}
+.torta .centro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.torta .centro span{font-size:13px;color:var(--muted)}
+/* Barras por semana: rayadas, la actual en negro */
+.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
+.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
+.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.tira{display:flex;gap:10px;overflow-x:auto;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px));scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.mini{flex:0 0 128px;background:var(--surface);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:28px}
+.mini .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini b{font-size:26px;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos como tarjetas apiladas */
+.pila{display:flex;flex-direction:column}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 rgba(255,255,255,.35)}
+.mov:first-child{margin-top:0}
+.mov:last-child{padding-bottom:16px}
+.mov .ico{background:rgba(255,255,255,.7);color:var(--on-color)}
+.mov .cat{font-size:12px;color:var(--muted)}
+.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
+.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea .num{flex:none}
+.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.mov{position:relative}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item .d{display:flex;flex-direction:column;min-width:0}
+.item .d span:last-child{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
+.pos{color:var(--ink)} .neg{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+textarea{font-family:var(--mono);font-size:12px;min-height:120px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
+.btn.sec{background:var(--accent-soft);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:active{opacity:.8}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:23px;height:23px}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
+.sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
+[hidden]{display:none!important}
+</style>
+<!-- estilos-app:fin -->
+<!-- revision:inicio · la banda de revisión no forma parte del diseño ni se copia a la app -->
+<style>
+  body{max-width:430px;margin:0 auto}
+  nav{max-width:402px;margin:0 auto}
+  .revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 16px;background:#000;color:#fff;font-size:13px}
+  .revision select{font:inherit;padding:2px 6px;border-radius:6px;border:0}
+  .revision label{display:flex;align-items:center;gap:6px}
+  .revision__nota{opacity:.7;width:100%}
+</style>
+<!-- revision:fin -->
+</head>
+<body>
+<!-- revision:inicio -->
+<div class="revision" role="region" aria-label="Revisión del preview">
+  <strong>Preview · reembolsos</strong>
+  <label>Pantalla <select id="rev-pantalla"></select></label>
+  <label>Estado <select id="rev-estado"><option value="normal">con datos</option><option value="vacio">vacío</option></select></label>
+  <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const pantallas = [...document.querySelectorAll("[data-pantalla]")];
+    const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
+    for (const p of pantallas) selP.append(new Option(p.dataset.titulo || p.dataset.pantalla, p.dataset.pantalla));
+    const q = new URLSearchParams(location.search);
+    if (q.get("pantalla")) selP.value = q.get("pantalla");
+    if (q.get("estado")) selE.value = q.get("estado");
+    function aplicar() {
+      for (const p of pantallas) {
+        p.hidden = p.dataset.pantalla !== selP.value;
+        if (!p.hidden) { p.style.display = "flex"; document.getElementById("rev-titulo").textContent = p.dataset.titulo || ""; }
+        for (const e of p.querySelectorAll("[data-estado]")) e.hidden = e.dataset.estado !== selE.value;
+      }
+      for (const a of document.querySelectorAll("[data-ir]")) {
+        if (a.dataset.ir === selP.value) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+      history.replaceState(null, "", "?" + new URLSearchParams({ pantalla: selP.value, estado: selE.value }));
+    }
+    document.addEventListener("click", (ev) => {
+      const a = ev.target.closest("[data-ir]");
+      if (a) { ev.preventDefault(); selP.value = a.dataset.ir; aplicar(); }
+    });
+    for (const el of [selP, selE]) el.addEventListener("change", aplicar);
+    aplicar();
+  });
+</script>
+<!-- revision:fin -->
+<header><div><h1 id="rev-titulo"></h1><span class="m">octubre 2026</span></div></header>
+<main>
+<!-- pantallas:inicio
+  Una <section data-pantalla="<clave>" data-titulo="<título>" style="flex-direction:column;gap:14px">
+  por pantalla. Dentro, dos bloques: <div data-estado="normal"> (con datos de ejemplo) y
+  <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
+  Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
+-->
+<section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
+    <div class="card color" style="--c:var(--rosa)" data-ui="por-cobrar"><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big">34,4 €</span><span class="sub">2 pendientes · 1 aprobado</span></div>
+    <div class="grid2" data-ui="disponibles-color">
+      <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:22.6 175.9"/></svg><b>13 %</b></div></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:28.1 175.9"/></svg><b>16 %</b></div></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+    </div>
+    <div class="card"><span class="lbl">Gasto del mes</span><div class="torta"><svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="77" style="stroke:var(--cat1);stroke-dasharray:199.6 483.8;stroke-dashoffset:0.0"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat11);stroke-dasharray:129.7 483.8;stroke-dashoffset:-201.6"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat5);stroke-dasharray:92.1 483.8;stroke-dashoffset:-333.3"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat3);stroke-dasharray:54.4 483.8;stroke-dashoffset:-427.4"/></svg><div class="centro"><b>154,3 €</b><span>gastado en octubre</span></div></div><div class="list"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Súper</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat11)"></i>Trabajo (reembolsable)</span><span class="num">42 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat5)"></i>Ocio</span><span class="num">30 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat3)"></i>Delivery</span><span class="num">18 €</span></div></div></div>
+    <div class="card color" style="--c:var(--rosa-claro)"><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras"><div class="col"><em>82,3 €</em><i style="height:100%"></i><small>1–7</small></div><div class="col"><em>72 €</em><i style="height:87%"></i><small>8–14</small></div><div class="col hoy"><em></em><i style="height:3%"></i><small>15–21</small></div><div class="col"><em></em><i style="height:3%"></i><small>22–28</small></div><div class="col"><em></em><i style="height:3%"></i><small>29–31</small></div></div></div>
+    <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Ingresos y gastos</span></div><div class="meses"><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>may</small></div><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>jun</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:78%"></i></div><small>jul</small></div><div class="col neg"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:95%"></i></div><small>ago</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:53%"></i></div><small>sep</small></div><div class="col"><div class="par"><i class="ing" style="height:100%"></i><i class="gas" style="height:9%"></i></div><small>oct</small></div></div></div>
+    <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Patrimonio neto</span></div><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
+    <span class="sub">Sin reembolsos por cobrar: la tarjeta no aparece.</span>
+  </div>
+</section>
+<section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Pendiente 2</button><button aria-pressed="false">Aprobado 1</button><button aria-pressed="false">Pagado 3</button></div></div>
+    <div class="pila">
+      <div class="mov osc" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 12/10</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>parking</span><span class="num">−12,4 €</span></div></div>
+      <div class="mov osc" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 28/09</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>almuerzo con cliente</span><span class="num">−15 €</span></div></div>
+    </div>
+    <div class="row" data-ui="suma-filtro"><span class="sub">2 gastos</span><span class="lbl">Suma 27,4 €</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div><span class="sub">Reembolsos</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Pendiente 0</button><button aria-pressed="false">Aprobado 0</button><button aria-pressed="false">Pagado 0</button></div></div>
+    <div class="card"><div class="empty">No hay reembolsos en este estado.</div></div>
+  </div>
+</section>
+<section data-pantalla="hoja-gasto-reembolso" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal"><div class="sheet-bg"></div><div class="sheet">
+    <div class="row"><h2>Editar movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" value="12.40">
+    <div><span class="lbl">Cuenta</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Banco A</button><button aria-pressed="true">Tarjeta</button><button aria-pressed="false">Revolut</button></div></div>
+    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Súper</button><button aria-pressed="false">Comida fuera</button><button aria-pressed="false">Transporte</button><button aria-pressed="true">Trabajo (reembolsable)</button><button aria-pressed="false">Otros</button></div></div>
+    <div data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Pendiente</button><button aria-pressed="true">Aprobado</button><button aria-pressed="false">Pagado</button></div></div>
+    <label class="f">Nota (opcional)<input type="text" value="parking"></label>
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+  <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" placeholder="0,00 €">
+    <div><span class="lbl">Reembolso</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Pendiente</button><button aria-pressed="false">Aprobado</button><button aria-pressed="false">Pagado</button></div></div>
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+</section>
+<section data-pantalla="hoja-ingreso-reembolso" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal"><div class="sheet-bg"></div><div class="sheet">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px"><button aria-pressed="false">Gasto</button><button aria-pressed="true">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" value="17">
+    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Sueldo</button><button aria-pressed="true">Reembolso</button><button aria-pressed="false">Venta o trabajo extra</button><button aria-pressed="false">Regalo</button><button aria-pressed="false">Intereses y rendimientos</button><button aria-pressed="false">Otros</button></div></div>
+    <div class="card color" style="--c:var(--rosa-claro)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span><div>
+      <label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>parking</span><span class="sub">12/10 · Pendiente</span></span><span class="num">12,4 €</span></label><label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>taxi</span><span class="sub">05/10 · Aprobado</span></span><span class="num">4,6 €</span></label><label class="check"><input type="checkbox"><span style="flex:1;display:flex;flex-direction:column"><span>almuerzo con cliente</span><span class="sub">28/09 · Pendiente</span></span><span class="num">15 €</span></label>
+    </div><div class="row sub"><span>Marcados 17 €</span><span>Ingreso 17 €</span></div></div>
+    <button class="btn">Guardar ingreso</button>
+  </div></div>
+  <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px"><button aria-pressed="false">Gasto</button><button aria-pressed="true">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <div class="card color" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div class="empty">No tenés reembolsos por cobrar.</div></div>
+    <button class="btn">Guardar ingreso</button>
+  </div></div>
+</section>
+<section data-pantalla="cuentas" data-titulo="Mis cuentas" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Patrimonio neto</span><span class="monto">4587<span class="dec">,9 €</span></span></div>
+    <div data-ui="grupos-color" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Bancos y efectivo</span><span class="num sub">2594,2 €</span></div><div class="list"><div class="item"><div class="d"><span>Banco A</span><span>sin tope</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>tope 300 €</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div></div></div>
+    <div class="card color osc" style="--c:var(--oliva)"><div class="row"><span class="lbl">Inversiones</span><span class="num sub">2100 €</span></div><div class="list"><div class="item"><div class="d"><span>Broker X</span><span>+100 € (+5,0 %) sobre 2000 €</span></div><div class="v"><span class="num">2100 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
+    <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjetas de crédito</span><span class="num sub">-106,3 €</span></div><div class="list"><div class="item"><div class="d"><span>Tarjeta</span><span>tope 500 €</span></div><div class="v"><span class="num">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--fucsia)"><div class="row"><span class="lbl">Financiaciones</span><span class="num sub">-600 €</span></div><div class="list"><div class="item"><div class="d"><span>Financiera Z</span><span>50 €/mes · faltan 12</span></div><div class="v"><span class="num">-600 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio"><div class="card color" style="--c:var(--rosa)"><span class="lbl">Tu foto financiera</span><span>Cargá lo que tenés y lo que debés.</span></div></div>
+</section>
+<section data-pantalla="mes" data-titulo="Cierre del mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color osc" style="--c:var(--oliva)" data-ui="conciliacion-color"><div class="row"><span class="lbl">Conciliación de octubre</span><span class="chip idle">1 de 3</span></div><div class="list"><div class="item"><div class="d"><span>Banco A</span><span>al 15/10</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>al 15/10</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div><div class="item"><div class="d"><span>Tarjeta</span><span>al 15/10</span></div><div class="v"><span class="num">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--rosa)" data-ui="checklist-color"><span class="lbl">Día de cobro</span><div><label class="check"><input type="checkbox" checked><span>Transferir 100 € al fondo</span></label><label class="check"><input type="checkbox"><span>Pagar el alquiler</span></label></div><button class="btn sec">Agregar tarea</button></div>
+  </div>
+  <div data-estado="vacio"><div class="card color" style="--c:var(--rosa)"><span class="lbl">Día de cobro</span><div class="empty">Agregá las tareas de tu cierre de mes.</div></div></div>
+</section>
+<!-- pantallas:fin -->
+</main>
+<nav>
+<!-- nav:inicio · una entrada por pantalla, con data-ir="<clave de la pantalla>", como en la app
+  <button data-ir="inicio">…icono…Inicio</button>
+-->
+<button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+<button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
+<button class="fab" data-ir="hoja-ingreso-reembolso">+</button>
+<button data-ir="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
+<button data-ir="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Cierre</button>
+<!-- nav:fin -->
+</nav>
+</body>
+</html>

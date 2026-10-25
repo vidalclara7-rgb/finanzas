@@ -1,0 +1,83 @@
+# Capacidad: interfaz
+
+## Requisito: los avisos no tapan botones
+
+Con una hoja abierta, los avisos de la app («Gasto guardado», «4 movimientos importados»…) aparecen
+arriba de la pantalla, sin tapar ningún botón de la hoja. Sin hoja abierta, aparecen sobre la barra de
+navegación.
+
+### Escenario: aviso con la hoja abierta
+- **Dado** un extracto recién importado, con la hoja «Extracto importado» abierta
+- **Cuando** aparece el aviso «2 movimientos importados»
+- **Entonces** el aviso no se superpone con ningún botón de la hoja
+
+## Requisito: fondo blanco con acentos
+
+En modo claro el fondo es gris muy claro y las tarjetas llevan color: el disponible de cada cuenta y
+los grupos de Cuentas, el de su tipo (bancos salvia, inversiones verde oliva, tarjetas cherry,
+financiaciones fucsia, deudas compartidas rosa); «Por semana» rosa claro, «Ingresos y gastos»
+salvia, la conciliación verde oliva y el checklist rosa. «Gasto del mes» es blanca, para que se lean
+los colores de la torta. La paleta es viva: rojo anaranjado, cherry, frambuesa, rosa chicle, fucsia,
+verde oliva oscuro y salvia. Cada categoría tiene su color, el mismo en la torta, en la lista y en su
+tarjeta de movimiento; sobre los colores oscuros el texto es blanco y sobre los claros, oscuro. Los
+importes principales son grandes, con los decimales en gris.
+
+### Escenario: fondo gris claro con tarjetas de color
+- **Dado** el teléfono en modo claro y una tarjeta de crédito con tope
+- **Cuando** la persona abre la app
+- **Entonces** el fondo de la pantalla es gris muy claro, la tarjeta «Gasto del mes» es blanca y la del disponible de la tarjeta es cherry
+- **Y** el resultado del mes se ve grande con los decimales en gris
+
+### Escenario: mismo color por categoría
+- **Dado** un gasto en Supermercado este mes
+- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
+- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
+
+### Escenario: texto legible sobre colores oscuros
+- **Dado** un gasto en Compras este mes
+- **Cuando** la persona abre Movimientos
+- **Entonces** el texto de su tarjeta cherry es blanco y se lee con contraste de al menos 4,5 a 1
+
+### Escenario: reembolsos en frambuesa
+- **Dado** un gasto en Trabajo (reembolsable) este mes
+- **Cuando** la persona abre Movimientos
+- **Entonces** su tarjeta es frambuesa con texto blanco
+
+## Requisito: todas las paletas se leen
+
+En cada paleta, en modo claro y en modo oscuro, los importes principales y el texto de las tarjetas
+de color se leen con un contraste de al menos 4,5 a 1, las dos partes de la barra de fijos y
+variables se distinguen de su tarjeta (al menos 1,5 a 1: el dato está en el texto que la acompaña), y cada categoría conserva el mismo color en la
+torta y en su tarjeta de movimiento.
+
+### Escenario: contraste en las cuatro paletas
+- **Dado** gastos fijos y variables, una tarjeta de crédito con tope y cuentas de varios tipos
+- **Cuando** la persona recorre las cuatro paletas en claro y en oscuro
+- **Entonces** en todas el resultado, el disponible, el patrimonio y el texto de las tarjetas de movimiento tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
+
+### Escenario: mismo color por categoría en otra paleta
+- **Dado** un gasto en Supermercado y la paleta Lima y lavanda elegida
+- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
+- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
+
+## Requisito: importes con coma decimal
+
+Todos los campos de importe (movimientos, cuentas, conciliación y ajustes) se escriben con coma
+decimal, como en el teclado del iPhone («12,50»). También se acepta el punto. Al editar, el importe
+guardado se muestra con coma.
+
+### Escenario: gasto con coma
+- **Dado** la hoja de gasto abierta
+- **Cuando** la persona escribe «12,50» en el importe y guarda
+- **Entonces** el gasto queda en 12,5 €
+
+### Escenario: saldo de una cuenta con coma
+- **Dado** la hoja «Nueva cuenta» abierta
+- **Cuando** la persona crea «Banco B» con saldo «1.234,56»
+- **Entonces** Banco B tiene 1234,56 €
+
+### Escenario: importe guardado al editar
+- **Dado** un gasto de 12,50 €
+- **Cuando** la persona lo abre para editarlo
+- **Entonces** el importe dice «12,5»
+
