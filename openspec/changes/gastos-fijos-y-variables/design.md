@@ -41,3 +41,11 @@
 - La importación de extractos (cambio aprobado, aún sin construir) creará gastos que pasan por la
   misma regla: si su categoría y nota coinciden con un fijo, vienen marcados.
 - Sube la versión de la caché.
+
+## Gate 2 (2026-10-25)
+
+- Variables en rayado de tinta y fijos en tinta llena: el fucsia de la primera versión coincidía con
+  Ocio y confundía en el ranking. Clases nuevas: `.partida`, `.reparto`, `.rank`, `.bar.cat`.
+- Las barras del ranking se miden contra el total del mes, para comparar entre grupos.
+- Pantallas del preview: `inicio`, `movs` y `hoja-gasto-fijo` (la casilla dentro de la hoja de
+  movimiento).

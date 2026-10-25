@@ -76,6 +76,16 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .forma{display:block;width:100%;height:auto}
 .forma circle{fill:var(--rojo)}
 .forma.bad .centro{stroke:var(--ink);stroke-width:6}
+/* Fijos y variables: barra partida (fijos en tinta llena, variables rayados, para no confundirse con ninguna categoría) y ranking por grupo */
+.partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
+.partida i{display:block;height:100%;border-radius:10px;min-width:6px}
+.partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:repeating-linear-gradient(135deg,var(--ink) 0 3px,transparent 3px 7px);box-shadow:inset 0 0 0 2px var(--ink)}
+.reparto{display:flex;flex-direction:column;gap:6px}
+.reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.rank .grupo{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rank .fila{display:flex;flex-direction:column;gap:5px;font-size:15px}
+.bar.cat>i{background:var(--c)}
 /* Anillo del tope */
 .ring{position:relative;width:64px;height:64px;flex:none}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}

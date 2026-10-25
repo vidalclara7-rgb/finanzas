@@ -1,6 +1,6 @@
 ---
 cambio: gastos-fijos-y-variables
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Gastos fijos y variables en Inicio
