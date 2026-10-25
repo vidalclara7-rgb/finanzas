@@ -269,8 +269,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <input type="number" inputmode="decimal" step="0.01" id="mImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
     <div id="mUna"><span class="lbl">Cuenta</span><div class="seg" id="segCuentaM" style="margin-top:8px"></div></div>
     <div id="mUnaCat"><span class="lbl">Categoría</span><div class="seg" id="segCat" style="margin-top:8px"></div></div>
-    <div id="mReemb" data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" id="segReembM" style="margin-top:8px"></div></div>
-    <div class="card color" id="mCubre" data-ui="gastos-que-cubre" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div id="mCubreList"></div><div class="row sub" id="mCubreTot"><span id="mMarcados"></span><span id="mIngTxt"></span></div></div>
+    <div id="mReemb" data-pantalla="hoja-gasto-reembolso" data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" id="segReembM" style="margin-top:8px"></div></div>
+    <div class="card color" id="mCubre" data-pantalla="hoja-ingreso-reembolso" data-ui="gastos-que-cubre" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div id="mCubreList"></div><div class="row sub" id="mCubreTot"><span id="mMarcados"></span><span id="mIngTxt"></span></div></div>
     <div id="mTransf" data-pantalla="hoja-transferencia" style="display:flex;flex-direction:column;gap:14px">
       <div data-ui="desde"><span class="lbl">Desde</span><div class="seg" id="segDesde" style="margin-top:8px"></div></div>
       <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" id="segHacia" style="margin-top:8px"></div></div>
@@ -458,7 +458,7 @@ function forma(ing,gas){const p=ing>0?gas/ing:0;$("formaCentro").setAttribute("r
   $("forma").classList.toggle("bad",ing>0&&gas>ing);
   $("formaTxt").textContent=ing>0?`Gastaste el ${Math.round(p*100)} % de lo que entró`:"Todavía no anotaste ingresos este mes";}
 
-const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-estado-r="${x[0]}" style="align-self:flex-start">${x[1]}</span>`;};
+const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-ui="estado-reembolso" data-estado-r="${x[0]}" style="align-self:flex-start">${x[1]}</span>`;};
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
 let filtroR=null;
 function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);

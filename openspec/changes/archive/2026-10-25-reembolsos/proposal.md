@@ -1,7 +1,8 @@
 ---
 cambio: reembolsos
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-25
 ---
 # Reembolsos de gastos corporativos
 
