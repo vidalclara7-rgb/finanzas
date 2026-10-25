@@ -211,3 +211,25 @@ t.test("alquiler importado", async () => {
   assert.equal(d.movs.find((m) => m.nota === "Alquiler" && m.fecha === "2026-10-01").fijo, true);
   assert.equal(d.movs.find((m) => m.nota === "Comercio Uno").fijo, undefined);
 });
+
+const internacional = (dia, importe) => ({ fecha: `2026-10-${dia}`, desc: "Transferencia internacional a Ana Ejemplo", importe: -importe });
+
+// Escenario: transferencia internacional
+t.test("transferencia internacional", async () => {
+  const { page } = await abrir({ datos: cuentas({ cuentas: [{ ...BANCO, ref: "4321" }, { ...REVOLUT, ref: "7788" }] }) });
+  await importar(page, await X.revolut(page, { ref: "7788", titular: "Ana Ejemplo", movs: [internacional("07", 20)] }));
+  assert.equal(await que(page, 0), "g|Regalos");
+  assert.equal(await page.$eval('[data-que="0"] option:checked', (o) => o.textContent), "Gasto · Regalos");
+});
+
+// Escenario: otra categoría recordada
+t.test("otra categoría recordada", async () => {
+  const { page } = await abrir({ datos: cuentas({ cuentas: [{ ...BANCO, ref: "4321" }, { ...REVOLUT, ref: "7788" }] }) });
+  await importar(page, await X.revolut(page, { ref: "7788", titular: "Ana Ejemplo", movs: [internacional("07", 20)] }));
+  await page.selectOption('[data-que="0"]', "g|Casa/Splitwise");
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  await page.click("#icNo");
+  await importar(page, await X.revolut(page, { ref: "7788", titular: "Ana Ejemplo", movs: [internacional("14", 35)] }));
+  assert.equal(await que(page, 0), "g|Casa/Splitwise");
+});

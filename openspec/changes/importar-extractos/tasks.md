@@ -54,3 +54,11 @@
 - [x] `python3 kit.py check` en verde
 - [x] `python3 kit.py capturas`
 - [x] `CLAUDE.md`: modelo de datos, pantallas y dependencia
+
+## Gate 3, primera ronda
+- [x] Categoría de gasto Regalos (`--cat13` en las cuatro paletas, colores por nombre)
+- [x] Transferencia internacional a tu nombre: gasto en Regalos o la categoría aprendida
+- [x] Avisos arriba con una hoja abierta; nunca más anchos que la pantalla
+- [x] Tests: transferencia internacional, otra categoría recordada, aviso con la hoja abierta
+- [x] Copia de prueba privada para Safari del iPhone
+

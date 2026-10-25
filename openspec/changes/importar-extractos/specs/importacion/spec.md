@@ -122,3 +122,20 @@ quite.
 - **Dado** un gasto fijo «alquiler» en Casa/Splitwise de septiembre 2026
 - **Cuando** la persona importa un extracto con un cargo «Alquiler» que llega en Casa/Splitwise
 - **Entonces** ese borrador dice «Fijo» y, al guardarlo, el gasto queda fijo
+
+## Requisito: transferencia internacional a tu nombre
+
+Una transferencia internacional a nombre de la persona sale a una cuenta que no está en la app (por
+ejemplo, para pagar algo en otro país): llega como gasto en Regalos, no como transferencia entre sus
+cuentas. Si para ese mismo destinatario la persona eligió antes otra categoría, llega con esa.
+
+### Escenario: transferencia internacional
+- **Dado** «Banco A» y «Revolut», y un extracto de Revolut con «Transferencia internacional a Ana Ejemplo» por 20 €
+- **Cuando** la persona lo importa
+- **Entonces** ese movimiento llega como «Gasto · Regalos»
+
+### Escenario: otra categoría recordada
+- **Dado** una importación anterior en la que la persona guardó esa transferencia internacional como Casa/Splitwise
+- **Cuando** importa otro extracto con otra transferencia internacional al mismo destinatario
+- **Entonces** llega como «Gasto · Casa/Splitwise»
+

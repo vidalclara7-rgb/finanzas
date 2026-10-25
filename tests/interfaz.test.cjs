@@ -226,3 +226,21 @@ t.test("mismo color por categoría en otra paleta", async () => {
   const tarjeta = await page.$eval('[data-mov="2"]', (el) => getComputedStyle(el).backgroundColor);
   assert.equal(porcion, tarjeta);
 });
+
+// Escenario: aviso con la hoja abierta
+t.test("aviso con la hoja abierta", async () => {
+  const X = require("./extractos.cjs");
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }] }) });
+  await A.ir(page, "movs");
+  const buf = await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [{ fecha: "2026-10-05", desc: "Comercio Uno", importe: -30 }, { fecha: "2026-10-09", desc: "Comercio Dos", importe: -20 }] });
+  await page.setInputFiles("#pdfIn", { name: "extracto.pdf", mimeType: "application/pdf", buffer: buf });
+  await page.waitForFunction(() => !document.getElementById("sheetI").hidden, null, { timeout: 20000 });
+  await page.click("#iGuardar");
+  await page.waitForFunction(() => !document.getElementById("sheetIC").hidden && [...document.querySelectorAll(".toast")].some((t) => t.textContent === "2 movimientos importados"));
+  const choques = await page.evaluate(() => {
+    const t = [...document.querySelectorAll(".toast")].find((x) => x.textContent === "2 movimientos importados").getBoundingClientRect();
+    return [...document.querySelectorAll("#sheetIC button")].filter((b) => b.offsetParent).map((b) => [b.textContent, b.getBoundingClientRect()])
+      .filter(([, r]) => r.left < t.right && t.left < r.right && r.top < t.bottom && t.top < r.bottom).map(([n]) => n);
+  });
+  assert.deepEqual(choques, []);
+});

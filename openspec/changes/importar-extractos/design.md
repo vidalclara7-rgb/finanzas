@@ -82,3 +82,16 @@
 - Desmarcar «Fijo» en un borrador deja la regla en «no es fijo», igual que en la hoja de gasto.
 - Probado contra los tres extractos reales de la persona, fuera del repo: los totales cuadran al
   céntimo con el saldo de cada extracto. El de Revolut Trading se rechaza con el aviso.
+
+## Gate 3, primera ronda (2026-10-25)
+
+- La persona: las transferencias internacionales a su nombre son pagos de gastos en otro país,
+  «principalmente regalos». Se agrega la categoría de gasto **Regalos** (para todas las personas,
+  antes de Trabajo (reembolsable)) y una transferencia internacional a nombre del titular llega como
+  gasto en Regalos, o con la categoría aprendida para ese destinatario. Descartado: Otros por defecto.
+- Regalos tiene color propio `--cat13` en las cuatro paletas; `colorCat()` pasa a un mapa por nombre
+  para que ninguna categoría existente cambie de color.
+- «Arreglá el botón para que nada se solape»: con una hoja abierta los avisos van arriba.
+- Prueba en iPhone: no hay un iPhone ni el motor de Safari en este entorno. Se publica una copia de
+  prueba privada (Artifact de claude.ai) para que la persona la abra en Safari del teléfono; con datos
+  aparte y sin instalación ni uso sin conexión. No le llega a nadie más.
