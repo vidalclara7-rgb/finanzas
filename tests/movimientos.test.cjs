@@ -190,3 +190,126 @@ t.test("mes en negativo", async () => {
   assert.equal(await A.texto(page, "#resultado"), "-50 €");
   assert.match(await page.getAttribute("#resultado", "class"), /\bneg\b/);
 });
+
+const CASA = "Casa/Splitwise";
+const fijo = (id, fecha, importe, cat, nota = "") => ({ ...A.gasto(id, fecha, importe, 1, cat, nota), fijo: true });
+const conFijos = (movs, fijos = {}) => ({ datos: A.v2({ cuentas: [BANCO], movs, fijos }) });
+const esFijo = async (page, id) => (await page.locator(`[data-mov="${id}"] [data-ui="chip-fijo"]`).count()) === 1;
+// La hoja pone el foco en el importe al abrirse: se espera antes de escribir la nota, para que no caiga ahí
+async function abrirGasto(page, cat, nota) {
+  await page.click("#fab");
+  await page.waitForFunction(() => document.activeElement && document.activeElement.id === "mImporte");
+  await A.elegir(page, "segCat", cat);
+  if (nota !== undefined) await page.fill("#mNota", nota);
+}
+
+// Escenario: gasto marcado como fijo
+t.test("gasto marcado como fijo", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await page.fill("#mImporte", "600");
+  await A.elegir(page, "segCat", CASA);
+  await page.fill("#mNota", "alquiler");
+  await page.check("#mFijo");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  assert.equal(await A.texto(page, '#fv [data-grupo="fij"] span:last-child'), "600 € · 100 %");
+  await A.ir(page, "movs");
+  const id = (await A.guardados(page)).movs[0].id;
+  assert.equal(await A.texto(page, `[data-mov="${id}"] [data-ui="chip-fijo"]`), "Fijo");
+});
+
+// Escenario: el siguiente viene marcado
+t.test("el siguiente viene marcado", async () => {
+  const { page } = await abrir(conFijos([fijo(1, "2026-09-01", 600, CASA, "alquiler")], { [`${CASA}|alquiler`]: true }));
+  await abrirGasto(page, CASA, "Alquiler ");
+  assert.ok(await page.isChecked("#mFijo"));
+  await page.fill("#mNota", "otra cosa");
+  assert.equal(await page.isChecked("#mFijo"), false);
+});
+
+// Escenario: desmarcar un fijo
+t.test("desmarcar un fijo", async () => {
+  const { page } = await abrir(conFijos([fijo(1, "2026-09-01", 600, CASA, "alquiler"), fijo(2, "2026-10-01", 600, CASA, "alquiler")], { [`${CASA}|alquiler`]: true }));
+  await A.ir(page, "movs");
+  await page.click('[data-mov="2"] .linea');
+  assert.ok(await page.isChecked("#mFijo"));
+  await page.uncheck("#mFijo");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  assert.equal(await esFijo(page, 2), false);
+  const d = await A.guardados(page);
+  assert.equal(d.movs.find((m) => m.id === 1).fijo, true);
+  assert.equal(d.movs.find((m) => m.id === 2).fijo, undefined);
+  await abrirGasto(page, CASA, "alquiler");
+  assert.equal(await page.isChecked("#mFijo"), false);
+});
+
+// Escenario: reembolsable sin casilla
+t.test("reembolsable sin casilla", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  assert.ok(await page.isVisible("#mFijoL"));
+  await A.elegir(page, "segCat", "Trabajo (reembolsable)");
+  assert.equal(await page.isVisible("#mFijoL"), false);
+});
+
+// Escenario: sin nota no se arrastra
+t.test("sin nota no se arrastra", async () => {
+  const { page } = await abrir(conFijos([fijo(1, "2026-10-01", 40, "Ocio")]));
+  await abrirGasto(page, "Ocio");
+  assert.equal(await page.isChecked("#mFijo"), false);
+});
+
+const tres = (cat, nota, importes, meses = ["2026-08", "2026-09", "2026-10"]) => importes.map((v, i) => A.gasto(20 + i, `${meses[i]}-05`, v, 1, cat, nota));
+
+// Escenario: sugerencia tras tres meses
+t.test("sugerencia tras tres meses", async () => {
+  const { page } = await abrir(conFijos(tres("Salud", "gimnasio", [30, 30, 32])));
+  assert.ok(await page.isVisible("#sugFijo"));
+  assert.equal(await A.texto(page, "#sugTit"), "¿“gimnasio” es un gasto fijo?");
+  assert.equal(await A.texto(page, "#sugSub"), "Salud · se repite en agosto, septiembre y octubre, unos 31 € al mes");
+});
+
+// Escenario: aceptar la sugerencia
+t.test("aceptar la sugerencia", async () => {
+  const { page } = await abrir(conFijos(tres("Salud", "gimnasio", [30, 30, 32])));
+  await page.click("#sugSi");
+  assert.equal(await page.isVisible("#sugFijo"), false);
+  assert.equal(await A.texto(page, '#fv [data-grupo="fij"] span:last-child'), "32 € · 100 %");
+  assert.deepEqual((await A.guardados(page)).movs.map((m) => m.fijo), [true, true, true]);
+  await A.ir(page, "movs");
+  assert.ok(await esFijo(page, 22));
+  await abrirGasto(page, "Salud", "gimnasio");
+  assert.ok(await page.isChecked("#mFijo"));
+});
+
+// Escenario: rechazar la sugerencia
+t.test("rechazar la sugerencia", async () => {
+  const { page } = await abrir(conFijos(tres("Salud", "gimnasio", [30, 30, 32])));
+  await page.click("#sugNo");
+  assert.equal(await page.isVisible("#sugFijo"), false);
+  await page.reload();
+  assert.equal(await page.isVisible("#sugFijo"), false);
+  assert.deepEqual((await A.guardados(page)).movs.map((m) => m.fijo), [undefined, undefined, undefined]);
+  await A.ir(page, "movs");
+  assert.equal(await esFijo(page, 22), false);
+});
+
+// Escenario: importe que cambia mucho
+t.test("importe que cambia mucho", async () => {
+  const { page } = await abrir(conFijos(tres(CASA, "luz", [40, 80, 45])));
+  assert.equal(await page.isVisible("#sugFijo"), false);
+});
+
+// Escenario: un mes salteado
+t.test("un mes salteado", async () => {
+  const { page } = await abrir(conFijos(tres("Salud", "gimnasio", [30, 30, 30], ["2026-07", "2026-08", "2026-10"])));
+  assert.equal(await page.isVisible("#sugFijo"), false);
+});
+
+// Escenario: gastos sin nota
+t.test("gastos sin nota", async () => {
+  const { page } = await abrir(conFijos(tres("Súper", "", [100, 100, 100])));
+  assert.equal(await page.isVisible("#sugFijo"), false);
+});

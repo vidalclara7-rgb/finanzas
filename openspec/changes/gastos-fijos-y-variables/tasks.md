@@ -7,24 +7,24 @@
 - [x] `python3 kit.py preview gastos-fijos-y-variables` en verde y capturas en claro y oscuro
 
 ## Datos
-- [ ] `movs[i].fijo` y `fijos` en la raíz; `norm()` crea `fijos` vacío (al cargar y al restaurar)
+- [x] `movs[i].fijo` y `fijos` en la raíz; `norm()` crea `fijos` vacío (al cargar y al restaurar)
 
 ## Pantallas y lógica
-- [ ] Quitar la forma de círculos y su hoja de estilos; línea «Gastaste el X %» sobre el resultado
-- [ ] «Fijos y variables»: barra partida y ranking por grupo, sin reembolsables
-- [ ] Casilla «Gasto fijo» en la hoja de gasto (oculta en reembolsables), premarcado por categoría y nota
-- [ ] Desmarcar: el gasto vuelve a variable y la regla se quita
-- [ ] Etiqueta «Fijo» en la tarjeta del movimiento
-- [ ] Sugerencias: tres meses seguidos, ±10 %, con nota; «Sí, es fijo» y «No»
-- [ ] `data-pantalla` y `data-ui` del preview en la app
-- [ ] Subir `CACHE` en `sw.js`
+- [x] Quitar la forma de círculos y su hoja de estilos; línea «Gastaste el X %» sobre el resultado
+- [x] «Fijos y variables»: barra partida y ranking por grupo, sin reembolsables
+- [x] Casilla «Gasto fijo» en la hoja de gasto (oculta en reembolsables), premarcado por categoría y nota
+- [x] Desmarcar: el gasto vuelve a variable y la regla se quita
+- [x] Etiqueta «Fijo» en la tarjeta del movimiento
+- [x] Sugerencias: tres meses seguidos, ±10 %, con nota; «Sí, es fijo» y «No»
+- [x] `data-pantalla` y `data-ui` del preview en la app
+- [x] Subir `CACHE` en `sw.js`
 
 ## Tests
-- [ ] graficos: 7 escenarios
-- [ ] movimientos: 11 escenarios
-- [ ] datos: 3 escenarios
+- [x] graficos: 7 escenarios
+- [x] movimientos: 11 escenarios
+- [x] datos: 3 escenarios
 
 ## Comprobación y documentación
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y contraste en las cuatro paletas
-- [ ] `CLAUDE.md`: modelo de datos, pantallas y gráficos
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y contraste en las cuatro paletas
+- [x] `CLAUDE.md`: modelo de datos, pantallas y gráficos

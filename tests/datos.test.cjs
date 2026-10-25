@@ -192,3 +192,40 @@ t.test("copia con paleta", async () => {
   assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(246, 240, 228)");
   assert.equal((await A.guardados(page)).settings.paleta, "pastel");
 });
+
+// Escenario: datos sin marca de fijo
+t.test("datos sin marca de fijo", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 200, 1), A.gasto(2, "2026-10-04", 100, 1, "Ocio", "cine")] });
+  delete datos.fijos;
+  const { page, errores } = await abrir({ datos });
+  assert.equal(await A.texto(page, '#fv [data-grupo="var"] span:last-child'), "300 € · 100 %");
+  const d = await A.guardados(page);
+  assert.deepEqual(d.movs, datos.movs);
+  assert.deepEqual(d.fijos, {});
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: copia anterior sin fijos
+t.test("copia anterior sin fijos", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 80, 1)] });
+  const { page } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "inicio");
+  assert.equal(await A.texto(page, '#fv [data-grupo="var"] span:last-child'), "80 € · 100 %");
+  assert.equal(await page.locator('#fv [data-grupo="fij"]').count(), 0);
+});
+
+// Escenario: copia con fijos y una sugerencia rechazada
+t.test("copia con fijos y una sugerencia rechazada", async () => {
+  const gim = ["2026-08", "2026-09", "2026-10"].map((m, i) => A.gasto(10 + i, `${m}-05`, 30, 1, "Salud", "gimnasio"));
+  const copia = A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-01", 600, 1, "Casa/Splitwise", "alquiler"), fijo: true }, ...gim],
+    fijos: { "Casa/Splitwise|alquiler": true, "Salud|gimnasio": false } });
+  const { page } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "inicio");
+  assert.equal(await page.isVisible("#sugFijo"), false);
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] [data-ui="chip-fijo"]'), "Fijo");
+});

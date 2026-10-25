@@ -76,18 +76,54 @@ t.test("gasto chico frente a lo que entró", async () => {
   const { page } = await abrir(con([A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 149.8, 1)]));
   assert.equal(await A.texto(page, "#formaTxt"), "Gastaste el 9 % de lo que entró");
   assert.equal(await A.texto(page, "#resultado"), "1550,2 €");
-  assert.doesNotMatch(await page.getAttribute("#forma", "class"), /\bbad\b/);
+  assert.doesNotMatch(await page.getAttribute("#formaTxt", "class"), /\bexc\b/);
 });
 
 // Escenario: gasto mayor que lo que entró
 t.test("gasto mayor que lo que entró", async () => {
   const { page } = await abrir(con([A.ingreso(1, "2026-10-01", 100, 1), A.gasto(2, "2026-10-03", 150, 1)]));
   assert.equal(await A.texto(page, "#formaTxt"), "Gastaste el 150 % de lo que entró");
-  assert.match(await page.getAttribute("#forma", "class"), /\bbad\b/);
+  assert.match(await page.getAttribute("#formaTxt", "class"), /\bexc\b/);
 });
 
 // Escenario: mes sin ingresos
 t.test("mes sin ingresos", async () => {
   const { page } = await abrir(con([A.gasto(2, "2026-10-03", 50, 1)]));
   assert.equal(await A.texto(page, "#formaTxt"), "Todavía no anotaste ingresos este mes");
+});
+
+const fijo = (id, fecha, importe, cat, nota = "") => ({ ...A.gasto(id, fecha, importe, 1, cat, nota), fijo: true });
+const grupo = (page, k) => page.locator(`#fv [data-grupo="${k}"] span`).allInnerTexts();
+const rank = (page) => page.locator("#fv .rank > *").evaluateAll((els) => els.map((e) => e.dataset.rankGrupo || e.dataset.rank));
+
+// Escenario: reparto entre fijos y variables
+t.test("reparto entre fijos y variables", async () => {
+  const { page } = await abrir(con([fijo(1, "2026-10-01", 600, "Casa/Splitwise", "alquiler"), fijo(2, "2026-10-02", 40, "Ocio", "streaming"),
+    A.gasto(3, "2026-10-03", 300, 1), A.gasto(4, "2026-10-04", 60, 1, "Comida fuera")]));
+  assert.deepEqual((await grupo(page, "fij")).map((x) => x.trim()), ["Fijos", "640 € · 64 %"]);
+  assert.deepEqual((await grupo(page, "var")).map((x) => x.trim()), ["Variables", "360 € · 36 %"]);
+  assert.deepEqual(await rank(page), ["fij", "Casa/Splitwise", "Ocio", "var", "Súper", "Comida fuera"]);
+  assert.equal(await page.isVisible("#fvPista"), false);
+});
+
+// Escenario: reembolsables fuera del reparto
+t.test("reembolsables fuera del reparto", async () => {
+  const { page } = await abrir(con([A.gasto(1, "2026-10-03", 100, 1), A.gasto(2, "2026-10-04", 50, 1, "Trabajo (reembolsable)")]));
+  assert.deepEqual((await grupo(page, "var")).map((x) => x.trim()), ["Variables", "100 € · 100 %"]);
+  assert.deepEqual(await rank(page), ["var", "Súper"]);
+  assert.doesNotMatch(await A.texto(page, "#fv"), /Trabajo/);
+});
+
+// Escenario: todavía sin gastos fijos
+t.test("todavía sin gastos fijos", async () => {
+  const { page } = await abrir(con([A.gasto(1, "2026-10-03", 150, 1), A.gasto(2, "2026-10-04", 50, 1, "Ocio")]));
+  assert.deepEqual(await page.locator("#fv .partida i").evaluateAll((is) => is.map((i) => i.className)), ["var"]);
+  assert.equal(await A.texto(page, "#fvPista"), "Marcá tus gastos fijos al anotarlos: alquiler, cuotas, suscripciones.");
+});
+
+// Escenario: sin gastos para repartir
+t.test("sin gastos para repartir", async () => {
+  const { page } = await abrir(con([A.gasto(1, "2026-10-03", 30, 1, "Trabajo (reembolsable)")]));
+  assert.equal(await page.locator("#fv .partida").count(), 0);
+  assert.equal(await A.texto(page, "#fv"), "Todavía no anotaste gastos este mes.");
 });

@@ -50,3 +50,14 @@
 - Las barras del ranking se miden contra el total del mes, para comparar entre grupos.
 - Pantallas del preview: `inicio`, `movs` y `hoja-gasto-fijo` (la casilla dentro de la hoja de
   movimiento).
+
+## Al construir (2026-10-25)
+
+- Desmarcar «Gasto fijo» deja la regla en `false` (no sólo la borra): la persona dijo que no es fijo,
+  así que tampoco se sugiere. Cumple el escenario «desmarcar un fijo».
+- La pista «Marcá tus gastos fijos…» va entre el reparto y el ranking; con sólo variables, el ranking
+  de variables se muestra igual (el requisito pide las categorías de cada grupo).
+- Se sustituye en `interfaz` el requisito «todas las paletas se leen» (venía de `paletas`): hablaba de
+  la figura de círculos, que este cambio retira. Ahora pide que las dos partes de la barra se
+  distingan de su tarjeta (1,5 a 1).
+- `CACHE` sube a `finanzas-v9`.

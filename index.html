@@ -72,14 +72,11 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
 .con-dot{display:flex;align-items:center;gap:8px;min-width:0}
-/* Forma del gasto del mes: tres círculos rojos, el del centro crece con lo gastado */
-.forma{display:block;width:100%;height:auto}
-.forma circle{fill:var(--rojo)}
-.forma.bad .centro{stroke:var(--ink);stroke-width:6}
 /* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
 .partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
 .partida i{display:block;height:100%;border-radius:10px;min-width:6px}
 .partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:var(--frambuesa)}
+.sub.exc{color:var(--bad);font-weight:600}
 .reparto{display:flex;flex-direction:column;gap:6px}
 .reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
 .rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
@@ -200,9 +197,10 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
       <button class="btn" id="crearPrimera">Crear cuenta</button>
     </div>
+    <div class="card" id="fvCard" data-ui="fijos-variables"><span class="lbl">Fijos y variables</span><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
+    <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--rosa-claro)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
     <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px">
-      <svg class="forma" id="forma" viewBox="0 0 358 150" data-ui="forma-gasto"><circle cx="0" cy="75" r="75"/><circle class="centro" id="formaCentro" cx="179" cy="75" r="18"/><circle cx="358" cy="75" r="75"/></svg>
-      <span class="sub" id="formaTxt"></span>
+      <span class="sub" id="formaTxt" data-ui="porcentaje-ingresos"></span>
       <span class="sub">Resultado del mes</span>
       <span class="monto" id="resultado"></span>
       <div class="row sub"><span id="ingMes"></span><span id="gasMes"></span></div>
@@ -303,6 +301,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" id="segHacia" style="margin-top:8px"></div></div>
     </div>
     <label class="f" for="mNota">Nota (opcional)<input type="text" id="mNota" placeholder="Ej: Consum, cena con amigas"></label>
+    <label class="check" id="mFijoL" data-pantalla="hoja-gasto-fijo" data-ui="casilla-fijo"><input type="checkbox" id="mFijo"><span style="flex:1;display:flex;flex-direction:column"><span>Gasto fijo</span><span class="sub">Se repite al menos 12 meses: alquiler, cuotas, seguros, suscripciones</span></span></label>
     <label class="f" for="mFecha">Fecha<input type="date" id="mFecha"></label>
     <button class="btn" type="submit" id="mGuardar">Guardar gasto</button>
   </div>
@@ -390,7 +389,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return reembolsos(s);}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return fijosNorm(reembolsos(s));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -409,10 +408,13 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return reembolsos(s);}
+  return fijosNorm(reembolsos(s));}
 // Los gastos reembolsables sin estado (guardados antes de los estados) quedan pendientes
 function reembolsos(s){s.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat===REEMB&&!m.reembolso)m.reembolso={estado:"pendiente"};});return s;}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{}});}
+// Reglas de gastos fijos por categoría y nota: true = los siguientes vienen marcados; false = no es fijo (no se sugiere)
+function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
+const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{}});}
 let S=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
 function mesData(id){if(!S.meses[id])S.meses[id]={checks:{}};if(!S.meses[id].checks)S.meses[id].checks={};return S.meses[id];}
@@ -483,10 +485,37 @@ function mesesIG(card,el){const out=[];const d=new Date();d.setDate(1);d.setMont
   const mx=Math.max(...out.map(([,i,g])=>Math.max(i,g)));card.hidden=!(mx>0);if(card.hidden)return;
   el.innerHTML=out.map(([id,i,g])=>`<div class="col${g>i?" neg":""}" data-mes="${id}" data-ing="${i}" data-gas="${g}"><div class="par"><i class="ing" style="height:${Math.max(i/mx*100,2).toFixed(0)}%"></i><i class="gas" style="height:${Math.max(g/mx*100,2).toFixed(0)}%"></i></div><small>${MESES[+id.slice(5)-1].slice(0,3)}</small></div>`).join("");}
 // Forma del gasto del mes: el círculo del centro crece con lo gastado frente a lo que entró
-function forma(ing,gas){const p=ing>0?gas/ing:0;$("formaCentro").setAttribute("r",(18+57*Math.min(p,1)).toFixed(0));
-  $("forma").classList.toggle("bad",ing>0&&gas>ing);
+function porcentajeIng(ing,gas){const p=ing>0?gas/ing:0;
+  $("formaTxt").classList.toggle("exc",ing>0&&gas>ing);
   $("formaTxt").textContent=ing>0?`Gastaste el ${Math.round(p*100)} % de lo que entró`:"Todavía no anotaste ingresos este mes";}
 
+// Fijos y variables del mes: barra partida y categorías de cada grupo, sin los gastos reembolsables
+function fijosVar(gs){const g=gs.filter(x=>x.cat!==REEMB),tot=r2(g.reduce((a,x)=>a+x.importe,0));
+  if(!(tot>0)){$("fv").innerHTML=`<div class="empty">Todavía no anotaste gastos este mes.</div>`;return;}
+  const grupos=[["fij","Fijos",g.filter(x=>x.fijo)],["var","Variables",g.filter(x=>!x.fijo)]].map(([k,n,xs])=>{const pc={};xs.forEach(x=>pc[x.cat]=(pc[x.cat]||0)+x.importe);
+    return {k,n,v:r2(xs.reduce((a,x)=>a+x.importe,0)),cats:Object.entries(pc).sort((a,b)=>b[1]-a[1])};}).filter(x=>x.v>0);
+  const pct=v=>Math.round(v/tot*100)+" %";
+  $("fv").innerHTML=`<div class="partida" role="img" aria-label="${grupos.map(x=>x.n+" "+pct(x.v)).join(", ")}">${grupos.map(x=>`<i class="${x.k}" style="flex:${x.v}"></i>`).join("")}</div>
+    <div class="reparto">${grupos.map(x=>`<div class="row" data-grupo="${x.k}"><span class="con-dot"><i class="dot ${x.k}"></i>${x.n}</span><span>${eur(x.v)} · ${pct(x.v)}</span></div>`).join("")}</div>
+    ${grupos.some(x=>x.k==="fij")?"":`<span class="sub" id="fvPista">Marcá tus gastos fijos al anotarlos: alquiler, cuotas, suscripciones.</span>`}
+    <div class="rank" data-ui="ranking-grupos">${grupos.map(x=>`<span class="grupo" data-rank-grupo="${x.k}">${x.n}</span>`+x.cats.map(([c,v])=>`<div class="fila" data-rank="${esc(c)}"><div class="row"><span>${esc(c)}</span><span class="num">${eur(v)}</span></div><div class="bar cat" style="--c:${colorCat(c)}"><i style="width:${(v/tot*100).toFixed(1)}%"></i></div></div>`).join("")).join("")}</div>`;}
+// Sugerencia de gasto fijo: misma categoría y nota en tres meses seguidos, cada mes a ±10 % del promedio
+const mesSig=(id,n)=>{const [y,m]=id.split("-").map(Number),d=new Date(y,m-1+n,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");};
+function sugerirFijo(){const gr={};
+  S.movs.forEach(m=>{if(m.tipo!=="gasto"||m.cat===REEMB||m.fijo)return;const k=claveFijo(m.cat,m.nota);if(!k||k in S.fijos)return;
+    const x=gr[k]=gr[k]||{k,cat:m.cat,nota:m.nota.trim(),meses:{}},mes=m.fecha.slice(0,7);x.meses[mes]=(x.meses[mes]||0)+m.importe;});
+  let mejor=null;
+  Object.values(gr).forEach(x=>Object.keys(x.meses).sort().forEach(a=>{const ms=[a,mesSig(a,1),mesSig(a,2)];if(!ms.every(q=>x.meses[q]))return;
+    const vs=ms.map(q=>x.meses[q]),prom=vs.reduce((p,v)=>p+v,0)/3;if(vs.some(v=>Math.abs(v-prom)>prom*0.1+1e-9))return;
+    if(!mejor||prom>mejor.prom)mejor={...x,ms,prom};}));
+  return mejor;}
+let sug=null;
+function pintarSugerencia(){sug=sugerirFijo();$("sugFijo").hidden=!sug;if(!sug)return;
+  $("sugTit").textContent=`¿“${sug.nota}” es un gasto fijo?`;
+  const ns=sug.ms.map(q=>MESES[+q.slice(5)-1]);
+  $("sugSub").textContent=`${sug.cat} · se repite en ${ns[0]}, ${ns[1]} y ${ns[2]}, unos ${eur(Math.round(sug.prom))} al mes`;}
+$("sugSi").onclick=()=>{if(!sug)return;S.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat!==REEMB&&claveFijo(m.cat,m.nota)===sug.k)m.fijo=true;});S.fijos[sug.k]=true;persist();render();};
+$("sugNo").onclick=()=>{if(!sug)return;S.fijos[sug.k]=false;persist();render();};
 const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-ui="estado-reembolso" data-estado-r="${x[0]}" style="align-self:flex-start">${x[1]}</span>`;};
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
 let filtroR=null;
@@ -495,7 +524,7 @@ function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eur(m.importe);}
   else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eur(m.importe);}
   else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
-  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span>${m.reembolso?chipR(m.reembolso.estado):""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
+  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span>${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 function aplicarPaleta(){const p=S.settings.paleta||"viva";
   if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
@@ -506,7 +535,7 @@ function render(){
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
   const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
-  forma(ing,gas);monto($("resultado"),r2(ing-gas));$("ingMes").textContent="Ingresos "+eur(ing);$("gasMes").textContent="Gastos "+eur(gas);
+  porcentajeIng(ing,gas);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ing-gas));$("ingMes").textContent="Ingresos "+eur(ing);$("gasMes").textContent="Gastos "+eur(gas);
   const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
   const pc=porCobrar(),nP=pc.filter(m=>m.reembolso.estado==="pendiente").length,nA=pc.length-nP;$("porCobrar").hidden=!pc.length;
   $("cobrarVal").textContent=eur(pc.reduce((a,m)=>a+m.importe,0));
@@ -584,7 +613,9 @@ function movUI(){const t=mov.tipo,ops=S.cuentas.map(c=>[c.id,c.nombre]);
   seg($("segCuentaM"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segDesde"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segHacia"),ops,mov.destino,v=>mov.destino=+v);
   const cats=t==="ingreso"?INGRESOS:CATS;if(!cats.includes(mov.cat))mov.cat=cats[0];seg($("segCat"),cats.map(c=>[c,c]),mov.cat,v=>{mov.cat=v;movUI();});
   // Estado del reembolso (gasto reembolsable) y gastos que cubre (ingreso de Reembolso)
-  $("mReemb").hidden=!(t==="gasto"&&mov.cat===REEMB);seg($("segReembM"),ESTADOS_R.map(([k,l])=>[k,l]),mov.reemb,v=>mov.reemb=v);
+  $("mReemb").hidden=!(t==="gasto"&&mov.cat===REEMB);
+  // Gasto fijo: en uno nuevo, la casilla sigue a la regla de su categoría y nota hasta que la persona la toque
+  $("mFijoL").hidden=!(t==="gasto"&&mov.cat!==REEMB);if(!movId&&!mov.fijoTocado)$("mFijo").checked=S.fijos[claveFijo(mov.cat,$("mNota").value)]===true;seg($("segReembM"),ESTADOS_R.map(([k,l])=>[k,l]),mov.reemb,v=>mov.reemb=v);
   const cubre=t==="ingreso"&&mov.cat==="Reembolso";$("mCubre").hidden=!cubre;
   if(cubre){const ops=S.movs.filter(m=>m.reembolso&&(m.reembolso.estado!=="pagado"||(movId&&m.reembolso.cobro===movId))).sort((a,b)=>b.fecha.localeCompare(a.fecha));
     $("mCubreList").innerHTML=ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-cubre="${m.id}" ${mov.cubre.includes(m.id)?"checked":""}><span style="flex:1;display:flex;flex-direction:column"><span>${m.nota?esc(m.nota):esc(m.cat)}</span><span class="sub">${diaMes(m.fecha)} · ${(ESTADOS_R.find(x=>x[0]===m.reembolso.estado)||ESTADOS_R[0])[1]}</span></span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<div class="empty">No tenés reembolsos por cobrar.</div>`;
@@ -597,7 +628,7 @@ function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?
   if(hay){const a=S.cuentas[0].id,b=(S.cuentas[1]||S.cuentas[0]).id;
     mov=m?{tipo:m.tipo,cuenta:m.cuenta,destino:m.destino??b,cat:m.cat||"Súper",reemb:m.reembolso?m.reembolso.estado:"pendiente",cubre:S.movs.filter(x=>x.reembolso&&x.reembolso.cobro===m.id).map(x=>x.id)}:{tipo:"gasto",cuenta:a,destino:b,cat:"Súper",reemb:"pendiente",cubre:[]};
     seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
-    $("mImporte").value=m?m.importe:"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();movUI();}
+    $("mImporte").value=m?m.importe:"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&m.fijo);movUI();}
   mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
 $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const v=num("mImporte");if(!(v>0)){toast("Poné un importe mayor que 0");return;}
@@ -605,6 +636,8 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const m={id:movId||nid(),tipo:mov.tipo,fecha:$("mFecha").value||hoy(),importe:v,cuenta:mov.cuenta,nota:$("mNota").value.trim()};
   if(m.tipo==="transferencia")m.destino=mov.destino;else m.cat=mov.cat;
   const viejo=S.movs.find(x=>x.id===movId);
+  // Marcar fijo deja la regla para los siguientes con esa nota; desmarcar la cambia a «no es fijo»
+  if(m.tipo==="gasto"&&m.cat!==REEMB){const k=claveFijo(m.cat,m.nota);if($("mFijo").checked){m.fijo=true;if(k)S.fijos[k]=true;}else if(k&&S.fijos[k]===true)S.fijos[k]=false;}
   if(m.tipo==="gasto"&&m.cat===REEMB)m.reembolso={estado:mov.reemb,...(viejo&&viejo.reembolso&&viejo.reembolso.cobro&&mov.reemb==="pagado"?{cobro:viejo.reembolso.cobro}:{})};
   const i=S.movs.findIndex(x=>x.id===movId);if(i>=0){desconciliar(S.movs[i]);S.movs[i]=m;}else S.movs.push(m);
   // Un ingreso de Reembolso paga los gastos marcados; los que dejó de cubrir vuelven a Aprobado
@@ -616,6 +649,7 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   if(cubre.length){const dif=r2(v-sumaCubre());if(Math.abs(dif)>=0.005)aviso=`El ingreso es ${eur(Math.abs(dif))} ${dif>0?"más":"menos"} que los gastos marcados`;}
   desconciliar(m);cerrar();cambio();toast(aviso);});
 $("mCubreList").addEventListener("change",e=>{const id=+e.target.dataset.cubre;if(!id)return;mov.cubre=e.target.checked?[...mov.cubre,id]:mov.cubre.filter(x=>x!==id);cubreTot();});
+$("mNota").addEventListener("input",movUI);$("mFijo").addEventListener("change",()=>mov.fijoTocado=true);
 $("mImporte").addEventListener("input",()=>{if(!$("mCubre").hidden)cubreTot();});
 $("verCobrar").onclick=()=>{filtroR="pendiente";ir("movs");render();};
 $("mCrearCuenta").onclick=()=>{ir("cuentas");abrirCuenta(null);};

@@ -190,6 +190,7 @@ t.test("contraste en las cuatro paletas", async () => {
   const datos = EJEMPLO();
   datos.cuentas.push(A.cta(3, "Broker", 2000, { tipo: "inversion" }), A.cta(4, "Préstamo", 800, { tipo: "financiacion" }));
   datos.movs.push(A.gasto(9, "2026-10-06", 48, 1, "Compras"), A.gasto(10, "2026-10-07", 12, 1, "Trabajo (reembolsable)"),
+    { ...A.gasto(12, "2026-10-01", 600, 1, "Casa/Splitwise", "alquiler"), fijo: true },
     A.transf(11, "2026-10-08", 100, 1, 3));
   for (const esquema of ["light", "dark"]) {
     const { page } = await abrir({ datos, esquema });
@@ -200,8 +201,10 @@ t.test("contraste en las cuatro paletas", async () => {
         const [texto, detras] = await colores(page, sel);
         assert.ok(contraste(texto, detras) >= 4.5, `${p}/${esquema} ${sel}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
       }
-      const [figura, fondo] = await page.$eval("#forma circle", (c) => [getComputedStyle(c).fill, getComputedStyle(document.body).backgroundColor]);
-      assert.ok(contraste(figura, fondo) >= 1.5, `${p}/${esquema} figura del mes: ${figura} sobre ${fondo} = ${contraste(figura, fondo).toFixed(2)}`);
+      for (const k of ["fij", "var"]) {
+        const [parte, tarjeta] = await page.$eval(`#fv .partida .${k}`, (el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el.closest(".card")).backgroundColor]);
+        assert.ok(contraste(parte, tarjeta) >= 1.5, `${p}/${esquema} barra ${k}: ${parte} sobre ${tarjeta} = ${contraste(parte, tarjeta).toFixed(2)}`);
+      }
       await A.ir(page, "movs");
       for (const id of [2, 3, 9, 10, 11]) {
         const [texto, detras] = await colores(page, `[data-mov="${id}"] .linea`);
