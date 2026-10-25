@@ -164,7 +164,7 @@ t.test("categorías ordenadas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [
     A.gasto(1, "2026-10-02", 18, 1, "Comida fuera"), A.gasto(2, "2026-10-03", 64.3, 1, "Supermercado"),
     A.gasto(3, "2026-10-04", 42, 1, "Trabajo (reembolsable)"), A.ingreso(4, "2026-10-01", 1500, 1)] }) });
-  const cats = await page.locator("#cats .item span:first-child").allInnerTexts();
+  const cats = await page.locator("#cats .item > span:first-child").allInnerTexts();
   assert.deepEqual(cats, ["Supermercado", "Trabajo (reembolsable)", "Comida fuera"]);
 });
 

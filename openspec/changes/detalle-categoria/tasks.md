@@ -8,19 +8,19 @@
 - [x] `python3 kit.py preview detalle-categoria` en verde y capturas en claro y oscuro
 
 ## Pantallas y lógica
-- [ ] «Fijos y variables» resumido en Inicio; al tocar, su hoja; categorías que abren su hoja
-- [ ] Torta y lista de «Gasto del mes» abren la hoja de categoría
-- [ ] Hoja de categoría: total, comparación con el mes anterior, flechas sin pasar del mes en curso
-- [ ] Reparto por cuenta ordenado, 5 + «Resto» que se abre
-- [ ] Gastos de la categoría de mayor a menor; tocar abre «Editar movimiento»
-- [ ] `data-pantalla` y `data-ui` del preview en la app
-- [ ] Subir `CACHE` en `sw.js`
+- [x] «Fijos y variables» resumido en Inicio; al tocar, su hoja; categorías que abren su hoja
+- [x] Torta y lista de «Gasto del mes» abren la hoja de categoría
+- [x] Hoja de categoría: total, comparación con el mes anterior, flechas sin pasar del mes en curso
+- [x] Reparto por cuenta ordenado, 5 + «Resto» que se abre
+- [x] Gastos de la categoría de mayor a menor; tocar abre «Editar movimiento»
+- [x] `data-pantalla` y `data-ui` del preview en la app
+- [x] Subir `CACHE` en `sw.js`
 
 ## Tests
-- [ ] graficos: 18 escenarios (los de fijos y variables, adaptados)
+- [x] graficos: 18 escenarios (los de fijos y variables, adaptados)
 
 ## Comprobación y documentación
-- [ ] `python3 kit.py check` en verde
-- [ ] Capturas de la app real en claro y oscuro
-- [ ] `CLAUDE.md`: pantallas y gráficos
-- [ ] Copia de prueba del iPhone actualizada
+- [x] `python3 kit.py check` en verde
+- [x] Capturas de la app real en claro y oscuro
+- [x] `CLAUDE.md`: pantallas y gráficos
+- [x] Copia de prueba del iPhone actualizada
