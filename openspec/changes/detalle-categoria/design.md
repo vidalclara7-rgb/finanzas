@@ -42,3 +42,9 @@
   cuatro paletas y la pista de las barras de categoría, a una más clara.
 - Este cambio sustituye «fijos y variables del mes», que `importar-extractos` también sustituye (para
   decir Supermercado): se archiva después de él y su texto ya dice Supermercado.
+
+## Gate 2 (2026-10-25)
+
+- Pantallas: `inicio`, `hoja-fijos-variables` y `hoja-categoria`. Clases nuevas: `.mesnav` (flechas
+  de mes), `.toca` / `.mas` (lo que se toca, con «›»), `.gastos-cat`. La pista de `.bar.cat` es más
+  clara y Otros (`--cat12`) más oscuro en las cuatro paletas.

@@ -1,6 +1,6 @@
 ---
 cambio: detalle-categoria
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Abrir una categoría de gasto
