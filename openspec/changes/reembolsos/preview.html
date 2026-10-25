@@ -7,25 +7,27 @@
 <!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
 <style>
 :root{
-  --bg:#FFFFFF; --surface:#F2F1EC; --ink:#121212; --muted:#7A786F; --line:#E2E0D8;
-  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#ECEAE3;
-  --rojo:#E3241B; --naranja:#FF6A13; --on-color:#121212;
+  --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
+  --ink-base:#121212; --muted-base:#77766F;
+  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
+  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
+  --on-color:#121212;
   --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
   --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
-  --ingreso:#CFE3A8; --neutro:#E4E3DE;
+  --ingreso:#C8DDA6; --neutro:#FFFFFF;
   --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
-  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas de movimiento) */
-  --cat1:#A9C4B6; --cat2:#E3241B; --cat3:#FF6A13; --cat4:#B89C70; --cat5:#ECE78A; --cat6:#A9B8CC;
-  --cat7:#E7B9C6; --cat8:#9DB88A; --cat9:#9EC1DE; --cat10:#CDB57E; --cat11:#BDBDBD; --cat12:#D9D5C6;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
+  --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
+  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#C9C9C4; --cat12:#E2DED3;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root{
-  --bg:#0E0E0E; --surface:#1C1C1B; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2D2A;
-  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#262624;
-  --hero:#1C1C1B; --nav:#1C1C1B; --nav-ink:#8E8C84; --nav-on:#F2F1EC;
-  --neutro:#C9C7C0;
+  --bg:#101010; --surface:#1E1E1E; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2E2C;
+  --ink-base:#F2F1EC; --muted-base:#A3A19A;
+  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#2A2A28;
+  --hero:#1E1E1E; --nav:#1E1E1E; --nav-ink:#8E8C84; --nav-on:#F2F1EC; --neutro:#1E1E1E;
   --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C; color-scheme:dark}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
@@ -42,6 +44,13 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
 /* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
 .card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
+/* Sobre colores oscuros (oliva, cherry) el texto es blanco */
+.card.color.osc,.mov.osc{--on-color:#FFFFFF;color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.75);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
+.mov.osc .ico{background:rgba(255,255,255,.22);color:#FFFFFF}
+.mini .ico{color:var(--on-color)} .ico.osc,.mini .ico.osc{color:#FFFFFF}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
 .lbl{font-size:15px;color:var(--ink);font-weight:600}
 .big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
 /* Importe grande con los decimales en gris */
