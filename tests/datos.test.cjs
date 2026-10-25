@@ -168,3 +168,27 @@ t.test("copia anterior con reembolsables", async () => {
   await A.ir(page, "movs");
   assert.equal(await A.texto(page, '[data-mov="1"] [data-estado-r]'), "Pendiente");
 });
+
+// Escenario: datos sin paleta
+t.test("datos sin paleta", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
+  const { page } = await abrir({ datos });
+  assert.equal(await page.evaluate(() => document.documentElement.hasAttribute("data-paleta")), false);
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(236, 236, 234)");
+  const d = await A.guardados(page);
+  assert.deepEqual(d.cuentas, datos.cuentas);
+  assert.deepEqual(d.movs, datos.movs);
+  await A.ir(page, "ajustes");
+  assert.equal(await page.$eval('[data-paleta-op][aria-pressed="true"]', (b) => b.dataset.paletaOp), "viva");
+});
+
+// Escenario: copia con paleta
+t.test("copia con paleta", async () => {
+  const copia = A.v2({ settings: { paleta: "pastel" }, cuentas: [BANCO] });
+  const { page } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.paleta), "pastel");
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(246, 240, 228)");
+  assert.equal((await A.guardados(page)).settings.paleta, "pastel");
+});

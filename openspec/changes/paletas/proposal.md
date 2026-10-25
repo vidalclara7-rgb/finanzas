@@ -1,6 +1,6 @@
 ---
 cambio: paletas
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Elegir la paleta de colores en Ajustes

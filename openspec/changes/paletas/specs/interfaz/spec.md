@@ -24,13 +24,14 @@ al instante, y la elección se recuerda al volver a abrir. Sin elección, la pal
 ## Requisito: todas las paletas se leen
 
 En cada paleta, en modo claro y en modo oscuro, los importes principales y el texto de las tarjetas
-de color se leen con un contraste de al menos 4,5 a 1, y cada categoría conserva el mismo color en la
+de color se leen con un contraste de al menos 4,5 a 1, la figura del gasto del mes se distingue del
+fondo (al menos 1,5 a 1: es decorativa, el dato está en el texto que la acompaña), y cada categoría conserva el mismo color en la
 torta y en su tarjeta de movimiento.
 
 ### Escenario: contraste en las cuatro paletas
 - **Dado** gastos, una tarjeta de crédito con tope y cuentas de varios tipos
 - **Cuando** la persona recorre las cuatro paletas en claro y en oscuro
-- **Entonces** en todas el resultado, el disponible, el patrimonio y el texto de las tarjetas de movimiento tienen contraste de al menos 4,5 a 1
+- **Entonces** en todas el resultado, el disponible, el patrimonio y el texto de las tarjetas de movimiento tienen contraste de al menos 4,5 a 1, y la figura del mes, de al menos 1,5 a 1 contra el fondo
 
 ### Escenario: mismo color por categoría en otra paleta
 - **Dado** un gasto en Súper y la paleta Lima y lavanda elegida

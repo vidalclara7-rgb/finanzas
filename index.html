@@ -168,7 +168,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 @media (prefers-color-scheme: dark){
 :root[data-paleta="viva"],[data-paleta="viva"]{--bg:#101010;--surface:#1E1E1E;--line:#2E2E2C;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#101010;--accent-soft:#2E2E2C;--nav:#1E1E1E;--nav-on:#F2F1EC;--neutro:#1E1E1E;--hero:#1E1E1E}
 :root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#0E0E0E;--surface:#1C1C1B;--line:#2E2D2A;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#0E0E0E;--accent-soft:#2E2D2A;--nav:#1C1C1B;--nav-on:#F2F1EC;--neutro:#1C1C1B;--hero:#1C1C1B}
-:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#0B0B0D;--surface:#1A1A1E;--line:#2B2B31;--ink:#F2F2F4;--muted:#A1A1AA;--ink-base:#F2F2F4;--muted-base:#A1A1AA;--accent:#F2F2F4;--accent-ink:#0B0B0D;--accent-soft:#2B2B31;--nav:#1A1A1E;--nav-on:#F2F2F4;--neutro:#1A1A1E;--hero:#1A1A1E;--oliva:#34343E;--cherry:#44444F}
+:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#0B0B0D;--surface:#1A1A1E;--line:#2B2B31;--ink:#F2F2F4;--muted:#A1A1AA;--ink-base:#F2F2F4;--muted-base:#A1A1AA;--accent:#F2F2F4;--accent-ink:#0B0B0D;--accent-soft:#2B2B31;--nav:#1A1A1E;--nav-on:#F2F2F4;--neutro:#1A1A1E;--hero:#1A1A1E;--oliva:#34343E;--cherry:#44444F;--rojo:#A48CF0}
 :root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#13120F;--surface:#1F1D19;--line:#302C26;--ink:#F4EEE3;--muted:#A79F92;--ink-base:#F4EEE3;--muted-base:#A79F92;--accent:#F4EEE3;--accent-ink:#13120F;--accent-soft:#302C26;--nav:#1F1D19;--nav-on:#F4EEE3;--neutro:#1F1D19;--hero:#1F1D19}
 }
 .paletas{display:flex;flex-direction:column;gap:10px}
@@ -243,6 +243,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
   <!-- AJUSTES -->
   <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
+    <div class="card" data-ui="selector-paleta"><span class="lbl">Paleta de colores</span><div class="paletas" id="paletas"></div></div>
     <div class="card" data-ui="plan-ajustes">
       <span class="lbl">Plan del fondo de emergencia</span>
       <label class="f" for="aporte">Aporte mensual al fondo (€)<input type="number" inputmode="decimal" id="aporte"></label>
@@ -355,6 +356,8 @@ const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",
 // Color de las tarjetas de cada tipo de cuenta; inversiones y tarjetas son oscuros (texto blanco)
 const COLOR={liquidez:"--salvia",inversion:"--oliva",tarjeta:"--cherry",financiacion:"--fucsia",compartida:"--rosa"};
 const tipoOsc=t=>t==="inversion"||t==="tarjeta"?" osc":"";
+// Paletas elegibles en Ajustes (las define la hoja de estilos con data-paleta)
+const PALETAS=[["viva","Viva"],["editorial","Editorial"],["lima","Lima y lavanda"],["pastel","Pastel crema"]];
 const ESTADOS_R=[["pendiente","Pendiente","warnc"],["aprobado","Aprobado","idle"],["pagado","Pagado","ok"]];
 const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
 
@@ -484,7 +487,11 @@ function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
   return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span>${m.reembolso?chipR(m.reembolso.estado):""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
+function aplicarPaleta(){const p=S.settings.paleta||"viva";
+  if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
+  $("paletas").innerHTML=PALETAS.map(([k,n])=>`<button type="button" class="paleta-op" data-paleta-op="${k}" aria-pressed="${k===p}"><span>${n}</span><span class="muestra" data-paleta="${k}"><i style="background:var(--salvia)"></i><i style="background:var(--cherry)"></i><i style="background:var(--rosa)"></i><i style="background:var(--oliva)"></i><i style="background:var(--cat2)"></i></span></button>`).join("");}
 function render(){
+  aplicarPaleta();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
@@ -690,7 +697,8 @@ document.addEventListener("change",e=>{const c=e.target.dataset&&e.target.datase
 $("guardarAjustes").onclick=()=>{const of=num("objFondo"),ap=num("aporte"),ini=$("inicio").value;
   if(!(of>0)||!(ap>0)||!ini){toast("Completá el aporte, el objetivo y el mes de inicio");return;}
   const saltos=$("saltos").value.split(",").map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}$/.test(x)).join(", ");
-  S.settings={aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
+  S.settings={paleta:S.settings.paleta,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
+$("paletas").addEventListener("click",e=>{const b=e.target.closest("[data-paleta-op]");if(!b)return;S.settings.paleta=b.dataset.paletaOp;persist();render();});
 $("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),PLAN=planMap(),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
   const porCat={};ms.filter(m=>m.tipo==="gasto").forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const fc=S.cuentas.find(c=>c.fondo),f=fc?valorCuenta(fc):null;

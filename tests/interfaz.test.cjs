@@ -144,3 +144,82 @@ t.test("reembolsos en frambuesa", async () => {
   const [texto] = await colores(page, '[data-mov="9"] .linea');
   assert.equal(texto, "rgb(255, 255, 255)");
 });
+
+const PALETAS = ["viva", "editorial", "lima", "pastel"];
+const fondoBody = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+const marcada = (page) => page.$eval('[data-paleta-op][aria-pressed="true"]', (b) => b.dataset.paletaOp);
+async function elegirPaleta(page, p) {
+  await A.ir(page, "ajustes");
+  await page.click(`[data-paleta-op="${p}"]`);
+}
+
+// Escenario: cambiar a pastel crema
+t.test("cambiar a pastel crema", async () => {
+  const { page } = await abrir({ datos: EJEMPLO() });
+  assert.equal(await fondoBody(page), "rgb(236, 236, 234)");
+  await elegirPaleta(page, "pastel");
+  assert.equal(await fondoBody(page), "rgb(246, 240, 228)");
+  assert.equal(await marcada(page), "pastel");
+  assert.equal((await A.guardados(page)).settings.paleta, "pastel");
+});
+
+// Escenario: la paleta se recuerda
+t.test("la paleta se recuerda", async () => {
+  const datos = EJEMPLO();
+  datos.settings.paleta = "editorial";
+  const { page } = await abrir({ datos });
+  await page.reload();
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.paleta), "editorial");
+  assert.equal(await fondoBody(page), "rgb(255, 255, 255)");
+  await A.ir(page, "ajustes");
+  assert.equal(await marcada(page), "editorial");
+});
+
+// Escenario: paleta por defecto
+t.test("paleta por defecto", async () => {
+  const { page } = await abrir();
+  await A.ir(page, "ajustes");
+  assert.equal(await marcada(page), "viva");
+  assert.equal(await page.locator("[data-paleta-op]").count(), 4);
+  assert.deepEqual((await page.locator("[data-paleta-op] span:first-child").allInnerTexts()).map((x) => x.trim()),
+    ["Viva", "Editorial", "Lima y lavanda", "Pastel crema"]);
+});
+
+// Escenario: contraste en las cuatro paletas
+t.test("contraste en las cuatro paletas", async () => {
+  const datos = EJEMPLO();
+  datos.cuentas.push(A.cta(3, "Broker", 2000, { tipo: "inversion" }), A.cta(4, "Préstamo", 800, { tipo: "financiacion" }));
+  datos.movs.push(A.gasto(9, "2026-10-06", 48, 1, "Compras"), A.gasto(10, "2026-10-07", 12, 1, "Trabajo (reembolsable)"),
+    A.transf(11, "2026-10-08", 100, 1, 3));
+  for (const esquema of ["light", "dark"]) {
+    const { page } = await abrir({ datos, esquema });
+    for (const p of PALETAS) {
+      await elegirPaleta(page, p);
+      await A.ir(page, "inicio");
+      for (const sel of ["#resultado", '[data-disp="2"] .big', "#netoIni"]) {
+        const [texto, detras] = await colores(page, sel);
+        assert.ok(contraste(texto, detras) >= 4.5, `${p}/${esquema} ${sel}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
+      }
+      const [figura, fondo] = await page.$eval("#forma circle", (c) => [getComputedStyle(c).fill, getComputedStyle(document.body).backgroundColor]);
+      assert.ok(contraste(figura, fondo) >= 1.5, `${p}/${esquema} figura del mes: ${figura} sobre ${fondo} = ${contraste(figura, fondo).toFixed(2)}`);
+      await A.ir(page, "movs");
+      for (const id of [2, 3, 9, 10, 11]) {
+        const [texto, detras] = await colores(page, `[data-mov="${id}"] .linea`);
+        assert.ok(contraste(texto, detras) >= 4.5, `${p}/${esquema} movimiento ${id}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
+      }
+    }
+  }
+});
+
+// Escenario: mismo color por categoría en otra paleta
+t.test("mismo color por categoría en otra paleta", async () => {
+  const { page } = await abrir({ datos: EJEMPLO() });
+  const vivaPorcion = await page.$eval('#torta circle[data-cat="Súper"]', (c) => getComputedStyle(c).stroke);
+  await elegirPaleta(page, "lima");
+  await A.ir(page, "inicio");
+  const porcion = await page.$eval('#torta circle[data-cat="Súper"]', (c) => getComputedStyle(c).stroke);
+  assert.notEqual(porcion, vivaPorcion);
+  await A.ir(page, "movs");
+  const tarjeta = await page.$eval('[data-mov="2"]', (el) => getComputedStyle(el).backgroundColor);
+  assert.equal(porcion, tarjeta);
+});
