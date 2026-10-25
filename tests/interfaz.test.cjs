@@ -272,3 +272,39 @@ t.test("importe guardado al editar", async () => {
   await page.click('[data-mov="7"] .linea');
   assert.equal(await page.inputValue("#mImporte"), "12,5");
 });
+
+// Píxeles de un ícono en puntos relativos (0 a 1), leídos en el navegador
+async function pixeles(page, archivo, puntos) {
+  return page.evaluate(async ([f, ps]) => {
+    const img = await createImageBitmap(await (await fetch(f)).blob());
+    const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+    const g = c.getContext("2d"); g.drawImage(img, 0, 0);
+    return ps.map(([x, y]) => [...g.getImageData(Math.floor(x * img.width), Math.floor(y * img.height), 1, 1).data.slice(0, 3)]);
+  }, [archivo, puntos]);
+}
+const PUNTOS = { fondo: [0.05, 0.05], abajo: [0.5, 0.9], punto: [0.816, 0.637] };
+const COLORES = { fondo: [243, 166, 218], abajo: [243, 166, 218], punto: [240, 90, 44] };
+const cerca = (a, b) => a.every((v, i) => Math.abs(v - b[i]) <= 10);
+
+// Escenario: ícono en la pantalla de inicio
+t.test("ícono en la pantalla de inicio", async () => {
+  const { page } = await abrir();
+  assert.equal(await page.getAttribute('link[rel="apple-touch-icon"]', "href"), "icon-180.png");
+  const m = await page.evaluate(async () => (await fetch("manifest.webmanifest")).json());
+  assert.deepEqual(m.icons.map((i) => i.src), ["icon-192.png", "icon-512.png"]);
+  const ks = Object.keys(PUNTOS), vs = await pixeles(page, "icon-180.png", ks.map((k) => PUNTOS[k]));
+  ks.forEach((k, i) => assert.ok(cerca(vs[i], COLORES[k]), `${k}: ${vs[i]}`));
+  // Las letras «mf» en tinta: buena parte de la franja de las letras es negra
+  const zona = [];
+  for (let x = 0.12; x <= 0.72; x += 0.03) for (let y = 0.45; y <= 0.66; y += 0.03) zona.push([x, y]);
+  const negros = (await pixeles(page, "icon-180.png", zona)).filter((p) => p.every((v) => v < 60)).length;
+  assert.ok(negros / zona.length > 0.25, `letras: ${negros} de ${zona.length} puntos negros`);
+});
+
+// Escenario: mismo ícono en todos los tamaños
+t.test("mismo ícono en todos los tamaños", async () => {
+  const { page } = await abrir();
+  const ps = Object.values(PUNTOS);
+  const [a, b, c] = await Promise.all(["icon-180.png", "icon-192.png", "icon-512.png"].map((f) => pixeles(page, f, ps)));
+  a.forEach((p, i) => { assert.ok(cerca(p, b[i]) && cerca(p, c[i]), `punto ${i}: ${p} / ${b[i]} / ${c[i]}`); });
+});
