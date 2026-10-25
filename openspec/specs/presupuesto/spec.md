@@ -8,7 +8,7 @@ ajustes no descuentan. El anillo del tope se marca en aviso desde el 75 % y como
 superarlo.
 
 ### Escenario: disponible con un reembolsable
-- **Dado** «Tarjeta» con tope de 500 €, 64,30 € en Súper y 42 € en Trabajo (reembolsable) con esa tarjeta
+- **Dado** «Tarjeta» con tope de 500 €, 64,30 € en Supermercado y 42 € en Trabajo (reembolsable) con esa tarjeta
 - **Cuando** la persona abre Inicio
 - **Entonces** Tarjeta muestra 435,7 € disponibles y «Gastado 64,3 € de 500 €»
 

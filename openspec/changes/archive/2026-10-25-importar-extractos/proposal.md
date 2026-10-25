@@ -1,7 +1,8 @@
 ---
 cambio: importar-extractos
-estado: diseno-aprobado
+estado: archivado
 datos: migra
+archivado: 2026-10-25
 ---
 # Importar extractos del banco y adjuntar archivos
 

@@ -4,13 +4,13 @@
 
 Con el botón «+» la persona abre «Nuevo movimiento», elige Gasto y anota importe, una de sus
 cuentas, categoría, una nota opcional y la fecha, que por defecto es hoy. Las categorías de gasto
-son: Súper, Comida fuera, Delivery, Transporte, Ocio, Compras, Belleza, Casa/Splitwise, Salud,
-Viajes, Trabajo (reembolsable) y Otros. El gasto baja el saldo de la cuenta o, si es una tarjeta,
+son: Supermercado, Comida fuera, Delivery, Transporte, Ocio, Compras, Ropa, Belleza, Casa/Splitwise,
+Salud, Viajes, Regalos, Trabajo (reembolsable) y Otros. El gasto baja el saldo de la cuenta o, si es una tarjeta,
 sube su deuda.
 
 ### Escenario: gasto desde una cuenta propia
 - **Dado** que hoy es 2026-10-15 y «Banco A» con saldo inicial de 1000 € desde el 2026-10-01
-- **Cuando** la persona anota un gasto de 12,50 € en Súper desde Banco A con la nota «verdulería»
+- **Cuando** la persona anota un gasto de 12,50 € en Supermercado desde Banco A con la nota «verdulería»
 - **Entonces** la app avisa «Gasto guardado»
 - **Y** el gasto aparece en Movimientos con «−12,5 €» y la fecha 15/10
 - **Y** Banco A tiene 987,5 €
@@ -103,7 +103,7 @@ Inicio muestra los cinco gastos más recientes en tarjetas chicas que se desliza
 Tocar un movimiento abre su hoja con los datos cargados; guardar lo actualiza.
 
 ### Escenario: corregir un importe
-- **Dado** un gasto de 20 € en Súper desde Banco A, que tiene 980 €
+- **Dado** un gasto de 20 € en Supermercado desde Banco A, que tiene 980 €
 - **Cuando** la persona lo toca, cambia el importe a 25 € y guarda
 - **Entonces** el gasto muestra «−25 €» y Banco A tiene 975 €
 
@@ -128,9 +128,9 @@ Inicio muestra lo gastado en el mes por categoría, de mayor a menor, incluidos 
 reembolsables. Ingresos, transferencias y ajustes no aparecen.
 
 ### Escenario: categorías ordenadas
-- **Dado** 64,30 € en Súper, 42 € en Trabajo (reembolsable), 18 € en Comida fuera y un ingreso de 1500 € este mes
+- **Dado** 64,30 € en Supermercado, 42 € en Trabajo (reembolsable), 18 € en Comida fuera y un ingreso de 1500 € este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** «Por categoría» muestra Súper, Trabajo (reembolsable) y Comida fuera, en ese orden
+- **Entonces** «Por categoría» muestra Supermercado, Trabajo (reembolsable) y Comida fuera, en ese orden
 
 ### Escenario: sin gastos por categoría
 - **Dado** que no hay gastos en el mes en curso
@@ -154,7 +154,7 @@ Reembolso: el resultado es el de la plata propia. Los totales de Movimientos sí
 - **Entonces** el resultado es -50 € y se marca en rojo
 
 ### Escenario: reembolsos fuera del resultado
-- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Súper y 50 € en Trabajo (reembolsable) este mes
+- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Supermercado y 50 € en Trabajo (reembolsable) este mes
 - **Cuando** la persona abre Inicio
 - **Entonces** ve ingresos 1000 €, gastos 200 € y resultado 800 €
 - **Y** en Movimientos, los totales son ingresos 1050 € y gastos 250 €
@@ -232,6 +232,6 @@ hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota 
 - **Entonces** no aparece ninguna sugerencia
 
 ### Escenario: gastos sin nota
-- **Dado** que hoy es 2026-10-15 y gastos de 100 € en Súper sin nota en agosto, septiembre y octubre
+- **Dado** que hoy es 2026-10-15 y gastos de 100 € en Supermercado sin nota en agosto, septiembre y octubre
 - **Cuando** la persona abre Inicio
 - **Entonces** no aparece ninguna sugerencia

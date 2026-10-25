@@ -7,10 +7,10 @@ total del mes en el centro. Cada categoría tiene su color, y la lista de catego
 mismo color.
 
 ### Escenario: torta con tres categorías
-- **Dado** 64,30 € en Súper, 42 € en Trabajo (reembolsable) y 18 € en Comida fuera este mes
+- **Dado** 64,30 € en Supermercado, 42 € en Trabajo (reembolsable) y 18 € en Comida fuera este mes
 - **Cuando** la persona abre Inicio
 - **Entonces** la torta tiene tres porciones y en el centro dice «124,3 €»
-- **Y** la porción de Súper es la más grande
+- **Y** la porción de Supermercado es la más grande
 
 ### Escenario: torta sin gastos
 - **Dado** que no hay gastos en el mes en curso
@@ -78,13 +78,13 @@ ordenadas de mayor a menor, con su importe y una barra proporcional. Los gastos 
 (reembolsable)», los ingresos, las transferencias y los ajustes no cuentan.
 
 ### Escenario: reparto entre fijos y variables
-- **Dado** este mes 600 € en Casa/Splitwise y 40 € en Ocio marcados como fijos, y 300 € en Súper y 60 € en Comida fuera sin marcar
+- **Dado** este mes 600 € en Casa/Splitwise y 40 € en Ocio marcados como fijos, y 300 € en Supermercado y 60 € en Comida fuera sin marcar
 - **Cuando** la persona abre Inicio
 - **Entonces** «Fijos y variables» dice «Fijos 640 € · 64 %» y «Variables 360 € · 36 %»
-- **Y** bajo Fijos aparecen Casa/Splitwise y Ocio, en ese orden, y bajo Variables Súper y Comida fuera
+- **Y** bajo Fijos aparecen Casa/Splitwise y Ocio, en ese orden, y bajo Variables Supermercado y Comida fuera
 
 ### Escenario: reembolsables fuera del reparto
-- **Dado** este mes 100 € en Súper y 50 € en Trabajo (reembolsable)
+- **Dado** este mes 100 € en Supermercado y 50 € en Trabajo (reembolsable)
 - **Cuando** la persona abre Inicio
 - **Entonces** «Fijos y variables» dice «Variables 100 € · 100 %» y no aparece Trabajo (reembolsable)
 
@@ -122,6 +122,6 @@ tampoco los gastos de «Trabajo (reembolsable)» ni los ingresos de Reembolso: n
 - **Entonces** se lee «Todavía no anotaste ingresos este mes»
 
 ### Escenario: reembolsos fuera del porcentaje
-- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Súper y 50 € en Trabajo (reembolsable) este mes
+- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Supermercado y 50 € en Trabajo (reembolsable) este mes
 - **Cuando** la persona abre Inicio
 - **Entonces** se lee «Gastaste el 20 % de lo que entró»
