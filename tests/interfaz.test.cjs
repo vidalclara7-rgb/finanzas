@@ -140,7 +140,7 @@ t.test("reembolsos en frambuesa", async () => {
   const { page } = await abrir({ datos });
   await A.ir(page, "movs");
   const fondo = await page.$eval('[data-mov="9"]', (el) => getComputedStyle(el).backgroundColor);
-  assert.equal(fondo, "rgb(214, 60, 122)");
+  assert.equal(fondo, "rgb(208, 56, 118)");
   const [texto] = await colores(page, '[data-mov="9"] .linea');
   assert.equal(texto, "rgb(255, 255, 255)");
 });

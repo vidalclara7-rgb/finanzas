@@ -20,3 +20,8 @@
 - `--on-osc` es el color del texto de las tarjetas `osc` en cada paleta (blanco, salvo Pastel crema).
 - Los tests de contraste recorren las cuatro paletas en claro y en oscuro.
 - Sube la versión de la caché.
+
+## Al preparar el preview (2026-10-25)
+
+- Un control de contraste de las cuatro paletas mostró que el frambuesa de Viva (Trabajo
+  reembolsable) con texto blanco daba 4,39 a 1. Pasa a `#D03876` (4,66), casi igual a la vista.
