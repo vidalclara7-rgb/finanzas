@@ -1,7 +1,8 @@
 ---
 cambio: paletas
-estado: diseno-aprobado
+estado: archivado
 datos: amplia
+archivado: 2026-10-25
 ---
 # Elegir la paleta de colores en Ajustes
 
