@@ -4,7 +4,8 @@
 
 Inicio muestra, para cada cuenta con tope, cuánto queda del tope mensual: tope menos lo gastado en el
 mes con esa cuenta. Los gastos de «Trabajo (reembolsable)», los ingresos, las transferencias y los
-ajustes no descuentan. La barra se marca en aviso desde el 75 % del tope y como excedida al superarlo.
+ajustes no descuentan. El anillo del tope se marca en aviso desde el 75 % y como excedido al
+superarlo.
 
 ### Escenario: disponible con un reembolsable
 - **Dado** «Tarjeta» con tope de 500 €, 64,30 € en Súper y 42 € en Trabajo (reembolsable) con esa tarjeta
@@ -14,7 +15,7 @@ ajustes no descuentan. La barra se marca en aviso desde el 75 % del tope y como 
 ### Escenario: tope superado
 - **Dado** «Revolut» con tope de 300 € y 320 € gastados con esa cuenta este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** Revolut muestra -20 € disponibles y la barra se marca como excedida
+- **Entonces** Revolut muestra -20 € disponibles y el anillo se marca como excedido
 
 ### Escenario: cuenta sin tope
 - **Dado** «Banco A» sin tope y «Tarjeta» con tope
