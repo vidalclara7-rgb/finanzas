@@ -1,9 +1,9 @@
 # Tareas: movimientos-y-conciliacion
 
 ## Preview (Gate 2)
-- [ ] Clases nuevas en la hoja de estilos (barras dobles de ingresos y gastos), sin tocar marcado ni lógica
-- [ ] `preview.html`: Inicio, Movimientos, hoja de movimiento (gasto y transferencia), Cuentas, hoja de cuenta, Cierre, hoja de conciliación, hoja de tarea y Ajustes, con datos y vacías
-- [ ] `python3 kit.py preview movimientos-y-conciliacion` en verde y capturas en claro y oscuro
+- [x] Clases nuevas en la hoja de estilos (barras dobles de ingresos y gastos), sin tocar marcado ni lógica
+- [x] `preview.html`: Inicio, Movimientos, hoja de movimiento (gasto y transferencia), Cuentas, hoja de cuenta, Cierre, hoja de conciliación, hoja de tarea y Ajustes, con datos y vacías
+- [x] `python3 kit.py preview movimientos-y-conciliacion` en verde y capturas en claro y oscuro
 
 ## Datos y migración
 - [ ] Modelo v2 en `norm()`: cuentas con saldo de partida, `movs`, `tareas`, conciliaciones por mes

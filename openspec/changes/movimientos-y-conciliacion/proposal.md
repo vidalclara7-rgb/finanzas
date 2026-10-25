@@ -1,6 +1,6 @@
 ---
 cambio: movimientos-y-conciliacion
-estado: aprobada
+estado: diseno-aprobado
 datos: migra
 ---
 # Movimientos entre tus cuentas y conciliación mensual
