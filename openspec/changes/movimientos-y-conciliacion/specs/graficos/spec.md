@@ -36,3 +36,25 @@ gastos por mes, y marca los meses que cerraron en negativo. Transferencias y aju
 - **Dado** que no hay ingresos ni gastos en los últimos seis meses
 - **Cuando** la persona abre Inicio
 - **Entonces** no se dibuja el gráfico de ingresos contra gastos
+
+## Requisito: forma del gasto del mes
+
+Arriba de Inicio, una forma roja muestra cuánto de lo que entró en el mes ya se gastó: crece con el
+gasto y se completa al llegar a lo ingresado. Debajo, el resultado del mes en grande. Si el gasto
+supera lo ingresado, se marca. Transferencias y ajustes no cuentan.
+
+### Escenario: gasto chico frente a lo que entró
+- **Dado** ingresos de 1700 € y gastos de 149,80 € este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** la forma dice «Gastaste el 9 % de lo que entró»
+- **Y** debajo se ve el resultado, 1550,2 €
+
+### Escenario: gasto mayor que lo que entró
+- **Dado** ingresos de 100 € y gastos de 150 € este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** la forma dice «Gastaste el 150 % de lo que entró» y se marca como excedida
+
+### Escenario: mes sin ingresos
+- **Dado** gastos de 50 € y ningún ingreso este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** la forma dice «Todavía no anotaste ingresos este mes»

@@ -71,15 +71,22 @@ no cambia. Pagar la tarjeta es una transferencia del banco a la tarjeta.
 
 ## Requisito: ver los movimientos del mes
 
-La pestaña Movimientos muestra los movimientos del mes en curso, del más reciente al más antiguo:
-ingresos con «+», gastos con «−», transferencias con la cuenta de origen y la de destino, y ajustes
-de conciliación. Arriba, el total de ingresos y el de gastos del mes; transferencias y ajustes no
-suman en ninguno.
+La pestaña Movimientos muestra los movimientos del mes en curso, del más reciente al más antiguo,
+como tarjetas apiladas: cada gasto del color de su categoría, los ingresos en verde claro, las
+transferencias y los ajustes en gris. Cada tarjeta lleva la categoría, la nota o la cuenta y el
+importe: ingresos con «+», gastos con «−», transferencias con la cuenta de origen y la de destino.
+Arriba, el total de ingresos y el de gastos del mes; transferencias y ajustes no suman en ninguno.
+Inicio muestra los cinco gastos más recientes en tarjetas chicas que se deslizan de costado.
 
 ### Escenario: movimientos de otro mes no aparecen
 - **Dado** que hoy es 2026-10-15, un gasto del 2026-09-28 y otro del 2026-10-03
 - **Cuando** la persona abre Movimientos
 - **Entonces** sólo ve el gasto del 2026-10-03
+
+### Escenario: últimos gastos en Inicio
+- **Dado** seis gastos este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** ve los cinco más recientes en tarjetas chicas, el más reciente primero
 
 ### Escenario: mes sin movimientos
 - **Dado** que no hay movimientos en el mes en curso

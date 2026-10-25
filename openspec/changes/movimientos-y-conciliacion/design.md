@@ -73,3 +73,21 @@ Sube la versión de la caché del service worker. `CLAUDE.md` se actualiza con e
 - Saldo editable a mano además de calculado: dos fuentes de verdad, la conciliación pierde sentido.
 - Bloquear los meses conciliados: la persona eligió permitir cambios.
 - Ajustes como gasto u otra categoría: ensuciarían el resultado del mes.
+
+## Estilo editorial (2026-10-25, a pedido de la persona en el Gate 2)
+
+Referencia: una app de finanzas de estilo editorial. Decidido con la persona: fondo blanco (no el
+beige de la referencia), paleta de la referencia, movimientos como tarjetas apiladas y, arriba de
+Inicio, una forma roja con el resultado del mes; todo dentro de este cambio porque rehace casi todas
+las pantallas. Sustituye el requisito «fondo blanco con acentos» (lima y lavanda) de la viva.
+
+- Colores por categoría, en el orden de `CATS`: Súper salvia, Comida fuera rojo, Delivery naranja,
+  Transporte arena, Ocio amarillo pálido, Compras azul grisáceo, Belleza rosa viejo, Casa/Splitwise
+  verde musgo claro, Salud celeste apagado, Viajes caqui, Trabajo (reembolsable) gris, Otros piedra.
+  Texto oscuro fijo sobre todos (también en modo oscuro).
+- Ingresos en verde claro, transferencias y ajustes en gris claro.
+- La forma: tres círculos rojos como en la referencia; el del centro crece con el porcentaje gastado
+  de lo ingresado (tope visual al 100 %). Al pasarse, se dibuja con borde negro.
+- Barras por semana rayadas, con la semana actual en negro sólido. Anillos del tope en negro, aviso
+  en naranja y excedido en rojo.
+- Botón «+» negro; barra de navegación blanca flotante con sombra.

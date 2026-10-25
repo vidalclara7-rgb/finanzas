@@ -7,25 +7,26 @@
 <!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
 <style>
 :root{
-  --bg:#FFFFFF; --surface:#F4F4F6; --ink:#111113; --muted:#6B6B74; --line:#E4E4E9;
-  --accent:#111113; --accent-ink:#FFFFFF; --accent-soft:#ECECF0;
-  --lime:#D4F36A; --lavender:#C7B6F7; --on-color:#111113;
-  --hero:#111113; --hero-ink:#FFFFFF; --hero-muted:#A1A1AA;
-  --nav:#111113; --nav-ink:#8B8B94;
-  --warn:#9A6B00; --warn-soft:#FBEFC8; --bad:#D23B2E; --bad-soft:#FBE1DE;
-  /* Colores fijos por categoría (torta y lista) */
-  --cat1:#C2E54F; --cat2:#A48CF0; --cat3:#3A3A42; --cat4:#7CC6F5; --cat5:#F6A06E; --cat6:#F28CB3;
-  --cat7:#58CFA0; --cat8:#F3CF4F; --cat9:#8E8E98; --cat10:#6D86F0; --cat11:#DCC2F5; --cat12:#C5C9D1;
+  --bg:#FFFFFF; --surface:#F2F1EC; --ink:#121212; --muted:#7A786F; --line:#E2E0D8;
+  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#ECEAE3;
+  --rojo:#E3241B; --naranja:#FF6A13; --on-color:#121212;
+  --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
+  --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
+  --ingreso:#CFE3A8; --neutro:#E4E3DE;
+  --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas de movimiento) */
+  --cat1:#A9C4B6; --cat2:#E3241B; --cat3:#FF6A13; --cat4:#B89C70; --cat5:#ECE78A; --cat6:#A9B8CC;
+  --cat7:#E7B9C6; --cat8:#9DB88A; --cat9:#9EC1DE; --cat10:#CDB57E; --cat11:#BDBDBD; --cat12:#D9D5C6;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root{
-  --bg:#0B0B0D; --surface:#1A1A1E; --ink:#F2F2F4; --muted:#A1A1AA; --line:#2B2B31;
-  --accent:#F2F2F4; --accent-ink:#111113; --accent-soft:#26262C;
-  --hero:#1F1F24; --hero-ink:#FFFFFF; --hero-muted:#A1A1AA;
-  --nav:#1F1F24; --nav-ink:#8B8B94; --cat3:#E4E4E9;
-  --warn:#F1C64E; --warn-soft:#3B3014; --bad:#FF8A7E; --bad-soft:#3F201C; color-scheme:dark}}
+  --bg:#0E0E0E; --surface:#1C1C1B; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2D2A;
+  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#262624;
+  --hero:#1C1C1B; --nav:#1C1C1B; --nav-ink:#8E8C84; --nav-on:#F2F1EC;
+  --neutro:#C9C7C0;
+  --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C; color-scheme:dark}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -35,33 +36,37 @@ header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacin
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
 .gear svg{width:22px;height:22px}
-.gear[aria-current=page]{background:var(--lime);border-color:var(--lime);color:var(--on-color)}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-/* Tarjeta principal negra y tarjetas de acento: redefinen los colores de lo que llevan dentro */
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
-.card.lime,.card.lav{color:var(--on-color);--ink:var(--on-color);--muted:rgba(17,17,19,.62);--line:rgba(17,17,19,.14);--bad:#B3261E;--accent-soft:rgba(255,255,255,.6)}
-.card.lime{background:var(--lime)} .card.lav{background:var(--lavender)}
+/* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
+.card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
 .lbl{font-size:15px;color:var(--ink);font-weight:600}
 .big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
-.bar>i{display:block;height:100%;background:var(--lime);border-radius:4px}
-.lime .bar>i,.lav .bar>i{background:var(--on-color)}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
 .bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
 .sub{font-size:14px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.ok{background:var(--lime);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
 .con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Forma del gasto del mes: tres círculos rojos, el del centro crece con lo gastado */
+.forma{display:block;width:100%;height:auto}
+.forma circle{fill:var(--rojo)}
+.forma.bad .centro{stroke:var(--ink);stroke-width:6}
 /* Anillo del tope */
 .ring{position:relative;width:64px;height:64px;flex:none}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:8;stroke-linecap:round}
-.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--lime)}
-.lime .ring .valor,.lav .ring .valor{stroke:var(--on-color)}
-.ring.warn .valor{stroke:var(--warn)} .ring.bad .valor{stroke:var(--bad)}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
 /* Torta (dona) de categorías */
 .torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
@@ -70,11 +75,11 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .torta .centro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .torta .centro span{font-size:13px;color:var(--muted)}
-/* Barras por semana */
+/* Barras por semana: rayadas, la actual en negro */
 .barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
 .barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
-.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:10px;background:var(--lavender)}
-.barras .col.hoy i{background:var(--lime)}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
 .barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
 .barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .barras .col.hoy small{color:var(--ink);font-weight:700}
@@ -83,10 +88,29 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
 .meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
 .meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
-.meses .ing{background:var(--lime)} .meses .gas{background:var(--lavender)}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
 .meses .col small{font-size:12px;color:var(--muted)}
 .meses .col.neg small{color:var(--bad);font-weight:700}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.tira{display:flex;gap:10px;overflow-x:auto;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px));scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.mini{flex:0 0 128px;background:var(--surface);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:28px}
+.mini .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini b{font-size:26px;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos como tarjetas apiladas */
+.pila{display:flex;flex-direction:column}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 rgba(255,255,255,.35)}
+.mov:first-child{margin-top:0}
+.mov:last-child{padding-bottom:16px}
+.mov .ico{background:rgba(255,255,255,.7);color:var(--on-color)}
+.mov .cat{font-size:12px;color:var(--muted)}
+.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
+.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea .num{flex:none}
+.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.mov{position:relative}
 .list{display:flex;flex-direction:column}
 .item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
 .item:last-child{border-bottom:0}
@@ -95,7 +119,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
 .item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
 .item.tap:last-child{border-bottom:0}
-.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
 .pos{color:var(--ink)} .neg{color:var(--bad)}
 .empty{color:var(--muted);font-size:15px;padding:8px 0}
 .check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
@@ -111,15 +135,15 @@ textarea{font-family:var(--mono);font-size:12px;min-height:120px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
 .seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
 nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button svg{width:23px;height:23px}
-nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
-.fab{justify-self:center;width:62px;height:62px;border-radius:31px;border:5px solid var(--bg);background:var(--lime);color:var(--on-color);font-size:32px;line-height:1;margin-top:-34px;padding:0;display:grid;place-items:center;font-weight:400}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
 .sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
 .sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
-.amount{font-size:36px !important;font-weight:700;text-align:center;border-radius:20px !important}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
 [hidden]{display:none!important}
 </style>
@@ -181,34 +205,38 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
 -->
 <section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card hero" data-ui="resultado-mes"><span class="lbl">Resultado del mes</span><span class="big">1550,2 €</span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 149,8 €</span></div></div>
+    <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px"><svg class="forma" viewBox="0 0 358 150" data-ui="forma-gasto"><circle cx="0" cy="75" r="75"/><circle class="centro" cx="179" cy="75" r="23"/><circle cx="358" cy="75" r="75"/></svg><span class="sub">Gastaste el 9 % de lo que entró</span><span class="sub">Resultado del mes</span><span class="monto">1550<span class="dec">,2 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 149,8 €</span></div></div>
+    <div class="tira" data-ui="ultimos-gastos"><div class="mini"><span class="ico" style="background:var(--cat4);color:var(--on-color)">T</span><div><div class="sub">Transporte · Banco A</div><b>-25,5</b></div></div><div class="mini"><span class="ico" style="background:var(--cat11);color:var(--on-color)">T</span><div><div class="sub">Trabajo (reembolsable) · Tarjeta</div><b>-42</b></div></div><div class="mini"><span class="ico" style="background:var(--cat2);color:var(--on-color)">C</span><div><div class="sub">Comida fuera · Revolut</div><b>-18</b></div></div><div class="mini"><span class="ico" style="background:var(--cat1);color:var(--on-color)">S</span><div><div class="sub">Súper · Tarjeta</div><b>-64,3</b></div></div></div>
     <div class="grid2" data-ui="disponibles">
       <div class="card" data-ui="disponible"><div class="row"><span class="lbl">Tarjeta</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:22.6 175.9"/></svg><b>13 %</b></div></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
       <div class="card" data-ui="disponible"><div class="row"><span class="lbl">Revolut</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:10.6 175.9"/></svg><b>6 %</b></div></div><span class="big">282 €</span><span class="sub">Gastado 18 € de 300 €</span></div>
     </div>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="torta" data-ui="torta-categorias"><svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="77" style="stroke:var(--cat1);stroke-dasharray:205.7 483.8;stroke-dashoffset:0.0"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat11);stroke-dasharray:133.6 483.8;stroke-dashoffset:-207.7"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat4);stroke-dasharray:80.4 483.8;stroke-dashoffset:-343.3"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat2);stroke-dasharray:56.1 483.8;stroke-dashoffset:-425.7"/></svg><div class="centro"><b>149,8 €</b><span>gastado en octubre</span></div></div><div class="list" data-ui="lista-categorias"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Súper</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat11)"></i>Trabajo (reembolsable)</span><span class="num">42 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat4)"></i>Transporte</span><span class="num">25,5 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat2)"></i>Comida fuera</span><span class="num">18 €</span></div></div></div>
     <div class="card" data-ui="barras-semana"><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras"><div class="col"><em>82,3 €</em><i style="height:100%"></i><small>1–7</small></div><div class="col"><em>67,5 €</em><i style="height:82%"></i><small>8–14</small></div><div class="col hoy"><em></em><i style="height:3%"></i><small>15–21</small></div><div class="col"><em></em><i style="height:3%"></i><small>22–28</small></div><div class="col"><em></em><i style="height:3%"></i><small>29–31</small></div></div></div>
-    <div class="card" data-ui="ingresos-gastos"><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--lime)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--lavender)"></i>Gastos</span></span></div><div class="meses"><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>may</small></div><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>jun</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:78%"></i></div><small>jul</small></div><div class="col neg"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:95%"></i></div><small>ago</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:53%"></i></div><small>sep</small></div><div class="col"><div class="par"><i class="ing" style="height:100%"></i><i class="gas" style="height:9%"></i></div><small>oct</small></div></div></div>
-    <div class="card lime" data-ui="patrimonio-inicio"><div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
+    <div class="card" data-ui="ingresos-gastos"><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses"><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>may</small></div><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>jun</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:78%"></i></div><small>jul</small></div><div class="col neg"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:95%"></i></div><small>ago</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:53%"></i></div><small>sep</small></div><div class="col"><div class="par"><i class="ing" style="height:100%"></i><i class="gas" style="height:9%"></i></div><small>oct</small></div></div></div>
+    <div class="card color" style="--c:var(--cat1)" data-ui="patrimonio-inicio"><div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card lime" data-ui="primer-paso"><span class="lbl">Primer paso</span><span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span><button class="btn">Crear cuenta</button></div>
-    <div class="card hero"><span class="lbl">Resultado del mes</span><span class="big">0 €</span><div class="row sub"><span>Ingresos 0 €</span><span>Gastos 0 €</span></div></div>
+    <div class="card color" style="--c:var(--cat5)" data-ui="primer-paso"><span class="lbl">Primer paso</span><span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span><button class="btn">Crear cuenta</button></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><svg class="forma" viewBox="0 0 358 150" data-ui="forma-gasto"><circle cx="0" cy="75" r="75"/><circle class="centro" cx="179" cy="75" r="18"/><circle cx="358" cy="75" r="75"/></svg><span class="sub">Todavía no anotaste ingresos este mes</span><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
     <div class="card"><span class="lbl">Gasto del mes</span><div class="empty">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
   </div>
 </section>
 <section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
-  <div data-estado="normal"><div class="card" data-ui="lista-movimientos"><div class="row sub" data-ui="totales-mes"><span>Ingresos <b class="num">1700 €</b></span><span>Gastos <b class="num">149,8 €</b></span></div><div class="list">
-      <div class="item"><div class="d"><span>Ajuste de conciliación</span><span>14/10 · Revolut</span></div><div class="row"><span class="num">−12,3 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Transporte</span><span>11/10 · Banco A</span></div><div class="row"><span class="num">−25,5 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Venta o trabajo extra · bicicleta</span><span>09/10 · Banco A</span></div><div class="row"><span class="num">+200 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Trabajo (reembolsable) · taxi</span><span>08/10 · Tarjeta</span></div><div class="row"><span class="num">−42 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Comida fuera · almuerzo</span><span>05/10 · Revolut</span></div><div class="row"><span class="num">−18 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Súper</span><span>03/10 · Tarjeta</span></div><div class="row"><span class="num">−64,3 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Transferencia</span><span>02/10 · Banco A → Revolut</span></div><div class="row"><span class="num">300 €</span><button>×</button></div></div>
-      <div class="item"><div class="d"><span>Sueldo</span><span>01/10 · Banco A</span></div><div class="row"><span class="num">+1500 €</span><button>×</button></div></div>
-    </div></div></div>
-  <div data-estado="vacio"><div class="card"><div class="row sub"><span>Ingresos <b class="num">0 €</b></span><span>Gastos <b class="num">0 €</b></span></div><div class="empty">Sin movimientos este mes.</div></div></div>
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big">1700 €</div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big">149,8 €</div></div></div>
+    <div class="pila" data-ui="lista-movimientos">
+      <div class="mov" style="--c:var(--neutro)"><button class="x">×</button><span class="ico">≈</span><span class="cat">Ajuste de conciliación · 14/10</span><div class="linea"><span>Revolut</span><span class="num">−12,3 €</span></div></div>
+      <div class="mov" style="--c:var(--cat4)"><button class="x">×</button><span class="ico">T</span><span class="cat">Transporte · 11/10</span><div class="linea"><span>Banco A</span><span class="num">−25,5 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><button class="x">×</button><span class="ico">+</span><span class="cat">Venta o trabajo extra · 09/10</span><div class="linea"><span>bicicleta</span><span class="num">+200 €</span></div></div>
+      <div class="mov" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 08/10</span><div class="linea"><span>taxi</span><span class="num">−42 €</span></div></div>
+      <div class="mov" style="--c:var(--cat2)"><button class="x">×</button><span class="ico">C</span><span class="cat">Comida fuera · 05/10</span><div class="linea"><span>almuerzo</span><span class="num">−18 €</span></div></div>
+      <div class="mov" style="--c:var(--cat1)"><button class="x">×</button><span class="ico">S</span><span class="cat">Súper · 03/10</span><div class="linea"><span>Tarjeta</span><span class="num">−64,3 €</span></div></div>
+      <div class="mov" style="--c:var(--neutro)"><button class="x">×</button><span class="ico">→</span><span class="cat">Transferencia · 02/10</span><div class="linea"><span>Banco A → Revolut</span><span class="num">300 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><button class="x">×</button><span class="ico">+</span><span class="cat">Sueldo · 01/10</span><div class="linea"><span>Banco A</span><span class="num">+1500 €</span></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px"><div class="row"><div><span class="sub">Ingresos</span><div class="big">0 €</div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big">0 €</div></div></div><div class="card"><div class="empty">Sin movimientos este mes.</div></div></div>
 </section>
 <section data-pantalla="hoja-movimiento" data-titulo="Este mes" style="flex-direction:column;gap:14px">
   <div data-estado="normal"><div class="sheet-bg"></div><div class="sheet" data-ui="hoja-movimiento">
@@ -223,7 +251,7 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
   </div></div>
   <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet">
     <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
-    <div class="card lime" data-ui="sin-cuentas"><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button class="btn">Crear cuenta</button></div>
+    <div class="card color" style="--c:var(--cat5)" data-ui="sin-cuentas"><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button class="btn">Crear cuenta</button></div>
   </div></div>
 </section>
 <section data-pantalla="hoja-transferencia" data-titulo="Este mes" style="flex-direction:column;gap:14px">
@@ -234,7 +262,6 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
     <div data-ui="desde"><span class="lbl">Desde</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Banco A</button><button aria-pressed="false">Tarjeta</button><button aria-pressed="false">Revolut</button><button aria-pressed="false">Fondo</button><button aria-pressed="false">Broker X</button></div></div>
     <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Banco A</button><button aria-pressed="true">Tarjeta</button><button aria-pressed="false">Revolut</button><button aria-pressed="false">Fondo</button><button aria-pressed="false">Broker X</button></div></div>
     <label class="f">Nota (opcional)<input type="text" value="pago de la tarjeta"></label>
-    <label class="f">Fecha<input type="date" value="2026-10-15"></label>
     <button class="btn">Guardar transferencia</button>
   </div></div>
   <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet">
@@ -248,16 +275,16 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
 </section>
 <section data-pantalla="cuentas" data-titulo="Mis cuentas" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card hero" data-ui="patrimonio"><span class="lbl">Patrimonio neto</span><span class="big">4587,9 €</span><div class="row sub"><span>Tenés 4694,2 €</span><span>Debés 106,3 €</span></div></div>
+    <div data-ui="patrimonio" style="display:flex;flex-direction:column;gap:6px"><span class="sub">Patrimonio neto</span><span class="monto">4587<span class="dec">,9 €</span></span><div class="row sub"><span>Tenés 4694,2 €</span><span>Debés 106,3 €</span></div></div>
     <div data-ui="grupos-cuentas" style="display:flex;flex-direction:column;gap:14px">
     <div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(--cat1)"></i>Bancos y efectivo</span><span class="num sub">2594,2 €</span></div><div class="list"><div class="item"><div class="d"><span>Banco A</span><span>sin tope</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>tope 300 €</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div><div class="item"><div class="d"><span>Fondo</span><span>fondo de emergencia</span></div><div class="v"><span class="num">150 €</span><span class="chip ok">Conciliada</span></div></div></div></div>
-    <div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(--cat2)"></i>Inversiones</span><span class="num sub">2100 €</span></div><div class="list"><div class="item"><div class="d"><span>Broker X</span><span>+100 € (+5,0 %) sobre 2000 €</span></div><div class="v"><span class="num">2100 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
-    <div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(--cat5)"></i>Tarjetas de crédito</span><span class="num sub">-106,3 €</span></div><div class="list"><div class="item"><div class="d"><span>Tarjeta</span><span>tope 500 € · disponible 1393,7 € de 1500 €</span></div><div class="v"><span class="num neg">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
+    <div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(--cat9)"></i>Inversiones</span><span class="num sub">2100 €</span></div><div class="list"><div class="item"><div class="d"><span>Broker X</span><span>+100 € (+5,0 %) sobre 2000 €</span></div><div class="v"><span class="num">2100 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
+    <div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(--cat3)"></i>Tarjetas de crédito</span><span class="num sub">-106,3 €</span></div><div class="list"><div class="item"><div class="d"><span>Tarjeta</span><span>tope 500 € · disponible 1393,7 € de 1500 €</span></div><div class="v"><span class="num neg">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
     </div>
     <button class="btn">Agregar cuenta</button>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card lime"><span class="lbl">Tu foto financiera</span><span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span></div>
+    <div class="card color" style="--c:var(--cat5)"><span class="lbl">Tu foto financiera</span><span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span></div>
     <button class="btn">Agregar cuenta</button>
   </div>
 </section>
@@ -285,7 +312,7 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
 </section>
 <section data-pantalla="mes" data-titulo="Cierre del mes" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card hero" data-ui="conciliacion"><div class="row"><span class="lbl">Conciliación de octubre</span><span class="chip idle">2 de 5</span></div><span class="sub">2 de 5 cuentas conciliadas. Tocá una para cargar el saldo real.</span><div class="list">
+    <div class="card" data-ui="conciliacion"><div class="row"><span class="lbl">Conciliación de octubre</span><span class="chip idle">2 de 5</span></div><span class="sub">2 de 5 cuentas conciliadas. Tocá una para cargar el saldo real.</span><div class="list">
       <div class="item"><div class="d"><span>Banco A</span><span>al 15/10</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>al 15/10</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div><div class="item"><div class="d"><span>Fondo</span><span>al 15/10</span></div><div class="v"><span class="num">150 €</span><span class="chip ok">Conciliada</span></div></div><div class="item"><div class="d"><span>Broker X</span><span>al 15/10</span></div><div class="v"><span class="num">2100 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Tarjeta</span><span>al 15/10</span></div><div class="v"><span class="num neg">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div>
     </div></div>
     <div class="card" data-ui="checklist"><span class="lbl">Día de cobro</span><div><label class="check"><input type="checkbox" checked><span>Transferir 100 € al fondo</span></label><label class="check"><input type="checkbox" checked><span>Transferir 300 € a Revolut</span></label><label class="check"><input type="checkbox"><span>Tarjeta cobrada en pago total, sin fraccionar</span></label><label class="check"><input type="checkbox"><span>Gastos de empresa cargados en la app</span></label><label class="check"><input type="checkbox"><span>Día 15: tarjeta por debajo de la mitad del tope</span></label></div><button class="btn sec">Agregar tarea</button></div>
@@ -296,7 +323,7 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
     </div></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card hero"><span class="lbl">Conciliación de octubre</span><span class="sub">Creá tus cuentas para conciliarlas a fin de mes.</span></div>
+    <div class="card"><span class="lbl">Conciliación de octubre</span><span class="sub">Creá tus cuentas para conciliarlas a fin de mes.</span></div>
     <div class="card"><span class="lbl">Día de cobro</span><div class="empty">Agregá las tareas de tu cierre de mes.</div><button class="btn sec">Agregar tarea</button></div>
     <div class="card"><span class="lbl">Plan del fondo</span><div class="empty">Cargá el aporte, el objetivo y el mes de inicio en Ajustes.</div></div>
   </div>
@@ -306,7 +333,7 @@ nav button[aria-current=page]{color:#FFFFFF;font-weight:600}
     <div class="row"><h2>Conciliar Banco A</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
     <div class="row"><span class="sub">Saldo calculado al 15/10</span><span class="num lbl">987,5 €</span></div>
     <label class="f">Saldo real según tu banco (€)<input type="number" class="amount" value="975.20"></label>
-    <div class="card" data-ui="diferencia"><div class="row"><span class="lbl">Diferencia</span><span class="chip warnc">-12,3 €</span></div><span class="sub">Puede ser un gasto que no anotaste o una comisión. Si lo registrás como ajuste, la cuenta queda conciliada con el saldo real y el ajuste no cuenta como gasto.</span></div>
+    <div class="card color" style="--c:var(--cat3)" data-ui="diferencia"><div class="row"><span class="lbl">Diferencia</span><span class="lbl num">-12,3 €</span></div><span class="sub">Puede ser un gasto que no anotaste o una comisión. Si lo registrás como ajuste, la cuenta queda conciliada con el saldo real y el ajuste no cuenta como gasto.</span></div>
     <button class="btn">Registrar ajuste y conciliar</button>
     <button class="btn sec">Dejar pendiente</button>
   </div></div>
