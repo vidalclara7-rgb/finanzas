@@ -44,8 +44,9 @@
 
 ## Gate 2 (2026-10-25)
 
-- Variables en rayado de tinta y fijos en tinta llena: el fucsia de la primera versión coincidía con
-  Ocio y confundía en el ranking. Clases nuevas: `.partida`, `.reparto`, `.rank`, `.bar.cat`.
+- Fijos en tinta y variables en frambuesa. El fucsia de la primera versión coincidía con Ocio y
+  confundía en el ranking; el rayado no le gustó a la persona; entre gris y frambuesa eligió
+  frambuesa, que es el color de Trabajo (reembolsable), fuera de este gráfico. Clases nuevas: `.partida`, `.reparto`, `.rank`, `.bar.cat`.
 - Las barras del ranking se miden contra el total del mes, para comparar entre grupos.
 - Pantallas del preview: `inicio`, `movs` y `hoja-gasto-fijo` (la casilla dentro de la hoja de
   movimiento).
