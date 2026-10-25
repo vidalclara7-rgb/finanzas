@@ -1,6 +1,6 @@
 ---
 cambio: reembolsos
-estado: diseno-aprobado
+estado: construida
 datos: amplia
 ---
 # Reembolsos de gastos corporativos
