@@ -1,7 +1,8 @@
 ---
 cambio: gastos-fijos-y-variables
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-25
 ---
 # Gastos fijos y variables en Inicio
 
