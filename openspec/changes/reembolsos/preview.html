@@ -10,7 +10,7 @@
   --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
   --ink-base:#121212; --muted-base:#77766F;
   --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
-  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
+  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --frambuesa:#D63C7A; --rosa-claro:#F8CDE6; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
   --on-color:#121212;
   --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
   --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
@@ -18,7 +18,7 @@
   --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
   --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
-  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#C9C9C4; --cat12:#E2DED3;
+  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#D63C7A; --cat12:#E2DED3;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
@@ -214,8 +214,16 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 -->
 <section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1550<span class="dec">,2 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 149,8 €</span></div></div>
-    <div class="card color" style="--c:var(--cat3)" data-ui="por-cobrar"><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big">34,4 €</span><span class="sub">2 pendientes · 1 aprobado</span></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
+    <div class="card color" style="--c:var(--rosa)" data-ui="por-cobrar"><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big">34,4 €</span><span class="sub">2 pendientes · 1 aprobado</span></div>
+    <div class="grid2" data-ui="disponibles-color">
+      <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:22.6 175.9"/></svg><b>13 %</b></div></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span><div class="ring" data-ui="anillo-tope"><svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:28.1 175.9"/></svg><b>16 %</b></div></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+    </div>
+    <div class="card"><span class="lbl">Gasto del mes</span><div class="torta"><svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="77" style="stroke:var(--cat1);stroke-dasharray:199.6 483.8;stroke-dashoffset:0.0"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat11);stroke-dasharray:129.7 483.8;stroke-dashoffset:-201.6"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat5);stroke-dasharray:92.1 483.8;stroke-dashoffset:-333.3"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat3);stroke-dasharray:54.4 483.8;stroke-dashoffset:-427.4"/></svg><div class="centro"><b>154,3 €</b><span>gastado en octubre</span></div></div><div class="list"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Súper</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat11)"></i>Trabajo (reembolsable)</span><span class="num">42 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat5)"></i>Ocio</span><span class="num">30 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat3)"></i>Delivery</span><span class="num">18 €</span></div></div></div>
+    <div class="card color" style="--c:var(--rosa-claro)"><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras"><div class="col"><em>82,3 €</em><i style="height:100%"></i><small>1–7</small></div><div class="col"><em>72 €</em><i style="height:87%"></i><small>8–14</small></div><div class="col hoy"><em></em><i style="height:3%"></i><small>15–21</small></div><div class="col"><em></em><i style="height:3%"></i><small>22–28</small></div><div class="col"><em></em><i style="height:3%"></i><small>29–31</small></div></div></div>
+    <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Ingresos y gastos</span></div><div class="meses"><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>may</small></div><div class="col"><div class="par"><i class="ing" style="height:2%"></i><i class="gas" style="height:2%"></i></div><small>jun</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:78%"></i></div><small>jul</small></div><div class="col neg"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:95%"></i></div><small>ago</small></div><div class="col"><div class="par"><i class="ing" style="height:88%"></i><i class="gas" style="height:53%"></i></div><small>sep</small></div><div class="col"><div class="par"><i class="ing" style="height:100%"></i><i class="gas" style="height:9%"></i></div><small>oct</small></div></div></div>
+    <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Patrimonio neto</span></div><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
@@ -226,8 +234,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
     <div data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Pendiente 2</button><button aria-pressed="false">Aprobado 1</button><button aria-pressed="false">Pagado 3</button></div></div>
     <div class="pila">
-      <div class="mov" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 12/10</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>parking</span><span class="num">−12,4 €</span></div></div>
-      <div class="mov" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 28/09</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>almuerzo con cliente</span><span class="num">−15 €</span></div></div>
+      <div class="mov osc" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 12/10</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>parking</span><span class="num">−12,4 €</span></div></div>
+      <div class="mov osc" style="--c:var(--cat11)"><button class="x">×</button><span class="ico">T</span><span class="cat">Trabajo (reembolsable) · 28/09</span><span class="chip warnc" data-ui="estado-reembolso" style="align-self:flex-start">Pendiente</span><div class="linea"><span>almuerzo con cliente</span><span class="num">−15 €</span></div></div>
     </div>
     <div class="row" data-ui="suma-filtro"><span class="sub">2 gastos</span><span class="lbl">Suma 27,4 €</span></div>
   </div>
@@ -251,7 +259,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
     <div class="seg" style="margin-top:8px"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
     <input type="number" class="amount" placeholder="0,00 €">
-    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Súper</button><button aria-pressed="false">Comida fuera</button><button aria-pressed="false">Transporte</button><button aria-pressed="true">Trabajo (reembolsable)</button><button aria-pressed="false">Otros</button></div></div>
     <div><span class="lbl">Reembolso</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Pendiente</button><button aria-pressed="false">Aprobado</button><button aria-pressed="false">Pagado</button></div></div>
     <button class="btn">Guardar gasto</button>
   </div></div>
@@ -261,23 +268,37 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
     <div class="seg" style="margin-top:8px"><button aria-pressed="false">Gasto</button><button aria-pressed="true">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
     <input type="number" class="amount" value="17">
-    <div><span class="lbl">Cuenta</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Banco A</button><button aria-pressed="false">Tarjeta</button><button aria-pressed="false">Revolut</button></div></div>
     <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Sueldo</button><button aria-pressed="true">Reembolso</button><button aria-pressed="false">Venta o trabajo extra</button><button aria-pressed="false">Regalo</button><button aria-pressed="false">Intereses y rendimientos</button><button aria-pressed="false">Otros</button></div></div>
-    <div class="card" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span><div>
-      <label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>parking</span><span class="sub">12/10 · Pendiente</span></span><span class="num">12,4 €</span></label>
-      <label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>taxi</span><span class="sub">05/10 · Aprobado</span></span><span class="num">4,6 €</span></label>
-      <label class="check"><input type="checkbox"><span style="flex:1;display:flex;flex-direction:column"><span>almuerzo con cliente</span><span class="sub">28/09 · Pendiente</span></span><span class="num">15 €</span></label>
+    <div class="card color" style="--c:var(--rosa-claro)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span><div>
+      <label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>parking</span><span class="sub">12/10 · Pendiente</span></span><span class="num">12,4 €</span></label><label class="check"><input type="checkbox" checked><span style="flex:1;display:flex;flex-direction:column"><span>taxi</span><span class="sub">05/10 · Aprobado</span></span><span class="num">4,6 €</span></label><label class="check"><input type="checkbox"><span style="flex:1;display:flex;flex-direction:column"><span>almuerzo con cliente</span><span class="sub">28/09 · Pendiente</span></span><span class="num">15 €</span></label>
     </div><div class="row sub"><span>Marcados 17 €</span><span>Ingreso 17 €</span></div></div>
     <button class="btn">Guardar ingreso</button>
   </div></div>
   <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet">
     <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
     <div class="seg" style="margin-top:8px"><button aria-pressed="false">Gasto</button><button aria-pressed="true">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
-    <input type="number" class="amount" value="13">
-    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Sueldo</button><button aria-pressed="true">Reembolso</button><button aria-pressed="false">Venta o trabajo extra</button><button aria-pressed="false">Regalo</button><button aria-pressed="false">Intereses y rendimientos</button><button aria-pressed="false">Otros</button></div></div>
-    <div class="card"><span class="lbl">¿Qué gastos cubre?</span><div class="empty">No tenés reembolsos por cobrar.</div></div>
+    <div class="card color" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div class="empty">No tenés reembolsos por cobrar.</div></div>
     <button class="btn">Guardar ingreso</button>
   </div></div>
+</section>
+<section data-pantalla="cuentas" data-titulo="Mis cuentas" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Patrimonio neto</span><span class="monto">4587<span class="dec">,9 €</span></span></div>
+    <div data-ui="grupos-color" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Bancos y efectivo</span><span class="num sub">2594,2 €</span></div><div class="list"><div class="item"><div class="d"><span>Banco A</span><span>sin tope</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>tope 300 €</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div></div></div>
+    <div class="card color osc" style="--c:var(--oliva)"><div class="row"><span class="lbl">Inversiones</span><span class="num sub">2100 €</span></div><div class="list"><div class="item"><div class="d"><span>Broker X</span><span>+100 € (+5,0 %) sobre 2000 €</span></div><div class="v"><span class="num">2100 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
+    <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjetas de crédito</span><span class="num sub">-106,3 €</span></div><div class="list"><div class="item"><div class="d"><span>Tarjeta</span><span>tope 500 €</span></div><div class="v"><span class="num">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--fucsia)"><div class="row"><span class="lbl">Financiaciones</span><span class="num sub">-600 €</span></div><div class="list"><div class="item"><div class="d"><span>Financiera Z</span><span>50 €/mes · faltan 12</span></div><div class="v"><span class="num">-600 €</span><span class="chip idle">Sin conciliar</span></div></div></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio"><div class="card color" style="--c:var(--rosa)"><span class="lbl">Tu foto financiera</span><span>Cargá lo que tenés y lo que debés.</span></div></div>
+</section>
+<section data-pantalla="mes" data-titulo="Cierre del mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color osc" style="--c:var(--oliva)" data-ui="conciliacion-color"><div class="row"><span class="lbl">Conciliación de octubre</span><span class="chip idle">1 de 3</span></div><div class="list"><div class="item"><div class="d"><span>Banco A</span><span>al 15/10</span></div><div class="v"><span class="num">2174,5 €</span><span class="chip idle">Sin conciliar</span></div></div><div class="item"><div class="d"><span>Revolut</span><span>al 15/10</span></div><div class="v"><span class="num">269,7 €</span><span class="chip ok">Conciliada</span></div></div><div class="item"><div class="d"><span>Tarjeta</span><span>al 15/10</span></div><div class="v"><span class="num">-106,3 €</span><span class="chip warnc">Diferencia -8,5 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--rosa)" data-ui="checklist-color"><span class="lbl">Día de cobro</span><div><label class="check"><input type="checkbox" checked><span>Transferir 100 € al fondo</span></label><label class="check"><input type="checkbox"><span>Pagar el alquiler</span></label></div><button class="btn sec">Agregar tarea</button></div>
+  </div>
+  <div data-estado="vacio"><div class="card color" style="--c:var(--rosa)"><span class="lbl">Día de cobro</span><div class="empty">Agregá las tareas de tu cierre de mes.</div></div></div>
 </section>
 <!-- pantallas:fin -->
 </main>
@@ -288,8 +309,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
 <button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
 <button class="fab" data-ir="hoja-ingreso-reembolso">+</button>
-<button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
-<button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Cierre</button>
+<button data-ir="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
+<button data-ir="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Cierre</button>
 <!-- nav:fin -->
 </nav>
 </body>

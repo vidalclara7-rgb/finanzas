@@ -22,3 +22,10 @@
   restaurar copias), sin cambiar `v`.
 - Al cambiar la categoría de un gasto a otra, se le quita `reembolso`.
 - Sube la versión de la caché.
+
+## Más color (2026-10-25, a pedido de la persona en el Gate 2)
+
+«Las cards siguen siendo grises»: Trabajo (reembolsable) tenía el gris y casi todas las tarjetas eran
+blancas. Se sustituye el requisito de estilo de la viva (venía de paleta-viva): Trabajo pasa a
+frambuesa `#D63C7A` con texto blanco, y las tarjetas toman color según su contenido (ver el
+requisito). «Gasto del mes» queda blanca porque la torta lleva los colores de todas las categorías.
