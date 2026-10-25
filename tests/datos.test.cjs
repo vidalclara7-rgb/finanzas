@@ -229,3 +229,21 @@ t.test("copia con fijos y una sugerencia rechazada", async () => {
   await A.ir(page, "movs");
   assert.equal(await A.texto(page, '[data-mov="1"] [data-ui="chip-fijo"]'), "Fijo");
 });
+
+// Escenario: datos sin importaciones
+t.test("datos sin importaciones", async () => {
+  const X = require("./extractos.cjs");
+  const datos = A.v2({ cuentas: [BANCO, A.cta(2, "Revolut", 50)], movs: [A.gasto(1, "2026-10-03", 20, 1, "Súper", "verdulería")] });
+  delete datos.reglas;
+  const { page, errores } = await abrir({ datos });
+  const d = await A.guardados(page);
+  assert.deepEqual(d.cuentas, datos.cuentas);
+  assert.deepEqual(d.movs, datos.movs);
+  assert.deepEqual(d.reglas, {});
+  await A.ir(page, "movs");
+  await page.setInputFiles("#pdfIn", { name: "extracto.pdf", mimeType: "application/pdf", buffer: await X.revolut(page, { movs: [{ fecha: "2026-10-05", desc: "Tienda Ejemplo", importe: -5 }] }) });
+  await page.waitForFunction(() => !document.getElementById("sheetI").hidden, null, { timeout: 20000 });
+  assert.ok(await page.isVisible("#iElegir"));
+  assert.equal(await page.locator('#segIElegir [aria-pressed="true"]').count(), 0);
+  assert.deepEqual(errores, []);
+});

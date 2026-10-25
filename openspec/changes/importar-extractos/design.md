@@ -62,3 +62,23 @@
   <categoría>» o «Transferencia a/desde <cuenta>», según el signo del importe.
 - Clases nuevas: `.borradores`, `.borr` (y `.off` para los desmarcados), `.adj`. Arreglo general:
   `.sheet>*{flex-shrink:0}`, porque en hojas largas las tarjetas se aplastaban y cortaban su contenido.
+
+## Al construir (2026-10-25)
+
+- pdf.js 3.11.174, build `legacy` (navegadores más viejos), en `vendor/pdfjs/` con su licencia y en
+  `FILES` del service worker. Se carga con una etiqueta `<script>` la primera vez que se importa.
+- Los adjuntos y su índice viven en IndexedDB, no en `S`: así la copia de seguridad (que reemplaza
+  `S` al restaurar) no deja índices de archivos que no viajan. Cambia lo que decía arriba.
+- Santander cuenta: la fecha del movimiento es la fecha valor (la del gasto); la fecha de operación es
+  cuando se asienta, hasta cuatro días después, y no emparejaba las recargas con Revolut.
+- Transferencias: además de lo previsto, el cargo «Liquidación de las tarjetas de crédito» va a la
+  tarjeta cuando hay una sola. A nombre propio sin la otra mitad cargada, se propone la primera cuenta
+  de bancos: la persona lo cambia en el selector si es otra (por ejemplo, una cuenta fuera de la app).
+- La otra mitad de una transferencia sólo cuenta como «Ya está» si ya es una transferencia; un gasto o
+  ingreso del mismo importe en otra cuenta no se toca.
+- Tarjeta: las cuotas de compras fraccionadas («CUOTA FRACCIONAR COMPRA …») y los intereses de la
+  sección C entran como gastos del mes, porque son parte del importe a pagar; el plan de cuotas queda
+  fuera de alcance, como decía la propuesta.
+- Desmarcar «Fijo» en un borrador deja la regla en «no es fijo», igual que en la hoja de gasto.
+- Probado contra los tres extractos reales de la persona, fuera del repo: los totales cuadran al
+  céntimo con el saldo de cada extracto. El de Revolut Trading se rechaza con el aviso.

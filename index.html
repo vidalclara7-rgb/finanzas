@@ -93,6 +93,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .borr .marcas{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
 .borr.off .d,.borr.off .num{opacity:.5}
 .borr .cubre{grid-column:2/4}
+button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 /* Adjuntos de una cuenta */
 .adj{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .adj:last-child{border-bottom:0}
@@ -236,6 +237,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
   <!-- MOVIMIENTOS -->
   <section id="v-movs" data-pantalla="movs" hidden style="flex-direction:column;gap:14px">
+    <button class="btn sec" id="importar" data-ui="importar-extracto">Importar extracto</button>
+    <input type="file" id="pdfIn" accept="application/pdf,.pdf" hidden>
     <div data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" id="segReemb" style="margin-top:8px"></div></div>
     <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big" id="totIng"></div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big" id="totGas"></div></div></div>
     <div class="pila" id="movs" data-ui="lista-movimientos"></div>
@@ -284,6 +287,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="card">
       <span class="lbl">Copia de seguridad</span>
       <span class="sub">Tus datos viven solo en este iPhone. Hacé una copia cada tanto y guardala en Notas.</span>
+      <span class="sub" id="avisoAdj" data-ui="aviso-adjuntos" hidden></span>
       <button class="btn sec" id="copiarBackup">Copiar copia de seguridad</button>
       <label class="f" for="backupIn">Restaurar: pegá una copia acá<textarea id="backupIn"></textarea></label>
       <button class="btn danger" id="restaurar">Restaurar copia</button>
@@ -339,6 +343,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <label class="f" for="cCuotas" data-t="financiacion">Cuotas que faltan (opcional)<input type="number" inputmode="numeric" step="1" id="cCuotas"></label>
   <label class="f" for="cTope" data-t="liquidez tarjeta">Tope de gasto mensual (€, opcional)<input type="number" inputmode="decimal" step="0.01" id="cTope" placeholder="Sin tope"></label>
   <label class="check" for="cFondo" data-t="liquidez" data-ui="es-fondo"><input type="checkbox" id="cFondo"><span>Es mi fondo de emergencia</span></label>
+  <div class="card" id="cAdj" data-ui="adjuntos"><span class="lbl">Adjuntos</span><div id="cAdjLista"></div>
+    <div class="row" style="gap:8px"><button type="button" class="btn sec" style="flex:1" id="cAdjuntar" data-ui="adjuntar">Adjuntar archivo</button><button type="button" class="btn sec" style="flex:1" id="cImportar" data-ui="importar-cuenta">Importar extracto</button></div>
+    <input type="file" id="adjIn" accept="application/pdf,image/*" hidden></div>
   <button class="btn" type="submit">Guardar cuenta</button>
   <button class="btn danger" type="button" id="cBorrar" hidden>Borrar cuenta</button>
 </form>
@@ -353,6 +360,26 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <button class="btn" type="button" id="kAjuste" hidden>Registrar ajuste y conciliar</button>
   <button class="btn sec" type="button" id="kPendiente" hidden>Dejar pendiente</button>
 </form>
+
+<!-- Hoja de importación: elegir la cuenta (la primera vez) y revisar los borradores -->
+<div id="sheetI" class="sheet" data-pantalla="hoja-importar" data-ui="hoja-importar" hidden>
+  <div class="row"><h2>Importar extracto</h2><button type="button" class="btn sec" id="iCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <span class="sub" id="iSub"></span>
+  <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--rosa-claro)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
+  <button type="button" class="btn" id="iSeguir">Seguir</button>
+  <div id="iCuentaBox" data-ui="cuenta-extracto"><span class="lbl">Cuenta</span><div class="seg" id="segICuenta" style="margin-top:8px"></div></div>
+  <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
+  <button type="button" class="btn" id="iGuardar" data-ui="guardar-importacion"></button>
+</div>
+<!-- Después de importar: conciliar con el saldo del extracto -->
+<div id="sheetIC" class="sheet" data-pantalla="hoja-importar-conciliar" hidden>
+  <div class="row"><h2>Extracto importado</h2><button type="button" class="btn sec" id="icCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <span class="sub" id="icSub"></span>
+  <div class="card color osc" id="icCard" data-ui="conciliar-extracto" style="--c:var(--oliva)"><span class="lbl">Conciliar con el extracto</span>
+    <div class="list"><div class="item"><span id="icExtLbl"></span><span class="num" id="icExt"></span></div><div class="item"><span>Saldo calculado</span><span class="num" id="icCalc"></span></div><div class="item"><span>Diferencia</span><span class="num" id="icDif"></span></div></div>
+    <button type="button" class="btn" id="icConciliar">Conciliar con el extracto</button></div>
+  <button type="button" class="btn sec" id="icNo">Ahora no</button>
+</div>
 
 <!-- Hoja de tarea del checklist -->
 <form id="sheetT" class="sheet" data-pantalla="hoja-tarea" data-ui="hoja-tarea" hidden autocomplete="off">
@@ -405,7 +432,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return fijosNorm(reembolsos(s));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return reglasNorm(fijosNorm(reembolsos(s)));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -424,13 +451,15 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return fijosNorm(reembolsos(s));}
+  return reglasNorm(fijosNorm(reembolsos(s)));}
 // Los gastos reembolsables sin estado (guardados antes de los estados) quedan pendientes
 function reembolsos(s){s.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat===REEMB&&!m.reembolso)m.reembolso={estado:"pendiente"};});return s;}
 // Reglas de gastos fijos por categoría y nota: true = los siguientes vienen marcados; false = no es fijo (no se sugiere)
+// Categoría que la persona eligió para cada comercio al importar: {"g|<comercio>": categoría}
+function reglasNorm(s){if(!s.reglas||typeof s.reglas!=="object"||Array.isArray(s.reglas))s.reglas={};return s;}
 function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
 const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{}});}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{},reglas:{}});}
 let S=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
 function mesData(id){if(!S.meses[id])S.meses[id]={checks:{}};if(!S.meses[id].checks)S.meses[id].checks={};return S.meses[id];}
@@ -546,7 +575,7 @@ function aplicarPaleta(){const p=S.settings.paleta||"viva";
   if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
   $("paletas").innerHTML=PALETAS.map(([k,n])=>`<button type="button" class="paleta-op" data-paleta-op="${k}" aria-pressed="${k===p}"><span>${n}</span><span class="muestra" data-paleta="${k}"><i style="background:var(--salvia)"></i><i style="background:var(--cherry)"></i><i style="background:var(--rosa)"></i><i style="background:var(--oliva)"></i><i style="background:var(--cat2)"></i></span></button>`).join("");}
 function render(){
-  aplicarPaleta();
+  aplicarPaleta();avisoAdj();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
@@ -610,7 +639,7 @@ async function copiar(txt,ok){try{await navigator.clipboard.writeText(txt);toast
 const num=id=>{const v=parseFloat(String($(id).value).replace(",","."));return isNaN(v)?null:r2(v);};
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheet","sheetC","sheetK","sheetT"];
+const HOJAS=["sheet","sheetC","sheetK","sheetT","sheetI","sheetIC"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 function cerrar(){HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;}
 function cambio(){guardarNeto();persist();render();}
@@ -685,6 +714,7 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
   $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";
   $("cAportado").value=c&&c.aportado||"";$("cLimite").value=c&&c.limite||"";$("cCuota").value=c&&c.cuota||"";$("cCuotas").value=c&&c.cuotas||"";
   $("cTope").value=c&&c.tope||"";$("cFondo").checked=!!(c&&c.fondo);
+  $("cAdj").hidden=!c;adjConfirm=null;if(c)pintarAdj();
   tipoUI();mostrar("sheetC");setTimeout(()=>$("cNombre").focus(),50);}
 $("sheetC").addEventListener("submit",e=>{e.preventDefault();
   const nombre=$("cNombre").value.trim(), viejo=S.cuentas.find(x=>x.id===editId);
@@ -703,27 +733,289 @@ $("sheetC").addEventListener("submit",e=>{e.preventDefault();
 $("cBorrar").onclick=()=>{const b=$("cBorrar");
   if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
   if(S.movs.some(m=>m.cuenta===editId||m.destino===editId)){toast("No se puede borrar: la cuenta tiene movimientos");b.dataset.confirm="";b.textContent="Borrar cuenta";return;}
+  const id=editId;adjTodos().then(as=>as.filter(a=>a.cuenta===id).forEach(a=>adjBorrar(a.id).catch(()=>{})));
   S.cuentas=S.cuentas.filter(x=>x.id!==editId);cerrar();cambio();toast("Cuenta borrada");};
 
 // Hoja de conciliación
-let concId=null;
-function difConc(){const c=cuentaDe(concId),r=num("kReal");if(r==null)return null;const real=esDeuda(c)?-r:(c.tipo==="compartida"&&valorCuenta(c,fechaCierre(mesId()))<0?-r:r);
-  return {real,dif:r2(real-valorCuenta(c,fechaCierre(mesId())))};}
+// La conciliación es de un mes (desde un extracto puede ser uno anterior) y puede llegar con el saldo ya cargado
+let concId=null,concMes=null;
+function difConc(){const c=cuentaDe(concId),r=num("kReal");if(r==null)return null;const f=fechaCierre(concMes),real=esDeuda(c)?-r:(c.tipo==="compartida"&&valorCuenta(c,f)<0?-r:r);
+  return {real,dif:r2(real-valorCuenta(c,f))};}
 function concUI(){const d=difConc(),hay=d&&Math.abs(d.dif)>=0.005;$("kDif").hidden=!hay;$("kAjuste").hidden=!hay;$("kPendiente").hidden=!hay;$("kConciliar").hidden=!!hay;if(hay)$("kDifVal").textContent=eur(d.dif);}
-function abrirConc(id){const c=cuentaDe(+id);concId=c.id;const f=fechaCierre(mesId()),v=valorCuenta(c,f);
+function abrirConc(id,mes,real){const c=cuentaDe(+id);concId=c.id;concMes=mes||mesId();const f=fechaCierre(concMes),v=valorCuenta(c,f);
   $("kTitulo").textContent="Conciliar "+c.nombre;$("kCalcLbl").textContent="Saldo calculado al "+diaMes(f);$("kCalc").textContent=eur(v);
   $("kRealLbl").textContent=esDeuda(c)?"Deuda real según tu banco (€)":c.tipo==="inversion"?"Valor actual según la plataforma (€)":"Saldo real según tu banco (€)";
-  $("kReal").value="";concUI();mostrar("sheetK");setTimeout(()=>$("kReal").focus(),50);}
-function marcar(real,ok){const md=mesData(mesId());if(!md.conc)md.conc={};md.conc[concId]={real,fecha:fechaCierre(mesId()),ok};}
+  $("kReal").value=real!=null?real:"";concUI();mostrar("sheetK");setTimeout(()=>$("kReal").focus(),50);}
+function marcar(real,ok){const md=mesData(concMes);if(!md.conc)md.conc={};md.conc[concId]={real,fecha:fechaCierre(concMes),ok};}
 $("kReal").addEventListener("input",concUI);
 $("sheetK").addEventListener("submit",e=>{e.preventDefault();const d=difConc();
   if(!d){toast("Cargá el saldo real de la cuenta");return;}
   if(Math.abs(d.dif)>=0.005){concUI();return;}
   marcar(d.real,true);cerrar();cambio();toast("Cuenta conciliada");});
 $("kAjuste").onclick=()=>{const d=difConc();if(!d)return;
-  S.movs.push({id:nid(),tipo:"ajuste",fecha:fechaCierre(mesId()),importe:d.dif,cuenta:concId,nota:""});
+  S.movs.push({id:nid(),tipo:"ajuste",fecha:fechaCierre(concMes),importe:d.dif,cuenta:concId,nota:""});
   marcar(d.real,true);cerrar();cambio();toast("Cuenta conciliada");};
 $("kPendiente").onclick=()=>{const d=difConc();if(!d)return;marcar(d.real,false);cerrar();cambio();toast("Diferencia pendiente");};
+
+// Importar extractos en PDF. El lector (pdf.js, en vendor/) se carga sólo al importar
+let pdfjsP=null;
+function cargarPdfjs(){return pdfjsP||(pdfjsP=new Promise((ok,mal)=>{const s=document.createElement("script");s.src="vendor/pdfjs/pdf.min.js";
+  s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="vendor/pdfjs/pdf.worker.min.js";ok(window.pdfjsLib);};
+  s.onerror=()=>{pdfjsP=null;mal(new Error("No se pudo cargar el lector de PDF"));};document.head.appendChild(s);}));}
+// Lectores de extractos: de las líneas del PDF (texto con posición) a movimientos con signo
+// (+ entra a la cuenta del extracto, − sale). Cada lector, separado, para sumar formatos sin tocar los otros.
+const pad2=n=>String(n).padStart(2,"0");
+const sinTildes=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+const normTxt=s=>sinTildes(String(s||"")).toLowerCase().replace(/\s+/g," ").trim();
+const dinero=s=>{const m=String(s).replace(/\s/g,"").match(/^(-?)([\d.]+,\d{2})(€|EUR)?$/);return m?(m[1]?-1:1)*parseFloat(m[2].replace(/\./g,"").replace(",",".")):null;};
+const ultimos4=s=>{const d=String(s||"").replace(/\D/g,"");return d.length>=4?d.slice(-4):null;};
+const MESES_C={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,sept:9,oct:10,nov:11,dic:12};
+const MESES_L={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+const fechaTxt=(d,mes,a)=>{const n=MESES_C[normTxt(mes).replace(".","")]||MESES_L[normTxt(mes)];return n?`${a}-${pad2(n)}-${pad2(d)}`:null;};
+const txtLinea=l=>l.it.map(i=>i.s).join(" ");
+const cerca=(items,x)=>items.reduce((b,i)=>!b||Math.abs(i.x-x)<Math.abs(b.x-x)?i:b,null);
+const despues=(L,clave)=>{for(const l of L){const i=l.it.findIndex(x=>x.s.includes(clave));if(i>=0)return l.it.slice(i+1).map(x=>x.s).join(" ").trim();}return "";};
+
+// Las líneas de un PDF: los textos de cada página agrupados por altura y ordenados de izquierda a derecha
+async function lineasPdf(pdfjs,datos){const doc=await pdfjs.getDocument({data:datos}).promise,L=[];
+  for(let p=1;p<=doc.numPages;p++){const tc=await (await doc.getPage(p)).getTextContent(),f={};
+    tc.items.forEach(it=>{if(!it.str||!it.str.trim())return;const y=Math.round(it.transform[5]);(f[y]=f[y]||[]).push({x:Math.round(it.transform[4]),s:it.str.trim()});});
+    Object.keys(f).map(Number).sort((a,b)=>b-a).forEach(y=>L.push({p,y,it:f[y].sort((a,b)=>a.x-b.x)}));}
+  return L;}
+
+// Revolut, extracto de cuenta en euros: sólo «Transacciones de la cuenta» (no el depósito)
+function lectorRevolut(L){
+  const fR=s=>{const m=String(s).match(/^(\d{1,2}) ([a-zA-Zé]+)\.? (\d{4})$/);return m?fechaTxt(m[1],m[2],m[3]):null;};
+  const ref=ultimos4(despues(L,"IBAN").split(" ")[0]||(L.map(txtLinea).join(" ").match(/IBAN\s*([A-Z]{2}[\d ]{10,})/)||[])[1]);
+  const iB=L.findIndex(l=>/Revolut Bank/.test(txtLinea(l)));const tit=L.slice(iB+1).find(l=>l.p===1&&l.it[0].x<100&&/^[A-Za-zÀ-ÿ' -]+$/.test(txtLinea(l)));
+  // Saldo final de la cuenta corriente, en la tabla del resumen
+  let saldo=null;const hR=L.find(l=>l.it.some(i=>i.s==="Saldo final"));
+  if(hR){const fila=L.find(l=>l.p===hR.p&&l.y<hR.y&&/^Cuenta\b/.test(l.it[0].s));if(fila){const x=hR.it.find(i=>i.s==="Saldo final").x;const v=cerca(fila.it.filter(i=>dinero(i.s)!=null),x);if(v)saldo=dinero(v.s);}}
+  let estado=0,col=null,cur=null,desde=null,hasta=null;const movs=[];
+  for(const l of L){const t=txtLinea(l);
+    if(/^Transacciones de la cuenta/.test(t)){estado=1;const m=t.match(/desde el (\d+) de (\w+) de (\d{4}) al (\d+) de (\w+) de (\d{4})/);if(m){desde=fechaTxt(m[1],m[2],m[3]);hasta=fechaTxt(m[4],m[5],m[6]);}continue;}
+    if(estado===1&&/^Transacciones de /.test(t)){estado=2;continue;}
+    if(estado!==1)continue;
+    const iD=l.it.find(i=>i.s==="Descripción");
+    if(iD&&l.it.some(i=>i.s==="Dinero saliente")){col={desc:iD.x,sal:l.it.find(i=>i.s==="Dinero saliente").x,ent:l.it.find(i=>i.s==="Dinero entrante").x,saldo:(l.it.find(i=>i.s==="Saldo")||{x:9e3}).x};cur=null;continue;}
+    if(!col)continue;
+    const f=fR(l.it[0].s);
+    if(f){const desc=l.it.filter(i=>i.x>=col.desc-6&&i.x<col.sal-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
+      let imp=0;l.it.filter(i=>dinero(i.s)!=null&&i.x>=col.sal-30).forEach(i=>{const c=[["sal",col.sal],["ent",col.ent],["saldo",col.saldo]].reduce((b,k)=>Math.abs(i.x-k[1])<Math.abs(i.x-b[1])?k:b);if(c[0]==="sal")imp-=dinero(i.s);if(c[0]==="ent")imp+=dinero(i.s);});
+      cur={fecha:f,texto:desc,extra:"",importe:Math.round(imp*100)/100};movs.push(cur);continue;}
+    if(cur&&l.it.length===1&&Math.abs(l.it[0].x-col.desc)<8)cur.extra=(cur.extra+" "+l.it[0].s).trim();else cur=null;}
+  const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  return {fmt:"revolut",banco:"Revolut",tipo:"cuenta",nombreFmt:"Extracto de Revolut en euros",ref,titular:tit?txtLinea(tit):"",desde,hasta,
+    saldo:saldo!=null&&ult?{importe:saldo,fecha:ult}:null,movs:movs.filter(m=>m.importe)};}
+
+// Santander, movimientos de cuenta
+function lectorSantanderCuenta(L){
+  const ref=ultimos4(despues(L,"CUENTA SANTANDER:")),titular=despues(L,"TITULAR:");
+  let col=null,cur=null,desde=null,hasta=null;const movs=[];
+  for(const l of L){const t=txtLinea(l);
+    const r=t.match(/del (\d+) (\w+) (\d{4}) al (\d+) (\w+) (\d{4})/);if(r&&/Movimientos de cuenta/.test(t)){desde=fechaTxt(r[1],r[2],r[3]);hasta=fechaTxt(r[4],r[5],r[6]);}
+    const iO=l.it.find(i=>i.s==="Operación");
+    if(iO&&l.it.some(i=>i.s==="Importe")){col={op:iO.x,imp:l.it.find(i=>i.s==="Importe").x,saldo:(l.it.find(i=>i.s==="Saldo")||{x:9e3}).x};cur=null;continue;}
+    if(!col)continue;
+    const m=l.it[0].s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if(m){const desc=l.it.filter(i=>i.x>=col.op-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
+      const ims=l.it.filter(i=>dinero(i.s)!=null),imp=ims.length?cerca(ims,col.imp):null,sal=ims.length>1?cerca(ims,col.saldo):null;
+      cur={fecha:`${m[3]}-${m[2]}-${m[1]}`,texto:desc,extra:"",importe:imp?dinero(imp.s):0,_saldo:sal&&sal!==imp?dinero(sal.s):null};movs.push(cur);continue;}
+    // La fecha valor es la del gasto real (la de operación es cuando se asienta, días después)
+    if(cur&&/^Fecha valor/.test(l.it[0].s)){const v=l.it[0].s.match(/(\d{2})\/(\d{2})\/(\d{4})/);if(v)cur.fecha=`${v[3]}-${v[2]}-${v[1]}`;cur.extra=(cur.extra+" "+l.it.slice(1).map(i=>i.s).join(" ")).trim();continue;}
+    cur=null;}
+  // Saldo de la cabecera («Saldo: 84,70 EUR (a fecha …)»); si no está, el de la última línea
+  const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  const sL=L.find(l=>l.it[0]&&l.it[0].s==="Saldo:");let saldo=sL?dinero(sL.it[1]&&sL.it[1].s):null;
+  if(saldo==null){const u=movs.filter(m=>m.fecha===ult&&m._saldo!=null)[0];if(u)saldo=u._saldo;}
+  movs.forEach(m=>delete m._saldo);
+  return {fmt:"santander-cuenta",banco:"Santander",tipo:"cuenta",nombreFmt:"Movimientos de cuenta de Santander",ref,titular,desde,hasta,
+    saldo:saldo!=null&&ult?{importe:saldo,fecha:ult}:null,movs:movs.filter(m=>m.importe)};}
+
+// Santander, extracto de tarjeta de crédito: compras (+ en el extracto) son gastos, pagos (−) entran a la tarjeta
+function lectorSantanderTarjeta(L){
+  const ref=ultimos4(despues(L,"Contrato número"));
+  const tl=L.find(l=>/TITULAR/.test(txtLinea(l)));const titular=tl?txtLinea(tl).replace(/^.*TITULAR\s*/,"").replace(/[*\d\s]+$/,"").trim():"";
+  const per=despues(L,"Periodo de liquidación").match(/(\d{2})\/(\d{2})\/(\d{4}) A (\d{2})\/(\d{2})\/(\d{4})/);
+  const desde=per?`${per[3]}-${per[2]}-${per[1]}`:null,hasta=per?`${per[6]}-${per[5]}-${per[4]}`:null;
+  const aPagar=dinero(despues(L,"Importe a Pagar"));
+  let sec="",col=null,cur=null;const movs=[];
+  for(const l of L){const t=txtLinea(l);
+    // Una sección puede seguir en la página siguiente sin repetir la cabecera de columnas
+    const s=t.match(/^([A-C]) - /);if(s){if(s[1]!==sec)col=null;sec=s[1];cur=null;continue;}
+    if(/^Operaciones Fraccionadas/.test(t)){sec="";continue;}
+    if(!sec)continue;
+    const iC=l.it.find(i=>i.s==="Concepto");
+    if(iC&&sec!=="C"){col={con:iC.x,imp:(l.it.find(i=>/^Importe/.test(i.s))||{x:9e3}).x};continue;}
+    const m=l.it[0].s.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+    if(m){const fecha=`${m[3]}-${m[2]}-${m[1]}`,ims=l.it.filter(i=>dinero(i.s)!=null);
+      if(sec==="C"){const desc=l.it.filter(i=>i.x>l.it[0].x+20&&dinero(i.s)==null&&!/^--$|^\d+,\d+$/.test(i.s)).map(i=>i.s)[0]||"Intereses";
+        const v=ims.length?dinero(ims[ims.length-1].s):0;cur={fecha,texto:desc,extra:"",importe:-v,_c:true};movs.push(cur);continue;}
+      if(!col)continue;
+      const desc=l.it.filter(i=>i.x>=col.con-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
+      if(/^SALDO ANTERIOR/i.test(desc)){cur=null;continue;}
+      const v=ims.length?dinero(cerca(ims,col.imp).s):0;cur={fecha,texto:desc,extra:"",importe:-v};movs.push(cur);continue;}
+    if(cur&&cur._c&&l.it.length===1){cur.extra=l.it[0].s;continue;}
+    cur=null;}
+  movs.forEach(m=>{if(m._c){m.texto=(m.texto+" "+m.extra).trim();m.extra="";delete m._c;}});
+  const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,
+    saldo:aPagar!=null&&ult?{importe:-aPagar,fecha:ult}:null,movs:movs.filter(m=>m.importe)};}
+
+// Reconoce el formato por textos fijos del documento
+const LECTORES=[[t=>t.includes("Extracto en EUR")&&t.includes("Revolut Bank"),lectorRevolut],
+  [t=>t.includes("Movimientos de cuenta")&&t.includes("CUENTA SANTANDER"),lectorSantanderCuenta],
+  [t=>t.includes("Extracto de movimientos")&&t.includes("CREDITO SANTANDER"),lectorSantanderTarjeta]];
+function leerExtracto(L){const t=L.map(txtLinea).join("\n");const x=LECTORES.find(([es])=>es(t));return x?x[1](L):null;}
+// Lo que se propone para cada movimiento del extracto
+const claveCom=t=>normTxt(t).replace(/[^a-z0-9ñ ]/g," ").replace(/\s+/g," ").trim();
+const dias=(a,b)=>(Date.parse(a)-Date.parse(b))/864e5;
+// El comercio: la descripción sin el tipo de pago, números, ciudad ni datos de tarjeta
+function comercio(t){let s=String(t||"").split(",")[0].trim().replace(/^anulaci[oó]n\s+/i,"");
+  const PRE=/^(pago m[oó]vil|compra internet|compra|pago en|en|cuota fraccionar compra|inter\.euro)\s+/i;while(PRE.test(s))s=s.replace(PRE,"");
+  s=s.replace(/\*+/g," ").split(/\s+/).filter(w=>w&&!/\d/.test(w)&&!/^(sq|tarj\.?|:)$/i.test(w)).join(" ").trim();
+  if(s&&s===s.toUpperCase())s=s.toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase());
+  return s||String(t||"").trim();}
+// Palabras conocidas por categoría (en minúsculas, sin tildes, palabras enteras); va antes Delivery que Transporte
+const PALABRAS=[["Delivery",["glovo","just eat","uber eats","deliveroo"]],
+  ["Súper",["consum","carrefour","carref","mercadona","lidl","aldi","bonpreu","bonarea","caprabo","eroski","alcampo","hipercor","condis","ahorramas","supermercado","supercor","spar"]],
+  ["Comida fuera",["restaurante","restaurant","bar","cafe","cafeteria","coffee","pizza","pizzeria","burger","mcdonalds","telepizza","starbucks"]],
+  ["Transporte",["renfe","metro","tmb","taxi","cabify","uber","bolt","freenow","gasolinera","repsol","cepsa","petroprix","parking","autopark","bicing"]],
+  ["Ocio",["cine","cines","netflix","spotify","hbo","disney","steam","entradas","fourvenues","ticketmaster","conciertos"]],
+  ["Compras",["amazon","zara","klarna","corte ingles","decathlon","primark","desigual","temu","shein"]],
+  ["Belleza",["peluqueria","sephora","druni","estetica"]],
+  ["Salud",["farmacia","fisio","fisioterapia","clinica","dental","dentista","optica","adeslas"]],
+  ["Viajes",["hotel","booking","airbnb","ryanair","vueling","iberia"]],
+  ["Casa/Splitwise",["alquiler","endesa","iberdrola","naturgy","vodafone","movistar","orange","digi","splitwise"]]];
+function propuestaCat(s,com,txt){const k=claveCom(com),w=" "+claveCom(txt)+" ";
+  if(s<0){const r=S.reglas["g|"+k];if(r&&CATS.includes(r))return r;const p=PALABRAS.find(([,ws])=>ws.some(x=>w.includes(" "+x+" ")));return p?p[0]:"Otros";}
+  const r=S.reglas["i|"+k];if(r&&INGRESOS.includes(r))return r;
+  if(w.includes(" gastos "))return "Reembolso";if(w.includes(" nomina "))return "Sueldo";
+  if(/ (interes|intereses|bonificacion|rendimiento|rendimientos) /.test(w))return "Intereses y rendimientos";return "Otros";}
+// Plata entre tus cuentas: los últimos dígitos de otra cuenta, su nombre, tu nombre o una recarga
+function otraCuenta(m,cid,r){const otras=S.cuentas.filter(c=>c.id!==cid);if(!otras.length)return null;
+  const txt=m.texto+" "+m.extra,w=" "+claveCom(txt)+" ";
+  const runs=txt.replace(/(\d)\s+(?=\d)/g,"$1").match(/\d{4,}/g)||[];
+  let c=otras.find(o=>o.ref&&runs.some(d=>d.endsWith(o.ref)));if(c)return c;
+  // El cargo de la tarjeta de crédito en el banco: a la tarjeta (si hay una sola)
+  const tjs=otras.filter(o=>o.tipo==="tarjeta");if(tjs.length===1&&/ liquidacion (de las )?tarjetas? (de )?credito /.test(w))return tjs[0];
+  const pri=" "+claveCom(m.texto.split(",")[0])+" ";
+  c=otras.find(o=>claveCom(o.nombre).length>=4&&pri.includes(" "+claveCom(o.nombre)+" "));if(c)return c;
+  const tit=claveCom(r.titular).split(" ").filter(x=>x.length>=3);
+  if(!((tit.length>=2&&tit.every(x=>w.includes(" "+x+" ")))||w.includes(" recarga ")))return null;
+  const par=S.movs.find(x=>x.tipo==="transferencia"&&Math.abs(x.importe-Math.abs(m.importe))<0.005&&Math.abs(dias(x.fecha,m.fecha))<=3&&(m.importe<0?x.cuenta===cid:x.destino===cid));
+  if(par){const o=cuentaDe(m.importe<0?par.destino:par.cuenta);if(o&&o.id!==cid)return o;}
+  return otras.find(o=>o.tipo==="liquidez")||otras[0];}
+// Ya está: el mismo movimiento en esta cuenta (fecha e importe) o la otra mitad de una transferencia (±3 días)
+function yaEsta(m,cid){const v=Math.abs(m.importe);
+  return S.movs.some(x=>Math.abs(x.importe-v)<0.005&&(
+    (x.cuenta===cid&&x.fecha===m.fecha&&(m.importe<0?x.tipo==="gasto":x.tipo==="ingreso"))||
+    (x.tipo==="transferencia"&&Math.abs(dias(x.fecha,m.fecha))<=3&&(m.importe<0?x.cuenta===cid:x.destino===cid))));}
+let imp=null, impPref=null;
+function borradores(){const r=imp.r,cid=imp.cuenta;
+  const d=r.movs.map((m,i)=>{const nota=comercio(m.texto),o=otraCuenta(m,cid,r);
+    const x={i,fecha:m.fecha,s:m.importe,nota,que:o?"t|"+o.id:(m.importe<0?"g|":"i|")+propuestaCat(m.importe,nota,m.texto+" "+m.extra),on:true,marca:null,cubre:[]};
+    if(yaEsta(m,cid)){x.on=false;x.marca="ya";}
+    return x;});
+  // Una compra y su anulación por el mismo importe y comercio el mismo día no cuentan
+  d.filter(a=>a.s>0&&/^anulaci/.test(normTxt(r.movs[a.i].texto))).forEach(a=>{
+    const c=d.find(y=>y.s<0&&y.marca!=="anulada"&&y.fecha===a.fecha&&Math.abs(y.s+a.s)<0.005&&claveCom(y.nota)===claveCom(a.nota));
+    if(c){a.on=c.on=false;a.marca=c.marca="anulada";}});
+  // En orden de fecha, del más viejo al más nuevo (cada borrador conserva su número del extracto)
+  d.forEach(fijoDe);imp.d=d.sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.i-b.i);}
+// Un gasto que coincide con una regla de fijo llega marcado
+function fijoDe(x){x.fijoRegla=x.que.startsWith("g|")&&x.que!=="g|"+REEMB&&S.fijos[claveFijo(x.que.slice(2),x.nota)]===true;x.fijo=x.fijoRegla;}
+const borrDe=k=>imp.d.find(x=>x.i===+k);
+function opcionesQue(x){const otras=S.cuentas.filter(c=>c.id!==imp.cuenta);
+  const ops=[...(x.s<0?CATS.map(c=>["g|"+c,"Gasto · "+c]):INGRESOS.map(c=>["i|"+c,"Ingreso · "+c])),
+    ...otras.map(c=>["t|"+c.id,(x.s<0?"Transferencia a ":"Transferencia desde ")+c.nombre])];
+  return ops.map(([v,l])=>`<option value="${esc(v)}"${v===x.que?" selected":""}>${esc(l)}</option>`).join("");}
+function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  return `<span class="card color cubre" style="--c:var(--rosa-claro)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
+function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
+  $("iRevisa").textContent=`Revisá ${d.length} ${d.length===1?"movimiento":"movimientos"}`;
+  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+
+      (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
+    return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
+  $("iGuardar").textContent=`Guardar ${n} ${n===1?"movimiento":"movimientos"}`;}
+function avisoNoReconocido(){const w=document.createElement("div");w.innerHTML=`<div class="toast" data-ui="aviso-no-reconocido"></div>`;const t=w.firstChild;
+  t.textContent="No reconozco este extracto. Por ahora leo Revolut (cuenta en euros) y Santander (cuenta y tarjeta de crédito).";document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
+async function importarArchivo(f,pref){if(!f)return;
+  if(!S.cuentas.length){toast("Primero creá una cuenta");return;}
+  let r=null;try{const pdfjs=await cargarPdfjs();r=leerExtracto(await lineasPdf(pdfjs,new Uint8Array(await f.arrayBuffer())));}catch(e){r=null;}
+  if(!r){avisoNoReconocido();return;}
+  if(!r.movs.length){toast("El extracto no tiene movimientos");return;}
+  const c=r.ref&&S.cuentas.find(x=>x.ref===r.ref);
+  imp={r,file:f,cuenta:c?c.id:(pref||null),elegida:null};
+  $("iSub").textContent=`${r.banco} · ${r.tipo}${r.ref?" terminada en "+r.ref:""}${r.desde&&r.hasta?` · del ${diaMes(r.desde)} al ${diaMes(r.hasta)}`:""}`;
+  if(imp.cuenta)revisar();else elegirCuenta();
+  mostrar("sheetI");}
+function elegirCuenta(){const r=imp.r;$("iElegir").hidden=$("iSeguir").hidden=false;$("iCuentaBox").hidden=$("iLista").hidden=$("iGuardar").hidden=true;
+  $("iElegirSub").textContent=`${r.nombreFmt}${r.ref?` · ${r.tipo} terminada en ${r.ref}`:""}. La próxima vez la app lo reconoce sola.`;
+  seg($("segIElegir"),S.cuentas.map(c=>[c.id,c.nombre]),imp.elegida,v=>imp.elegida=+v);}
+function revisar(){$("iElegir").hidden=$("iSeguir").hidden=true;$("iCuentaBox").hidden=$("iLista").hidden=$("iGuardar").hidden=false;
+  seg($("segICuenta"),S.cuentas.map(c=>[c.id,c.nombre]),imp.cuenta,v=>{imp.cuenta=+v;borradores();pintarBorr();});
+  borradores();pintarBorr();}
+$("iSeguir").onclick=()=>{if(!imp.elegida){toast("Elegí la cuenta");return;}imp.cuenta=imp.elegida;revisar();};
+$("iBorr").addEventListener("change",e=>{const t=e.target;
+  if(t.dataset.on!=null){const x=borrDe(t.dataset.on);x.on=t.checked;t.closest(".borr").classList.toggle("off",!x.on);const n=imp.d.filter(y=>y.on).length;$("iGuardar").textContent=`Guardar ${n} ${n===1?"movimiento":"movimientos"}`;}
+  else if(t.dataset.que!=null){const x=borrDe(t.dataset.que);x.que=t.value;x.cubre=[];fijoDe(x);pintarBorr();}
+  else if(t.dataset.icubre!=null){const x=borrDe(t.dataset.icubre),id=+t.value;x.cubre=t.checked?[...x.cubre,id]:x.cubre.filter(y=>y!==id);}});
+$("iBorr").addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();});
+$("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on);if(!sel.length){toast("Marcá al menos un movimiento");return;}
+  const r=imp.r,cid=imp.cuenta,c=cuentaDe(cid),origen=nid();
+  // La cuenta recuerda los últimos dígitos del extracto
+  if(r.ref){S.cuentas.forEach(o=>{if(o.ref===r.ref)delete o.ref;});c.ref=r.ref;}
+  sel.forEach(x=>{const t=x.que[0],v=x.que.slice(2),m={id:nid(),tipo:"gasto",fecha:x.fecha,importe:r2(Math.abs(x.s)),cuenta:cid,nota:x.nota,origen};
+    if(t==="t"){m.tipo="transferencia";if(x.s<0)m.destino=+v;else{m.cuenta=+v;m.destino=cid;}}
+    else{m.tipo=t==="g"?"gasto":"ingreso";m.cat=v;S.reglas[t+"|"+claveCom(x.nota)]=v;
+      if(m.tipo==="gasto"&&v===REEMB)m.reembolso={estado:"pendiente"};
+      if(m.tipo==="gasto"&&v!==REEMB){const k=claveFijo(v,x.nota);if(x.fijo){m.fijo=true;if(k)S.fijos[k]=true;}else if(x.fijoRegla&&k)S.fijos[k]=false;}}
+    S.movs.push(m);desconciliar(m);
+    if(m.tipo==="ingreso"&&v==="Reembolso")S.movs.forEach(g=>{if(g.reembolso&&x.cubre.includes(g.id))g.reembolso={estado:"pagado",cobro:m.id};});});
+  const n=sel.length,ult=r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  try{await adjGuardar({id:nid(),cuenta:cid,mes:ult.slice(0,7),nombre:imp.file.name||"extracto.pdf",tipo:"pdf",mime:"application/pdf",datos:await imp.file.arrayBuffer()});}catch(e){}
+  cambio();toast(`${n} ${n===1?"movimiento importado":"movimientos importados"}`);
+  // Después de guardar: conciliar con el saldo del extracto, si lo trae
+  const sub=`${n} ${n===1?"movimiento importado":"movimientos importados"} en ${c.nombre}. El extracto quedó en sus adjuntos.`;
+  $("icCard").hidden=!r.saldo;
+  if(r.saldo){const calc=valorCuenta(c,r.saldo.fecha);imp.conc={cid,mes:r.saldo.fecha.slice(0,7),fecha:r.saldo.fecha,real:r.saldo.importe,dif:r2(r.saldo.importe-calc)};
+    $("icExtLbl").textContent=`${esDeuda(c)?"Deuda":"Saldo"} del extracto al ${diaMes(r.saldo.fecha)}`;$("icExt").textContent=eur(r.saldo.importe);$("icCalc").textContent=eur(calc);$("icDif").textContent=eur(imp.conc.dif);
+    $("icSub").textContent=sub;$("icNo").textContent="Ahora no";}
+  else{$("icSub").textContent=sub+" Este extracto no trae el saldo: conciliá a mano en Cierre.";$("icNo").textContent="Listo";}
+  mostrar("sheetIC");};
+$("icConciliar").onclick=()=>{const k=imp.conc;
+  if(Math.abs(k.dif)<0.005){const md=mesData(k.mes);if(!md.conc)md.conc={};md.conc[k.cid]={real:k.real,fecha:k.fecha,ok:true};cerrar();cambio();toast("Cuenta conciliada");return;}
+  abrirConc(k.cid,k.mes,Math.abs(k.real));};
+$("icNo").onclick=$("icCerrar").onclick=$("iCerrar").onclick=()=>{imp=null;cerrar();};
+$("importar").onclick=()=>{impPref=null;$("pdfIn").click();};
+$("pdfIn").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";await importarArchivo(f,impPref);});
+
+// Adjuntos: los archivos viven en el almacenamiento de archivos del navegador, fuera de los datos y de la copia
+let idbP=null;
+function idb(){return idbP||(idbP=new Promise((ok,mal)=>{const q=indexedDB.open("finanzas-adjuntos",1);q.onupgradeneeded=()=>q.result.createObjectStore("archivos",{keyPath:"id"});q.onsuccess=()=>ok(q.result);q.onerror=()=>{idbP=null;mal(q.error);};}));}
+async function adjTx(modo,fn){const db=await idb();return new Promise((ok,mal)=>{const t=db.transaction("archivos",modo),q=fn(t.objectStore("archivos"));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>mal(t.error);});}
+const adjGuardar=a=>adjTx("readwrite",st=>st.put(a));
+const adjBorrar=id=>adjTx("readwrite",st=>st.delete(id));
+const adjTodos=()=>adjTx("readonly",st=>st.getAll()).then(x=>x||[]).catch(()=>[]);
+let adjConfirm=null;
+async function pintarAdj(){const cid=editId;if(cid==null)return;
+  const as=(await adjTodos()).filter(a=>a.cuenta===cid).sort((a,b)=>b.mes.localeCompare(a.mes)||b.id-a.id);
+  $("cAdjLista").innerHTML=as.length?as.map(a=>`<div class="adj" data-adj="${a.id}"><span class="d" data-abrir="${a.id}"><span>${esc(a.nombre)}</span><span class="sub">${mesDe(a.mes)} · ${a.tipo==="pdf"?"PDF":"Foto"}</span></span>${adjConfirm===a.id?`<button type="button" class="btn danger" style="padding:6px 12px;font-size:14px" data-ui="borrar-adjunto" data-adj-del="${a.id}">Borrar</button>`:`<button type="button" class="x" aria-label="Borrar adjunto" data-adj-x="${a.id}">×</button>`}</div>`).join("")
+    :`<div class="empty">Todavía no hay adjuntos. Adjuntá extractos, recibos o fotos: quedan sólo en este teléfono.</div>`;}
+async function avisoAdj(){const n=(await adjTodos()).length;$("avisoAdj").hidden=!n;
+  $("avisoAdj").textContent=n===1?"Tu adjunto no entra en la copia: guardalo aparte si lo necesitás.":`Tus ${n} adjuntos no entran en la copia: guardalos aparte si los necesitás.`;}
+$("cAdjLista").addEventListener("click",async e=>{const x=e.target.closest("[data-adj-x]"),d=e.target.closest("[data-adj-del]"),a=e.target.closest("[data-abrir]");
+  if(x){adjConfirm=+x.dataset.adjX;pintarAdj();return;}
+  if(d){await adjBorrar(+d.dataset.adjDel);adjConfirm=null;await pintarAdj();avisoAdj();toast("Adjunto borrado");return;}
+  if(a){const f=(await adjTodos()).find(y=>y.id===+a.dataset.abrir);if(!f)return;const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([f.datos],{type:f.mime}));l.target="_blank";l.rel="noopener";l.click();}});
+$("cAdjuntar").onclick=()=>$("adjIn").click();
+$("adjIn").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f||editId==null)return;
+  const tipo=f.type==="application/pdf"||/\.pdf$/i.test(f.name)?"pdf":f.type.startsWith("image/")?"foto":null;
+  if(!tipo){toast("Adjuntá un PDF o una foto");return;}
+  try{await adjGuardar({id:nid(),cuenta:editId,mes:mesId(),nombre:f.name,tipo,mime:f.type||"application/octet-stream",datos:await f.arrayBuffer()});}catch(err){toast("No se pudo guardar el archivo");return;}
+  await pintarAdj();avisoAdj();toast("Archivo adjuntado");});
+$("cImportar").onclick=()=>{impPref=editId;$("pdfIn").click();};
 
 // Hoja de tarea
 let tareaId=null;
