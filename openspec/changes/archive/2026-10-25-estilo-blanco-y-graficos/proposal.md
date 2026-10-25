@@ -1,7 +1,8 @@
 ---
 cambio: estilo-blanco-y-graficos
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-10-25
 ---
 # Estilo blanco y gráficos de gastos
 

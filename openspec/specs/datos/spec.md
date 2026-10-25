@@ -3,7 +3,7 @@
 ## Requisito: los datos quedan sólo en el teléfono
 
 Todo lo que la persona carga queda guardado en su dispositivo y sigue ahí al cerrar y volver a abrir
-la app. No se envía a ningún servidor.
+la app. La app no se comunica con ningún otro sitio.
 
 ### Escenario: se conserva al volver a abrir
 - **Dado** un gasto y una cuenta guardados
@@ -13,7 +13,7 @@ la app. No se envía a ningún servidor.
 ### Escenario: nada sale del teléfono
 - **Dado** la app abierta
 - **Cuando** la persona anota un gasto y crea una cuenta
-- **Entonces** la app no hace ninguna petición a otro sitio fuera de las tipografías
+- **Entonces** la app no hace ninguna petición a otro sitio
 
 ## Requisito: copia de seguridad
 
