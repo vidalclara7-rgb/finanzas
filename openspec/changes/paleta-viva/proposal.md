@@ -1,6 +1,6 @@
 ---
 cambio: paleta-viva
-estado: propuesta
+estado: aprobada
 datos: sin-cambios
 ---
 # Paleta viva: rosas, cherry y verde oscuro sobre gris claro
