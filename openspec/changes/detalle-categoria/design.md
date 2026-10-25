@@ -28,3 +28,17 @@
 - Hoja nueva `sheetCat` (en `HOJAS`) con el título, el total (`monto()`), la comparación, las barras
   (`.rank`/`.bar.cat` ya existentes, en el color de la categoría) y la lista con `movHTML()`.
 - Sin datos nuevos ni migración. Sube la versión de la caché.
+
+## Segunda ronda del Gate 1 (2026-10-25)
+
+- La persona: «no me gusta que el panel de inicio tenga tanto detalle… pondría algo más visual y
+  luego iría a más detalle». Arriba de Inicio queda la barra fijo/variable con los dos importes; el
+  ranking por grupo pasa a la hoja «Fijos y variables». Descartados: la torta arriba y un número grande
+  con anillo. Lo demás de Inicio (torta, disponibles y por cobrar, por semana, ingresos y gastos,
+  patrimonio) sigue: lo eligió así.
+- Decidido al escribir: en la hoja «Fijos y variables», tocar una categoría abre su hoja de categoría
+  (con todos sus gastos del mes, fijos y variables).
+- Otros (`--cat12`) se veía igual que la pista de la barra: Otros pasa a un tono más oscuro en las
+  cuatro paletas y la pista de las barras de categoría, a una más clara.
+- Este cambio sustituye «fijos y variables del mes», que `importar-extractos` también sustituye (para
+  decir Supermercado): se archiva después de él y su texto ya dice Supermercado.

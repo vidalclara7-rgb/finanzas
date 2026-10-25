@@ -87,3 +87,49 @@ mes sin gastos de la categoría, lo dice y no dibuja barras.
 - **Dado** gastos en Supermercado en octubre 2026 y ninguno en agosto 2026
 - **Cuando** la persona va hasta agosto con ‹
 - **Entonces** se lee «No gastaste en Supermercado en agosto 2026.» y no hay barras
+
+## Requisito: fijos y variables del mes
+
+Arriba de Inicio, «Fijos y variables» muestra el gasto del mes en curso partido en dos, fijos y
+variables, con una barra partida y, debajo, cada parte con su importe y su porcentaje del total, sin
+más detalle. Al tocarla se abre la hoja «Fijos y variables», con las categorías de cada grupo
+ordenadas de mayor a menor, con su importe y una barra proporcional; tocar una categoría abre su hoja.
+Los gastos de «Trabajo (reembolsable)», los ingresos, las transferencias y los ajustes no cuentan.
+
+### Escenario: reparto entre fijos y variables
+- **Dado** este mes 600 € en Casa/Splitwise y 40 € en Ocio marcados como fijos, y 300 € en Supermercado y 60 € en Comida fuera sin marcar
+- **Cuando** la persona abre Inicio
+- **Entonces** «Fijos y variables» dice «Fijos 640 € · 64 %» y «Variables 360 € · 36 %», sin la lista de categorías
+- **Y** al tocarla, la hoja muestra bajo Fijos Casa/Splitwise y Ocio, en ese orden, y bajo Variables Supermercado y Comida fuera
+
+### Escenario: de fijos y variables a una categoría
+- **Dado** la hoja «Fijos y variables» abierta con Supermercado entre los variables
+- **Cuando** la persona toca Supermercado
+- **Entonces** se abre la hoja «Supermercado»
+
+### Escenario: reembolsables fuera del reparto
+- **Dado** este mes 100 € en Supermercado y 50 € en Trabajo (reembolsable)
+- **Cuando** la persona abre Inicio
+- **Entonces** «Fijos y variables» dice «Variables 100 € · 100 %» y en su hoja no aparece Trabajo (reembolsable)
+
+### Escenario: todavía sin gastos fijos
+- **Dado** este mes sólo gastos sin marcar como fijos, por 200 €
+- **Cuando** la persona abre Inicio
+- **Entonces** la barra es entera de variables
+- **Y** se lee «Marcá tus gastos fijos al anotarlos: alquiler, cuotas, suscripciones.»
+
+### Escenario: sin gastos para repartir
+- **Dado** que este mes sólo hay un gasto de 30 € en Trabajo (reembolsable)
+- **Cuando** la persona abre Inicio
+- **Entonces** no se dibuja la barra, se lee «Todavía no anotaste gastos este mes.» y no se abre nada al tocar
+
+## Requisito: las barras de categoría se ven
+
+En las barras por categoría y por cuenta, la parte llena se distingue de su pista (al menos 1,5 a 1)
+en cualquier categoría, también Otros, en las cuatro paletas, en claro y en oscuro.
+
+### Escenario: Otros se ve en su barra
+- **Dado** un gasto en Otros este mes
+- **Cuando** la persona recorre las cuatro paletas en claro y en oscuro y abre «Fijos y variables»
+- **Entonces** la barra de Otros se distingue de su pista en todas
+

@@ -13,6 +13,11 @@ recorrer Movimientos entero.
 
 ## Qué cambia
 
+- Arriba de Inicio, «Fijos y variables» queda sólo con la barra partida y los dos importes. Al
+  tocarla se abre la hoja «Fijos y variables» con las categorías de cada grupo, y cada categoría se
+  abre a su vez. Lo demás de Inicio sigue igual.
+- Las barras de categoría se distinguen siempre de su pista (hoy Otros casi no se ve).
+
 - En «Gasto del mes» de Inicio, tocar una porción de la torta o una fila de la lista abre la hoja de
   esa categoría.
 - La hoja muestra el total del mes, cuánto cambió frente al mes anterior y un gráfico de barras
@@ -26,7 +31,7 @@ A todas las personas que usan el link. No cambia nada de lo guardado.
 
 ## Pantallas
 
-Inicio («Gasto del mes» se puede tocar) y hoja de categoría (nueva).
+Inicio («Fijos y variables» resumido y «Gasto del mes» se pueden tocar), hoja «Fijos y variables» (nueva) y hoja de categoría (nueva).
 
 ## Fuera de alcance
 
