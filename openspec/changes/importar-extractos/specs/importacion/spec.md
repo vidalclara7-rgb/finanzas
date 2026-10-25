@@ -42,12 +42,17 @@ cada uno. Nada se guarda hasta tocar «Guardar»; cerrar sin guardar no cambia n
 
 Cada gasto llega con una categoría propuesta: la que la persona eligió antes para el mismo comercio
 o, si no hay, la que corresponde a palabras conocidas (por ejemplo, un supermercado conocido es
-Súper). Si no hay ninguna, Otros. Lo que la persona elige al guardar queda recordado.
+Supermercado). Si no hay ninguna, Otros. Lo que la persona elige al guardar queda recordado.
 
 ### Escenario: comercio conocido
 - **Dado** un extracto con una compra en «Consum»
 - **Cuando** la persona lo importa
-- **Entonces** esa compra llega con la categoría Súper
+- **Entonces** esa compra llega con la categoría Supermercado
+
+### Escenario: tienda de ropa
+- **Dado** un extracto con una compra en «Zara»
+- **Cuando** la persona lo importa
+- **Entonces** esa compra llega con la categoría Ropa
 
 ### Escenario: la app aprende
 - **Dado** una importación anterior en la que la persona guardó «Bar Ejemplo» como Ocio

@@ -12,11 +12,11 @@ const enCuentas = async (page) => { await A.ir(page, "cuentas"); };
 // Escenario: gasto desde una cuenta propia
 t.test("gasto desde una cuenta propia", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
-  await A.nuevoGasto(page, { importe: 12.5, cuenta: "Banco A", cat: "Súper", nota: "verdulería" });
+  await A.nuevoGasto(page, { importe: 12.5, cuenta: "Banco A", cat: "Supermercado", nota: "verdulería" });
   await A.aviso(page, "Gasto guardado");
   await A.ir(page, "movs");
   const tarjeta = await A.texto(page, "#movs .mov");
-  assert.match(tarjeta, /Súper · 15\/10/);
+  assert.match(tarjeta, /Supermercado · 15\/10/);
   assert.match(tarjeta, /verdulería/);
   assert.match(tarjeta, /−12,5 €/);
   await enCuentas(page);
@@ -162,10 +162,10 @@ t.test("un solo toque no borra", async () => {
 // Escenario: categorías ordenadas
 t.test("categorías ordenadas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [
-    A.gasto(1, "2026-10-02", 18, 1, "Comida fuera"), A.gasto(2, "2026-10-03", 64.3, 1, "Súper"),
+    A.gasto(1, "2026-10-02", 18, 1, "Comida fuera"), A.gasto(2, "2026-10-03", 64.3, 1, "Supermercado"),
     A.gasto(3, "2026-10-04", 42, 1, "Trabajo (reembolsable)"), A.ingreso(4, "2026-10-01", 1500, 1)] }) });
   const cats = await page.locator("#cats .item span:first-child").allInnerTexts();
-  assert.deepEqual(cats, ["Súper", "Trabajo (reembolsable)", "Comida fuera"]);
+  assert.deepEqual(cats, ["Supermercado", "Trabajo (reembolsable)", "Comida fuera"]);
 });
 
 // Escenario: sin gastos por categoría
@@ -310,7 +310,7 @@ t.test("un mes salteado", async () => {
 
 // Escenario: gastos sin nota
 t.test("gastos sin nota", async () => {
-  const { page } = await abrir(conFijos(tres("Súper", "", [100, 100, 100])));
+  const { page } = await abrir(conFijos(tres("Supermercado", "", [100, 100, 100])));
   assert.equal(await page.isVisible("#sugFijo"), false);
 });
 

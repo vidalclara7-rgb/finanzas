@@ -14,7 +14,7 @@ t.test("torta con tres categorías", async () => {
   const porciones = await page.locator("#torta circle").evaluateAll((cs) => cs.map((c) => [c.dataset.cat, parseFloat(c.style.strokeDasharray)]));
   assert.equal(porciones.length, 3);
   assert.equal(await A.texto(page, "#torta .centro b"), "124,3 €");
-  assert.equal(porciones.reduce((a, b) => (b[1] > a[1] ? b : a))[0], "Súper");
+  assert.equal(porciones.reduce((a, b) => (b[1] > a[1] ? b : a))[0], "Supermercado");
 });
 
 // Escenario: torta sin gastos
@@ -102,7 +102,7 @@ t.test("reparto entre fijos y variables", async () => {
     A.gasto(3, "2026-10-03", 300, 1), A.gasto(4, "2026-10-04", 60, 1, "Comida fuera")]));
   assert.deepEqual((await grupo(page, "fij")).map((x) => x.trim()), ["Fijos", "640 € · 64 %"]);
   assert.deepEqual((await grupo(page, "var")).map((x) => x.trim()), ["Variables", "360 € · 36 %"]);
-  assert.deepEqual(await rank(page), ["fij", "Casa/Splitwise", "Ocio", "var", "Súper", "Comida fuera"]);
+  assert.deepEqual(await rank(page), ["fij", "Casa/Splitwise", "Ocio", "var", "Supermercado", "Comida fuera"]);
   assert.equal(await page.isVisible("#fvPista"), false);
 });
 
@@ -110,7 +110,7 @@ t.test("reparto entre fijos y variables", async () => {
 t.test("reembolsables fuera del reparto", async () => {
   const { page } = await abrir(con([A.gasto(1, "2026-10-03", 100, 1), A.gasto(2, "2026-10-04", 50, 1, "Trabajo (reembolsable)")]));
   assert.deepEqual((await grupo(page, "var")).map((x) => x.trim()), ["Variables", "100 € · 100 %"]);
-  assert.deepEqual(await rank(page), ["var", "Súper"]);
+  assert.deepEqual(await rank(page), ["var", "Supermercado"]);
   assert.doesNotMatch(await A.texto(page, "#fv"), /Trabajo/);
 });
 

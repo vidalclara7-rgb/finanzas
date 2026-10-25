@@ -104,7 +104,7 @@ async function nuevaCuenta(page, { tipo, nombre, saldo, signo, fondo, extra = {}
 
 // Datos del modelo v2, armados a mano
 const cta = (id, nombre, saldoInicial, extra = {}) => ({ id, tipo: "liquidez", nombre, saldoInicial, desde: "2026-10-01", ...extra });
-const gasto = (id, fecha, importe, cuenta, cat = "Súper", nota = "") => ({ id, tipo: "gasto", fecha, importe, cuenta, cat, nota });
+const gasto = (id, fecha, importe, cuenta, cat = "Supermercado", nota = "") => ({ id, tipo: "gasto", fecha, importe, cuenta, cat, nota });
 const ingreso = (id, fecha, importe, cuenta, cat = "Sueldo", nota = "") => ({ id, tipo: "ingreso", fecha, importe, cuenta, cat, nota });
 const transf = (id, fecha, importe, cuenta, destino) => ({ id, tipo: "transferencia", fecha, importe, cuenta, destino, nota: "" });
 const v2 = (extra = {}) => ({ v: 2, settings: {}, cuentas: [], movs: [], tareas: [], meses: {}, ...extra });
@@ -118,7 +118,7 @@ function datosEjemplo() {
   return {
     settings: { topeTarjeta: 500, topeRevolut: 300, aporte: 100, objetivoFondo: 1000, inicio: "2026-09", saltos: "" },
     gastos: [
-      { id: 1, fecha: f + "03", importe: 64.3, cuenta: "tarjeta", cat: "Súper", nota: "" },
+      { id: 1, fecha: f + "03", importe: 64.3, cuenta: "tarjeta", cat: "Supermercado", nota: "" },
       { id: 2, fecha: f + "05", importe: 18, cuenta: "revolut", cat: "Comida fuera", nota: "almuerzo" },
       { id: 3, fecha: f + "08", importe: 42, cuenta: "tarjeta", cat: "Trabajo (reembolsable)", nota: "taxi" },
       { id: 4, fecha: f + "11", importe: 25.5, cuenta: "santander", cat: "Transporte", nota: "" },

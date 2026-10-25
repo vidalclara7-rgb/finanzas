@@ -101,7 +101,7 @@ t.test("texto legible sobre colores oscuros", async () => {
 // Escenario: mismo color por categoría
 t.test("mismo color por categoría", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
-  const porcion = await page.$eval('#torta circle[data-cat="Súper"]', (c) => getComputedStyle(c).stroke);
+  const porcion = await page.$eval('#torta circle[data-cat="Supermercado"]', (c) => getComputedStyle(c).stroke);
   await A.ir(page, "movs");
   const tarjeta = await page.$eval('[data-mov="2"]', (el) => getComputedStyle(el).backgroundColor);
   assert.equal(porcion, tarjeta);
@@ -217,10 +217,10 @@ t.test("contraste en las cuatro paletas", async () => {
 // Escenario: mismo color por categoría en otra paleta
 t.test("mismo color por categoría en otra paleta", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
-  const vivaPorcion = await page.$eval('#torta circle[data-cat="Súper"]', (c) => getComputedStyle(c).stroke);
+  const vivaPorcion = await page.$eval('#torta circle[data-cat="Supermercado"]', (c) => getComputedStyle(c).stroke);
   await elegirPaleta(page, "lima");
   await A.ir(page, "inicio");
-  const porcion = await page.$eval('#torta circle[data-cat="Súper"]', (c) => getComputedStyle(c).stroke);
+  const porcion = await page.$eval('#torta circle[data-cat="Supermercado"]', (c) => getComputedStyle(c).stroke);
   assert.notEqual(porcion, vivaPorcion);
   await A.ir(page, "movs");
   const tarjeta = await page.$eval('[data-mov="2"]', (el) => getComputedStyle(el).backgroundColor);
@@ -243,4 +243,32 @@ t.test("aviso con la hoja abierta", async () => {
       .filter(([, r]) => r.left < t.right && t.left < r.right && r.top < t.bottom && t.top < r.bottom).map(([n]) => n);
   });
   assert.deepEqual(choques, []);
+});
+
+// Escenario: gasto con coma
+t.test("gasto con coma", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  assert.equal(await page.getAttribute("#mImporte", "inputmode"), "decimal");
+  await A.nuevoGasto(page, { importe: "12,50", cuenta: "Banco A" });
+  await A.aviso(page, "Gasto guardado");
+  assert.equal((await A.guardados(page)).movs[0].importe, 12.5);
+});
+
+// Escenario: saldo de una cuenta con coma
+t.test("saldo de una cuenta con coma", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await A.ir(page, "cuentas");
+  await A.nuevaCuenta(page, { nombre: "Banco B", saldo: "1.234,56" });
+  await A.aviso(page, "Cuenta guardada");
+  const b = (await A.guardados(page)).cuentas.find((c) => c.nombre === "Banco B");
+  assert.equal(b.saldoInicial, 1234.56);
+  assert.equal(await A.texto(page, `[data-cta="${b.id}"] .v .num`), "1234,56 €");
+});
+
+// Escenario: importe guardado al editar
+t.test("importe guardado al editar", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(7, "2026-10-03", 12.5, 1)] }) });
+  await A.ir(page, "movs");
+  await page.click('[data-mov="7"] .linea');
+  assert.equal(await page.inputValue("#mImporte"), "12,5");
 });

@@ -103,7 +103,7 @@ t.test("checklist anterior convertido", async () => {
 
 // Escenario: sólo las cuentas usadas
 t.test("sólo las cuentas usadas", async () => {
-  const { page } = await abrir({ datos: { settings: {}, gastos: [{ id: 1, fecha: "2026-10-03", importe: 20, cuenta: "tarjeta", cat: "Súper", nota: "" }], meses: {} } });
+  const { page } = await abrir({ datos: { settings: {}, gastos: [{ id: 1, fecha: "2026-10-03", importe: 20, cuenta: "tarjeta", cat: "Supermercado", nota: "" }], meses: {} } });
   assert.deepEqual(await nombres(page), ["Tarjeta"]);
 });
 
@@ -233,7 +233,7 @@ t.test("copia con fijos y una sugerencia rechazada", async () => {
 // Escenario: datos sin importaciones
 t.test("datos sin importaciones", async () => {
   const X = require("./extractos.cjs");
-  const datos = A.v2({ cuentas: [BANCO, A.cta(2, "Revolut", 50)], movs: [A.gasto(1, "2026-10-03", 20, 1, "Súper", "verdulería")] });
+  const datos = A.v2({ cuentas: [BANCO, A.cta(2, "Revolut", 50)], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", "verdulería")] });
   delete datos.reglas;
   const { page, errores } = await abrir({ datos });
   const d = await A.guardados(page);
@@ -246,4 +246,31 @@ t.test("datos sin importaciones", async () => {
   assert.ok(await page.isVisible("#iElegir"));
   assert.equal(await page.locator('#segIElegir [aria-pressed="true"]').count(), 0);
   assert.deepEqual(errores, []);
+});
+
+// Escenario: datos con Súper
+t.test("datos con Súper", async () => {
+  const VIEJA = "Súper";
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, VIEJA), { ...A.gasto(2, "2026-10-04", 15, 1, VIEJA, "verdulería"), fijo: true }],
+    fijos: { [`${VIEJA}|verdulería`]: true }, reglas: { "g|consum": VIEJA } });
+  const { page } = await abrir({ datos });
+  const d = await A.guardados(page);
+  assert.deepEqual(d.movs.map((m) => m.cat), ["Supermercado", "Supermercado"]);
+  assert.deepEqual(d.fijos, { "Supermercado|verdulería": true });
+  assert.deepEqual(d.reglas, { "g|consum": "Supermercado" });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCat", "Supermercado");
+  await page.fill("#mNota", "verdulería");
+  assert.ok(await page.isChecked("#mFijo"));
+});
+
+// Escenario: copia vieja con Súper
+t.test("copia vieja con Súper", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Súper", "pan")] });
+  const { page } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado · 03\/10/);
 });

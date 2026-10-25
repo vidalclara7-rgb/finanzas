@@ -1,7 +1,7 @@
 ---
 cambio: importar-extractos
 estado: diseno-aprobado
-datos: amplia
+datos: migra
 ---
 # Importar extractos del banco y adjuntar archivos
 
@@ -38,6 +38,11 @@ la memoria de categorías por comercio y los adjuntos.
 
 Movimientos (botón «Importar extracto»), hoja de importación (elegir cuenta y revisar borradores),
 hoja de cuenta (adjuntos e importar), Ajustes (aviso de que los adjuntos no entran en la copia).
+
+## Agregado en el Gate 3 (2026-10-25)
+
+Al probar en el iPhone: los importes se escriben con coma; categorías nuevas Regalos y Ropa; «Súper»
+pasa a llamarse «Supermercado» (se migra lo guardado).
 
 ## Fuera de alcance
 

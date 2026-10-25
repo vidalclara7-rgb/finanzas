@@ -95,3 +95,15 @@
 - Prueba en iPhone: no hay un iPhone ni el motor de Safari en este entorno. Se publica una copia de
   prueba privada (Artifact de claude.ai) para que la persona la abra en Safari del teléfono; con datos
   aparte y sin instalación ni uso sin conexión. No le llega a nadie más.
+
+## Gate 3, segunda ronda (2026-10-25, probando en el iPhone)
+
+- «No me deja poner comas»: los campos `type="number"` de Safari rechazan la coma del teclado en
+  castellano. Pasan a `type="text"` con `inputmode="decimal"`; `num()` acepta coma o punto y los
+  miles con punto («1.234,56»), y al editar se muestra con coma (`aTexto()`).
+- Categoría nueva **Ropa** (después de Compras, `--cat14`); las tiendas de ropa conocidas pasan de
+  Compras a Ropa en `PALABRAS`.
+- «Súper» → «Supermercado»: `categoriasNorm()` en `norm()` renombra la categoría en `movs`, en los
+  valores de `reglas` y en las claves de `fijos`, también con `v: 2`. `datos: migra`.
+- Para que la especificación viva no quede hablando de «Súper», este delta sustituye los requisitos
+  vivos que lo nombraban, con el texto igual salvo el nombre.

@@ -89,8 +89,15 @@ t.test("cerrar sin guardar", async () => {
 t.test("comercio conocido", async () => {
   const { page } = await abrir({ datos: cuentas() });
   await importar(page, await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [gasto("2026-10-03", "Pago Movil En 8930208 Consum, Ciudad Es, Tarj. :*1111", 22.05)] }));
-  assert.equal(await que(page, 0), "g|Súper");
+  assert.equal(await que(page, 0), "g|Supermercado");
   assert.equal(await A.texto(page, '[data-borr="0"] .d b'), "Consum");
+});
+
+// Escenario: tienda de ropa
+t.test("tienda de ropa", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [gasto("2026-10-03", "Pago Movil En Zara Centro, Ciudad Es", 39.95)] }));
+  assert.equal(await que(page, 0), "g|Ropa");
 });
 
 // Escenario: la app aprende
