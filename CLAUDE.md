@@ -10,7 +10,7 @@ Se desarrolla **dirigida por especificación (SDD, con OpenSpec)**: una idea ent
 index.html            toda la app (HTML, CSS y JS en un solo archivo, sin build)
 vendor/pdfjs/         pdf.js 3.11.174 de Mozilla (Apache 2.0), sin modificar: la única dependencia, para leer extractos
 sw.js                 service worker: red primero, caché de respaldo para uso sin conexión
-manifest.webmanifest, icon-*.png   instalación en pantalla de inicio (ícono: pila de tarjetas, se regenera con `node scripts/icono.cjs`)
+manifest.webmanifest, icon-*.png   instalación en pantalla de inicio (ícono: monograma «mf.», se regenera con `node scripts/icono.cjs`)
 kit.py                check · specs · tests · preview · capturas · archive · servir · instalar
 openspec/
   specs/<capacidad>/spec.md   lo que la app hace HOY. Sólo lo escribe /sdd:archive

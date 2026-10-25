@@ -1,14 +1,12 @@
-// Ícono de la app: pila de tres tarjetas sobre verde oliva (paleta Viva). Lo exporta a PNG en los
+// Ícono de la app: el monograma «mf.» en negro sobre rosa chicle, con el punto rojo anaranjado (paleta Viva). Lo exporta a PNG en los
 // tamaños que usa la app con el navegador de los tests:  node scripts/icono.cjs
 const path = require("node:path");
 const { chromium } = require("playwright");
 
 const SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#5F6B4E"/>
-  <rect x="108" y="118" width="296" height="150" rx="40" fill="#B9BDA6"/>
-  <rect x="108" y="196" width="296" height="150" rx="40" fill="#F3A6DA"/>
-  <rect x="108" y="274" width="296" height="150" rx="40" fill="#F05A2C"/>
-  <text x="144" y="398" font-family="Helvetica, Arial, sans-serif" font-weight="800" font-size="108" fill="#121212">€</text>
+  <rect width="512" height="512" fill="#F3A6DA"/>
+  <text x="236" y="350" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="800" font-size="280" letter-spacing="-16" fill="#121212">mf</text>
+  <circle cx="418" cy="326" r="30" fill="#F05A2C"/>
 </svg>`;
 
 (async () => {

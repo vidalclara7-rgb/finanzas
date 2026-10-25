@@ -1,4 +1,4 @@
-# Diseño: icono-tarjetas
+# Diseño: icono-monograma
 
 ## Decisiones de la persona (2026-10-25)
 
@@ -18,3 +18,10 @@
   `icon-512.png`, con los mismos nombres: el manifiesto y `index.html` no cambian.
 - `theme_color`/`background_color` del manifiesto siguen como están.
 - Sube la versión de la caché para que los teléfonos descarguen los íconos nuevos.
+
+## Gate 3, primera ronda (2026-10-25)
+
+- La persona: «me gusta la verde pero me gusta más el mf con el fondo rosa y el punto rojo». Pasa a
+  la opción C: «mf» en tinta `#121212` sobre rosa chicle `#F3A6DA`, con el punto en rojo anaranjado
+  `#F05A2C` (el que vio en la propuesta). El cambio se renombra de `icono-tarjetas` a
+  `icono-monograma`. La pila de tarjetas queda descartada.

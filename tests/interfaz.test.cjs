@@ -282,8 +282,8 @@ async function pixeles(page, archivo, puntos) {
     return ps.map(([x, y]) => [...g.getImageData(Math.floor(x * img.width), Math.floor(y * img.height), 1, 1).data.slice(0, 3)]);
   }, [archivo, puntos]);
 }
-const PUNTOS = { fondo: [0.05, 0.05], salvia: [0.5, 0.27], rosa: [0.5, 0.42], frente: [0.65, 0.68] };
-const COLORES = { fondo: [95, 107, 78], salvia: [185, 189, 166], rosa: [243, 166, 218], frente: [240, 90, 44] };
+const PUNTOS = { fondo: [0.05, 0.05], abajo: [0.5, 0.9], punto: [0.816, 0.637] };
+const COLORES = { fondo: [243, 166, 218], abajo: [243, 166, 218], punto: [240, 90, 44] };
 const cerca = (a, b) => a.every((v, i) => Math.abs(v - b[i]) <= 10);
 
 // Escenario: ícono en la pantalla de inicio
@@ -294,10 +294,11 @@ t.test("ícono en la pantalla de inicio", async () => {
   assert.deepEqual(m.icons.map((i) => i.src), ["icon-192.png", "icon-512.png"]);
   const ks = Object.keys(PUNTOS), vs = await pixeles(page, "icon-180.png", ks.map((k) => PUNTOS[k]));
   ks.forEach((k, i) => assert.ok(cerca(vs[i], COLORES[k]), `${k}: ${vs[i]}`));
-  // El «€» en tinta oscura sobre la tarjeta de adelante
+  // Las letras «mf» en tinta: buena parte de la franja de las letras es negra
   const zona = [];
-  for (let x = 0.28; x <= 0.42; x += 0.02) for (let y = 0.6; y <= 0.78; y += 0.02) zona.push([x, y]);
-  assert.ok((await pixeles(page, "icon-180.png", zona)).some((p) => p.every((v) => v < 60)), "no se ve el €");
+  for (let x = 0.12; x <= 0.72; x += 0.03) for (let y = 0.45; y <= 0.66; y += 0.03) zona.push([x, y]);
+  const negros = (await pixeles(page, "icon-180.png", zona)).filter((p) => p.every((v) => v < 60)).length;
+  assert.ok(negros / zona.length > 0.25, `letras: ${negros} de ${zona.length} puntos negros`);
 });
 
 // Escenario: mismo ícono en todos los tamaños
