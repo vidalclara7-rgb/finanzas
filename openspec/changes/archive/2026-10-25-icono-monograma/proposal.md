@@ -1,8 +1,9 @@
 ---
 cambio: icono-monograma
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
 preview: no
+archivado: 2026-10-25
 ---
 # Ícono con el monograma «mf.»
 
