@@ -35,7 +35,8 @@ ordenadas de mayor a menor, con su importe y una barra proporcional. Los gastos 
 ## Requisito: porcentaje de lo que entró
 
 Encima del resultado del mes, una línea de texto dice qué parte de lo que entró en el mes ya se
-gastó. Si el gasto supera lo ingresado, la línea se marca. Transferencias y ajustes no cuentan.
+gastó. Si el gasto supera lo ingresado, la línea se marca. Transferencias y ajustes no cuentan, y
+tampoco los gastos de «Trabajo (reembolsable)» ni los ingresos de Reembolso: no son plata propia.
 
 ### Escenario: gasto chico frente a lo que entró
 - **Dado** ingresos de 1700 € y gastos de 149,80 € este mes
@@ -52,3 +53,8 @@ gastó. Si el gasto supera lo ingresado, la línea se marca. Transferencias y aj
 - **Dado** gastos de 50 € y ningún ingreso este mes
 - **Cuando** la persona abre Inicio
 - **Entonces** se lee «Todavía no anotaste ingresos este mes»
+
+### Escenario: reembolsos fuera del porcentaje
+- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Súper y 50 € en Trabajo (reembolsable) este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** se lee «Gastaste el 20 % de lo que entró»

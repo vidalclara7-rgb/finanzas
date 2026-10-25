@@ -195,10 +195,9 @@ const CASA = "Casa/Splitwise";
 const fijo = (id, fecha, importe, cat, nota = "") => ({ ...A.gasto(id, fecha, importe, 1, cat, nota), fijo: true });
 const conFijos = (movs, fijos = {}) => ({ datos: A.v2({ cuentas: [BANCO], movs, fijos }) });
 const esFijo = async (page, id) => (await page.locator(`[data-mov="${id}"] [data-ui="chip-fijo"]`).count()) === 1;
-// La hoja pone el foco en el importe al abrirse: se espera antes de escribir la nota, para que no caiga ahí
 async function abrirGasto(page, cat, nota) {
   await page.click("#fab");
-  await page.waitForFunction(() => document.activeElement && document.activeElement.id === "mImporte");
+  await A.hojaLista(page);
   await A.elegir(page, "segCat", cat);
   if (nota !== undefined) await page.fill("#mNota", nota);
 }
@@ -207,6 +206,7 @@ async function abrirGasto(page, cat, nota) {
 t.test("gasto marcado como fijo", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
   await page.click("#fab");
+  await A.hojaLista(page);
   await page.fill("#mImporte", "600");
   await A.elegir(page, "segCat", CASA);
   await page.fill("#mNota", "alquiler");
@@ -312,4 +312,16 @@ t.test("un mes salteado", async () => {
 t.test("gastos sin nota", async () => {
   const { page } = await abrir(conFijos(tres("Súper", "", [100, 100, 100])));
   assert.equal(await page.isVisible("#sugFijo"), false);
+});
+
+// Escenario: reembolsos fuera del resultado
+t.test("reembolsos fuera del resultado", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1000, 1), A.ingreso(2, "2026-10-10", 50, 1, "Reembolso"),
+    A.gasto(3, "2026-10-03", 200, 1), A.gasto(4, "2026-10-04", 50, 1, "Trabajo (reembolsable)")] }) });
+  assert.equal(await A.texto(page, "#ingMes"), "Ingresos 1000 €");
+  assert.equal(await A.texto(page, "#gasMes"), "Gastos 200 €");
+  assert.equal(await A.texto(page, "#resultado"), "800 €");
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totIng"), "1050 €");
+  assert.equal(await A.texto(page, "#totGas"), "250 €");
 });

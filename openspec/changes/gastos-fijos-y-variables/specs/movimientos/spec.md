@@ -76,3 +76,25 @@ hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota 
 - **Dado** que hoy es 2026-10-15 y gastos de 100 € en Súper sin nota en agosto, septiembre y octubre
 - **Cuando** la persona abre Inicio
 - **Entonces** no aparece ninguna sugerencia
+
+## Requisito: resultado del mes
+
+Inicio muestra los ingresos, los gastos y el resultado del mes en curso (ingresos menos gastos).
+Transferencias y ajustes no cuentan, y tampoco los gastos de «Trabajo (reembolsable)» ni los ingresos de
+Reembolso: el resultado es el de la plata propia. Los totales de Movimientos sí los incluyen.
+
+### Escenario: resultado con ingresos y gastos
+- **Dado** ingresos de 1500 € en Sueldo y 200 € en Venta o trabajo extra, y gastos de 64,30 € y 18 € este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** ve ingresos 1700 €, gastos 82,3 € y resultado 1617,7 €
+
+### Escenario: mes en negativo
+- **Dado** un ingreso de 100 € y gastos por 150 € este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** el resultado es -50 € y se marca en rojo
+
+### Escenario: reembolsos fuera del resultado
+- **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Súper y 50 € en Trabajo (reembolsable) este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** ve ingresos 1000 €, gastos 200 € y resultado 800 €
+- **Y** en Movimientos, los totales son ingresos 1050 € y gastos 250 €

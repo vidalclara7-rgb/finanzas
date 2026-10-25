@@ -61,3 +61,12 @@
   la figura de círculos, que este cambio retira. Ahora pide que las dos partes de la barra se
   distingan de su tarjeta (1,5 a 1).
 - `CACHE` sube a `finanzas-v9`.
+
+## Gate 3, primera ronda (2026-10-25)
+
+- La persona pide sacar los reembolsables también de arriba de Inicio. Elige: el % de lo que entró y
+  el resultado del mes (ingresos, gastos, resultado) sin gastos de «Trabajo (reembolsable)» ni
+  ingresos de Reembolso, para que coincidan con la barra. Descartados: sólo la línea del %, y sacarlos
+  de todo Inicio (torta, «Por categoría», seis meses), que siguen como están.
+- Se sustituye el requisito vivo «resultado del mes» (de movimientos). Los totales de la pestaña
+  Movimientos siguen sumando todo, porque la lista muestra todo.

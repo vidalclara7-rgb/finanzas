@@ -535,7 +535,9 @@ function render(){
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
   const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
-  porcentajeIng(ing,gas);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ing-gas));$("ingMes").textContent="Ingresos "+eur(ing);$("gasMes").textContent="Gastos "+eur(gas);
+  // Arriba de Inicio, sólo la plata propia: sin gastos reembolsables ni ingresos de Reembolso
+  const propios=ms.filter(m=>!(m.tipo==="gasto"&&m.cat===REEMB)&&!(m.tipo==="ingreso"&&m.cat==="Reembolso")),ingP=sumaTipo(propios,"ingreso"),gasP=sumaTipo(propios,"gasto");
+  porcentajeIng(ingP,gasP);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ingP-gasP));$("ingMes").textContent="Ingresos "+eur(ingP);$("gasMes").textContent="Gastos "+eur(gasP);
   const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
   const pc=porCobrar(),nP=pc.filter(m=>m.reembolso.estado==="pendiente").length,nA=pc.length-nP;$("porCobrar").hidden=!pc.length;
   $("cobrarVal").textContent=eur(pc.reduce((a,m)=>a+m.importe,0));

@@ -127,3 +127,10 @@ t.test("sin gastos para repartir", async () => {
   assert.equal(await page.locator("#fv .partida").count(), 0);
   assert.equal(await A.texto(page, "#fv"), "Todavía no anotaste gastos este mes.");
 });
+
+// Escenario: reembolsos fuera del porcentaje
+t.test("reembolsos fuera del porcentaje", async () => {
+  const { page } = await abrir(con([A.ingreso(1, "2026-10-01", 1000, 1), A.ingreso(2, "2026-10-10", 50, 1, "Reembolso"),
+    A.gasto(3, "2026-10-03", 200, 1), A.gasto(4, "2026-10-04", 50, 1, "Trabajo (reembolsable)")]));
+  assert.equal(await A.texto(page, "#formaTxt"), "Gastaste el 20 % de lo que entró");
+});

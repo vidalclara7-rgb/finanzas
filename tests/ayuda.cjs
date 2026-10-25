@@ -74,8 +74,11 @@ const portapapeles = (page) => page.evaluate(() => navigator.clipboard.readText(
 const elegir = (page, seg, texto) => page.locator(`#${seg} button`, { hasText: new RegExp(`^${texto.replace(/[()]/g, "\\$&")}$`) }).click();
 
 // Nuevo movimiento desde el «+»: tipo gasto, ingreso o transferencia; cuentas por nombre
+// Al abrirse, la hoja pone el foco en el importe: se espera, para que lo que se escribe no caiga en otro campo
+const hojaLista = (page) => page.waitForFunction(() => document.activeElement && document.activeElement.id === "mImporte");
 async function nuevoMov(page, { tipo = "gasto", importe, cuenta, desde, hacia, cat, nota, fecha } = {}) {
   await page.click("#fab");
+  await hojaLista(page);
   await page.click(`#segMov button[data-v="${tipo}"]`);
   if (importe !== undefined) await page.fill("#mImporte", String(importe));
   if (cuenta) await elegir(page, "segCuentaM", cuenta);
@@ -141,4 +144,4 @@ function preparar(nodeTest) {
   return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
 }
 
-module.exports = { iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
+module.exports = { hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };

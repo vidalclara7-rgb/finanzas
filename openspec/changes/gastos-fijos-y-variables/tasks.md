@@ -18,11 +18,13 @@
 - [x] Sugerencias: tres meses seguidos, ±10 %, con nota; «Sí, es fijo» y «No»
 - [x] `data-pantalla` y `data-ui` del preview en la app
 - [x] Subir `CACHE` en `sw.js`
+- [x] Gate 3, ronda 1: % y resultado del mes sin reembolsables (gastos de Trabajo e ingresos de Reembolso)
 
 ## Tests
 - [x] graficos: 7 escenarios
 - [x] movimientos: 11 escenarios
 - [x] datos: 3 escenarios
+- [x] reembolsos fuera del porcentaje y del resultado: 2 escenarios
 
 ## Comprobación y documentación
 - [x] `python3 kit.py check` en verde
