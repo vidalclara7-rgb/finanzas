@@ -17,6 +17,11 @@ superarlo.
 - **Cuando** la persona abre Inicio
 - **Entonces** Revolut muestra -20 € disponibles y el anillo se marca como excedido
 
+### Escenario: tope en aviso
+- **Dado** «Tarjeta» con tope de 500 € y 400 € gastados con esa tarjeta este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** el anillo de Tarjeta dice «80 %» y se marca en aviso
+
 ### Escenario: cuenta sin tope
 - **Dado** «Banco A» sin tope y «Tarjeta» con tope
 - **Cuando** la persona abre Inicio

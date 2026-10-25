@@ -9,7 +9,8 @@ Cambio en curso (openspec/changes/<cambio>/):
   - en `construida`: tasks.md sin tareas pendientes y un test por escenario
 
 Especificación viva (openspec/specs/<capacidad>/spec.md): describe lo que la
-app hace hoy, así que cada escenario tiene que tener su test.
+app hace hoy, así que cada escenario tiene que tener su test, salvo los de los
+requisitos que un cambio ya en construcción sustituye o retira (los prueba el delta).
 
 Un requisito dice QUÉ hace la app, no CÓMO: sin ficheros, funciones ni
 tecnologías. Y una app sin ninguna especificación también falla.
@@ -35,7 +36,20 @@ def _rel(p: Path) -> str:
     return p.relative_to(os_.RAIZ).as_posix()
 
 
-def revisar_spec(spec: os_.Spec, exigir_tests: bool, con_test: set[str], vivas: dict) -> tuple[list, int, int]:
+def sustituidos() -> dict[str, set[str]]:
+    """Requisitos de la viva que un cambio ya en construcción (diseño aprobado o construido)
+    sustituye o retira: sus escenarios los prueba el delta, no hace falta que conserven su test."""
+    out: dict[str, set[str]] = {}
+    for c in os_.cambios_activos():
+        if not os_.al_menos(c, "diseno-aprobado"):
+            continue
+        for d in (c / "specs").glob("*/spec.md"):
+            out.setdefault(d.parent.name, set()).update(r.nombre for r in os_.leer_spec(d).requisitos)
+    return out
+
+
+def revisar_spec(spec: os_.Spec, exigir_tests: bool, con_test: set[str], vivas: dict,
+                 exentos: set[str] = frozenset()) -> tuple[list, int, int]:
     fallos, n_req, n_esc = [], 0, 0
     rel = _rel(spec.ruta)
     if not spec.requisitos:
@@ -56,7 +70,7 @@ def revisar_spec(spec: os_.Spec, exigir_tests: bool, con_test: set[str], vivas: 
             for palabra in ("Dado", "Cuando", "Entonces"):
                 if not re.search(rf"\*\*{palabra}\*\*", cuerpo):
                     fallos.append(f"{rel}: al escenario «{titulo}» le falta «**{palabra}**»")
-            if exigir_tests and titulo.lower() not in con_test:
+            if exigir_tests and r.nombre not in exentos and titulo.lower() not in con_test:
                 fallos.append(f"{rel}: el escenario «{titulo}» no tiene test (// Escenario: {titulo})")
     return fallos, n_req, n_esc
 
@@ -74,8 +88,9 @@ def revisar() -> tuple[list[str], list[str]]:
             notas.append("openspec/ vacío y sin app: nada que comprobar")
         return fallos, notas
 
+    en_cambio = sustituidos()
     for cap, spec in vivas.items():
-        f, nr, ne = revisar_spec(spec, True, con_test, {})
+        f, nr, ne = revisar_spec(spec, True, con_test, {}, en_cambio.get(cap, set()))
         fallos += f
         notas.append(f"openspec/specs/{cap}: {nr} requisitos, {ne} escenarios")
 

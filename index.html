@@ -160,58 +160,52 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <main>
   <!-- INICIO -->
   <section id="v-inicio" data-pantalla="inicio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card lime" id="setupCard" hidden>
+    <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--cat5)" hidden>
       <span class="lbl">Primer paso</span>
-      <span>Cargá tus topes y tu plan de ahorro en Ajustes para empezar.</span>
-      <button class="btn" id="irAjustes">Ir a Ajustes</button>
+      <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
+      <button class="btn" id="crearPrimera">Crear cuenta</button>
     </div>
-    <div class="grid2">
-      <div class="card hero" data-ui="tarjeta-disponible"><div class="row"><span class="lbl">Tarjeta</span><div class="ring" id="ringTarjeta" data-ui="anillo-tope"></div></div><span class="big" id="dispTarjeta">–</span><span class="sub" id="subTarjeta"></span></div>
-      <div class="card lav" data-ui="revolut-disponible"><div class="row"><span class="lbl">Revolut</span><div class="ring" id="ringRevolut" data-ui="anillo-tope"></div></div><span class="big" id="dispRevolut">–</span><span class="sub" id="subRevolut"></span></div>
+    <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px">
+      <svg class="forma" id="forma" viewBox="0 0 358 150" data-ui="forma-gasto"><circle cx="0" cy="75" r="75"/><circle class="centro" id="formaCentro" cx="179" cy="75" r="18"/><circle cx="358" cy="75" r="75"/></svg>
+      <span class="sub" id="formaTxt"></span>
+      <span class="sub">Resultado del mes</span>
+      <span class="monto" id="resultado"></span>
+      <div class="row sub"><span id="ingMes"></span><span id="gasMes"></span></div>
     </div>
+    <div class="tira" id="ultimos" data-ui="ultimos-gastos"></div>
+    <div class="grid2" id="disponibles" data-ui="disponibles"></div>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="lista-categorias"></div></div>
     <div class="card" id="barrasCard" data-ui="barras-semana" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
-    <div class="card">
-      <div class="row"><span class="lbl">Fondo de emergencia</span><span class="chip" id="chipFondo"></span></div>
-      <span class="big" id="fondoVal">–</span>
-      <div class="bar"><i id="fondoBar"></i></div>
-      <span class="sub" id="fondoSub"></span>
-    </div>
-    <div class="card lime" id="netoCard" data-ui="patrimonio-inicio" hidden>
+    <div class="card" id="mesesCard" data-ui="ingresos-gastos" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses" id="meses"></div></div>
+    <div class="card color" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--cat1)" hidden>
       <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
       <span class="big" id="netoIni">–</span>
       <span class="sub" id="netoIniSub"></span>
     </div>
-    <div class="card"><span class="lbl">Últimos gastos</span><div class="list" id="ultimos"></div></div>
   </section>
 
   <!-- MOVIMIENTOS -->
-  <section id="v-movs" data-pantalla="movs" hidden>
-    <div class="card" data-ui="lista-gastos"><div class="row"><span class="lbl">Total del mes</span><span class="num" id="totalMes"></span></div><div class="list" id="movs"></div></div>
+  <section id="v-movs" data-pantalla="movs" hidden style="flex-direction:column;gap:14px">
+    <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big" id="totIng"></div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big" id="totGas"></div></div></div>
+    <div class="pila" id="movs" data-ui="lista-movimientos"></div>
   </section>
 
-  <!-- MES -->
-  <section id="v-mes" hidden style="flex-direction:column;gap:14px">
-    <div class="card"><span class="lbl">Día de cobro</span><div id="checks"></div></div>
-    <div class="card">
-      <span class="lbl">Saldo del fondo de emergencia</span>
-      <label class="f" for="fondoInput">Anotalo cuando hagas la transferencia
-        <input type="number" inputmode="decimal" id="fondoInput" placeholder="0">
-      </label>
-      <button class="btn" id="guardarFondo">Guardar saldo</button>
-    </div>
-    <div class="card"><span class="lbl">Plan del fondo</span><div class="list" id="plan"></div></div>
+  <!-- CIERRE -->
+  <section id="v-mes" data-pantalla="mes" hidden style="flex-direction:column;gap:14px">
+    <div class="card" data-ui="conciliacion"><div class="row"><span class="lbl" id="concTitulo">Conciliación</span><span class="chip idle" id="concChip"></span></div><span class="sub" id="concSub"></span><div class="list" id="concList"></div></div>
+    <div class="card" data-ui="checklist"><span class="lbl">Día de cobro</span><div id="checks"></div><button class="btn sec" id="addTarea">Agregar tarea</button></div>
+    <div class="card" data-ui="plan-fondo"><span class="lbl">Plan del fondo</span><div class="list" id="plan"></div></div>
   </section>
 
   <!-- CUENTAS -->
   <section id="v-cuentas" data-pantalla="cuentas" hidden style="flex-direction:column;gap:14px">
-    <div class="card lime" id="cuentasVacio">
+    <div class="card color" id="cuentasVacio" style="--c:var(--cat5)">
       <span class="lbl">Tu foto financiera</span>
       <span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span>
     </div>
-    <div class="card hero" id="netoBox" data-ui="patrimonio" hidden>
-      <span class="lbl">Patrimonio neto</span>
-      <span class="big" id="neto">–</span>
+    <div id="netoBox" data-ui="patrimonio" style="display:flex;flex-direction:column;gap:6px" hidden>
+      <span class="sub">Patrimonio neto</span>
+      <span class="monto" id="neto">–</span>
       <div class="row sub"><span>Tenés <span class="num" id="activos"></span></span><span>Debés <span class="num" id="deudas"></span></span></div>
       <span class="sub" id="cuotasSub"></span>
     </div>
@@ -220,12 +214,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   </section>
 
   <!-- AJUSTES -->
-  <section id="v-ajustes" hidden style="flex-direction:column;gap:14px">
-    <div class="card">
-      <span class="lbl">Topes mensuales</span>
-      <label class="f" for="topeTarjeta">Tarjeta de crédito (€)<input type="number" inputmode="decimal" id="topeTarjeta"></label>
-      <label class="f" for="topeRevolut">Revolut (€)<input type="number" inputmode="decimal" id="topeRevolut"></label>
-      <span class="lbl" style="margin-top:6px">Plan de ahorro</span>
+  <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
+    <div class="card" data-ui="plan-ajustes">
+      <span class="lbl">Plan del fondo de emergencia</span>
       <label class="f" for="aporte">Aporte mensual al fondo (€)<input type="number" inputmode="decimal" id="aporte"></label>
       <label class="f" for="objFondo">Objetivo del fondo (€)<input type="number" inputmode="decimal" id="objFondo"></label>
       <label class="f" for="inicio">Mes del primer aporte<input type="month" id="inicio"></label>
@@ -249,74 +240,173 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
 <nav>
   <button data-v="inicio" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
-  <button data-v="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Gastos</button>
-  <button class="fab" id="fab" aria-label="Añadir gasto">+</button>
+  <button data-v="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
+  <button class="fab" id="fab" aria-label="Nuevo movimiento">+</button>
   <button data-v="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
-  <button data-v="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mes</button>
+  <button data-v="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Cierre</button>
 </nav>
 
 <div id="sheetBg" class="sheet-bg" hidden></div>
-<form id="sheet" class="sheet" data-pantalla="hoja-gasto" data-ui="hoja-gasto" hidden autocomplete="off">
-  <div class="row"><h2>Nuevo gasto</h2><button type="button" class="btn sec" id="cerrar" style="padding:8px 12px">Cerrar</button></div>
-  <input type="number" inputmode="decimal" step="0.01" id="gImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
-  <div><span class="lbl">Cuenta</span><div class="seg" id="segCuenta" style="margin-top:8px"></div></div>
-  <div><span class="lbl">Categoría</span><div class="seg" id="segCat" style="margin-top:8px"></div></div>
-  <label class="f" for="gNota">Nota (opcional)<input type="text" id="gNota" placeholder="Ej: Consum, cena con amigas"></label>
-  <label class="f" for="gFecha">Fecha<input type="date" id="gFecha"></label>
-  <button class="btn" type="submit">Guardar gasto</button>
+
+<!-- Hoja de movimiento: gasto, ingreso o transferencia -->
+<form id="sheet" class="sheet" data-pantalla="hoja-movimiento" data-ui="hoja-movimiento" hidden autocomplete="off">
+  <div class="row"><h2 id="mTitulo">Nuevo movimiento</h2><button type="button" class="btn sec" id="cerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="card color" id="sinCuentas" data-ui="sin-cuentas" style="--c:var(--cat5)" hidden><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button type="button" class="btn" id="mCrearCuenta">Crear cuenta</button></div>
+  <div id="mCampos" style="display:flex;flex-direction:column;gap:14px">
+    <div class="seg" id="segMov" data-ui="tipo-movimiento"></div>
+    <input type="number" inputmode="decimal" step="0.01" id="mImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
+    <div id="mUna"><span class="lbl">Cuenta</span><div class="seg" id="segCuentaM" style="margin-top:8px"></div></div>
+    <div id="mUnaCat"><span class="lbl">Categoría</span><div class="seg" id="segCat" style="margin-top:8px"></div></div>
+    <div id="mTransf" data-pantalla="hoja-transferencia" style="display:flex;flex-direction:column;gap:14px">
+      <div data-ui="desde"><span class="lbl">Desde</span><div class="seg" id="segDesde" style="margin-top:8px"></div></div>
+      <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" id="segHacia" style="margin-top:8px"></div></div>
+    </div>
+    <label class="f" for="mNota">Nota (opcional)<input type="text" id="mNota" placeholder="Ej: Consum, cena con amigas"></label>
+    <label class="f" for="mFecha">Fecha<input type="date" id="mFecha"></label>
+    <button class="btn" type="submit" id="mGuardar">Guardar gasto</button>
+  </div>
 </form>
 
-<form id="sheetC" class="sheet" hidden autocomplete="off">
+<!-- Hoja de cuenta -->
+<form id="sheetC" class="sheet" data-pantalla="hoja-cuenta" data-ui="hoja-cuenta" hidden autocomplete="off">
   <div class="row"><h2 id="cTitulo">Nueva cuenta</h2><button type="button" class="btn sec" id="cCerrar" style="padding:8px 12px">Cerrar</button></div>
-  <div><span class="lbl">Tipo</span><div class="seg" id="segTipo" style="margin-top:8px"></div></div>
+  <div id="cTipoBox"><span class="lbl">Tipo</span><div class="seg" id="segTipo" style="margin-top:8px"></div></div>
   <label class="f" for="cNombre">Nombre<input type="text" id="cNombre"></label>
-  <div data-t="compartida"><div class="seg" id="segSigno"></div></div>
-  <label class="f" for="cSaldo"><span id="cSaldoLbl">Saldo (€)</span><input type="number" inputmode="decimal" step="0.01" id="cSaldo" placeholder="0"></label>
+  <div id="cNueva" style="display:flex;flex-direction:column;gap:14px">
+    <div data-t="compartida"><div class="seg" id="segSigno"></div></div>
+    <label class="f" for="cSaldo" data-ui="saldo-partida"><span id="cSaldoLbl">Saldo con el que parte (€)</span><input type="number" inputmode="decimal" step="0.01" id="cSaldo" placeholder="0"></label>
+  </div>
+  <div id="cEdita" style="display:flex;flex-direction:column;gap:6px"><div class="row"><span class="sub">Saldo calculado hoy</span><span class="num lbl" id="cCalc"></span></div><span class="sub">El saldo se corrige conciliando, en Cierre.</span></div>
   <label class="f" for="cAportado" data-t="inversion">Total aportado (€, opcional, para ver la ganancia)<input type="number" inputmode="decimal" step="0.01" id="cAportado"></label>
   <label class="f" for="cLimite" data-t="tarjeta">Límite de la tarjeta (€, opcional)<input type="number" inputmode="decimal" step="0.01" id="cLimite"></label>
   <label class="f" for="cCuota" data-t="financiacion">Cuota mensual (€)<input type="number" inputmode="decimal" step="0.01" id="cCuota"></label>
   <label class="f" for="cCuotas" data-t="financiacion">Cuotas que faltan (opcional)<input type="number" inputmode="numeric" step="1" id="cCuotas"></label>
+  <label class="f" for="cTope" data-t="liquidez tarjeta">Tope de gasto mensual (€, opcional)<input type="number" inputmode="decimal" step="0.01" id="cTope" placeholder="Sin tope"></label>
+  <label class="check" for="cFondo" data-t="liquidez" data-ui="es-fondo"><input type="checkbox" id="cFondo"><span>Es mi fondo de emergencia</span></label>
   <button class="btn" type="submit">Guardar cuenta</button>
   <button class="btn danger" type="button" id="cBorrar" hidden>Borrar cuenta</button>
 </form>
 
+<!-- Hoja de conciliación -->
+<form id="sheetK" class="sheet" data-pantalla="hoja-conciliacion" data-ui="hoja-conciliacion" hidden autocomplete="off">
+  <div class="row"><h2 id="kTitulo">Conciliar</h2><button type="button" class="btn sec" id="kCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="row"><span class="sub" id="kCalcLbl"></span><span class="num lbl" id="kCalc"></span></div>
+  <label class="f" for="kReal"><span id="kRealLbl">Saldo real según tu banco (€)</span><input type="number" inputmode="decimal" step="0.01" id="kReal" class="amount" placeholder="0,00 €"></label>
+  <div class="card color" id="kDif" data-ui="diferencia" style="--c:var(--cat3)" hidden><div class="row"><span class="lbl">Diferencia</span><span class="lbl num" id="kDifVal"></span></div><span class="sub">Puede ser un gasto que no anotaste o una comisión. Si lo registrás como ajuste, la cuenta queda conciliada con el saldo real y el ajuste no cuenta como gasto.</span></div>
+  <button class="btn" type="submit" id="kConciliar">Conciliar</button>
+  <button class="btn" type="button" id="kAjuste" hidden>Registrar ajuste y conciliar</button>
+  <button class="btn sec" type="button" id="kPendiente" hidden>Dejar pendiente</button>
+</form>
+
+<!-- Hoja de tarea del checklist -->
+<form id="sheetT" class="sheet" data-pantalla="hoja-tarea" data-ui="hoja-tarea" hidden autocomplete="off">
+  <div class="row"><h2 id="tTitulo">Nueva tarea</h2><button type="button" class="btn sec" id="tCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <label class="f" for="tTexto">Tarea<input type="text" id="tTexto" placeholder="Ej: pagar el alquiler"></label>
+  <button class="btn" type="submit">Guardar tarea</button>
+  <button class="btn danger" type="button" id="tBorrar" hidden>Borrar tarea</button>
+</form>
+
 <script>
 const KEY="finanzas-v1";
-const CUENTAS=[["tarjeta","Tarjeta"],["revolut","Revolut"],["santander","Débito/efectivo"]];
 const CATS=["Súper","Comida fuera","Delivery","Transporte","Ocio","Compras","Belleza","Casa/Splitwise","Salud","Viajes","Trabajo (reembolsable)","Otros"];
-function planMap(){const st=S.settings;const out={};if(!st.aporte||!st.objetivoFondo||!st.inicio)return out;
-  const saltos=(st.saltos||"").split(",").map(x=>x.trim()).filter(Boolean);let [y,m]=st.inicio.split("-").map(Number);let acc=0;
-  for(let i=0;i<60&&acc<st.objetivoFondo;i++){const id=y+"-"+String(m).padStart(2,"0");if(!saltos.includes(id))acc+=st.aporte;out[id]=Math.min(acc,st.objetivoFondo);m++;if(m>12){m=1;y++;}}
-  return out;}
-function checksList(){const st=S.settings;return [["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]];}
-const configurado=()=>{const st=S.settings;return st.topeTarjeta>0&&st.topeRevolut>0&&st.aporte>0&&st.objetivoFondo>0&&!!st.inicio;};
+const INGRESOS=["Sueldo","Reembolso","Venta o trabajo extra","Regalo","Intereses y rendimientos","Otros"];
+const REEMB="Trabajo (reembolsable)";
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-
-// Tipos de cuenta: [tipo, título del grupo, etiqueta del importe, ejemplo de nombre, es deuda]
-const TIPOS=[["liquidez","Bancos y efectivo","Saldo actual (€)","Ej: Santander, Revolut, efectivo",false],
-  ["inversion","Inversiones","Valor actual (€)","Ej: Revolut inversiones, fondo indexado",false],
-  ["tarjeta","Tarjetas de crédito","Deuda actual (€)","Ej: Visa del banco",true],
-  ["financiacion","Financiaciones","Deuda pendiente (€)","Ej: Klarna, Cetelem, préstamo",true],
-  ["compartida","Deudas compartidas","Importe neto (€)","Ej: Splitwise, gastos del piso",null]];
+// Tipos de cuenta: [tipo, título del grupo, ejemplo de nombre, es deuda]
+const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",false],
+  ["inversion","Inversiones","Ej: Revolut inversiones, fondo indexado",false],
+  ["tarjeta","Tarjetas de crédito","Ej: Visa del banco",true],
+  ["financiacion","Financiaciones","Ej: Klarna, Cetelem, préstamo",true],
+  ["compartida","Deudas compartidas","Ej: Splitwise, gastos del piso",false]];
 // Color del punto de cada tipo de cuenta (variables --cat de la hoja de estilos)
-const COLOR={liquidez:"--cat1",inversion:"--cat2",tarjeta:"--cat5",financiacion:"--cat6",compartida:"--cat9"};
+const COLOR={liquidez:"--cat1",inversion:"--cat9",tarjeta:"--cat3",financiacion:"--cat7",compartida:"--cat11"};
 const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
-// Valor con signo para el patrimonio: positivo es lo que tenés, negativo lo que debés
-const valorCuenta=c=>c.tipo==="compartida"?c.saldo:tipoDe(c.tipo)[4]?-c.saldo:c.saldo;
-function norm(s){if(!Array.isArray(s.cuentas))s.cuentas=[];if(!s.meses)s.meses={};if(!s.settings)s.settings={};return s;}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.gastos)return norm(s);}catch(e){}return norm({settings:{},gastos:[],meses:{}});}
-let S=load();
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
+
 const $=id=>document.getElementById(id);
-const eur=n=>(Math.round(n*100)/100).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
 const pad=n=>String(n).padStart(2,"0");
+const r2=n=>Math.round(n*100)/100;
+const eur=n=>r2(n).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
 const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
 const mesId=()=>hoy().slice(0,7);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const mesDe=id=>{const [y,m]=id.split("-");return MESES[+m-1]+" "+y;};
-function gastosMes(id){return S.gastos.filter(g=>g.fecha.slice(0,7)===id);}
-function mesData(id){if(!S.meses[id])S.meses[id]={fondo:null,checks:{}};return S.meses[id];}
-function ultimoFondo(){const ks=Object.keys(S.meses).filter(k=>S.meses[k].fondo!=null).sort();return ks.length?S.meses[ks[ks.length-1]].fondo:null;}
+const fechaCorta=f=>f?f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(2,4):"";
+const diaMes=f=>f.slice(8,10)+"/"+f.slice(5,7);
+const finDeMes=m=>{const [y,mm]=m.split("-").map(Number);return m+"-"+pad(new Date(y,mm,0).getDate());};
+// Fecha de cierre de un mes: el último día, o hoy si es el mes en curso
+const fechaCierre=m=>m===mesId()?hoy():finDeMes(m);
+let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
+
+// Datos v2. norm() convierte lo guardado por versiones anteriores; se aplica al cargar y al restaurar
+function norm(s){
+  if(!s||typeof s!=="object")s={};
+  if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return s;}
+  const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
+  // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
+  s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
+  // Primera versión: una cuenta por cada cuenta fija con gastos o tope
+  const idDe={};
+  [["tarjeta","Tarjeta","tarjeta",st.topeTarjeta],["revolut","Revolut","liquidez",st.topeRevolut],["santander","Débito/efectivo","liquidez",0]].forEach(([k,nombre,tipo,tope])=>{
+    const fs=gastos.filter(g=>g.cuenta===k).map(g=>g.fecha).sort();if(!fs.length&&!(tope>0))return;
+    const c={id:nid(),tipo,nombre,saldoInicial:0,desde:(fs.length?fs[0].slice(0,7):mesId())+"-01"};if(tope>0)c.tope=tope;
+    s.cuentas.push(c);idDe[k]=c.id;});
+  s.movs=gastos.filter(g=>idDe[g.cuenta]).map(g=>({id:g.id,tipo:"gasto",fecha:g.fecha,importe:g.importe,cuenta:idDe[g.cuenta],cat:g.cat,nota:g.nota||""}));
+  // El último saldo anotado del fondo pasa a la cuenta «Fondo de emergencia»; los anteriores quedan para el plan
+  const conFondo=Object.keys(s.meses).filter(k=>s.meses[k].fondo!=null).sort();
+  if(conFondo.length&&!s.cuentas.some(c=>c.fondo)){const k=conFondo[conFondo.length-1];
+    s.cuentas.push({id:nid(),tipo:"liquidez",nombre:"Fondo de emergencia",saldoInicial:s.meses[k].fondo,desde:k+"-01",fondo:true});}
+  // Las cinco tareas fijas pasan a ser propias, con los mismos ids para conservar lo marcado
+  s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
+    ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
+  delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
+  return s;}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{}});}
+let S=load();
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
+function mesData(id){if(!S.meses[id])S.meses[id]={checks:{}};if(!S.meses[id].checks)S.meses[id].checks={};return S.meses[id];}
+
+// Saldos: «valor con signo» (lo que tenés en positivo, lo que debés en negativo)
+const esDeuda=c=>tipoDe(c.tipo)[3];
+const valorInicial=c=>esDeuda(c)?-c.saldoInicial:c.saldoInicial;
+function efecto(m,id){
+  if(m.tipo==="gasto")return m.cuenta===id?-m.importe:0;
+  if(m.tipo==="ingreso"||m.tipo==="ajuste")return m.cuenta===id?m.importe:0;
+  if(m.tipo==="transferencia")return (m.cuenta===id?-m.importe:0)+(m.destino===id?m.importe:0);
+  return 0;}
+function valorCuenta(c,hasta){let v=valorInicial(c);for(const m of S.movs)if(m.fecha>=c.desde&&(!hasta||m.fecha<=hasta))v+=efecto(m,c.id);return r2(v);}
+const cuentaDe=id=>S.cuentas.find(c=>c.id===id);
+const nombreDe=id=>{const c=cuentaDe(id);return c?c.nombre:"Sin cuenta";};
+function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota)q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
+function guardarNeto(){mesData(mesId()).neto=totales().neto;}
+const movsMes=id=>S.movs.filter(m=>m.fecha.slice(0,7)===id);
+const sumaTipo=(ms,t)=>r2(ms.filter(m=>m.tipo===t).reduce((a,m)=>a+m.importe,0));
+
+// Conciliación: conciliada si se confirmó, o si lo pendiente ya coincide con el calculado
+function estadoConc(c,m){const e=(mesData(m).conc||{})[c.id];if(!e)return {txt:"Sin conciliar",cls:"idle",ok:false};
+  const dif=r2(e.real-valorCuenta(c,fechaCierre(m)));
+  if(e.ok||Math.abs(dif)<0.005)return {txt:"Conciliada",cls:"ok",ok:true};
+  return {txt:"Diferencia "+eur(dif),cls:"warnc",ok:false};}
+// Un cambio en un movimiento devuelve a «sin conciliar» las cuentas que toca, en el mes de su fecha
+function desconciliar(m){if(!m)return;const md=S.meses[m.fecha.slice(0,7)];if(!md||!md.conc)return;[m.cuenta,m.destino].forEach(id=>{if(id!=null)delete md.conc[id];});}
+
+function planMap(){const st=S.settings;const out={};if(!st.aporte||!st.objetivoFondo||!st.inicio)return out;
+  const saltos=(st.saltos||"").split(",").map(x=>x.trim()).filter(Boolean);let [y,m]=st.inicio.split("-").map(Number);let acc=0;
+  for(let i=0;i<60&&acc<st.objetivoFondo;i++){const id=y+"-"+String(m).padStart(2,"0");if(!saltos.includes(id))acc+=st.aporte;out[id]=Math.min(acc,st.objetivoFondo);m++;if(m>12){m=1;y++;}}
+  return out;}
+// Saldo del fondo al cierre de un mes: la cuenta marcada como fondo, o lo anotado antes de que existiera
+function fondoEn(k){const fc=S.cuentas.find(c=>c.fondo);if(fc&&k>=fc.desde.slice(0,7))return valorCuenta(fc,fechaCierre(k));const md=S.meses[k];return md&&md.fondo!=null?md.fondo:null;}
+
+function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
+function detalleCuenta(c){const v=valorCuenta(c);
+  if(c.tipo==="inversion"&&c.aportado>0){const g=r2(v-c.aportado);return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
+  if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite+v)} de ${eur(c.limite)}`;
+  if(c.tipo==="financiacion"&&c.cuota>0)return `${eur(c.cuota)}/mes`+(c.cuotas>0?` · faltan ${c.cuotas} (hasta ${mesMas(c.cuotas)})`:"");
+  if(c.tipo==="compartida")return v>=0?"Te deben":"Debés";
+  if(c.fondo)return "fondo de emergencia";
+  return "";}
+// Importe grande con los decimales en gris
+function monto(el,n){const t=eur(n),i=t.search(/,| €/);el.innerHTML=`${esc(t.slice(0,i))}<span class="dec">${esc(t.slice(i))}</span>`;el.classList.toggle("neg",n<0);}
 
 // Anillo del tope: porcentaje usado, en aviso desde el 75 % y excedido al pasarse
 function anillo(el,usado,tope){el.hidden=!(tope>0);if(el.hidden)return;
@@ -336,145 +426,215 @@ function barras(card,el,gs,id){card.hidden=!gs.length;if(card.hidden)return;
   gs.forEach(g=>{sem[Math.floor((+g.fecha.slice(8)-1)/7)][2]+=g.importe;});
   const mx=Math.max(...sem.map(x=>x[2]));
   el.innerHTML=sem.map(([a,b,v])=>`<div class="col${hoyD>=a&&hoyD<=b?" hoy":""}"><em>${v?eur(v):""}</em><i style="height:${Math.max(v/mx*100,3).toFixed(0)}%"></i><small>${a}–${b}</small></div>`).join("");}
-function itemHTML(g,del){const c=CUENTAS.find(x=>x[0]===g.cuenta);const f=g.fecha.slice(8,10)+"/"+g.fecha.slice(5,7);
-  return `<div class="item"><div class="d"><span>${esc(g.cat)}${g.nota?" · "+esc(g.nota):""}</span><span>${f} · ${c?c[1]:""}</span></div><div class="row"><span class="num">${eur(g.importe)}</span>${del?`<button aria-label="Borrar gasto" data-del="${g.id}">×</button>`:""}</div></div>`;}
+// Ingresos contra gastos de los últimos seis meses
+function mesesIG(card,el){const out=[];const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5);
+  for(let i=0;i<6;i++){const id=d.getFullYear()+"-"+pad(d.getMonth()+1),ms=movsMes(id);out.push([id,sumaTipo(ms,"ingreso"),sumaTipo(ms,"gasto")]);d.setMonth(d.getMonth()+1);}
+  const mx=Math.max(...out.map(([,i,g])=>Math.max(i,g)));card.hidden=!(mx>0);if(card.hidden)return;
+  el.innerHTML=out.map(([id,i,g])=>`<div class="col${g>i?" neg":""}" data-mes="${id}" data-ing="${i}" data-gas="${g}"><div class="par"><i class="ing" style="height:${Math.max(i/mx*100,2).toFixed(0)}%"></i><i class="gas" style="height:${Math.max(g/mx*100,2).toFixed(0)}%"></i></div><small>${MESES[+id.slice(5)-1].slice(0,3)}</small></div>`).join("");}
+// Forma del gasto del mes: el círculo del centro crece con lo gastado frente a lo que entró
+function forma(ing,gas){const p=ing>0?gas/ing:0;$("formaCentro").setAttribute("r",(18+57*Math.min(p,1)).toFixed(0));
+  $("forma").classList.toggle("bad",ing>0&&gas>ing);
+  $("formaTxt").textContent=ing>0?`Gastaste el ${Math.round(p*100)} % de lo que entró`:"Todavía no anotaste ingresos este mes";}
+
+function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
+  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="−"+eur(m.importe);}
+  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eur(m.importe);}
+  else if(m.tipo==="transferencia"){c="var(--neutro)";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eur(m.importe);}
+  else{c="var(--neutro)";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
+  return `<div class="mov" style="--c:${c}" data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span><div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 function render(){
-  const id=mesId(), gs=gastosMes(id), st=S.settings, PLAN=planMap(), CHECKS=checksList();
-  $("setupCard").hidden=configurado();
+  const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
+  $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
-  const cuenta=k=>gs.filter(g=>g.cuenta===k&&g.cat!=="Trabajo (reembolsable)").reduce((a,g)=>a+g.importe,0);
-  const t=cuenta("tarjeta"), r=cuenta("revolut");
-  $("dispTarjeta").textContent=st.topeTarjeta?eur(st.topeTarjeta-t):eur(t); anillo($("ringTarjeta"),t,st.topeTarjeta);
-  $("subTarjeta").textContent=st.topeTarjeta?`Gastado ${eur(t)} de ${eur(st.topeTarjeta)}`:"Sin tope definido";
-  $("dispRevolut").textContent=st.topeRevolut?eur(st.topeRevolut-r):eur(r); anillo($("ringRevolut"),r,st.topeRevolut);
-  $("subRevolut").textContent=st.topeRevolut?`Gastado ${eur(r)} de ${eur(st.topeRevolut)}`:"Sin tope definido";
-  const fondo=ultimoFondo(), plan=PLAN[id];
-  $("fondoVal").textContent=fondo==null?"Sin anotar":eur(fondo);
-  $("fondoBar").style.width=(st.objetivoFondo?Math.min(100,(fondo||0)/st.objetivoFondo*100):0)+"%";
-  $("fondoSub").textContent=(st.objetivoFondo?`Objetivo ${eur(st.objetivoFondo)}`:"Sin objetivo definido")+(plan!=null?` · plan para ${MESES[+id.slice(5)-1]}: ${eur(plan)}`:"");
-  const chip=$("chipFondo");
-  if(fondo==null||plan==null){chip.className="chip idle";chip.textContent=fondo==null?"Anotá el saldo":"Fuera del plan";}
-  else if(fondo>=plan){chip.className="chip ok";chip.textContent="En plan";}
-  else{chip.className="chip warnc";chip.textContent="Atrasado "+eur(plan-fondo);}
+  const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
+  forma(ing,gas);monto($("resultado"),r2(ing-gas));$("ingMes").textContent="Ingresos "+eur(ing);$("gasMes").textContent="Gastos "+eur(gas);
+  const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
+  const ult=ord.filter(m=>m.tipo==="gasto").slice(0,5);$("ultimos").hidden=!ult.length;
+  $("ultimos").innerHTML=ult.map(g=>`<div class="mini" data-mini="${g.id}"><span class="ico" style="background:${colorCat(g.cat)};color:var(--on-color)">${esc(g.cat[0])}</span><div><div class="sub">${esc(g.cat)} · ${esc(nombreDe(g.cuenta))}</div><b>-${esc(eur(g.importe).slice(0,-2))}</b></div></div>`).join("");
+  // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
+  const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
+  $("disponibles").innerHTML=conTope.map(c=>`<div class="card" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
+  conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
+    anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const cs=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
-  torta($("torta"),cs,id); barras($("barrasCard"),$("barras"),gs,id);
+  torta($("torta"),cs,id); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"));
   $("cats").innerHTML=cs.length?cs.map(([c,v])=>`<div class="item"><span class="con-dot"><i class="dot" style="--c:${colorCat(c)}"></i>${esc(c)}</span><span class="num">${eur(v)}</span></div>`).join(""):`<div class="empty">Todavía no anotaste gastos este mes. Tocá + para empezar.</div>`;
-  const ord=[...gs].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
-  $("ultimos").innerHTML=ord.length?ord.slice(0,5).map(g=>itemHTML(g,false)).join(""):`<div class="empty">Sin gastos todavía.</div>`;
-  $("movs").innerHTML=ord.length?ord.map(g=>itemHTML(g,true)).join(""):`<div class="empty">Sin gastos este mes.</div>`;
-  $("totalMes").textContent=eur(gs.reduce((a,g)=>a+g.importe,0));
-  const md=mesData(id);
-  $("checks").innerHTML=CHECKS.map(([k,txt])=>`<label class="check" for="ck-${k}"><input type="checkbox" id="ck-${k}" data-ck="${k}" ${md.checks[k]?"checked":""}><span>${txt}</span></label>`).join("");
-  $("fondoInput").value=md.fondo??"";
-  $("plan").innerHTML=Object.keys(PLAN).length===0?`<div class="empty">Cargá el aporte, el objetivo y el mes de inicio en Ajustes.</div>`:Object.entries(PLAN).map(([k,v])=>{const real=S.meses[k]&&S.meses[k].fondo;const cls=real==null?"idle":real>=v?"ok":"warnc";const txt=real==null?(k<=id?"Sin dato":"Pendiente"):eur(real);
-    return `<div class="item"><span>${mesDe(k)}</span><div class="row"><span class="num sub">${eur(v)}</span><span class="chip ${cls}">${txt}</span></div></div>`;}).join("");
+  // Movimientos
+  $("totIng").textContent=eur(ing);$("totGas").textContent=eur(gas);
+  $("movs").innerHTML=ord.length?ord.map(movHTML).join(""):`<div class="card"><div class="empty">Sin movimientos este mes.</div></div>`;
+  // Cierre: conciliación, checklist y plan
+  const md=mesData(id), est=S.cuentas.map(c=>[c,estadoConc(c,id)]), nOk=est.filter(([,e])=>e.ok).length;
+  $("concTitulo").textContent="Conciliación de "+MESES[+id.slice(5)-1];
+  $("concChip").hidden=!S.cuentas.length;$("concChip").textContent=`${nOk} de ${S.cuentas.length}`;
+  $("concSub").textContent=S.cuentas.length?`${nOk} de ${S.cuentas.length} cuentas conciliadas. Tocá una para cargar el saldo real.`:"Creá tus cuentas para conciliarlas a fin de mes.";
+  $("concList").innerHTML=est.map(([c,e])=>{const v=valorCuenta(c,fechaCierre(id));return `<button type="button" class="item tap" data-conc="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>al ${diaMes(fechaCierre(id))}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("");
+  $("checks").innerHTML=S.tareas.length?S.tareas.map(t=>`<div class="check"><input type="checkbox" id="ck-${esc(t.id)}" data-ck="${esc(t.id)}" ${md.checks[t.id]?"checked":""}><label for="ck-${esc(t.id)}" style="flex:1">${esc(t.texto)}</label><button type="button" class="btn sec" data-tarea="${esc(t.id)}" aria-label="Editar tarea" style="padding:4px 10px;font-size:14px">Editar</button></div>`).join(""):`<div class="empty">Agregá las tareas de tu cierre de mes.</div>`;
+  const fc=S.cuentas.find(c=>c.fondo);
+  $("plan").innerHTML=Object.keys(PLAN).length===0?`<div class="empty">Cargá el aporte, el objetivo y el mes de inicio en Ajustes.</div>`:!fc?`<div class="empty">Marcá una cuenta como fondo de emergencia para seguir el plan.</div>`:Object.entries(PLAN).map(([k,v])=>{
+    const real=k>id?null:fondoEn(k);const cls=real==null?"idle":real>=v?"ok":"warnc";const txt=real==null?(k<=id?"Sin dato":"Pendiente"):real>=v?"En plan":"Atrasado "+eur(v-real);
+    return `<div class="item" data-plan="${k}"><span>${mesDe(k)}</span><div class="row"><span class="num sub">${eur(v)}</span><span class="chip ${cls}">${txt}</span></div></div>`;}).join("");
   renderCuentas();
-  $("topeTarjeta").value=st.topeTarjeta??"";$("topeRevolut").value=st.topeRevolut??"";$("objFondo").value=st.objetivoFondo??"";$("aporte").value=st.aporte??"";$("inicio").value=st.inicio||"";$("saltos").value=st.saltos||"";
+  $("objFondo").value=st.objetivoFondo??"";$("aporte").value=st.aporte??"";$("inicio").value=st.inicio||"";$("saltos").value=st.saltos||"";
 }
 
-function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota)q+=c.cuota;});return {activos:a,deudas:d,neto:a-d,cuotas:q};}
-const fechaCorta=f=>f?f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(2,4):"";
-function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
-function detalleCuenta(c){
-  if(c.tipo==="inversion"&&c.aportado>0){const g=c.saldo-c.aportado;return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
-  if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite-c.saldo)} de ${eur(c.limite)}`;
-  if(c.tipo==="financiacion"&&c.cuota>0)return `${eur(c.cuota)}/mes`+(c.cuotas>0?` · faltan ${c.cuotas} (hasta ${mesMas(c.cuotas)})`:"");
-  if(c.tipo==="compartida")return c.saldo>=0?"Te deben":"Debés";
-  return "";}
 function renderCuentas(){
-  const hay=S.cuentas.length>0, t=totales();
+  const hay=S.cuentas.length>0, t=totales(), id=mesId();
   $("cuentasVacio").hidden=hay;$("netoBox").hidden=!hay;$("netoCard").hidden=!hay;
-  const cls=t.neto<0?"big neg":"big";
-  $("neto").textContent=eur(t.neto);$("neto").className=cls;$("netoIni").textContent=eur(t.neto);$("netoIni").className=cls;
+  monto($("neto"),t.neto);$("netoIni").textContent=eur(t.neto);$("netoIni").className="big"+(t.neto<0?" neg":"");
   $("activos").textContent=eur(t.activos);$("deudas").textContent=eur(t.deudas);
   $("cuotasSub").textContent=t.cuotas>0?`Cuotas de financiaciones: ${eur(t.cuotas)} por mes`:"";
   $("netoIniSub").textContent=`Tenés ${eur(t.activos)} · debés ${eur(t.deudas)}`+(t.cuotas>0?` · cuotas ${eur(t.cuotas)}/mes`:"");
   $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
     const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
-    return `<div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(${COLOR[tipo]})"></i>${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=detalleCuenta(c);
-      return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${det?esc(det)+" · ":""}act. ${fechaCorta(c.actualizado)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span></div></button>`;}).join("")}</div></div>`;}).join("");
+    return `<div class="card"><div class="row"><span class="con-dot lbl"><i class="dot" style="--c:var(${COLOR[tipo]})"></i>${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
+      return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${esc(det)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("")}</div></div>`;}).join("");
 }
-
-// Hoja de cuenta
-let selTipo="liquidez", selSigno="mas", editId=null;
-function tipoUI(){const t=tipoDe(selTipo);$("cSaldoLbl").textContent=t[2];$("cNombre").placeholder=t[3];
-  document.querySelectorAll("#sheetC [data-t]").forEach(el=>el.hidden=el.dataset.t!==selTipo);}
-function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));editId=c?c.id:null;
-  selTipo=c?c.tipo:"liquidez";selSigno=c&&c.tipo==="compartida"&&c.saldo<0?"menos":"mas";
-  seg($("segTipo"),TIPOS.map(x=>[x[0],x[1]]),selTipo,v=>{selTipo=v;tipoUI();});
-  seg($("segSigno"),[["mas","Me deben"],["menos","Debo"]],selSigno,v=>selSigno=v);
-  $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;
-  $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
-  $("cNombre").value=c?c.nombre:"";$("cSaldo").value=c?Math.abs(c.saldo):"";
-  $("cAportado").value=c&&c.aportado||"";$("cLimite").value=c&&c.limite||"";$("cCuota").value=c&&c.cuota||"";$("cCuotas").value=c&&c.cuotas||"";
-  tipoUI();$("sheetC").hidden=false;$("sheetBg").hidden=false;setTimeout(()=>$(c?"cSaldo":"cNombre").focus(),50);}
-function guardarNeto(){mesData(mesId()).neto=Math.round(totales().neto*100)/100;}
 
 function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800);}
 async function copiar(txt,ok){try{await navigator.clipboard.writeText(txt);toast(ok);}catch(e){$("backupIn").value=txt;$("backupIn").select();toast("Seleccionado: copialo a mano");}}
+const num=id=>{const v=parseFloat(String($(id).value).replace(",","."));return isNaN(v)?null:r2(v);};
+function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
+  el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
+const HOJAS=["sheet","sheetC","sheetK","sheetT"];
+function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
+function cerrar(){HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;}
+function cambio(){guardarNeto();persist();render();}
 
 // Navegación
-const titles={inicio:"Este mes",movs:"Gastos",cuentas:"Mis cuentas",mes:"Cierre del mes",ajustes:"Ajustes"};
+const titles={inicio:"Este mes",movs:"Movimientos",cuentas:"Mis cuentas",mes:"Cierre del mes",ajustes:"Ajustes"};
 let vista="inicio";
 function ir(v){vista=v;document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
   ["inicio","movs","cuentas","mes","ajustes"].forEach(k=>{const s=$("v-"+k);s.hidden=k!==v;if(!s.hidden)s.style.display="flex";});
-  $("title").textContent=titles[v];$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Añadir gasto");window.scrollTo(0,0);}
+  $("title").textContent=titles[v];$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Nuevo movimiento");window.scrollTo(0,0);}
 document.querySelectorAll("nav [data-v], header [data-v]").forEach(b=>b.addEventListener("click",()=>ir(b.dataset.v)));
 
-// Hoja de nuevo gasto
-let selCuenta="tarjeta", selCat="Súper";
-function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${v===sel}">${esc(l)}</button>`).join("");
-  el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-function abrir(){selCuenta="tarjeta";selCat="Súper";seg($("segCuenta"),CUENTAS,selCuenta,v=>selCuenta=v);seg($("segCat"),CATS.map(c=>[c,c]),selCat,v=>selCat=v);
-  $("gImporte").value="";$("gNota").value="";$("gFecha").value=hoy();$("sheet").hidden=false;$("sheetBg").hidden=false;setTimeout(()=>$("gImporte").focus(),50);}
-function cerrar(){$("sheet").hidden=true;$("sheetC").hidden=true;$("sheetBg").hidden=true;}
-$("fab").onclick=()=>vista==="cuentas"?abrirCuenta(null):abrir();$("cerrar").onclick=cerrar;$("cCerrar").onclick=cerrar;$("sheetBg").onclick=cerrar;
-$("addCuenta").onclick=()=>abrirCuenta(null);
-$("irCuentas").onclick=()=>ir("cuentas");
-document.addEventListener("click",e=>{const b=e.target.closest("[data-cta]");if(b)abrirCuenta(b.dataset.cta);});
+// Hoja de movimiento
+let mov={tipo:"gasto",cuenta:null,destino:null,cat:"Súper"}, movId=null;
+const TXT={gasto:["Guardar gasto","Gasto guardado"],ingreso:["Guardar ingreso","Ingreso guardado"],transferencia:["Guardar transferencia","Transferencia guardada"]};
+function movUI(){const t=mov.tipo,ops=S.cuentas.map(c=>[c.id,c.nombre]);
+  $("mUna").hidden=$("mUnaCat").hidden=t==="transferencia";$("mTransf").hidden=t!=="transferencia";$("mGuardar").textContent=TXT[t][0];
+  seg($("segCuentaM"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segDesde"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segHacia"),ops,mov.destino,v=>mov.destino=+v);
+  const cats=t==="ingreso"?INGRESOS:CATS;if(!cats.includes(mov.cat))mov.cat=cats[0];seg($("segCat"),cats.map(c=>[c,c]),mov.cat,v=>mov.cat=v);}
+function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?m.id:null;
+  const hay=S.cuentas.length>0;$("sinCuentas").hidden=hay;$("mCampos").hidden=!hay;
+  $("mTitulo").textContent=m?"Editar movimiento":"Nuevo movimiento";
+  if(hay){const a=S.cuentas[0].id,b=(S.cuentas[1]||S.cuentas[0]).id;
+    mov=m?{tipo:m.tipo,cuenta:m.cuenta,destino:m.destino??b,cat:m.cat||"Súper"}:{tipo:"gasto",cuenta:a,destino:b,cat:"Súper"};
+    seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
+    $("mImporte").value=m?m.importe:"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();}
+  mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
+$("sheet").addEventListener("submit",e=>{e.preventDefault();
+  const v=num("mImporte");if(!(v>0)){toast("Poné un importe mayor que 0");return;}
+  if(mov.tipo==="transferencia"&&mov.cuenta===mov.destino){toast("Elegí dos cuentas distintas");return;}
+  const m={id:movId||nid(),tipo:mov.tipo,fecha:$("mFecha").value||hoy(),importe:v,cuenta:mov.cuenta,nota:$("mNota").value.trim()};
+  if(m.tipo==="transferencia")m.destino=mov.destino;else m.cat=mov.cat;
+  const i=S.movs.findIndex(x=>x.id===movId);if(i>=0){desconciliar(S.movs[i]);S.movs[i]=m;}else S.movs.push(m);
+  desconciliar(m);cerrar();cambio();toast(TXT[m.tipo][1]);});
+$("mCrearCuenta").onclick=()=>{ir("cuentas");abrirCuenta(null);};
+
+// Hoja de cuenta
+let selTipo="liquidez", selSigno="mas", editId=null;
+function tipoUI(){$("cNombre").placeholder=tipoDe(selTipo)[2];
+  document.querySelectorAll("#sheetC [data-t]").forEach(el=>el.hidden=!el.dataset.t.split(" ").includes(selTipo)||(el.dataset.t==="compartida"&&editId!=null));}
+function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));editId=c?c.id:null;
+  selTipo=c?c.tipo:"liquidez";selSigno="mas";
+  seg($("segTipo"),TIPOS.map(x=>[x[0],x[1]]),selTipo,v=>{selTipo=v;tipoUI();});
+  seg($("segSigno"),[["mas","Me deben"],["menos","Debo"]],selSigno,v=>selSigno=v);
+  $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;$("cTipoBox").hidden=!!c;$("cNueva").hidden=!!c;$("cEdita").hidden=!c;
+  $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
+  $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";
+  $("cAportado").value=c&&c.aportado||"";$("cLimite").value=c&&c.limite||"";$("cCuota").value=c&&c.cuota||"";$("cCuotas").value=c&&c.cuotas||"";
+  $("cTope").value=c&&c.tope||"";$("cFondo").checked=!!(c&&c.fondo);
+  tipoUI();mostrar("sheetC");setTimeout(()=>$("cNombre").focus(),50);}
 $("sheetC").addEventListener("submit",e=>{e.preventDefault();
-  const n=id=>{const v=parseFloat(String($(id).value).replace(",","."));return isNaN(v)?0:Math.round(v*100)/100;};
-  const nombre=$("cNombre").value.trim(), saldo=n("cSaldo");
+  const nombre=$("cNombre").value.trim(), viejo=S.cuentas.find(x=>x.id===editId);
   if(!nombre){toast("Ponele un nombre a la cuenta");return;}
-  if(saldo<0){toast("Poné el importe en positivo");return;}
-  const c={id:editId||Date.now(),tipo:selTipo,nombre,saldo:selTipo==="compartida"&&selSigno==="menos"?-saldo:saldo,actualizado:hoy()};
-  if(selTipo==="inversion"&&n("cAportado")>0)c.aportado=n("cAportado");
-  if(selTipo==="tarjeta"&&n("cLimite")>0)c.limite=n("cLimite");
-  if(selTipo==="financiacion"){if(n("cCuota")>0)c.cuota=n("cCuota");if(n("cCuotas")>0)c.cuotas=Math.round(n("cCuotas"));}
+  const saldo=num("cSaldo")??0;if(!viejo&&saldo<0){toast("Poné el importe en positivo");return;}
+  const c=viejo?{...viejo,nombre}:{id:nid(),tipo:selTipo,nombre,saldoInicial:selTipo==="compartida"&&selSigno==="menos"?-saldo:saldo,desde:hoy()};
+  ["aportado","limite","cuota","cuotas","tope","fondo"].forEach(k=>delete c[k]);
+  const pos=k=>{const v=num(k);return v>0?v:null;};
+  if(c.tipo==="inversion"&&pos("cAportado"))c.aportado=pos("cAportado");
+  if(c.tipo==="tarjeta"&&pos("cLimite"))c.limite=pos("cLimite");
+  if(c.tipo==="financiacion"){if(pos("cCuota"))c.cuota=pos("cCuota");if(pos("cCuotas"))c.cuotas=Math.round(pos("cCuotas"));}
+  if((c.tipo==="liquidez"||c.tipo==="tarjeta")&&pos("cTope"))c.tope=pos("cTope");
+  if(c.tipo==="liquidez"&&$("cFondo").checked){S.cuentas.forEach(x=>delete x.fondo);c.fondo=true;}
   const i=S.cuentas.findIndex(x=>x.id===editId);if(i>=0)S.cuentas[i]=c;else S.cuentas.push(c);
-  guardarNeto();persist();cerrar();render();toast("Cuenta guardada");});
+  cerrar();cambio();toast("Cuenta guardada");});
 $("cBorrar").onclick=()=>{const b=$("cBorrar");
   if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
-  S.cuentas=S.cuentas.filter(x=>x.id!==editId);guardarNeto();persist();cerrar();render();toast("Cuenta borrada");};
-$("sheet").addEventListener("submit",e=>{e.preventDefault();
-  const v=parseFloat(String($("gImporte").value).replace(",","."));
-  if(!(v>0)){toast("Poné un importe mayor que 0");return;}
-  S.gastos.push({id:Date.now(),fecha:$("gFecha").value||hoy(),importe:Math.round(v*100)/100,cuenta:selCuenta,cat:selCat,nota:$("gNota").value.trim()});
-  persist();cerrar();render();toast("Gasto guardado");});
+  if(S.movs.some(m=>m.cuenta===editId||m.destino===editId)){toast("No se puede borrar: la cuenta tiene movimientos");b.dataset.confirm="";b.textContent="Borrar cuenta";return;}
+  S.cuentas=S.cuentas.filter(x=>x.id!==editId);cerrar();cambio();toast("Cuenta borrada");};
 
-document.addEventListener("click",e=>{const d=e.target.closest("[data-del]");if(!d)return;
-  if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent="Borrar";d.style.color="var(--bad)";d.style.fontSize="14px";setTimeout(()=>{if(d.isConnected){d.dataset.confirm="";d.textContent="×";d.style.color="";d.style.fontSize="";}},2500);return;}
-  S.gastos=S.gastos.filter(g=>String(g.id)!==d.dataset.del);persist();render();toast("Gasto borrado");});
+// Hoja de conciliación
+let concId=null;
+function difConc(){const c=cuentaDe(concId),r=num("kReal");if(r==null)return null;const real=esDeuda(c)?-r:(c.tipo==="compartida"&&valorCuenta(c,fechaCierre(mesId()))<0?-r:r);
+  return {real,dif:r2(real-valorCuenta(c,fechaCierre(mesId())))};}
+function concUI(){const d=difConc(),hay=d&&Math.abs(d.dif)>=0.005;$("kDif").hidden=!hay;$("kAjuste").hidden=!hay;$("kPendiente").hidden=!hay;$("kConciliar").hidden=!!hay;if(hay)$("kDifVal").textContent=eur(d.dif);}
+function abrirConc(id){const c=cuentaDe(+id);concId=c.id;const f=fechaCierre(mesId()),v=valorCuenta(c,f);
+  $("kTitulo").textContent="Conciliar "+c.nombre;$("kCalcLbl").textContent="Saldo calculado al "+diaMes(f);$("kCalc").textContent=eur(v);
+  $("kRealLbl").textContent=esDeuda(c)?"Deuda real según tu banco (€)":c.tipo==="inversion"?"Valor actual según la plataforma (€)":"Saldo real según tu banco (€)";
+  $("kReal").value="";concUI();mostrar("sheetK");setTimeout(()=>$("kReal").focus(),50);}
+function marcar(real,ok){const md=mesData(mesId());if(!md.conc)md.conc={};md.conc[concId]={real,fecha:fechaCierre(mesId()),ok};}
+$("kReal").addEventListener("input",concUI);
+$("sheetK").addEventListener("submit",e=>{e.preventDefault();const d=difConc();
+  if(!d){toast("Cargá el saldo real de la cuenta");return;}
+  if(Math.abs(d.dif)>=0.005){concUI();return;}
+  marcar(d.real,true);cerrar();cambio();toast("Cuenta conciliada");});
+$("kAjuste").onclick=()=>{const d=difConc();if(!d)return;
+  S.movs.push({id:nid(),tipo:"ajuste",fecha:fechaCierre(mesId()),importe:d.dif,cuenta:concId,nota:""});
+  marcar(d.real,true);cerrar();cambio();toast("Cuenta conciliada");};
+$("kPendiente").onclick=()=>{const d=difConc();if(!d)return;marcar(d.real,false);cerrar();cambio();toast("Diferencia pendiente");};
+
+// Hoja de tarea
+let tareaId=null;
+function abrirTarea(id){const t=S.tareas.find(x=>x.id===id);tareaId=t?t.id:null;
+  $("tTitulo").textContent=t?"Editar tarea":"Nueva tarea";$("tTexto").value=t?t.texto:"";$("tBorrar").hidden=!t;$("tBorrar").dataset.confirm="";$("tBorrar").textContent="Borrar tarea";
+  mostrar("sheetT");setTimeout(()=>$("tTexto").focus(),50);}
+$("sheetT").addEventListener("submit",e=>{e.preventDefault();const texto=$("tTexto").value.trim();
+  if(!texto){toast("Escribí la tarea");return;}
+  const t=S.tareas.find(x=>x.id===tareaId);if(t)t.texto=texto;else S.tareas.push({id:String(nid()),texto});
+  cerrar();cambio();toast("Tarea guardada");});
+$("tBorrar").onclick=()=>{const b=$("tBorrar");
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
+  S.tareas=S.tareas.filter(x=>x.id!==tareaId);cerrar();cambio();toast("Tarea borrada");};
+
+$("fab").onclick=()=>vista==="cuentas"?abrirCuenta(null):abrirMov(null);
+$("cerrar").onclick=$("cCerrar").onclick=$("kCerrar").onclick=$("tCerrar").onclick=$("sheetBg").onclick=cerrar;
+$("addCuenta").onclick=()=>abrirCuenta(null);
+$("addTarea").onclick=()=>abrirTarea(null);
+$("irCuentas").onclick=()=>ir("cuentas");
+$("crearPrimera").onclick=()=>{ir("cuentas");abrirCuenta(null);};
+
+document.addEventListener("click",e=>{
+  const d=e.target.closest("[data-del]");
+  if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent="Borrar";d.style.color="var(--bad)";d.style.fontSize="14px";setTimeout(()=>{if(d.isConnected){d.dataset.confirm="";d.textContent="×";d.style.color="";d.style.fontSize="";}},2500);return;}
+    const m=S.movs.find(x=>String(x.id)===d.dataset.del);desconciliar(m);S.movs=S.movs.filter(x=>x!==m);cambio();toast("Movimiento borrado");return;}
+  const mv=e.target.closest("[data-mov]");if(mv&&mv.dataset.tipo!=="ajuste"){abrirMov(mv.dataset.mov);return;}
+  const c=e.target.closest("[data-cta]");if(c){abrirCuenta(c.dataset.cta);return;}
+  const k=e.target.closest("[data-conc]");if(k){abrirConc(k.dataset.conc);return;}
+  const t=e.target.closest("[data-tarea]");if(t)abrirTarea(t.dataset.tarea);});
 document.addEventListener("change",e=>{const c=e.target.dataset&&e.target.dataset.ck;if(!c)return;mesData(mesId()).checks[c]=e.target.checked;persist();});
 
-$("guardarFondo").onclick=()=>{const v=parseFloat(String($("fondoInput").value).replace(",","."));mesData(mesId()).fondo=isNaN(v)?null:v;persist();render();toast("Saldo guardado");};
-$("guardarAjustes").onclick=()=>{const n=id=>parseFloat($(id).value);const tt=n("topeTarjeta"),tr=n("topeRevolut"),of=n("objFondo"),ap=n("aporte"),ini=$("inicio").value;
-  if([tt,tr,of,ap].some(x=>!(x>0))||!ini){toast("Completá todos los importes y el mes de inicio");return;}
+$("guardarAjustes").onclick=()=>{const of=num("objFondo"),ap=num("aporte"),ini=$("inicio").value;
+  if(!(of>0)||!(ap>0)||!ini){toast("Completá el aporte, el objetivo y el mes de inicio");return;}
   const saltos=$("saltos").value.split(",").map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}$/.test(x)).join(", ");
-  S.settings={topeTarjeta:tt,topeRevolut:tr,objetivoFondo:of,aporte:ap,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
-$("copiarResumen").onclick=()=>{const id=mesId(),gs=gastosMes(id),st=S.settings,md=mesData(id),PLAN=planMap(),CHECKS=checksList();const sum=k=>gs.filter(g=>g.cuenta===k).reduce((a,g)=>a+g.importe,0);
-  const porCat={};gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
-  const txt=[`Resumen ${mesDe(id)}`,`Tarjeta: ${eur(sum("tarjeta"))} de ${eur(st.topeTarjeta)}`,`Revolut: ${eur(sum("revolut"))} de ${eur(st.topeRevolut)}`,`Débito/efectivo: ${eur(sum("santander"))}`,`Fondo: ${md.fondo==null?"sin anotar":eur(md.fondo)} (plan ${PLAN[id]!=null?eur(PLAN[id]):"–"})`,`Checklist: ${CHECKS.filter(([k])=>md.checks[k]).length}/${CHECKS.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`)];
-  if(S.cuentas.length){const t=totales();txt.push(`Patrimonio neto: ${eur(t.neto)} (tengo ${eur(t.activos)}, debo ${eur(t.deudas)}${t.cuotas>0?`, cuotas ${eur(t.cuotas)}/mes`:""})`,"Cuentas:",
-    ...S.cuentas.map(c=>{const d=detalleCuenta(c);return `- ${c.nombre} (${tipoDe(c.tipo)[1]}): ${eur(valorCuenta(c))}${d?" · "+d:""} · act. ${fechaCorta(c.actualizado)}`;}));}
+  S.settings={aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
+$("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),PLAN=planMap(),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
+  const porCat={};ms.filter(m=>m.tipo==="gasto").forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
+  const fc=S.cuentas.find(c=>c.fondo),f=fc?valorCuenta(fc):null;
+  const txt=[`Resumen ${mesDe(id)}`,`Ingresos: ${eur(ing)} · Gastos: ${eur(gas)} · Resultado: ${eur(ing-gas)}`,"Cuentas:",
+    ...S.cuentas.map(c=>{const e=estadoConc(c,id),d=detalleCuenta(c);return `- ${c.nombre} (${tipoDe(c.tipo)[1]}): ${eur(valorCuenta(c))} · ${e.ok?"conciliada":e.cls==="warnc"?e.txt.toLowerCase():"sin conciliar"}${d?" · "+d:""}`;}),
+    ...S.cuentas.filter(c=>c.tope>0).map(c=>{const u=ms.filter(m=>m.tipo==="gasto"&&m.cuenta===c.id&&m.cat!==REEMB).reduce((a,m)=>a+m.importe,0);return `Disponible ${c.nombre}: ${eur(c.tope-u)} de ${eur(c.tope)}`;}),
+    `Fondo: ${f==null?"sin cuenta de fondo":eur(f)} (plan ${PLAN[id]!=null?eur(PLAN[id]):"–"})`,
+    `Checklist: ${S.tareas.filter(x=>md.checks[x.id]).length}/${S.tareas.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`),
+    `Patrimonio neto: ${eur(t.neto)} (tengo ${eur(t.activos)}, debo ${eur(t.deudas)}${t.cuotas>0?`, cuotas ${eur(t.cuotas)}/mes`:""})`];
   copiar(txt.join("\n"),"Resumen copiado");};
 $("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada");
-$("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!Array.isArray(d.gastos)||!d.settings)throw 0;S=norm(d);persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
+$("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!d.settings||!(Array.isArray(d.gastos)||Array.isArray(d.movs)))throw 0;S=norm(d);persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
 
-$("irAjustes").onclick=()=>ir("ajustes");
-render();
+persist();render();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 </body>

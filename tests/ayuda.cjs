@@ -32,7 +32,7 @@ async function iniciar() {
   return { url: `http://127.0.0.1:${srv.address().port}/`, browser, async cerrar() { await browser.close(); srv.close(); } };
 }
 
-// Abre la app con `datos` ya guardados (sólo en la primera carga: al recargar se conserva lo que hizo el test).
+// Abre la app con `datos` ya guardados (sólo en la primera carga del contexto).
 // `hoy` fija la fecha para que los meses sean previsibles. `sw: true` deja registrar el service worker.
 async function pagina(ent, { datos, esquema = "light", hoy = HOY, sw = false } = {}) {
   const ctx = await ent.browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: esquema, serviceWorkers: sw ? "allow" : "block" });
@@ -45,7 +45,8 @@ async function pagina(ent, { datos, esquema = "light", hoy = HOY, sw = false } =
   });
   if (datos) {
     await ctx.addInitScript(([k, d]) => {
-      if (!sessionStorage.getItem("sembrado")) { localStorage.setItem(k, JSON.stringify(d)); sessionStorage.setItem("sembrado", "1"); }
+      // Una sola vez por contexto: al recargar o abrir otra pestaña se conserva lo que hizo el test
+      if (!localStorage.getItem("__sembrado")) { localStorage.setItem(k, JSON.stringify(d)); localStorage.setItem("__sembrado", "1"); }
     }, [CLAVE, datos]);
   }
   const page = await ctx.newPage();
@@ -69,24 +70,41 @@ const aviso = (page, texto) => page.waitForFunction((t) => window.__avisos.some(
 const texto = (page, sel) => page.locator(sel).innerText();
 const portapapeles = (page) => page.evaluate(() => navigator.clipboard.readText());
 
-async function nuevoGasto(page, { importe, cuenta, cat, nota } = {}) {
-  await page.click("#fab");
-  if (importe !== undefined) await page.fill("#gImporte", String(importe));
-  if (cuenta) await page.click(`#segCuenta button[data-v="${cuenta}"]`);
-  if (cat) await page.click(`#segCat button[data-v="${cat}"]`);
-  if (nota) await page.fill("#gNota", nota);
-  await page.click('#sheet button[type="submit"]');
-}
+// Botón de un selector por su texto (las cuentas se eligen por nombre)
+const elegir = (page, seg, texto) => page.locator(`#${seg} button`, { hasText: new RegExp(`^${texto.replace(/[()]/g, "\\$&")}$`) }).click();
 
-async function nuevaCuenta(page, { tipo, nombre, saldo, signo, extra = {} } = {}) {
+// Nuevo movimiento desde el «+»: tipo gasto, ingreso o transferencia; cuentas por nombre
+async function nuevoMov(page, { tipo = "gasto", importe, cuenta, desde, hacia, cat, nota, fecha } = {}) {
+  await page.click("#fab");
+  await page.click(`#segMov button[data-v="${tipo}"]`);
+  if (importe !== undefined) await page.fill("#mImporte", String(importe));
+  if (cuenta) await elegir(page, "segCuentaM", cuenta);
+  if (desde) await elegir(page, "segDesde", desde);
+  if (hacia) await elegir(page, "segHacia", hacia);
+  if (cat) await elegir(page, "segCat", cat);
+  if (nota) await page.fill("#mNota", nota);
+  if (fecha) await page.fill("#mFecha", fecha);
+  await page.click("#mGuardar");
+}
+const nuevoGasto = (page, o = {}) => nuevoMov(page, { ...o, tipo: "gasto" });
+
+async function nuevaCuenta(page, { tipo, nombre, saldo, signo, fondo, extra = {} } = {}) {
   await page.click("#addCuenta");
   if (tipo) await page.click(`#segTipo button[data-v="${tipo}"]`);
   if (signo) await page.click(`#segSigno button[data-v="${signo}"]`);
   if (nombre) await page.fill("#cNombre", nombre);
   if (saldo !== undefined) await page.fill("#cSaldo", String(saldo));
   for (const [id, v] of Object.entries(extra)) await page.fill("#" + id, String(v));
+  if (fondo) await page.check("#cFondo");
   await page.click('#sheetC button[type="submit"]');
 }
+
+// Datos del modelo v2, armados a mano
+const cta = (id, nombre, saldoInicial, extra = {}) => ({ id, tipo: "liquidez", nombre, saldoInicial, desde: "2026-10-01", ...extra });
+const gasto = (id, fecha, importe, cuenta, cat = "Súper", nota = "") => ({ id, tipo: "gasto", fecha, importe, cuenta, cat, nota });
+const ingreso = (id, fecha, importe, cuenta, cat = "Sueldo", nota = "") => ({ id, tipo: "ingreso", fecha, importe, cuenta, cat, nota });
+const transf = (id, fecha, importe, cuenta, destino) => ({ id, tipo: "transferencia", fecha, importe, cuenta, destino, nota: "" });
+const v2 = (extra = {}) => ({ v: 2, settings: {}, cuentas: [], movs: [], tareas: [], meses: {}, ...extra });
 
 const AJUSTES = { topeTarjeta: 500, topeRevolut: 300, aporte: 100, objetivoFondo: 1000, inicio: "2026-09", saltos: "" };
 // Datos mínimos: ajustes completos y lo que se pase encima
@@ -123,4 +141,4 @@ function preparar(nodeTest) {
   return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
 }
 
-module.exports = { iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, nuevoGasto, nuevaCuenta, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
+module.exports = { iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };

@@ -6,37 +6,37 @@
 - [x] `python3 kit.py preview movimientos-y-conciliacion` en verde y capturas en claro y oscuro
 
 ## Datos y migración
-- [ ] Modelo v2 en `norm()`: cuentas con saldo de partida, `movs`, `tareas`, conciliaciones por mes
-- [ ] Migración de la primera versión: cuentas Tarjeta, Revolut, Débito/efectivo y Fondo de emergencia, gastos asignados, tareas con sus importes y marcas
-- [ ] Migración de la versión con cuentas (saldo escrito a mano como saldo de partida)
-- [ ] Abrir dos veces y restaurar copias viejas convierte igual, sin duplicar
+- [x] Modelo v2 en `norm()`: cuentas con saldo de partida, `movs`, `tareas`, conciliaciones por mes
+- [x] Migración de la primera versión: cuentas Tarjeta, Revolut, Débito/efectivo y Fondo de emergencia, gastos asignados, tareas con sus importes y marcas
+- [x] Migración de la versión con cuentas (saldo escrito a mano como saldo de partida)
+- [x] Abrir dos veces y restaurar copias viejas convierte igual, sin duplicar
 
 ## Pantallas y lógica
-- [ ] Saldo calculado por cuenta con sus movimientos desde el día de partida
-- [ ] Hoja de movimiento: gasto, ingreso y transferencia; editar; sin cuentas
-- [ ] Movimientos: lista del mes con signos y totales; borrar con dos toques
-- [ ] Inicio: resultado del mes, disponibles con anillo por cuenta con tope, torta, barras por semana, ingresos contra gastos por mes, primer paso
-- [ ] Cuentas: tope, fondo, estado de conciliación; no borrar con movimientos
-- [ ] Cierre: conciliación (hoja con diferencia, ajuste o pendiente), estado «x de y», checklist editable, plan del fondo con la cuenta marcada
-- [ ] Cambiar un movimiento de un mes conciliado lo devuelve a «sin conciliar»
-- [ ] Ajustes: sólo el plan del fondo; resumen del mes nuevo
-- [ ] Patrimonio del mes al cambiar cuentas o movimientos
-- [ ] `data-pantalla` y `data-ui` del preview en la app
-- [ ] Subir `CACHE` en `sw.js`
+- [x] Saldo calculado por cuenta con sus movimientos desde el día de partida
+- [x] Hoja de movimiento: gasto, ingreso y transferencia; editar; sin cuentas
+- [x] Movimientos: lista del mes con signos y totales; borrar con dos toques
+- [x] Inicio: resultado del mes, disponibles con anillo por cuenta con tope, torta, barras por semana, ingresos contra gastos por mes, primer paso
+- [x] Cuentas: tope, fondo, estado de conciliación; no borrar con movimientos
+- [x] Cierre: conciliación (hoja con diferencia, ajuste o pendiente), estado «x de y», checklist editable, plan del fondo con la cuenta marcada
+- [x] Cambiar un movimiento de un mes conciliado lo devuelve a «sin conciliar»
+- [x] Ajustes: sólo el plan del fondo; resumen del mes nuevo
+- [x] Patrimonio del mes al cambiar cuentas o movimientos
+- [x] `data-pantalla` y `data-ui` del preview en la app
+- [x] Subir `CACHE` en `sw.js`
 
 ## Tests
-- [ ] movimientos: 18 escenarios
-- [ ] conciliacion: 8 escenarios
-- [ ] cuentas: 10 escenarios
-- [ ] datos: 7 escenarios
-- [ ] fondo: 5 escenarios
-- [ ] presupuesto: 5 escenarios
-- [ ] cierre-mes: 7 escenarios
-- [ ] graficos: 5 escenarios
-- [ ] interfaz: 3 escenarios
-- [ ] Tests de la especificación viva que sigue vigente, adaptados al modelo nuevo; los de gastos retirados se borran junto con su capacidad
+- [x] movimientos: 19 escenarios (con «últimos gastos en Inicio»)
+- [x] conciliacion: 8 escenarios
+- [x] cuentas: 10 escenarios
+- [x] datos: 7 escenarios
+- [x] fondo: 5 escenarios
+- [x] presupuesto: 6 escenarios (se repuso «tope en aviso», que el delta había perdido)
+- [x] cierre-mes: 7 escenarios
+- [x] graficos: 8 escenarios del delta (con la forma del gasto del mes) y 4 de la viva
+- [x] interfaz: 5 escenarios del delta y 4 de la viva
+- [x] Tests de la especificación viva que sigue vigente, adaptados al modelo nuevo; los de gastos retirados se borran junto con su capacidad
 
 ## Comprobación y documentación
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` contra el preview aprobado, en claro y oscuro
-- [ ] `CLAUDE.md`: modelo de datos, pantallas y migración
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` contra el preview aprobado, en claro y oscuro
+- [x] `CLAUDE.md`: modelo de datos, pantallas y migración
