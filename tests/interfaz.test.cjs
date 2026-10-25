@@ -70,14 +70,17 @@ t.test("títulos con la letra del texto", async () => {
   assert.equal(await letra("#sheet h2"), cuerpo);
 });
 
-// Escenario: fondo gris claro con tarjetas blancas
-t.test("fondo gris claro con tarjetas blancas", async () => {
+// Escenario: fondo gris claro con tarjetas de color
+t.test("fondo gris claro con tarjetas de color", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   assert.notEqual(fondo, "rgb(255, 255, 255)");
   assert.ok(luminancia(fondo) > 0.85, `fondo ${fondo}`);
   const tarjeta = await page.$eval('[data-ui="gasto-categorias"]', (el) => getComputedStyle(el).backgroundColor);
   assert.equal(tarjeta, "rgb(255, 255, 255)");
+  const disponible = await page.$eval('[data-disp="2"]', (el) => getComputedStyle(el).backgroundColor);
+  const cherry = await page.evaluate(() => { const d = document.createElement("div"); d.style.background = "var(--cherry)"; document.body.append(d); const c = getComputedStyle(d).backgroundColor; d.remove(); return c; });
+  assert.equal(disponible, cherry);
   assert.equal(await A.texto(page, "#resultado .dec"), ",7 €");
   const [entero] = await colores(page, "#resultado");
   const [dec] = await colores(page, "#resultado .dec");
@@ -128,4 +131,16 @@ t.test("abrir sin conexión", async () => {
   await page.reload();
   assert.equal(await A.texto(page, "#title"), "Este mes");
   assert.equal(await A.texto(page, "#resultado"), "1617,7 €");
+});
+
+// Escenario: reembolsos en frambuesa
+t.test("reembolsos en frambuesa", async () => {
+  const datos = EJEMPLO();
+  datos.movs.push(A.gasto(9, "2026-10-06", 12, 1, "Trabajo (reembolsable)", "parking"));
+  const { page } = await abrir({ datos });
+  await A.ir(page, "movs");
+  const fondo = await page.$eval('[data-mov="9"]', (el) => getComputedStyle(el).backgroundColor);
+  assert.equal(fondo, "rgb(214, 60, 122)");
+  const [texto] = await colores(page, '[data-mov="9"] .linea');
+  assert.equal(texto, "rgb(255, 255, 255)");
 });

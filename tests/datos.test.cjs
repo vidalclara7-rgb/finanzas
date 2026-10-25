@@ -149,3 +149,22 @@ t.test("resumen con conciliación", async () => {
   assert.match(txt, /^- Banco A \(Bancos y efectivo\): 2500 € · conciliada/m);
   assert.match(txt, /^- Tarjeta Y \(Tarjetas de crédito\): -100 € · sin conciliar/m);
 });
+
+// Escenario: reembolsables anteriores
+t.test("reembolsables anteriores", async () => {
+  const R = "Trabajo (reembolsable)";
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 10, 1, R), A.gasto(2, "2026-10-04", 5, 1, R)] }) });
+  const d = await A.guardados(page);
+  assert.deepEqual(d.movs.map((m) => m.reembolso), [{ estado: "pendiente" }, { estado: "pendiente" }]);
+  assert.equal(await A.texto(page, "#cobrarVal"), "15 €");
+});
+
+// Escenario: copia anterior con reembolsables
+t.test("copia anterior con reembolsables", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 10, 1, "Trabajo (reembolsable)")] });
+  const { page } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] [data-estado-r]'), "Pendiente");
+});
