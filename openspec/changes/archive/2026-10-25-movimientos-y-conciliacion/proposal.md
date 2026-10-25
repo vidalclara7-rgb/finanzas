@@ -1,7 +1,8 @@
 ---
 cambio: movimientos-y-conciliacion
-estado: diseno-aprobado
+estado: archivado
 datos: migra
+archivado: 2026-10-25
 ---
 # Movimientos entre tus cuentas y conciliación mensual
 
