@@ -16,8 +16,10 @@ tres meses seguidos.
 
 - **Ajustes → Categorías:** una pantalla para crear, renombrar, cambiar el color y borrar categorías de
   gasto y de ingreso. Al borrar una, sus movimientos pasan a «Otros» (con confirmación).
-- **Atajo «Nueva categoría…»** al anotar un movimiento y al revisar un extracto importado, para crear una
-  sobre la marcha.
+- **Categoría en un desplegable:** al anotar o editar un movimiento, la categoría se elige en un selector
+  desplegable en lugar de la grilla de botones, que con más categorías queda muy cargada.
+- **Atajo «Nueva categoría…»**, último ítem de ese desplegable y de la lista de la revisión de un extracto, para
+  crear una sobre la marcha.
 - **Categoría «siempre fija»:** un interruptor por categoría de gasto (por ejemplo Servicios mensuales,
   Alquiler). Todo gasto de esa categoría cuenta como fijo y viene marcado, sin importar el importe ni la
   nota.
@@ -33,7 +35,8 @@ cualquier categoría que ya usen los movimientos se conserva.
 - Ajustes: tarjeta «Categorías» que abre la hoja «Categorías».
 - Hoja «Categorías»: las listas de gasto y de ingreso, con «Nueva categoría».
 - Hoja «Categoría»: nombre, color (para gastos), «Siempre fija» (para gastos) y borrar.
-- Hoja «Nuevo movimiento» y revisión del extracto: «Nueva categoría…».
+- Hoja «Nuevo movimiento»: la categoría pasa de botones a un desplegable, con «Nueva categoría…» al final.
+- Revisión del extracto: «Nueva categoría…» en la lista de cada movimiento.
 
 ## Fuera de alcance
 

@@ -7,6 +7,9 @@
 - Lo fijo con importe variable se resuelve con una categoría **«siempre fija»** (descartadas: sugerencia
   por nota sin límite de importe, que falla si la nota cambia cada mes; y las dos a la vez).
 
+- **Categoría en un desplegable** (2026-10-26, a pedido de la persona al ver las categorías de siempre más las
+  propias): un selector desplegable en lugar de los botones, porque la grilla queda muy cargada.
+
 ## Decisiones tomadas al escribir (a confirmar en el Gate 1)
 
 - **Identidad por nombre.** Los movimientos guardan el nombre de la categoría, como hoy; renombrar
@@ -23,6 +26,9 @@
 - **Al borrar:** los movimientos pasan a «Otros»; lo aprendido para esa categoría y las reglas de fijos con
   su nombre se descartan (se volverían a proponer).
 - **Al renombrar:** se reescriben movimientos, lo aprendido y las reglas de fijos.
+- **El desplegable** es el selector del sistema (en iPhone, la rueda), como ya es el del importador. No muestra el
+  color de cada categoría: el color se ve en la torta, la lista y las tarjetas. Orden: las de siempre, las nuevas,
+  «Otros» y, al final, «Nueva categoría…». Al volver de crear una, queda elegida.
 - **Orden:** las de siempre, luego las nuevas por orden de creación, y «Otros» al final.
 
 ## Cómo se implementa en index.html
@@ -35,5 +41,8 @@
   «Reembolso», «Otros», «Regalos» al importar) sigue por nombre y se ignora si la categoría no existe.
 - `esFijo(m)` = `m.fijo === true || (m.fijo !== false && categoría siempre fija)`; lo usan fijos y variables,
   la etiqueta «Fijo», la casilla de la hoja y el importador.
+- La hoja de movimiento cambia `#segCat` (botones) por un `<select>` con las categorías y `"+ Nueva categoría…"`;
+  al elegirla abre `sheetCat` y vuelve con la nueva elegida. Los tests que elegían la categoría por botón pasan a
+  elegirla en el selector.
 - Hojas nuevas `sheetCats` y `sheetCat` en `HOJAS`; textos de la persona con `esc()`.
 - Sube la versión de `CACHE` en `sw.js`.

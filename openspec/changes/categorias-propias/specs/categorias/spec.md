@@ -114,8 +114,9 @@ fijo, sin importar el importe ni la nota. Desmarcarlo en un gasto concreto lo de
 
 ## Requisito: nueva categoría desde los selectores
 
-Al anotar un movimiento y al revisar un extracto, junto a las categorías hay «Nueva categoría…», que abre la
-hoja para crearla. Al guardar, vuelve a lo que se estaba haciendo con la categoría nueva ya elegida.
+Al anotar un movimiento, la categoría se elige en un desplegable que termina con «Nueva categoría…»; al revisar
+un extracto, la lista de cada movimiento también la tiene. Al elegirla se abre la hoja para crearla y, al guardar,
+vuelve a lo que se estaba haciendo con la categoría nueva ya elegida.
 
 ### Escenario: crear al anotar un gasto
 - **Dado** la hoja de gasto abierta con el importe escrito

@@ -6,7 +6,8 @@ Con el botón «+» la persona abre «Nuevo movimiento», elige Gasto y anota im
 cuentas, categoría, una nota opcional y la fecha, que por defecto es hoy. Las categorías de gasto
 son las de la persona; al empezar: Supermercado, Comida fuera, Delivery, Transporte, Ocio, Compras, Ropa,
 Belleza, Casa/Splitwise, Salud, Viajes, Regalos, Salidas bar/disco, Plan Iberia, Servicios mensuales,
-Alquiler, Carga móvil, Trabajo (reembolsable) y Otros. También puede crear una con «Nueva categoría…». El gasto baja el saldo de la cuenta o, si es una tarjeta,
+Alquiler, Carga móvil, Trabajo (reembolsable) y Otros. La categoría se elige en un
+desplegable, que termina con «Nueva categoría…» para crear una. El gasto baja el saldo de la cuenta o, si es una tarjeta,
 sube su deuda.
 
 ### Escenario: gasto desde una cuenta propia
@@ -21,6 +22,12 @@ sube su deuda.
 - **Cuando** la persona anota un gasto de 30 € en Carga móvil desde Banco A
 - **Entonces** el gasto aparece en Movimientos como «Carga móvil» con «−30 €»
 - **Y** Banco A tiene 970 €
+
+### Escenario: elegir la categoría en el desplegable
+- **Dado** el formulario de gasto abierto
+- **Cuando** la persona abre el desplegable de categoría y elige Alquiler
+- **Entonces** el desplegable muestra «Alquiler» elegida
+- **Y** la última opción de la lista es «Nueva categoría…»
 
 ### Escenario: todas las categorías nuevas se pueden elegir
 - **Dado** el formulario de gasto abierto
