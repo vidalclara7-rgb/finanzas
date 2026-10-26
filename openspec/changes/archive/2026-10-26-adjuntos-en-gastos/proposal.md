@@ -1,7 +1,8 @@
 ---
 cambio: adjuntos-en-gastos
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Adjuntar un documento a varios gastos
 

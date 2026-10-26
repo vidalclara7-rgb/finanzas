@@ -1,7 +1,8 @@
 ---
 cambio: compras-en-cuotas
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Compras de tarjeta fraccionadas en cuotas
 

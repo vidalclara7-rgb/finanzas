@@ -1,7 +1,8 @@
 ---
 cambio: categorias-nuevas
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-10-26
 ---
 # Más categorías de gasto y de ingreso
 

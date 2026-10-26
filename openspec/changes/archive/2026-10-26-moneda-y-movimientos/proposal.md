@@ -1,7 +1,8 @@
 ---
 cambio: moneda-y-movimientos
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Últimos gastos sólo en Movimientos, y con su moneda
 

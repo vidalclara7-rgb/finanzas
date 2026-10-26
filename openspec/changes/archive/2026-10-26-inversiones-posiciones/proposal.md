@@ -1,7 +1,8 @@
 ---
 cambio: inversiones-posiciones
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Inversiones: compras, ventas y rendimiento por activo
 
