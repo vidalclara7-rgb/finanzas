@@ -7,34 +7,60 @@
 <!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
 <style>
 :root{
-  --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
-  --ink-base:#121212; --muted-base:#77766F;
-  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
-  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --frambuesa:#D03876; --rosa-claro:#F8CDE6; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
-  --on-color:#121212;
-  --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
-  --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
-  --ingreso:#C8DDA6; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
-  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
-  --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
-  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#D03876; --cat12:#ACA696; --cat13:#C9B8F0; --cat14:#A9D6E8;
-  --cat15:#5B3F9E; --cat16:#F2D064; --cat17:#7FB7B0; --cat18:#3F6E8C; --cat19:#C7E27A;
+  /* Una sola paleta, dos temas: la clara sale de un moodboard retro (oliva, vino, azul polvo, naranja quemado, rosa pálido) */
+  --bg:#F2E4DE; --surface:#FFFFFF; --ink:#2B1218; --muted:#7A5A60; --line:#E6CFC8;
+  --ink-base:#2B1218; --muted-base:#7A5A60;
+  --accent:#5A1A2A; --accent-ink:#FFFFFF; --accent-soft:#EBD6D0;
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --on-color:#2B1218;
+  --hero:#5A1A2A; --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
+  --nav:#FFFFFF; --nav-ink:#9A7A7E; --nav-on:#2B1218;
+  --ingreso:#D3DDA0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
+  /* Fondo de manchas: cinco colores, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
+  --mancha1:#8A9A3B; --mancha2:#8A2D42; --mancha3:#A9BDD6; --mancha4:#E4702A; --mancha5:#F1D5CD; --mancha-op:.5; --velo:rgba(242,228,222,.45); --estrellas:.5; --e1:#7A1F33; --e2:#6B7A2B;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root{
-  --bg:#101010; --surface:#1E1E1E; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2E2C;
-  --ink-base:#F2F1EC; --muted-base:#A3A19A;
-  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#2A2A28;
-  --hero:#1E1E1E; --nav:#1E1E1E; --nav-ink:#8E8C84; --nav-on:#F2F1EC; --neutro:#1E1E1E;
-  --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C; color-scheme:dark}}
+:root[data-apariencia="oscura"]{
+  /* La oscura sale de otro moodboard: cereza, chartreuse, rosa, óxido y azul Nantucket */
+  --bg:#16070D; --surface:#241019; --ink:#FBF1EE; --muted:#CDB3B7; --line:#4A2431;
+  --ink-base:#FBF1EE; --muted-base:#CDB3B7;
+  --accent:#FBF1EE; --accent-ink:#16070D; --accent-soft:#3A1B27;
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --on-color:#FBF1EE;
+  --hero:#241019; --nav:#241019; --nav-ink:#B79BA0; --nav-on:#FBF1EE; --neutro:#241019;
+  --ingreso:#3E4A14;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --mancha1:#A9A92E; --mancha2:#7A1030; --mancha3:#D64C86; --mancha4:#B5521F; --mancha5:#8FB0DA;
+  --mancha-op:.6; --velo:rgba(22,7,13,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCD0E8; color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num{font-variant-numeric:tabular-nums}
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+/* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
+.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
+.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
+.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
+.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
+@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
+.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
+.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
+.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
+.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
+.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
+.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
+@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
+html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
@@ -42,12 +68,14 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
-/* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
-.card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
-/* Sobre colores oscuros (oliva, cherry) el texto es blanco */
-.card.color.osc,.mov.osc{--on-color:var(--on-osc);color:var(--on-osc);--ink:var(--on-osc);--muted:var(--on-osc-muted);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
-.mov.osc .ico{background:rgba(255,255,255,.22);color:var(--on-osc)}
+/* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
+html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
+.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
+.mov::before{bottom:auto;height:44px}
+.mov{background:var(--surface);color:var(--ink-base)}
+.mov .ico{background:var(--c);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
 /* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
@@ -136,10 +164,9 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
 /* Movimientos como tarjetas apiladas */
 .pila{display:flex;flex-direction:column}
-.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 rgba(255,255,255,.35)}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 var(--line)}
 .mov:first-child{margin-top:0}
 .mov:last-child{padding-bottom:16px}
-.mov .ico{background:rgba(255,255,255,.7);color:var(--on-color)}
 .mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
 .mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -188,22 +215,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
 /* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
 .toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
-/* Paletas elegibles en Ajustes: cada una redefine los colores; sin data-paleta, la app usa Viva (la base de :root) */
-:root[data-paleta="viva"],[data-paleta="viva"]{--bg:#ECECEA;--surface:#FFFFFF;--line:#DEDEDA;--ink:#121212;--muted:#77766F;--ink-base:#121212;--muted-base:#77766F;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#DEDEDA;--nav:#FFFFFF;--nav-on:#121212;--neutro:#FFFFFF;--hero:#121212;--salvia:#B9BDA6;--oliva:#5F6B4E;--cherry:#A3243B;--frambuesa:#D03876;--fucsia:#E8559B;--rosa:#F3A6DA;--rosa-claro:#F8CDE6;--ingreso:#C8DDA6;--rojo:#F05A2C;--cat1:#B9BDA6;--cat2:#F05A2C;--cat3:#F3A6DA;--cat4:#5F6B4E;--cat5:#E8559B;--cat6:#A3243B;--cat7:#F8CDE6;--cat8:#D9C9A8;--cat9:#9FC2A4;--cat10:#F6A36B;--cat11:#D03876;--cat12:#ACA696;--cat13:#C9B8F0;--cat14:#A9D6E8;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
-:root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#FFFFFF;--surface:#F2F1EC;--line:#E2E0D8;--ink:#121212;--muted:#6E6C64;--ink-base:#121212;--muted-base:#6E6C64;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#E2E0D8;--nav:#F2F1EC;--nav-on:#121212;--neutro:#F2F1EC;--hero:#121212;--salvia:#A9C4B6;--oliva:#3E5A47;--cherry:#B81C14;--frambuesa:#8E3B5A;--fucsia:#FF7A2E;--rosa:#ECE78A;--rosa-claro:#E7B9C6;--ingreso:#CFE3A8;--rojo:#E3241B;--cat1:#A9C4B6;--cat2:#F26B5B;--cat3:#FF8A3D;--cat4:#4A5E3A;--cat5:#ECE78A;--cat6:#2F4A6B;--cat7:#E7B9C6;--cat8:#9DB88A;--cat9:#9EC1DE;--cat10:#CDB57E;--cat11:#7A2E45;--cat12:#A9A391;--cat13:#C3B1E1;--cat14:#F2C1A0;--cat15:#4A3F7A;--cat16:#E8CF6A;--cat17:#8FC1BA;--cat18:#35607A;--cat19:#C5D98A;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
-:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#FFFFFF;--surface:#F4F4F6;--line:#E4E4E9;--ink:#111113;--muted:#64646C;--ink-base:#111113;--muted-base:#64646C;--accent:#111113;--accent-ink:#FFFFFF;--accent-soft:#E4E4E9;--nav:#F4F4F6;--nav-on:#111113;--neutro:#F4F4F6;--hero:#111113;--salvia:#D4F36A;--oliva:#111113;--cherry:#2A2A31;--frambuesa:#5B3FB5;--fucsia:#C7B6F7;--rosa:#E3DAFB;--rosa-claro:#EEF9C8;--ingreso:#D4F36A;--rojo:#111113;--cat1:#C2E54F;--cat2:#A48CF0;--cat3:#7CC6F5;--cat4:#2E2E36;--cat5:#F6A06E;--cat6:#4B3A8C;--cat7:#F28CB3;--cat8:#58CFA0;--cat9:#F3CF4F;--cat10:#6D86F0;--cat11:#5B3FB5;--cat12:#9AA0AD;--cat13:#F5B7D3;--cat14:#FFD3A8;--cat15:#7A2E6B;--cat16:#FFB3A7;--cat17:#8EE0D4;--cat18:#1F5F7A;--cat19:#C9D6FF;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
-:root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#F6F0E4;--surface:#FFFCF6;--line:#E8DFCE;--ink:#151515;--muted:#6A6357;--ink-base:#151515;--muted-base:#6A6357;--accent:#151515;--accent-ink:#FFFFFF;--accent-soft:#E8DFCE;--nav:#FFFCF6;--nav-on:#151515;--neutro:#FFFCF6;--hero:#151515;--salvia:#B9C47F;--oliva:#BBD5F3;--cherry:#F4AFCF;--frambuesa:#E8A0C4;--fucsia:#D6C8F2;--rosa:#F5D86A;--rosa-claro:#FBE3EE;--ingreso:#CFE0A8;--rojo:#F4AFCF;--cat1:#B9C47F;--cat2:#F4AFCF;--cat3:#F5D86A;--cat4:#BBD5F3;--cat5:#D6C8F2;--cat6:#F7C59F;--cat7:#FAD1E3;--cat8:#CFE0A8;--cat9:#BFE3E0;--cat10:#F2DDA4;--cat11:#E8A0C4;--cat12:#C9BFAD;--cat13:#D9EBC6;--cat14:#F9D4C2;--cat15:#A99BE0;--cat16:#F2E48C;--cat17:#A5D6C8;--cat18:#8FB4D9;--cat19:#DDEA9A;--on-osc:#151515;--on-osc-muted:rgba(21,21,21,.62)}
-@media (prefers-color-scheme: dark){
-:root[data-paleta="viva"],[data-paleta="viva"]{--bg:#101010;--surface:#1E1E1E;--line:#2E2E2C;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#101010;--accent-soft:#2E2E2C;--nav:#1E1E1E;--nav-on:#F2F1EC;--neutro:#1E1E1E;--hero:#1E1E1E}
-:root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#0E0E0E;--surface:#1C1C1B;--line:#2E2D2A;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#0E0E0E;--accent-soft:#2E2D2A;--nav:#1C1C1B;--nav-on:#F2F1EC;--neutro:#1C1C1B;--hero:#1C1C1B}
-:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#0B0B0D;--surface:#1A1A1E;--line:#2B2B31;--ink:#F2F2F4;--muted:#A1A1AA;--ink-base:#F2F2F4;--muted-base:#A1A1AA;--accent:#F2F2F4;--accent-ink:#0B0B0D;--accent-soft:#2B2B31;--nav:#1A1A1E;--nav-on:#F2F2F4;--neutro:#1A1A1E;--hero:#1A1A1E;--oliva:#34343E;--cherry:#44444F;--rojo:#A48CF0}
-:root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#13120F;--surface:#1F1D19;--line:#302C26;--ink:#F4EEE3;--muted:#A79F92;--ink-base:#F4EEE3;--muted-base:#A79F92;--accent:#F4EEE3;--accent-ink:#13120F;--accent-soft:#302C26;--nav:#1F1D19;--nav-on:#F4EEE3;--neutro:#1F1D19;--hero:#1F1D19}
-}
-.paletas{display:flex;flex-direction:column;gap:10px}
-.paleta-op{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink);width:100%;text-align:left}
-.paleta-op[aria-pressed=true]{border-color:var(--ink);font-weight:600}
-.muestra{display:flex;gap:4px;padding:6px;border-radius:999px;background:var(--bg);flex:none}
-.muestra i{width:18px;height:18px;border-radius:50%;display:block}
 [hidden]{display:none!important}
 </style>
 <!-- estilos-app:fin -->
@@ -227,6 +238,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
 </div>
 <script>
+  // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
+  document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
   document.addEventListener("DOMContentLoaded", () => {
     const pantallas = [...document.querySelectorAll("[data-pantalla]")];
     const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
@@ -266,10 +279,10 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
     <div class="grid2" data-ui="disponibles-color">
-      <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta Y</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
-      <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+      <div class="card color acento" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta Y</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color acento" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
     </div>
-    <button type="button" class="card color" style="--c:var(--fucsia);text-align:left;font:inherit;border:0" data-ui="tarjeta-cuotas"><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big">290 €</span><span class="sub">2 cuotas · te quedan por pagar 1320 €</span></button>
+    <button type="button" class="card color acento" style="--c:var(--fucsia);text-align:left;font:inherit" data-ui="tarjeta-cuotas"><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big">290 €</span><span class="sub">2 cuotas · te quedan por pagar 1320 €</span></button>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="list" data-ui="categorias-que-se-abren"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">64,3 €</span></div></div></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">

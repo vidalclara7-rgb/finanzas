@@ -255,6 +255,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     </div>
     <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--rosa)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
+    <button type="button" class="card color acento" id="cuotasCard" data-ui="tarjeta-cuotas" style="--c:var(--fucsia);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><span class="sub" id="catsPista">Tocá una categoría para ver en qué se fue.</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="categorias-que-se-abren"></div></div>
     <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--rosa-claro)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
     <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--salvia)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses" id="meses"></div></div>
@@ -391,6 +392,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   </div>
   <div id="cEdita" style="display:flex;flex-direction:column;gap:6px"><div class="row"><span class="sub">Saldo calculado hoy</span><span class="num lbl" id="cCalc"></span></div><span class="sub">El saldo se corrige conciliando, en Cierre.</span></div>
   <div class="card" id="cCuotasMes" data-ui="cuotas-del-mes" hidden><span class="sub" id="cCuotasTxt"></span></div>
+  <button type="button" class="btn sec" id="cVerMovs" data-ui="ver-movimientos">Ver movimientos</button>
   <label class="f" for="cAportado" data-t="inversion">Total aportado (€, opcional, para ver la ganancia)<input type="text" inputmode="decimal" autocomplete="off" id="cAportado"></label>
   <label class="f" for="cLimite" data-t="tarjeta">Límite de la tarjeta (€, opcional)<input type="text" inputmode="decimal" autocomplete="off" id="cLimite"></label>
   <label class="f" for="cCuota" data-t="financiacion">Cuota mensual (€)<input type="text" inputmode="decimal" autocomplete="off" id="cCuota"></label>
@@ -479,6 +481,22 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="card" id="catVacio" hidden><div class="empty" id="catVacioTxt"></div></div>
 </div>
 
+<!-- Cuotas del mes: financiaciones y compras en cuotas -->
+<div id="sheetCuotas" class="sheet" data-pantalla="hoja-cuotas" data-ui="hoja-cuotas" hidden>
+  <div class="row"><h2>Cuotas del mes</h2><button type="button" class="btn sec" id="cuotasCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div style="display:flex;flex-direction:column;gap:4px"><span class="monto" id="cuTotal"></span><span class="sub" id="cuSub"></span></div>
+  <div class="card" id="cuFin" data-ui="lista-cuotas" hidden><span class="lbl">Financiaciones</span><div class="list" id="cuFinLista"></div></div>
+  <div class="card" id="cuCompras" data-ui="lista-compras-cuotas" hidden><span class="lbl">Compras en cuotas</span><div class="list" id="cuComprasLista"></div></div>
+</div>
+<!-- Los movimientos de una cuenta, mes por mes -->
+<div id="sheetMovsCta" class="sheet" data-pantalla="hoja-movimientos-cuenta" data-ui="hoja-movimientos-cuenta" hidden>
+  <div class="row"><h2 id="mcTitulo"></h2><button type="button" class="btn sec" id="mcCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="mesnav" data-ui="flechas-mes"><button type="button" id="mcAnt" aria-label="Mes anterior">‹</button><span id="mcMes"></span><button type="button" id="mcSig" aria-label="Mes siguiente">›</button></div>
+  <span class="sub" id="mcPista">Tocá un gasto para editarlo, por ejemplo para marcarlo como compra en cuotas.</span>
+  <div class="pila" id="mcLista" data-ui="lista-movimientos-cuenta"></div>
+  <div class="card" id="mcVacio" hidden><div class="empty" id="mcVacioTxt"></div></div>
+</div>
+
 <!-- Hoja de tarea del checklist -->
 <form id="sheetT" class="sheet" data-pantalla="hoja-tarea" data-ui="hoja-tarea" hidden autocomplete="off">
   <div class="row"><h2 id="tTitulo">Nueva tarea</h2><button type="button" class="btn sec" id="tCerrar" style="padding:8px 12px">Cerrar</button></div>
@@ -530,7 +548,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -549,7 +567,11 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))));}
+  return cuotasMesNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))));}
+// Cuotas que faltan de una financiación: «cuotasMes» es el mes en que se cargó el número (la cuenta regresiva parte de ahí).
+// Si falta o no es un mes válido, parte del mes actual; sin «cuotas», se descarta
+let cuotasNuevo=false;
+function cuotasMesNorm(s){s.cuentas.forEach(c=>{if(c.tipo==="financiacion"&&c.cuotas>0){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(c.cuotasMes)){c.cuotasMes=mesId();cuotasNuevo=true;}}else delete c.cuotasMes;});return s;}
 // Inversiones: activos (de una cuenta de inversión) y sus operaciones de compra y venta. Se descarta lo que no sea válido:
 // activos sin cuenta de inversión o sin nombre, operaciones sin activo, de otro tipo o con cantidad o precio que no sean positivos
 function invNorm(s){
@@ -581,6 +603,7 @@ function load(){let crudo=null;try{crudo=localStorage.getItem(KEY);}catch(e){}
   if(crudo)guardarClave(KEY_RESP,{texto:crudo,motivo:"ilegible",fecha:hoy()});
   return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{},reglas:{}});}
 let S=load();
+if(cuotasNuevo)persist();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
 function mesData(id){if(!S.meses[id])S.meses[id]={checks:{}};if(!S.meses[id].checks)S.meses[id].checks={};return S.meses[id];}
 
@@ -616,7 +639,7 @@ function cantidadesOk(ops){const por={};ops.forEach(o=>(por[o.activo]=por[o.acti
   return Object.values(por).every(l=>{l=[...l].sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.tipo==="compra"?0:1)-(b.tipo==="compra"?0:1));let q=0;return l.every(o=>{q=r6(q+(o.tipo==="compra"?o.cantidad:-o.cantidad));return q>=-1e-9;});});}
 const cuentaDe=id=>S.cuentas.find(c=>c.id===id);
 const nombreDe=id=>{const c=cuentaDe(id);return c?c.nombre:"Sin cuenta";};
-function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota)q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
+function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota&&!(c.cuotas>0&&cuotasFaltan(c)===0))q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
 function guardarNeto(){mesData(mesId()).neto=totales().neto;}
 // Compra en cuotas (sólo gastos de tarjeta): la deuda cuenta el total, pero en cada mes de sus cuotas cuenta sólo la cuota.
 // cuotaEnMes() devuelve una copia del gasto con el importe de ese mes (cuotaN = nº de cuota, total = lo que se debe), o null si no le toca
@@ -642,12 +665,22 @@ function planMap(){const st=S.settings;const out={};if(!st.aporte||!st.objetivoF
 // Saldo del fondo al cierre de un mes: la cuenta marcada como fondo, o lo anotado antes de que existiera
 function fondoEn(k){const fc=S.cuentas.find(c=>c.fondo);if(fc&&k>=fc.desde.slice(0,7))return valorCuenta(fc,fechaCierre(k));const md=S.meses[k];return md&&md.fondo!=null?md.fondo:null;}
 
+// Meses entre dos «AAAA-MM» (b menos a)
+const difMeses=(a,b)=>{const [y1,m1]=a.split("-").map(Number),[y2,m2]=b.split("-").map(Number);return (y2-y1)*12+m2-m1;};
+// Cuotas que faltan de una financiación en un mes, contando la de ese mes: bajan una por mes desde el mes en que se cargó el número
+const cuotasFaltan=(c,mes)=>c.cuotas>0?Math.max(0,c.cuotas-Math.max(0,difMeses(c.cuotasMes||mesId(),mes||mesId()))):null;
+// Lo que se paga en cuotas en un mes: financiaciones con cuota y compras en cuotas de tarjeta
+function cuotasDelMes(mes){
+  const fin=S.cuentas.filter(c=>c.tipo==="financiacion"&&c.cuota>0).map(c=>{const f=cuotasFaltan(c,mes);return f===0?null:{nombre:c.nombre,cuota:c.cuota,faltan:f,hasta:f?mesDe(mesSig(mes,f-1)):null,quedan:f?r2(c.cuota*f):null};}).filter(Boolean);
+  const compras=S.movs.map(m=>{const q=cuotaEnMes(m,mes);if(!q)return null;const f=m.cuotas.n-q.cuotaN+1;return {nombre:nombreDe(m.cuenta),nota:m.nota||"",cuota:q.importe,k:q.cuotaN,n:m.cuotas.n,faltan:f,hasta:mesDe(mesSig(mes,f-1)),quedan:r2(q.importe*f)};}).filter(Boolean);
+  const todas=[...fin,...compras];
+  return {fin,compras,total:r2(todas.reduce((a,x)=>a+x.cuota,0)),n:todas.length,quedan:r2(todas.reduce((a,x)=>a+(x.quedan||0),0))};}
 function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
 function detalleCuenta(c){const v=valorCuenta(c);
   if(c.tipo==="inversion"&&S.activos.some(a=>a.cuenta===c.id)){const i=invCuenta(c);return i.pagado>0?`${rendTxt(i.rend,i.pagado)} en activos`:"Activos sin compras todavía";}
   if(c.tipo==="inversion"&&c.aportado>0){const g=r2(v-c.aportado);return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
   if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite+v)} de ${eur(c.limite)}`;
-  if(c.tipo==="financiacion"&&c.cuota>0)return `${eur(c.cuota)}/mes`+(c.cuotas>0?` · faltan ${c.cuotas} (hasta ${mesMas(c.cuotas)})`:"");
+  if(c.tipo==="financiacion"&&c.cuota>0){const f=cuotasFaltan(c);return f===0?"Sin cuotas pendientes":`${eur(c.cuota)}/mes`+(f?` · faltan ${f} (hasta ${mesMas(f)})`:"");}
   if(c.tipo==="compartida")return v>=0?"Te deben":"Debés";
   if(c.fondo)return "fondo de emergencia";
   return "";}
@@ -727,6 +760,28 @@ $("catSig").onclick=()=>{if(catMesSel>=mesId())return;catMesSel=mesSig(catMesSel
 $("catRank").addEventListener("click",e=>{if(e.target.closest("[data-resto]")){catResto=true;pintarCat();}});
 $("catLista").addEventListener("click",e=>{const it=e.target.closest("[data-edit]");if(it)abrirMov(it.dataset.edit);});
 $("fvCerrar").onclick=$("catCerrar").onclick=cerrar;
+// Cuotas del mes: el detalle de cada financiación y de cada compra en cuotas
+function abrirCuotas(){const cd=cuotasDelMes(mesId());monto($("cuTotal"),cd.total);
+  $("cuSub").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");
+  const fila=(d,v)=>`<div class="item" data-ui="fila-cuota"><div class="d">${d}</div>${v}</div>`,quedan=x=>x.quedan!=null?`<div class="v"><span class="num">${eur(x.quedan)}</span><span class="sub">te quedan</span></div>`:"";
+  $("cuFin").hidden=!cd.fin.length;
+  $("cuFinLista").innerHTML=cd.fin.map(x=>fila(`<span>${esc(x.nombre)}</span><span>${eur(x.cuota)} por mes</span><span class="sub">${x.faltan?`faltan ${x.faltan} (hasta ${x.hasta})`:"sin fecha de fin"}</span>`,quedan(x))).join("");
+  $("cuCompras").hidden=!cd.compras.length;
+  $("cuComprasLista").innerHTML=cd.compras.map(x=>fila(`<span>${esc(x.nombre)}${x.nota?" · "+esc(x.nota):""}</span><span>cuota ${x.k} de ${x.n} · ${eur(x.cuota)}</span><span class="sub">faltan ${x.faltan} (hasta ${x.hasta})</span>`,quedan(x))).join("");
+  mostrar("sheetCuotas");}
+$("cuotasCard").onclick=abrirCuotas;$("cuotasCerrar").onclick=cerrar;
+// Los movimientos de una cuenta, mes por mes (los que salen o entran en ella); tocar uno lo abre para editarlo
+let mcId=null,mcMes=null;
+function abrirMovsCta(id,mes){mcId=id;mcMes=mes||mesId();pintarMovsCta();mostrar("sheetMovsCta");}
+function pintarMovsCta(){const c=S.cuentas.find(x=>x.id===mcId);if(!c){cerrar();return;}
+  $("mcTitulo").textContent=c.nombre;$("mcMes").textContent=mesDe(mcMes);$("mcSig").disabled=mcMes>=mesId();
+  const ms=movsMes(mcMes).filter(m=>m.cuenta===mcId||m.destino===mcId).sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
+  $("mcLista").innerHTML=ms.map(movHTML).join("");$("mcLista").hidden=$("mcPista").hidden=!ms.length;$("mcVacio").hidden=!!ms.length;
+  $("mcVacioTxt").textContent=`Sin movimientos de ${c.nombre} en ${MESES[+mcMes.slice(5)-1]} de ${mcMes.slice(0,4)}.`;}
+$("cVerMovs").onclick=()=>{if(editId!=null)abrirMovsCta(editId);};
+$("mcAnt").onclick=()=>{mcMes=mesSig(mcMes,-1);pintarMovsCta();};
+$("mcSig").onclick=()=>{if(mcMes>=mesId())return;mcMes=mesSig(mcMes,1);pintarMovsCta();};
+$("mcCerrar").onclick=()=>{volverCta=null;cerrar();};
 // Sugerencia de gasto fijo: misma categoría y nota en tres meses seguidos, cada mes a ±10 % del promedio
 const mesSig=(id,n)=>{const [y,m]=id.split("-").map(Number),d=new Date(y,m-1+n,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");};
 function sugerirFijo(){const gr={};
@@ -783,6 +838,9 @@ function render(){
   $("disponibles").innerHTML=conTope.map(c=>`<div class="card color acento" style="--c:var(${COLOR[c.tipo]})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
   conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
     anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
+  const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
+  if(cd.n){$("cuotasMes").textContent=eur(cd.total);$("cuotasSubI").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");}
+  if(!$("sheetMovsCta").hidden)pintarMovsCta();
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const cs=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
   torta($("torta"),cs,id); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"));
@@ -836,9 +894,12 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat"];
+const HOJAS=["sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetMovsCta"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
-function cerrar(){HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;}
+// Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
+let volverCta=null;
+function cerrar(){const eraMov=!$("sheet").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
+  if(volverCta){const v=volverCta;volverCta=null;if(eraMov)abrirMovsCta(v.id,v.mes);}}
 function cambio(){guardarNeto();persist();render();}
 
 // Navegación
@@ -924,22 +985,26 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
   $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;$("cTipoBox").hidden=!!c;$("cNueva").hidden=!!c;$("cEdita").hidden=!c;
   $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
   $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";
-  $("cAportado").value=aTexto(c&&c.aportado||"");$("cLimite").value=aTexto(c&&c.limite||"");$("cCuota").value=aTexto(c&&c.cuota||"");$("cCuotas").value=c&&c.cuotas||"";
+  $("cAportado").value=aTexto(c&&c.aportado||"");$("cLimite").value=aTexto(c&&c.limite||"");$("cCuota").value=aTexto(c&&c.cuota||"");$("cCuotas").value=c&&c.cuotas>0?(c.tipo==="financiacion"?cuotasFaltan(c)||"":c.cuotas):"";
   $("cTope").value=aTexto(c&&c.tope||"");$("cFondo").checked=!!(c&&c.fondo);
   {const q=c&&c.tipo==="tarjeta"?S.movs.map(m=>m.cuenta===c.id?cuotaEnMes(m,mesId()):null).filter(Boolean):[];
     $("cCuotasMes").hidden=!q.length;if(q.length)$("cCuotasTxt").innerHTML=`Cuotas de este mes: <b class="num">${eur(q.reduce((a,m)=>a+m.importe,0))}</b> · ${q.length} ${q.length===1?"compra":"compras"} en cuotas`;}
-  $("cAdj").hidden=!c;adjConfirm=null;if(c)pintarAdj();
+  $("cVerMovs").hidden=!c;$("cAdj").hidden=!c;adjConfirm=null;if(c)pintarAdj();
   tipoUI();mostrar("sheetC");setTimeout(()=>$("cNombre").focus(),50);}
 $("sheetC").addEventListener("submit",e=>{e.preventDefault();
   const nombre=$("cNombre").value.trim(), viejo=S.cuentas.find(x=>x.id===editId);
   if(!nombre){toast("Ponele un nombre a la cuenta");return;}
   const saldo=num("cSaldo")??0;if(!viejo&&saldo<0){toast("Poné el importe en positivo");return;}
   const c=viejo?{...viejo,nombre}:{id:nid(),tipo:selTipo,nombre,saldoInicial:selTipo==="compartida"&&selSigno==="menos"?-saldo:saldo,desde:hoy()};
-  ["aportado","limite","cuota","cuotas","tope","fondo"].forEach(k=>delete c[k]);
+  const faltaAntes=viejo&&viejo.tipo==="financiacion"&&viejo.cuotas>0?cuotasFaltan(viejo):null;
+  ["aportado","limite","cuota","cuotas","cuotasMes","tope","fondo"].forEach(k=>delete c[k]);
   const pos=k=>{const v=num(k);return v>0?v:null;};
   if(c.tipo==="inversion"&&pos("cAportado"))c.aportado=pos("cAportado");
   if(c.tipo==="tarjeta"&&pos("cLimite"))c.limite=pos("cLimite");
-  if(c.tipo==="financiacion"){if(pos("cCuota"))c.cuota=pos("cCuota");if(pos("cCuotas"))c.cuotas=Math.round(pos("cCuotas"));}
+  if(c.tipo==="financiacion"){if(pos("cCuota"))c.cuota=pos("cCuota");
+    if(pos("cCuotas")){const n=Math.round(pos("cCuotas"));
+      // Si el número es el mismo que se veía, la cuenta regresiva sigue; si cambió, parte de este mes
+      if(viejo&&viejo.cuotas>0&&n===faltaAntes){c.cuotas=viejo.cuotas;c.cuotasMes=viejo.cuotasMes;}else{c.cuotas=n;c.cuotasMes=mesId();}}}
   if((c.tipo==="liquidez"||c.tipo==="tarjeta")&&pos("cTope"))c.tope=pos("cTope");
   if(c.tipo==="liquidez"&&$("cFondo").checked){S.cuentas.forEach(x=>delete x.fondo);c.fondo=true;}
   const i=S.cuentas.findIndex(x=>x.id===editId);if(i>=0)S.cuentas[i]=c;else S.cuentas.push(c);
@@ -1355,7 +1420,7 @@ document.addEventListener("click",e=>{
     S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});quitarDeDocs(m.id);cambio();toast("Movimiento borrado");return;}
   const mv=e.target.closest("[data-mov]");
   if(mv&&seleccion){if(mv.dataset.tipo==="gasto"&&!e.target.closest("[data-sel]")){const id=+mv.dataset.mov;if(seleccion.has(id))seleccion.delete(id);else seleccion.add(id);render();}return;}
-  if(mv&&mv.dataset.tipo!=="ajuste"){abrirMov(mv.dataset.mov);return;}
+  if(mv&&mv.dataset.tipo!=="ajuste"){if(mv.closest("#mcLista"))volverCta={id:mcId,mes:mcMes};abrirMov(mv.dataset.mov);return;}
   if(e.target.closest("[data-ver-rend]")){abrirInv();return;}
   const c=e.target.closest("[data-cta]");if(c){abrirCuenta(c.dataset.cta);return;}
   const k=e.target.closest("[data-conc]");if(k){abrirConc(k.dataset.conc);return;}

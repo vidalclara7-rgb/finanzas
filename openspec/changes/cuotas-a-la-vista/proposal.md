@@ -1,6 +1,6 @@
 ---
 cambio: cuotas-a-la-vista
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Ver las cuotas del mes y los movimientos de cada cuenta
