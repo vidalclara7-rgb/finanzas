@@ -13,6 +13,7 @@ async function restaurar(page, texto) {
   await A.ir(page, "ajustes");
   await page.fill("#backupIn", texto);
   await page.click("#restaurar");
+  await page.click("#restaurar");
 }
 
 // Escenario: se conserva al volver a abrir
@@ -432,3 +433,303 @@ t.test("copia con una operación huérfana", async () => {
   assert.match(await A.texto(page, "#grupos"), /Banco A/);
   assert.deepEqual(errores, []);
 });
+
+// --- proteger los datos
+const KEY_COPIA = "finanzas-copia", KEY_RESP = "finanzas-respaldo";
+const ls = (page, k) => page.evaluate((x) => localStorage.getItem(x), k);
+const conCopia = async (page, fecha) => { await page.evaluate(([k, f]) => localStorage.setItem(k, JSON.stringify({ fecha: f })), [KEY_COPIA, fecha]); await page.reload(); };
+const unGasto = (nota = "") => A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-03", 20, 1), nota }] });
+const otrosDatos = () => A.v2({ cuentas: [A.cta(1, "Banco Otro", 500)], movs: [A.gasto(5, "2026-10-04", 7, 1, "Ocio")] });
+const avisoCopia = (page) => page.locator("#avisoCopia").isVisible();
+const sembrarCrudo = async (page, crudo) => { await page.evaluate((c) => localStorage.setItem("finanzas-v1", c), crudo); await page.reload(); };
+const archivo = (contenido, name = "copia.json") => ({ name, mimeType: "application/json", buffer: Buffer.from(contenido) });
+
+// Escenario: un solo toque no restaura
+t.test("un solo toque no restaura", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+  await page.click("#restaurar");
+  assert.equal(await A.texto(page, "#restaurar"), "Tocá de nuevo: reemplaza todo lo que tenés");
+  assert.deepEqual((await A.guardados(page)).cuentas.map((c) => c.nombre), ["Banco A"]);
+});
+
+// Escenario: guardar la copia en un archivo
+t.test("guardar la copia en un archivo", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  const [dl] = await Promise.all([page.waitForEvent("download"), page.click("#guardarArchivo")]);
+  assert.equal(dl.suggestedFilename(), "mis-finanzas-2026-10-15.json");
+  const texto = require("node:fs").readFileSync(await dl.path(), "utf8");
+  const g = await A.guardados(page);
+  const copia = JSON.parse(texto);
+  assert.deepEqual([copia.v, copia.cuentas, copia.movs], [g.v, g.cuentas, g.movs]);
+  await A.aviso(page, "Copia guardada");
+});
+
+// Escenario: restaurar desde un archivo
+t.test("restaurar desde un archivo", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1), A.gasto(2, "2026-10-04", 15, 1, "Ocio")] });
+  const { page } = await abrir();
+  await A.ir(page, "ajustes");
+  await page.setInputFiles("#archivoIn", archivo(JSON.stringify(copia)));
+  await page.waitForFunction(() => document.getElementById("backupIn").value.length > 10);
+  await page.click("#restaurar");
+  await page.click("#restaurar");
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.equal(await page.locator("#movs .mov").count(), 2);
+  await A.ir(page, "cuentas");
+  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+});
+
+// Escenario: archivo inválido
+t.test("archivo inválido", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.setInputFiles("#archivoIn", archivo("hola", "notas.txt"));
+  await page.waitForFunction(() => document.getElementById("backupIn").value === "hola");
+  await page.click("#restaurar");
+  await page.click("#restaurar");
+  await A.aviso(page, "Esa copia no es válida");
+  assert.equal((await A.guardados(page)).movs.length, 1);
+});
+
+// Escenario: última copia en Ajustes
+t.test("última copia en Ajustes", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await conCopia(page, "2026-10-12");
+  await A.ir(page, "ajustes");
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Última copia: hace 3 días");
+  assert.match(await A.texto(page, '[data-ui="advertencia-copia"]'), /Si borrás el ícono de la app/);
+});
+
+// Escenario: ninguna copia todavía
+t.test("ninguna copia todavía", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Todavía no hiciste ninguna copia.");
+});
+
+// Escenario: aviso en Inicio a los 7 días
+t.test("aviso en Inicio a los 7 días", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await conCopia(page, "2026-10-08");
+  assert.equal(await avisoCopia(page), true);
+  assert.equal(await A.texto(page, "#avisoCopiaT"), "Hace 7 días que no hacés una copia de seguridad");
+});
+
+// Escenario: sin aviso antes de los 7 días
+t.test("sin aviso antes de los 7 días", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await conCopia(page, "2026-10-09");
+  assert.equal(await avisoCopia(page), false);
+});
+
+// Escenario: aviso si nunca hubo copia
+t.test("aviso si nunca hubo copia", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  assert.equal(await avisoCopia(page), true);
+  assert.equal(await A.texto(page, "#avisoCopiaT"), "Todavía no hiciste ninguna copia de seguridad");
+});
+
+// Escenario: sin datos no hay aviso
+t.test("sin datos no hay aviso", async () => {
+  const { page } = await abrir();
+  assert.equal(await avisoCopia(page), false);
+});
+
+// Escenario: hacer la copia quita el aviso
+t.test("hacer la copia quita el aviso", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  assert.equal(await avisoCopia(page), true);
+  await page.click("#avisoCopiaBtn");
+  await page.click("#copiarBackup");
+  await A.aviso(page, "Copia de seguridad copiada");
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Última copia: hoy");
+  await A.ir(page, "inicio");
+  assert.equal(await avisoCopia(page), false);
+});
+
+// Escenario: cancelar el guardado no cuenta como copia
+t.test("cancelar el guardado no cuenta como copia", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await page.evaluate(() => { navigator.canShare = () => true; navigator.share = () => Promise.reject(new DOMException("cancelado", "AbortError")); });
+  await A.ir(page, "ajustes");
+  await page.click("#guardarArchivo");
+  await page.waitForTimeout(400);
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Todavía no hiciste ninguna copia.");
+  assert.equal(await ls(page, KEY_COPIA), null);
+  await A.ir(page, "inicio");
+  assert.equal(await avisoCopia(page), true);
+});
+
+// Escenario: lo anterior queda guardado
+t.test("lo anterior queda guardado", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+  await page.click("#restaurar");
+  await page.click("#restaurar");
+  await A.aviso(page, "Copia restaurada");
+  assert.equal(await page.isVisible("#cardRespaldo"), true);
+  assert.match(await A.texto(page, "#respaldoSub"), /Datos de antes de restaurar, del 15\/10/);
+  assert.equal(JSON.parse(JSON.parse(await ls(page, KEY_RESP)).texto).cuentas[0].nombre, "Banco A");
+});
+
+// Escenario: volver a lo anterior
+t.test("volver a lo anterior", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+  await page.click("#restaurar");
+  await page.click("#restaurar");
+  await A.aviso(page, "Copia restaurada");
+  await page.click("#respaldoRestaurar");
+  await page.click("#respaldoRestaurar");
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem("finanzas-v1")).cuentas[0].nombre === "Banco A");
+  assert.equal((await A.guardados(page)).movs[0].importe, 20);
+  assert.equal(JSON.parse(JSON.parse(await ls(page, KEY_RESP)).texto).cuentas[0].nombre, "Banco Otro");
+});
+
+// Escenario: restaurar sobre una app vacía no pisa el respaldo
+t.test("restaurar sobre una app vacía no pisa el respaldo", async () => {
+  const { page } = await abrir();
+  await sembrarCrudo(page, "{texto roto");
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+  await page.click("#restaurar");
+  await page.click("#restaurar");
+  await A.aviso(page, "Copia restaurada");
+  assert.equal(JSON.parse(await ls(page, KEY_RESP)).texto, "{texto roto");
+});
+
+// Escenario: descartar el respaldo
+t.test("descartar el respaldo", async () => {
+  const { page } = await abrir();
+  await sembrarCrudo(page, "{texto roto");
+  await A.ir(page, "ajustes");
+  await page.click("#respaldoDescartar");
+  assert.equal(await page.isVisible("#cardRespaldo"), true);
+  await page.click("#respaldoDescartar");
+  await A.aviso(page, "Respaldo descartado");
+  assert.equal(await page.isVisible("#cardRespaldo"), false);
+  assert.equal(await ls(page, KEY_RESP), null);
+});
+
+// Escenario: copiar el texto del respaldo
+t.test("copiar el texto del respaldo", async () => {
+  const { page } = await abrir();
+  await sembrarCrudo(page, "{texto roto");
+  await A.ir(page, "ajustes");
+  await page.click("#respaldoCopiar");
+  await A.aviso(page, "Respaldo copiado");
+  assert.equal(await A.portapapeles(page), "{texto roto");
+});
+
+// Escenario: texto guardado dañado
+t.test("texto guardado dañado", async () => {
+  const { page, errores } = await abrir();
+  await sembrarCrudo(page, '{"v":2,"settings":{},"cuentas":[{"id":1,');
+  assert.equal(await page.isVisible("#avisoIlegible"), true);
+  assert.match(await A.texto(page, "#avisoIlegible"), /No pude leer tus datos guardados/);
+  await A.ir(page, "ajustes");
+  assert.match(await A.texto(page, "#respaldoSub"), /Datos que no se pudieron leer/);
+  assert.equal(JSON.parse(await ls(page, KEY_RESP)).texto, '{"v":2,"settings":{},"cuentas":[{"id":1,');
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: datos que no son de la app
+t.test("datos que no son de la app", async () => {
+  const { page } = await abrir();
+  await sembrarCrudo(page, '{"hola":"mundo"}');
+  assert.equal((await A.guardados(page)).cuentas.length, 0);
+  assert.equal(JSON.parse(await ls(page, KEY_RESP)).texto, '{"hola":"mundo"}');
+  assert.equal(await page.isVisible("#avisoIlegible"), true);
+});
+
+// Escenario: primer uso
+t.test("primer uso", async () => {
+  const { page } = await abrir();
+  assert.equal(await ls(page, KEY_RESP), null);
+  assert.equal(await page.isVisible("#avisoIlegible"), false);
+  assert.equal(await avisoCopia(page), false);
+});
+
+// Escenario: datos de versiones anteriores sin fecha de copia
+t.test("datos de la versión anterior sin fecha de copia", async () => {
+  const { page } = await abrir({ datos: unGasto("de antes") });
+  assert.equal((await A.guardados(page)).movs[0].nota, "de antes");
+  await A.ir(page, "ajustes");
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Todavía no hiciste ninguna copia.");
+  assert.equal(await ls(page, KEY_RESP), null);
+});
+
+// --- pruebas extra de robustez
+t.test("claves de copia y respaldo con basura no rompen la app", async () => {
+  const { page, errores } = await abrir({ datos: unGasto() });
+  await page.evaluate(() => { localStorage.setItem("finanzas-copia", "{no es json"); localStorage.setItem("finanzas-respaldo", JSON.stringify({ texto: 5, motivo: {}, fecha: "<b>" })); });
+  await page.reload();
+  await A.ir(page, "ajustes");
+  assert.equal(await A.texto(page, "#ultimaCopia"), "Todavía no hiciste ninguna copia.");
+  assert.equal(await page.isVisible("#cardRespaldo"), false);
+  await page.evaluate(() => localStorage.setItem("finanzas-copia", JSON.stringify({ fecha: "mañana" })));
+  await page.reload();
+  assert.equal(await avisoCopia(page), true);
+  assert.deepEqual(errores, []);
+});
+
+t.test("si el respaldo no cabe en el almacenamiento, la app abre igual", async () => {
+  const { page, errores } = await abrir();
+  await sembrarCrudo(page, "{texto roto");
+  await page.evaluate(() => localStorage.removeItem("finanzas-respaldo"));
+  await page.addInitScript(() => { const o = Storage.prototype.setItem; Storage.prototype.setItem = function (k, v) { if (k === "finanzas-respaldo") throw new Error("sin espacio"); return o.call(this, k, v); }; });
+  await sembrarCrudo(page, "{texto roto otra vez");
+  assert.equal(await page.locator("#v-inicio").isVisible(), true);
+  assert.deepEqual(errores.filter((e) => !/sin espacio/.test(e)), []);
+});
+
+t.test("una copia inválida no cambia nada y no guarda respaldo", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", '{"settings":{}}');
+  await page.click("#restaurar");
+  await A.aviso(page, "Esa copia no es válida");
+  assert.equal(await ls(page, KEY_RESP), null);
+  assert.equal((await A.guardados(page)).movs.length, 1);
+});
+
+t.test("la confirmación de restaurar se cancela al cambiar el texto", async () => {
+  const { page } = await abrir({ datos: unGasto() });
+  await A.ir(page, "ajustes");
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+  await page.click("#restaurar");
+  assert.match(await A.texto(page, "#restaurar"), /Tocá de nuevo/);
+  await page.fill("#backupIn", JSON.stringify(otrosDatos()) + " ");
+  assert.equal(await A.texto(page, "#restaurar"), "Restaurar copia");
+});
+
+for (const esquema of ["light", "dark"]) {
+  t.test(`Ajustes e Inicio con los avisos nuevos a 390 px sin desbordes (${esquema})`, async () => {
+    const { page, errores } = await abrir({ esquema });
+    const sinDesborde = async (donde) => {
+      const [ancho, vista] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
+      assert.ok(ancho <= vista, `${donde}: ${ancho} > ${vista}`);
+    };
+    await sembrarCrudo(page, "{texto roto");
+    assert.equal(await page.isVisible("#avisoIlegible"), true);
+    await sinDesborde("inicio con datos ilegibles");
+    await A.ir(page, "ajustes");
+    assert.equal(await page.isVisible("#cardRespaldo"), true);
+    await sinDesborde("ajustes con respaldo");
+    await page.evaluate((d) => localStorage.setItem("finanzas-v1", JSON.stringify(d)), unGasto());
+    await page.reload();
+    assert.equal(await avisoCopia(page), true);
+    await sinDesborde("inicio con aviso de copia");
+    await A.ir(page, "ajustes");
+    await page.fill("#backupIn", JSON.stringify(otrosDatos()));
+    await page.click("#restaurar");
+    await sinDesborde("ajustes con la confirmación");
+    assert.deepEqual(errores, []);
+  });
+}
