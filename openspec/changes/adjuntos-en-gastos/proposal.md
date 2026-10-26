@@ -1,6 +1,6 @@
 ---
 cambio: adjuntos-en-gastos
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Adjuntar un documento a varios gastos
