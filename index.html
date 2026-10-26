@@ -369,6 +369,34 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <button class="btn danger" type="button" id="cBorrar" hidden>Borrar cuenta</button>
 </form>
 
+<!-- Hojas de inversiones -->
+<div id="sheetInv" class="sheet" data-pantalla="hoja-inversiones" data-ui="hoja-inversiones" hidden>
+  <div class="row"><h2>Inversiones</h2><button type="button" class="btn sec" id="invCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div id="invCuerpo" style="display:flex;flex-direction:column;gap:14px"></div>
+</div>
+<form id="sheetAct" class="sheet" data-pantalla="hoja-activo" data-ui="hoja-activo" hidden autocomplete="off">
+  <div class="row"><h2 id="aTitulo">Nuevo activo</h2><button type="button" class="btn sec" id="aCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <label class="f" for="aNombre">Nombre<input type="text" id="aNombre" placeholder="Ej: Fondo indexado, ETF mundial"></label>
+  <div id="aExtra" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="precio-actual"><div class="row"><span class="sub">Precio actual</span><span class="num lbl" id="aPrecio"></span></div><span class="sub" id="aPrecioSub"></span>
+      <label class="f" for="aPrecioNuevo">Nuevo precio (€)<input type="text" inputmode="decimal" autocomplete="off" id="aPrecioNuevo" placeholder="Ej: 56,2"></label><button type="button" class="btn sec" id="aPrecioBtn" data-ui="actualizar-precio">Actualizar precio</button></div>
+    <div class="card" data-ui="operaciones-activo"><span class="lbl">Operaciones</span><div id="aOps"></div></div>
+  </div>
+  <button class="btn" type="submit">Guardar activo</button>
+  <button class="btn danger" type="button" id="aBorrar" hidden>Borrar activo</button>
+</form>
+<form id="sheetOp" class="sheet" data-pantalla="hoja-operacion" data-ui="hoja-operacion" hidden autocomplete="off">
+  <div class="row"><h2 id="oTitulo">Nueva operación</h2><button type="button" class="btn sec" id="oCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="seg" id="segOpTipo" data-ui="tipo-operacion"></div>
+  <div><span class="lbl">Activo</span><div class="seg" id="segOpActivo" style="margin-top:8px"></div></div>
+  <label class="f" for="oFecha">Fecha<input type="date" id="oFecha"></label>
+  <div class="grid2"><label class="f" for="oCant">Cantidad<input type="text" inputmode="decimal" autocomplete="off" id="oCant" placeholder="0"></label><label class="f" for="oPrecio">Precio por unidad (€)<input type="text" inputmode="decimal" autocomplete="off" id="oPrecio" placeholder="0,00"></label></div>
+  <label class="f" for="oCom">Comisión (€, opcional)<input type="text" inputmode="decimal" autocomplete="off" id="oCom" placeholder="Sin comisión"></label>
+  <div class="row" id="oTotalRow" hidden><span class="sub" id="oTotalL"></span><span class="num lbl" id="oTotal"></span></div>
+  <button class="btn" type="submit">Guardar operación</button>
+  <button class="btn danger" type="button" id="oBorrar" hidden>Borrar operación</button>
+</form>
+
 <!-- Hoja de conciliación -->
 <form id="sheetK" class="sheet" data-pantalla="hoja-conciliacion" data-ui="hoja-conciliacion" hidden autocomplete="off">
   <div class="row"><h2 id="kTitulo">Conciliar</h2><button type="button" class="btn sec" id="kCerrar" style="padding:8px 12px">Cerrar</button></div>
@@ -471,7 +499,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return categoriasNorm(reglasNorm(fijosNorm(reembolsos(s))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -490,7 +518,14 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return categoriasNorm(reglasNorm(fijosNorm(reembolsos(s))));}
+  return categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))));}
+// Inversiones: activos (de una cuenta de inversión) y sus operaciones de compra y venta. Se descarta lo que no sea válido:
+// activos sin cuenta de inversión o sin nombre, operaciones sin activo, de otro tipo o con cantidad o precio que no sean positivos
+function invNorm(s){
+  s.activos=Array.isArray(s.activos)?s.activos.filter(a=>a&&typeof a==="object"&&typeof a.nombre==="string"&&a.nombre.trim()&&s.cuentas.some(c=>c.id===a.cuenta&&c.tipo==="inversion")):[];
+  s.ops=Array.isArray(s.ops)?s.ops.filter(o=>o&&typeof o==="object"&&s.activos.some(a=>a.id===o.activo)&&(o.tipo==="compra"||o.tipo==="venta")&&o.cantidad>0&&o.precio>0&&typeof o.fecha==="string"):[];
+  s.ops.forEach(o=>{if(!(o.comision>0))delete o.comision;});
+  return s;}
 // Los gastos reembolsables sin estado (guardados antes de los estados) quedan pendientes
 function reembolsos(s){s.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat===REEMB&&!m.reembolso)m.reembolso={estado:"pendiente"};});return s;}
 // Reglas de gastos fijos por categoría y nota: true = los siguientes vienen marcados; false = no es fijo (no se sugiere)
@@ -518,7 +553,28 @@ function efecto(m,id){
   if(m.tipo==="ingreso"||m.tipo==="ajuste")return m.cuenta===id?m.importe:0;
   if(m.tipo==="transferencia")return (m.cuenta===id?-m.importe:0)+(m.destino===id?m.importe:0);
   return 0;}
-function valorCuenta(c,hasta){let v=valorInicial(c);for(const m of S.movs)if(m.fecha>=c.desde&&(!hasta||m.fecha<=hasta))v+=efecto(m,c.id);return r2(v);}
+function valorCuenta(c,hasta){let v=valorInicial(c);for(const m of S.movs)if(m.fecha>=c.desde&&(!hasta||m.fecha<=hasta))v+=efecto(m,c.id);
+  // Inversión con activos: el efectivo sigue las compras y ventas, y se suma lo que valen las posiciones
+  if(c.tipo==="inversion")S.activos.forEach(a=>{if(a.cuenta!==c.id)return;const p=posicion(a,hasta);v+=p.valor+p.cobrado-p.pagado;});
+  return r2(v);}
+// Precio actual de un activo: el último anotado (en una operación o con «Actualizar precio») según su fecha; sin precio, 0
+const r6=n=>Math.round(n*1e6)/1e6;
+function precioDe(a,hasta){let p=0,f="";
+  [...S.ops.filter(o=>o.activo===a.id).map(o=>[o.fecha,o.precio]),...(a.precio>0&&a.fechaPrecio?[[a.fechaPrecio,a.precio]]:[])].forEach(([fe,pr])=>{if((!hasta||fe<=hasta)&&fe>=f){f=fe;p=pr;}});
+  return {p,f};}
+// Posición de un activo: cantidad, lo pagado en compras y lo cobrado en ventas (con comisiones), su valor y el rendimiento de caja
+function posicion(a,hasta){const c=S.cuentas.find(x=>x.id===a.cuenta);let qty=0,pagado=0,cobrado=0;
+  S.ops.forEach(o=>{if(o.activo!==a.id||(hasta&&o.fecha>hasta)||(c&&o.fecha<c.desde))return;const t=o.cantidad*o.precio,k=o.comision||0;
+    if(o.tipo==="compra"){qty+=o.cantidad;pagado+=t+k;}else{qty-=o.cantidad;cobrado+=t-k;}});
+  qty=r6(qty);const pr=precioDe(a,hasta),valor=r2(qty*pr.p);
+  return {qty,precio:pr.p,fechaPrecio:pr.f,valor,pagado:r2(pagado),cobrado:r2(cobrado),rend:r2(valor+cobrado-pagado)};}
+function invCuenta(c){const as=S.activos.filter(a=>a.cuenta===c.id),ps=as.map(a=>[a,posicion(a)]),suma=k=>r2(ps.reduce((x,[,p])=>x+p[k],0));
+  return {as,ps,pagado:suma("pagado"),rend:suma("rend"),enActivos:suma("valor"),valor:valorCuenta(c)};}
+const rendTxt=(r,pagado)=>{const s=r<0?"−":"+";return `${s}${eur(Math.abs(r))}`+(pagado>0?` (${s}${(Math.abs(r)/pagado*100).toFixed(1).replace(".",",")} %)`:"");};
+const fq=n=>(+n.toFixed(6)).toLocaleString("es-ES",{maximumFractionDigits:6});
+// Las cantidades de cada activo no pueden quedar negativas en ningún momento (a igual fecha, las compras van antes)
+function cantidadesOk(ops){const por={};ops.forEach(o=>(por[o.activo]=por[o.activo]||[]).push(o));
+  return Object.values(por).every(l=>{l=[...l].sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.tipo==="compra"?0:1)-(b.tipo==="compra"?0:1));let q=0;return l.every(o=>{q=r6(q+(o.tipo==="compra"?o.cantidad:-o.cantidad));return q>=-1e-9;});});}
 const cuentaDe=id=>S.cuentas.find(c=>c.id===id);
 const nombreDe=id=>{const c=cuentaDe(id);return c?c.nombre:"Sin cuenta";};
 function totales(){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota)q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
@@ -549,6 +605,7 @@ function fondoEn(k){const fc=S.cuentas.find(c=>c.fondo);if(fc&&k>=fc.desde.slice
 
 function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
 function detalleCuenta(c){const v=valorCuenta(c);
+  if(c.tipo==="inversion"&&S.activos.some(a=>a.cuenta===c.id)){const i=invCuenta(c);return i.pagado>0?`${rendTxt(i.rend,i.pagado)} en activos`:"Activos sin compras todavía";}
   if(c.tipo==="inversion"&&c.aportado>0){const g=r2(v-c.aportado);return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
   if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite+v)} de ${eur(c.limite)}`;
   if(c.tipo==="financiacion"&&c.cuota>0)return `${eur(c.cuota)}/mes`+(c.cuotas>0?` · faltan ${c.cuotas} (hasta ${mesMas(c.cuotas)})`:"");
@@ -720,8 +777,8 @@ function renderCuentas(){
   $("netoIniSub").textContent=`Tenés ${eur(t.activos)} · debés ${eur(t.deudas)}`+(t.cuotas>0?` · cuotas ${eur(t.cuotas)}/mes`:"");
   $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
     const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
-    return `<div class="card color${tipoOsc(tipo)}" style="--c:var(${COLOR[tipo]})"><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
-      return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${esc(det)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("")}</div></div>`;}).join("");
+    return `<div class="card color${tipoOsc(tipo)}" style="--c:var(${COLOR[tipo]})"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
+      return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${esc(det)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("")}</div>${tipo==="inversion"?`<button type="button" class="btn sec" data-ver-rend="1" data-ui="ver-rendimiento">Ver rendimiento</button>`:""}</div>`;}).join("");
 }
 
 const hojaAbierta=()=>HOJAS.some(x=>!$(x).hidden);
@@ -732,7 +789,7 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheet","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat"];
+const HOJAS=["sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 function cerrar(){HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;}
 function cambio(){guardarNeto();persist();render();}
@@ -844,6 +901,7 @@ $("cBorrar").onclick=()=>{const b=$("cBorrar");
   if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
   if(S.movs.some(m=>m.cuenta===editId||m.destino===editId)){toast("No se puede borrar: la cuenta tiene movimientos");b.dataset.confirm="";b.textContent="Borrar cuenta";return;}
   const id=editId;adjTodos().then(as=>as.filter(a=>a.cuenta===id).forEach(a=>adjBorrar(a.id).catch(()=>{})));
+  const ids=S.activos.filter(a=>a.cuenta===editId).map(a=>a.id);S.ops=S.ops.filter(o=>!ids.includes(o.activo));S.activos=S.activos.filter(a=>a.cuenta!==editId);
   S.cuentas=S.cuentas.filter(x=>x.id!==editId);cerrar();cambio();toast("Cuenta borrada");};
 
 // Hoja de conciliación
@@ -1161,6 +1219,68 @@ $("adjIn").addEventListener("change",async e=>{const f=e.target.files[0];e.targe
   await pintarAdj();avisoAdj();toast("Archivo adjuntado");});
 $("cImportar").onclick=()=>{impPref=editId;$("pdfIn").click();};
 
+// Hojas de inversiones: resumen por cuenta, activo y operación
+function abrirInv(){const cs=S.cuentas.filter(c=>c.tipo==="inversion");
+  $("invCuerpo").innerHTML=cs.map(c=>{const i=invCuenta(c),ef=r2(i.valor-i.enActivos);
+    return `<div class="card color osc" style="--c:var(--oliva)" data-ui="resumen-inversion"><div class="row"><span class="lbl">${esc(c.nombre)}</span><span class="big">${eur(i.valor)}</span></div>
+      <span class="sub">Efectivo ${eur(ef)}${i.as.length?` · en activos ${eur(i.enActivos)}`:""}</span>${i.as.length?`<span class="sub">Rendimiento ${i.pagado>0?rendTxt(i.rend,i.pagado):"sin datos todavía"}</span>`:""}${ef<-0.005?`<span class="sub" data-ui="aviso-efectivo">El efectivo de esta cuenta quedó en negativo: anotá la transferencia de entrada.</span>`:""}</div>
+      ${i.as.length?`<div class="list" data-ui="lista-activos">${i.ps.map(([a,p])=>`<button type="button" class="item tap" data-activo="${a.id}" data-ui="activo"><div class="d"><span>${esc(a.nombre)}</span><span>${fq(p.qty)} ${p.qty===1?"unidad":"unidades"} · precio ${eur(p.precio)}</span></div><div class="v"><span class="num">${eur(p.valor)}</span><span class="chip ${p.pagado>0?(p.rend>=0?"ok":"badc"):"idle"}">${p.pagado>0?rendTxt(p.rend,p.pagado):"Sin datos todavía"}</span></div></button>`).join("")}</div>`:`<div class="card"><div class="empty">Todavía no cargaste activos. Creá uno para registrar compras y ventas.</div></div>`}
+      <div class="row" style="gap:8px"><button type="button" class="btn sec" style="flex:1" data-nuevo-activo="${c.id}" data-ui="nuevo-activo">Nuevo activo</button>${i.as.length?`<button type="button" class="btn" style="flex:1" data-nueva-op="${c.id}" data-ui="nueva-operacion">Nueva operación</button>`:""}</div>`;}).join("")
+    +`<span class="sub">El rendimiento es lo que valen hoy tus unidades más lo cobrado en ventas, menos lo pagado en compras. Los precios los anotás vos.</span>`;
+  mostrar("sheetInv");}
+$("invCerrar").onclick=cerrar;
+$("invCuerpo").addEventListener("click",e=>{const a=e.target.closest("[data-activo]"),n=e.target.closest("[data-nuevo-activo]"),o=e.target.closest("[data-nueva-op]");
+  if(a)abrirAct(+a.dataset.activo);else if(n)abrirAct(null,+n.dataset.nuevoActivo);else if(o)abrirOp(null,+o.dataset.nuevaOp);});
+const numX=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.includes(","))t=t.replace(/\./g,"").replace(",",".");const v=parseFloat(t);return isNaN(v)?null:v;};
+let actId=null,actCuenta=null;
+function abrirAct(id,cuenta){const a=id!=null?S.activos.find(x=>x.id===id):null;actId=a?a.id:null;actCuenta=a?a.cuenta:cuenta;
+  $("aTitulo").textContent=a?a.nombre:"Nuevo activo";$("aNombre").value=a?a.nombre:"";$("aExtra").hidden=!a;$("aBorrar").hidden=!a;$("aBorrar").dataset.confirm="";$("aBorrar").textContent="Borrar activo";$("aPrecioNuevo").value="";
+  if(a)pintarAct();mostrar("sheetAct");setTimeout(()=>$("aNombre").focus(),50);}
+function pintarAct(){const a=S.activos.find(x=>x.id===actId);if(!a)return;const p=posicion(a);
+  $("aPrecio").textContent=eur(p.precio);
+  $("aPrecioSub").textContent=p.fechaPrecio?`Anotado el ${diaMes(p.fechaPrecio)}. La app no consulta cotizaciones.`:"Todavía sin precio: el activo vale 0 hasta que lo anotes. La app no consulta cotizaciones.";
+  const os=S.ops.filter(o=>o.activo===a.id).sort((x,y)=>y.fecha.localeCompare(x.fecha)||y.id-x.id);
+  $("aOps").innerHTML=os.length?os.map(o=>{const t=o.cantidad*o.precio,k=o.comision||0,c=o.tipo==="compra";
+    return `<button type="button" class="item tap" data-op="${o.id}"><div class="d"><span>${c?"Compra":"Venta"} · ${diaMes(o.fecha)}</span><span>${fq(o.cantidad)} × ${eur(o.precio)}${k?` · comisión ${eur(k)}`:""}</span></div><div class="v"><span class="num">${c?"−":"+"}${eur(c?t+k:t-k)}</span></div></button>`;}).join(""):`<div class="empty">Todavía no hay operaciones.</div>`;}
+$("aOps").addEventListener("click",e=>{const o=e.target.closest("[data-op]");if(o)abrirOp(+o.dataset.op);});
+$("aCerrar").onclick=abrirInv;
+$("sheetAct").addEventListener("submit",e=>{e.preventDefault();const nombre=$("aNombre").value.trim();
+  if(!nombre){toast("Poné un nombre para el activo");return;}
+  const a=S.activos.find(x=>x.id===actId);if(a)a.nombre=nombre;else S.activos.push({id:nid(),cuenta:actCuenta,nombre});
+  cambio();abrirInv();toast("Activo guardado");});
+$("aPrecioBtn").onclick=()=>{const a=S.activos.find(x=>x.id===actId),v=numX("aPrecioNuevo");if(!a)return;
+  if(!(v>0)){toast("Poné un precio mayor que 0");return;}
+  a.precio=r6(v);a.fechaPrecio=hoy();$("aPrecioNuevo").value="";cambio();pintarAct();toast("Precio actualizado");};
+$("aBorrar").onclick=()=>{const b=$("aBorrar"),n=S.ops.filter(o=>o.activo===actId).length;
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent=n?`Tocá de nuevo: se borran sus ${n} ${n===1?"operación":"operaciones"}`:"Tocá de nuevo para borrar";return;}
+  S.ops=S.ops.filter(o=>o.activo!==actId);S.activos=S.activos.filter(a=>a.id!==actId);cambio();abrirInv();toast("Activo borrado");};
+let opId=null,opCuenta=null,op={tipo:"compra",activo:null};
+function abrirOp(id,cuenta,activo){const o=id!=null?S.ops.find(x=>x.id===id):null,a0=o?S.activos.find(x=>x.id===o.activo):null;opId=o?o.id:null;opCuenta=a0?a0.cuenta:cuenta;
+  const as=S.activos.filter(a=>a.cuenta===opCuenta);op={tipo:o?o.tipo:"compra",activo:o?o.activo:(activo!=null?activo:as[0]&&as[0].id)};
+  $("oTitulo").textContent=o?"Editar operación":"Nueva operación";
+  $("oFecha").value=o?o.fecha:hoy();$("oCant").value=o?aTexto(o.cantidad):"";$("oPrecio").value=o?aTexto(o.precio):"";$("oCom").value=o&&o.comision?aTexto(o.comision):"";
+  $("oBorrar").hidden=!o;$("oBorrar").dataset.confirm="";$("oBorrar").textContent="Borrar operación";
+  opUI();mostrar("sheetOp");setTimeout(()=>$("oCant").focus(),50);}
+function opUI(){const as=S.activos.filter(a=>a.cuenta===opCuenta);
+  seg($("segOpTipo"),[["compra","Compra"],["venta","Venta"]],op.tipo,v=>{op.tipo=v;opUI();});
+  seg($("segOpActivo"),as.map(a=>[a.id,a.nombre]),op.activo,v=>{op.activo=+v;});
+  const c=numX("oCant"),p=numX("oPrecio"),k=numX("oCom")||0;$("oTotalRow").hidden=!(c>0&&p>0);$("oTotalL").textContent=op.tipo==="compra"?"Pagás":"Cobrás";$("oTotal").textContent=eur(op.tipo==="compra"?c*p+k:c*p-k);}
+["oCant","oPrecio","oCom"].forEach(i=>$(i).addEventListener("input",opUI));
+$("oCerrar").onclick=abrirInv;
+$("sheetOp").addEventListener("submit",e=>{e.preventDefault();
+  const cant=numX("oCant"),precio=numX("oPrecio"),com=$("oCom").value.trim()?numX("oCom"):0;
+  if(!(cant>0&&precio>0)){toast("Poné una cantidad y un precio mayores que 0");return;}
+  if(!(com>=0)){toast("La comisión no puede ser negativa");return;}
+  const o={id:opId||nid(),activo:op.activo,fecha:$("oFecha").value||hoy(),tipo:op.tipo,cantidad:r6(cant),precio:r6(precio)};if(com>0)o.comision=r2(com);
+  const i=S.ops.findIndex(x=>x.id===o.id),nuevo=i>=0?S.ops.map(x=>x.id===o.id?o:x):[...S.ops,o];
+  if(!cantidadesOk(nuevo)){toast(o.tipo==="venta"?"No tenés tantas unidades":"Esa compra respalda ventas posteriores");return;}
+  S.ops=nuevo;cambio();abrirInv();toast("Operación guardada");});
+$("oBorrar").onclick=()=>{const b=$("oBorrar");
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
+  const resto=S.ops.filter(o=>o.id!==opId);
+  if(!cantidadesOk(resto)){b.dataset.confirm="";b.textContent="Borrar operación";toast("Esa compra respalda ventas posteriores");return;}
+  S.ops=resto;cambio();abrirInv();toast("Operación borrada");};
+
 // Hoja de tarea
 let tareaId=null;
 function abrirTarea(id){const t=S.tareas.find(x=>x.id===id);tareaId=t?t.id:null;
@@ -1189,6 +1309,7 @@ document.addEventListener("click",e=>{
   const mv=e.target.closest("[data-mov]");
   if(mv&&seleccion){if(mv.dataset.tipo==="gasto"&&!e.target.closest("[data-sel]")){const id=+mv.dataset.mov;if(seleccion.has(id))seleccion.delete(id);else seleccion.add(id);render();}return;}
   if(mv&&mv.dataset.tipo!=="ajuste"){abrirMov(mv.dataset.mov);return;}
+  if(e.target.closest("[data-ver-rend]")){abrirInv();return;}
   const c=e.target.closest("[data-cta]");if(c){abrirCuenta(c.dataset.cta);return;}
   const k=e.target.closest("[data-conc]");if(k){abrirConc(k.dataset.conc);return;}
   const t=e.target.closest("[data-tarea]");if(t)abrirTarea(t.dataset.tarea);});

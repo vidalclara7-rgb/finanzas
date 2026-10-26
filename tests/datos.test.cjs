@@ -381,3 +381,54 @@ t.test("copia restaurada con gastos que ya no existen", async () => {
   assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
   assert.deepEqual(errores, []);
 });
+
+// --- inversiones
+const BROKER_D = A.cta(1, "Broker X", 1000, { tipo: "inversion" });
+
+// Escenario: datos de la versión anterior
+t.test("inversiones guardadas antes de las posiciones", async () => {
+  const datos = A.v2({ cuentas: [A.cta(1, "Broker X", 2100, { tipo: "inversion", aportado: 2000 })] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "cuentas");
+  assert.match(await A.texto(page, '[data-cta="1"]'), /\+100 € \(\+5,0 %\) sobre 2000 €/);
+  assert.equal(await A.texto(page, "#activos"), "2100 €");
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja sin posiciones", async () => {
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BROKER_D] })));
+  await A.aviso(page, "Copia restaurada");
+  const g = await A.guardados(page);
+  assert.deepEqual([g.activos, g.ops], [[], []]);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: la copia conserva las posiciones
+t.test("la copia conserva las posiciones", async () => {
+  const datos = A.v2({ cuentas: [BROKER_D], activos: [{ id: 10, cuenta: 1, nombre: "Fondo A" }], ops: [{ id: 1, activo: 10, tipo: "compra", cantidad: 10, precio: 50, fecha: "2026-10-10" }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "cuentas");
+  await otra.click("[data-ver-rend]");
+  assert.match((await A.texto(otra, '[data-activo="10"]')).replace(/\s+/g, " "), /Fondo A.*10 unidades/);
+});
+
+// Escenario: copia rota o con una operación huérfana
+t.test("copia con una operación huérfana", async () => {
+  const datos = A.v2({ cuentas: [BROKER_D, A.cta(2, "Banco A", 500)], activos: [], ops: [{ id: 1, activo: 99, tipo: "compra", cantidad: 10, precio: 50, fecha: "2026-10-10" }] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(datos));
+  await A.aviso(page, "Copia restaurada");
+  const g = await A.guardados(page);
+  assert.equal(g.ops.length, 0);
+  assert.equal(g.cuentas.length, 2);
+  await A.ir(page, "cuentas");
+  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+  assert.deepEqual(errores, []);
+});

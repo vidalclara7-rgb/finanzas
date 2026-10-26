@@ -1,6 +1,6 @@
 ---
 cambio: inversiones-posiciones
-estado: diseno-aprobado
+estado: construida
 datos: amplia
 ---
 # Inversiones: compras, ventas y rendimiento por activo
