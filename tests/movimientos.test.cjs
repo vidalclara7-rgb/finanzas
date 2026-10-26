@@ -325,3 +325,37 @@ t.test("reembolsos fuera del resultado", async () => {
   assert.equal(await A.texto(page, "#totIng"), "1050 €");
   assert.equal(await A.texto(page, "#totGas"), "250 €");
 });
+
+// Escenario: gasto en una categoría nueva
+t.test("gasto en una categoría nueva", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await A.nuevoGasto(page, { importe: 30, cuenta: "Banco A", cat: "Carga móvil" });
+  await A.aviso(page, "Gasto guardado");
+  await A.ir(page, "movs");
+  const tarjeta = await A.texto(page, "#movs .mov");
+  assert.match(tarjeta, /Carga móvil/);
+  assert.match(tarjeta, /−30 €/);
+  await enCuentas(page);
+  assert.equal(await saldo(page, 1), "970 €");
+});
+
+// Escenario: todas las categorías nuevas se pueden elegir
+t.test("todas las categorías nuevas se pueden elegir", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  const cats = await page.$$eval("#segCat button", (bs) => bs.map((b) => b.textContent));
+  for (const c of ["Salidas bar/disco", "Plan Iberia", "Servicios mensuales", "Alquiler", "Carga móvil"]) assert.ok(cats.includes(c), c);
+  assert.equal(cats[cats.length - 1], "Otros");
+});
+
+// Escenario: reembolso por regalos
+t.test("reembolso por regalos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-05", 80, 1, "Regalos")] }) });
+  await A.nuevoMov(page, { tipo: "ingreso", importe: 40, cuenta: "Banco A", cat: "Reembolso por regalos" });
+  await A.aviso(page, "Ingreso guardado");
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, "#movs .mov.ing, #movs .mov:has-text('Reembolso por regalos')"), /\+40 €/);
+  assert.equal(await A.texto(page, "#totIng"), "40 €");
+  assert.equal(await A.texto(page, "#totGas"), "80 €");
+});
