@@ -1,7 +1,8 @@
 ---
 cambio: rediseno-metaballs
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Rediseño oscuro con fondo de manchas («metaballs»)
 

@@ -33,11 +33,11 @@ donde abre «Nueva cuenta». El título del encabezado cambia con la pantalla.
 
 ## Requisito: modo oscuro
 
-La app sigue el modo claro u oscuro del teléfono. En oscuro el fondo es oscuro y todos los textos
-principales se leen con buen contraste.
+La app se ve en la apariencia que la persona elige (Oscura, Clara o Automática). En la oscura, y en la automática con
+el teléfono en modo oscuro, el fondo es oscuro y todos los textos principales se leen con buen contraste.
 
 ### Escenario: teléfono en modo oscuro
-- **Dado** el teléfono en modo oscuro
+- **Dado** «Automática» elegida y el teléfono en modo oscuro
 - **Cuando** la persona abre la app
 - **Entonces** el fondo de la pantalla es oscuro
 - **Y** los importes de Inicio tienen un contraste de al menos 4,5 a 1 con su fondo
@@ -59,76 +59,6 @@ Los títulos de las pantallas y de las hojas usan la misma letra que el resto de
 - **Dado** la app abierta en Inicio
 - **Cuando** la persona mira el título «Este mes» y abre la hoja de nuevo gasto
 - **Entonces** el título y el de la hoja usan la misma letra que el resto del texto
-
-## Requisito: fondo blanco con acentos
-
-En modo claro el fondo es gris muy claro y las tarjetas llevan color: el disponible de cada cuenta y
-los grupos de Cuentas, el de su tipo (bancos salvia, inversiones verde oliva, tarjetas cherry,
-financiaciones fucsia, deudas compartidas rosa); «Por semana» rosa claro, «Ingresos y gastos»
-salvia, la conciliación verde oliva y el checklist rosa. «Gasto del mes» es blanca, para que se lean
-los colores de la torta. La paleta es viva: rojo anaranjado, cherry, frambuesa, rosa chicle, fucsia,
-verde oliva oscuro y salvia. Cada categoría tiene su color, el mismo en la torta, en la lista y en su
-tarjeta de movimiento; sobre los colores oscuros el texto es blanco y sobre los claros, oscuro. Los
-importes principales son grandes, con los decimales en gris.
-
-### Escenario: fondo gris claro con tarjetas de color
-- **Dado** el teléfono en modo claro y una tarjeta de crédito con tope
-- **Cuando** la persona abre la app
-- **Entonces** el fondo de la pantalla es gris muy claro, la tarjeta «Gasto del mes» es blanca y la del disponible de la tarjeta es cherry
-- **Y** el resultado del mes se ve grande con los decimales en gris
-
-### Escenario: mismo color por categoría
-- **Dado** un gasto en Supermercado este mes
-- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
-
-### Escenario: texto legible sobre colores oscuros
-- **Dado** un gasto en Compras este mes
-- **Cuando** la persona abre Movimientos
-- **Entonces** el texto de su tarjeta cherry es blanco y se lee con contraste de al menos 4,5 a 1
-
-### Escenario: reembolsos en frambuesa
-- **Dado** un gasto en Trabajo (reembolsable) este mes
-- **Cuando** la persona abre Movimientos
-- **Entonces** su tarjeta es frambuesa con texto blanco
-
-## Requisito: elegir la paleta de colores
-
-En Ajustes, «Paleta de colores» ofrece cuatro paletas, cada una con su nombre y una muestra de sus
-colores: Viva, Editorial, Lima y lavanda y Pastel crema. Al elegir una, toda la app cambia de colores
-al instante, y la elección se recuerda al volver a abrir. Sin elección, la paleta es Viva.
-
-### Escenario: cambiar a pastel crema
-- **Dado** la app en la paleta Viva
-- **Cuando** la persona elige «Pastel crema» en Ajustes
-- **Entonces** el fondo de la pantalla pasa a crema y la opción queda marcada
-
-### Escenario: la paleta se recuerda
-- **Dado** la paleta Editorial elegida
-- **Cuando** la persona vuelve a abrir la app
-- **Entonces** la app se ve con la paleta Editorial
-
-### Escenario: paleta por defecto
-- **Dado** una app recién abierta, sin datos
-- **Cuando** la persona abre Ajustes
-- **Entonces** la paleta marcada es Viva
-
-## Requisito: todas las paletas se leen
-
-En cada paleta, en modo claro y en modo oscuro, los importes principales y el texto de las tarjetas
-de color se leen con un contraste de al menos 4,5 a 1, las dos partes de la barra de fijos y
-variables se distinguen de su tarjeta (al menos 1,5 a 1: el dato está en el texto que la acompaña), y cada categoría conserva el mismo color en la
-torta y en su tarjeta de movimiento.
-
-### Escenario: contraste en las cuatro paletas
-- **Dado** gastos fijos y variables, una tarjeta de crédito con tope y cuentas de varios tipos
-- **Cuando** la persona recorre las cuatro paletas en claro y en oscuro
-- **Entonces** en todas el resultado, el disponible, el patrimonio y el texto de las tarjetas de movimiento tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
-
-### Escenario: mismo color por categoría en otra paleta
-- **Dado** un gasto en Supermercado y la paleta Lima y lavanda elegida
-- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
 
 ## Requisito: los avisos no tapan botones
 
@@ -179,19 +109,19 @@ punto en rojo anaranjado, el mismo en todos los tamaños que usa la app.
 
 ## Requisito: las categorías nuevas tienen color propio
 
-Cada categoría de gasto nueva tiene un color fijo, distinto del de las demás, que es el mismo en la
-torta, en la lista de categorías y en las tarjetas de movimiento. En cualquier paleta, claro u oscuro,
-los importes y el texto de sus tarjetas se leen con contraste de al menos 4,5 a 1.
+Cada categoría de gasto nueva tiene un color fijo, distinto del de las demás, que es el mismo en la torta, en la lista
+de categorías y en las tarjetas de movimiento. En las dos apariencias, el texto de sus tarjetas se lee con contraste de
+al menos 4,5 a 1.
 
 ### Escenario: color en la torta y en la tarjeta
 - **Dado** un gasto de 30 € en Alquiler este mes
 - **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** el color de «Alquiler» es el mismo en la torta, la lista y la tarjeta
+- **Entonces** el color de «Alquiler» es el mismo en la torta, la lista y el icono de la tarjeta
 - **Y** no coincide con el de otra categoría
 
-### Escenario: contraste en las cuatro paletas
+### Escenario: contraste con cada categoría nueva
 - **Dado** un gasto en cada categoría nueva
-- **Cuando** la persona recorre las cuatro paletas en claro y en oscuro
+- **Cuando** la persona recorre Movimientos en las apariencias Clara y Oscura
 - **Entonces** el texto de cada tarjeta tiene contraste de al menos 4,5 a 1
 
 ## Requisito: los campos de fecha caben en el ancho
@@ -214,3 +144,49 @@ iPhone.
 - **Dado** Ajustes abierto a 390 px
 - **Cuando** la persona mira «Mes del primer aporte»
 - **Entonces** el campo cabe en su tarjeta
+
+## Requisito: tarjetas neutras sobre el fondo de manchas
+
+Una sola paleta con dos temas, tomados de dos moodboards: la clara en oliva, vino, azul polvo y naranja quemado sobre
+crema rosado; la oscura en cereza, chartreuse, rosa y óxido sobre vino muy oscuro. Las tarjetas son neutras y
+translúcidas, sin colores vivos: oscuras en la apariencia oscura y blancas, de vidrio esmerilado, en la clara. El color
+queda para lo que lo necesita: cada categoría tiene su color, el mismo en la torta, en la lista, en el icono y en el
+borde de su tarjeta de movimiento, y cada tipo de cuenta tiene el suyo en la franja de su tarjeta. Los importes
+principales son grandes, con los decimales en gris. El texto de las tarjetas es claro en la oscura y oscuro en la clara.
+
+### Escenario: tarjetas neutras sobre el fondo oscuro
+- **Dado** la apariencia Oscura y una tarjeta de crédito con tope
+- **Cuando** la persona abre Inicio
+- **Entonces** el fondo de la pantalla es oscuro, y las tarjetas «Gasto del mes» y el disponible de la tarjeta tienen un fondo neutro oscuro, sin color de categoría
+- **Y** el resultado del mes se ve grande con los decimales en gris
+
+### Escenario: tarjetas neutras sobre el fondo claro
+- **Dado** la apariencia Clara y una tarjeta de crédito con tope
+- **Cuando** la persona abre Inicio
+- **Entonces** el fondo de la pantalla es crema rosado y las tarjetas son blancas y translúcidas
+
+### Escenario: mismo color por categoría
+- **Dado** un gasto en Supermercado este mes
+- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
+- **Entonces** la porción de Supermercado y el icono de su tarjeta tienen el mismo color
+
+### Escenario: texto legible en las tarjetas
+- **Dado** un gasto en Compras este mes
+- **Cuando** la persona abre Movimientos, en la apariencia Oscura y en la Clara
+- **Entonces** el texto de su tarjeta se lee con contraste de al menos 4,5 a 1 con lo que tiene detrás
+
+### Escenario: reembolsos distinguibles
+- **Dado** un gasto en Trabajo (reembolsable) este mes
+- **Cuando** la persona abre Movimientos
+- **Entonces** su tarjeta tiene el color propio de esa categoría y distinto del de Compras
+
+## Requisito: todo se lee sobre el fondo
+
+En las dos apariencias, con el fondo de manchas detrás, los importes principales y el texto de las tarjetas se leen con
+un contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables se distinguen de su tarjeta (al
+menos 1,5 a 1: el dato está en el texto que la acompaña).
+
+### Escenario: contraste en las dos apariencias
+- **Dado** gastos fijos y variables, una tarjeta de crédito con tope y cuentas de varios tipos
+- **Cuando** la persona recorre Inicio, Movimientos, Cuentas y Cierre en las apariencias Clara y Oscura
+- **Entonces** el resultado, el disponible, el patrimonio y el texto de las tarjetas tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
