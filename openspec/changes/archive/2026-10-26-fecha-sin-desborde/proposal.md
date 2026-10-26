@@ -1,8 +1,9 @@
 ---
 cambio: fecha-sin-desborde
-estado: construida
+estado: archivado
 datos: sin-cambios
 preview: no
+archivado: 2026-10-26
 ---
 # Los campos de fecha caben en la pantalla
 
