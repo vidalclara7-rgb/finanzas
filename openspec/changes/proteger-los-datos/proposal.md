@@ -1,6 +1,6 @@
 ---
 cambio: proteger-los-datos
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Que no se pierdan los datos
