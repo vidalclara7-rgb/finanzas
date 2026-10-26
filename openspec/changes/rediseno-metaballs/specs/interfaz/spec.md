@@ -11,74 +11,74 @@ el teléfono en modo oscuro, el fondo es oscuro y todos los textos principales s
 - **Entonces** el fondo de la pantalla es oscuro
 - **Y** los importes de Inicio tienen un contraste de al menos 4,5 a 1 con su fondo
 
-## Requisito: tarjetas de color sobre el fondo
+## Requisito: tarjetas neutras sobre el fondo de manchas
 
-Las tarjetas llevan color según su contenido: el disponible de cada cuenta y los grupos de Cuentas, el de su tipo
-(bancos salvia, inversiones verde oliva, tarjetas cherry, financiaciones fucsia, deudas compartidas rosa); «Por
-semana» rosa claro, «Ingresos y gastos» salvia, la conciliación verde oliva y el checklist rosa. «Gasto del mes»
-tiene un fondo que deja leer la torta. Cada categoría tiene su color, el mismo en la torta, en la lista y en su
-tarjeta de movimiento; sobre los colores oscuros el texto es blanco y sobre los claros, oscuro. Los importes
-principales son grandes, con los decimales en gris. En la apariencia oscura las tarjetas de color se tiñen del
-color sobre el fondo oscuro, con el texto claro, en vez de llevar el color pleno.
+Una sola paleta, la de Paper Design: azules y violetas sobre un fondo azul muy oscuro (apariencia oscura) o azul hielo
+(clara). Las tarjetas son neutras y translúcidas, sin colores vivos: oscuras en la apariencia oscura y
+blancas, de vidrio esmerilado, en la clara. El color queda para lo que lo necesita: cada categoría tiene su color, el mismo en la torta, en
+la lista, en el icono y en el borde de su tarjeta de movimiento, y cada tipo de cuenta tiene el suyo en su icono. Los
+importes principales son grandes, con los decimales en gris. El texto de las tarjetas es claro en la oscura y
+oscuro en la clara.
 
-### Escenario: tarjetas de color sobre el fondo oscuro
+### Escenario: tarjetas neutras sobre el fondo oscuro
 - **Dado** la apariencia Oscura y una tarjeta de crédito con tope
-- **Cuando** la persona abre la app
-- **Entonces** el fondo de la pantalla es oscuro, «Gasto del mes» deja leer su torta y la tarjeta del disponible de la tarjeta está teñida de cherry
+- **Cuando** la persona abre Inicio
+- **Entonces** el fondo de la pantalla es oscuro, y las tarjetas «Gasto del mes» y el disponible de la tarjeta tienen un fondo neutro oscuro, sin color de categoría
 - **Y** el resultado del mes se ve grande con los decimales en gris
+
+### Escenario: tarjetas neutras sobre el fondo claro
+- **Dado** la apariencia Clara y una tarjeta de crédito con tope
+- **Cuando** la persona abre Inicio
+- **Entonces** el fondo de la pantalla es azul hielo y las tarjetas son blancas y translúcidas
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
 - **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
+- **Entonces** la porción de Supermercado y el icono de su tarjeta tienen el mismo color
 
-### Escenario: texto legible sobre colores oscuros
+### Escenario: texto legible en las tarjetas
 - **Dado** un gasto en Compras este mes
-- **Cuando** la persona abre Movimientos
-- **Entonces** el texto de su tarjeta cherry es blanco y se lee con contraste de al menos 4,5 a 1
+- **Cuando** la persona abre Movimientos, en la apariencia Oscura y en la Clara
+- **Entonces** el texto de su tarjeta se lee con contraste de al menos 4,5 a 1 con lo que tiene detrás
 
-### Escenario: reembolsos en frambuesa
+### Escenario: reembolsos distinguibles
 - **Dado** un gasto en Trabajo (reembolsable) este mes
 - **Cuando** la persona abre Movimientos
-- **Entonces** su tarjeta es frambuesa con texto blanco
+- **Entonces** su tarjeta tiene el color propio de esa categoría y distinto del de Compras
 
-## Requisito: elegir la paleta de colores
+## Requisito: todo se lee sobre el fondo
 
-En Ajustes, «Paleta de colores» ofrece cuatro paletas, cada una con su nombre y una muestra de sus
-colores: Viva, Editorial, Lima y lavanda y Pastel crema. Al elegir una, toda la app cambia de colores
-(las tarjetas, los acentos y las manchas del fondo) al instante, y la elección se recuerda al volver a abrir. Sin elección, la paleta es Viva.
+En las dos apariencias, con el fondo de manchas detrás, los importes principales y el texto de las tarjetas se leen con
+un contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables se distinguen de su tarjeta (al
+menos 1,5 a 1: el dato está en el texto que la acompaña).
 
-### Escenario: cambiar a pastel crema
-- **Dado** la app en la paleta Viva
-- **Cuando** la persona elige «Pastel crema» en Ajustes
-- **Entonces** las manchas del fondo y los acentos pasan a los colores de Pastel crema y la opción queda marcada
-
-### Escenario: la paleta se recuerda
-- **Dado** la paleta Editorial elegida
-- **Cuando** la persona vuelve a abrir la app
-- **Entonces** la app se ve con la paleta Editorial
-
-### Escenario: paleta por defecto
-- **Dado** una app recién abierta, sin datos
-- **Cuando** la persona abre Ajustes
-- **Entonces** la paleta marcada es Viva
-
-## Requisito: todas las paletas se leen
-
-En cada paleta, en la apariencia clara y en la oscura, con el fondo de manchas detrás, los importes principales y el texto de las tarjetas
-de color se leen con un contraste de al menos 4,5 a 1, las dos partes de la barra de fijos y
-variables se distinguen de su tarjeta (al menos 1,5 a 1: el dato está en el texto que la acompaña), y cada categoría conserva el mismo color en la
-torta y en su tarjeta de movimiento.
-
-### Escenario: contraste en las cuatro paletas
+### Escenario: contraste en las dos apariencias
 - **Dado** gastos fijos y variables, una tarjeta de crédito con tope y cuentas de varios tipos
-- **Cuando** la persona recorre las cuatro paletas en las apariencias Clara y Oscura
-- **Entonces** en todas el resultado, el disponible, el patrimonio y el texto de las tarjetas de movimiento tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
+- **Cuando** la persona recorre Inicio, Movimientos, Cuentas y Cierre en las apariencias Clara y Oscura
+- **Entonces** el resultado, el disponible, el patrimonio y el texto de las tarjetas tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
 
-### Escenario: mismo color por categoría en otra paleta
-- **Dado** un gasto en Supermercado y la paleta Lima y lavanda elegida
+## Requisito: las categorías nuevas tienen color propio
+
+Cada categoría de gasto nueva tiene un color fijo, distinto del de las demás, que es el mismo en la torta, en la lista
+de categorías y en las tarjetas de movimiento. En las dos apariencias, el texto de sus tarjetas se lee con contraste de
+al menos 4,5 a 1.
+
+### Escenario: color en la torta y en la tarjeta
+- **Dado** un gasto de 30 € en Alquiler este mes
 - **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** la porción de Supermercado y su tarjeta tienen el mismo color
+- **Entonces** el color de «Alquiler» es el mismo en la torta, la lista y el icono de la tarjeta
+- **Y** no coincide con el de otra categoría
+
+### Escenario: contraste con cada categoría nueva
+- **Dado** un gasto en cada categoría nueva
+- **Cuando** la persona recorre Movimientos en las apariencias Clara y Oscura
+- **Entonces** el texto de cada tarjeta tiene contraste de al menos 4,5 a 1
 
 ## Retirado: fondo blanco con acentos
-Lo sustituye «tarjetas de color sobre el fondo»: el fondo ya no es gris claro, sino el de manchas.
+Lo sustituyen «tarjetas neutras sobre el fondo de manchas» y la apariencia oscura o clara con fondo de manchas.
+
+## Retirado: elegir la paleta de colores
+Hay una sola paleta, la de Paper Design: ya no se elige.
+
+## Retirado: todas las paletas se leen
+Lo sustituye «todo se lee sobre el fondo», en las dos apariencias.

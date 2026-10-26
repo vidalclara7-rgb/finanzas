@@ -13,32 +13,36 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{
-  --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
-  --ink-base:#121212; --muted-base:#77766F;
-  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
-  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --frambuesa:#D03876; --rosa-claro:#F8CDE6; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
-  --on-color:#121212;
-  --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
-  --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
-  --ingreso:#C8DDA6; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
-  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
-  --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
-  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#D03876; --cat12:#ACA696; --cat13:#C9B8F0; --cat14:#A9D6E8;
-  --cat15:#5B3F9E; --cat16:#F2D064; --cat17:#7FB7B0; --cat18:#3F6E8C; --cat19:#C7E27A;
-  /* Fondo de manchas: cinco colores por paleta, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
-  --mancha1:#F05A2C; --mancha2:#D03876; --mancha3:#A3244F; --mancha4:#E8559B; --mancha5:#F6A36B; --mancha-op:.30; --velo:transparent;
+  /* Una sola paleta, la de Paper Design: azules y violetas. La apariencia clara es lavanda muy claro */
+  --bg:#E4EEFF; --surface:#FFFFFF; --ink:#14152B; --muted:#62658A; --line:#DDDCEE;
+  --ink-base:#14152B; --muted-base:#62658A;
+  --accent:#14152B; --accent-ink:#FFFFFF; --accent-soft:#E6E5F5;
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#4338CA; --frambuesa:#6D28D9; --rosa-claro:#E6E5F5; --rosa:#5B8DEF; --fucsia:#9333EA; --oliva:#2A4BD7; --salvia:#6F8CF0;
+  --on-color:#14152B;
+  --hero:#14152B; --hero-ink:#FFFFFF; --hero-muted:#A9ACD0;
+  --nav:#FFFFFF; --nav-ink:#8B8EB0; --nav-on:#14152B;
+  --ingreso:#BFE6D0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C81E1E; --bad-soft:#FBE1E1;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
+  --cat1:#0369A1; --cat2:#2563EB; --cat3:#4F46E5; --cat4:#7C3AED; --cat5:#9333EA; --cat6:#C026D3;
+  --cat7:#0E7490; --cat8:#1D4ED8; --cat9:#4338CA; --cat10:#6D28D9; --cat11:#7E22CE; --cat12:#A21CAF; --cat13:#0F766E; --cat14:#3B5BDB;
+  --cat15:#5B5BD6; --cat16:#7048E8; --cat17:#A03BC9; --cat18:#BE3FA8; --cat19:#4A6FA5;
+  /* Fondo de manchas: cinco colores, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
+  --mancha1:#3B82F6; --mancha2:#6366F1; --mancha3:#22D3EE; --mancha4:#A78BFA; --mancha5:#2DD4BF; --mancha-op:.55; --velo:transparent; --estrellas:.55; --e1:#3B5BDB; --e2:#0E7490;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#1A0B12; --surface:#2A141D; --ink:#FBFAF7; --muted:#D9D5CF; --line:#4A2A36;
-  --ink-base:#FBFAF7; --muted-base:#D9D5CF;
-  --accent:#FBFAF7; --accent-ink:#1A0B12; --accent-soft:#3A1E29;
-  --hero:#2A141D; --nav:#2A141D; --nav-ink:#B5B0A9; --nav-on:#FBFAF7; --neutro:#2A141D;
-  --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C;
-  --mancha-op:.6; --velo:rgba(26,11,18,.45); color-scheme:dark}
+  --bg:#090A1C; --surface:#14162F; --ink:#F4F5FF; --muted:#B4B8D6; --line:#2B2E55;
+  --ink-base:#F4F5FF; --muted-base:#B4B8D6;
+  --accent:#F4F5FF; --accent-ink:#090A1C; --accent-soft:#23264A;
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#8B7CF6; --frambuesa:#A78BFA; --rosa-claro:#23264A; --rosa:#7DA2FF; --fucsia:#C084FC; --oliva:#6D8BFF; --salvia:#8FA6F0;
+  --on-color:#F4F5FF;
+  --hero:#14162F; --nav:#14162F; --nav-ink:#9A9EC4; --nav-on:#F4F5FF; --neutro:#14162F;
+  --ingreso:#1F5C3E;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --mancha-op:.78; --velo:rgba(9,10,28,.22); --estrellas:.9; --e1:#FFFFFF; --e2:#C9D4FF; color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -46,6 +50,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 /* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
 .fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
 .fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
+.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
+.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
+.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
+@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
 .fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
 .fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
 .fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
@@ -53,8 +62,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 .fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
 .fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
 @keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
-@media (prefers-reduced-motion: reduce){.fondo i{animation:none}}
-html.en-pausa .fondo i{animation-play-state:paused}
+@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
+html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
@@ -63,17 +72,14 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-html[data-apariencia="oscura"] .card:not(.color):not(.hero){background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid rgba(255,255,255,.07)}
+html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(165,180,255,.2);box-shadow:0 0 24px rgba(91,63,181,.18)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
-/* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
-.card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
-/* Sobre colores oscuros (oliva, cherry) el texto es blanco */
-.card.color.osc,.mov.osc{--on-color:var(--on-osc);color:var(--on-osc);--ink:var(--on-osc);--muted:var(--on-osc-muted);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
-.mov.osc .ico{background:rgba(255,255,255,.22);color:var(--on-osc)}
-/* Apariencia oscura: las tarjetas de color se tiñen del color sobre el fondo oscuro, con texto claro, en vez de destacar con el color pleno */
-html[data-apariencia="oscura"] .card.color,html[data-apariencia="oscura"] .mov{--on-color:var(--on-osc);color:var(--on-osc);--ink:var(--on-osc);--muted:var(--on-osc-muted);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2);background:color-mix(in srgb,var(--c) 45%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
-html[data-apariencia="oscura"] .card.color.osc,html[data-apariencia="oscura"] .mov.osc{background:color-mix(in srgb,var(--c) var(--mez-osc,78%),var(--surface))}
-html[data-apariencia="oscura"] .mov .ico{background:rgba(255,255,255,.22);color:var(--on-osc)}
+/* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
+html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(37,99,235,.15)}
+.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
+.mov::before{bottom:auto;height:44px}
+.mov{background:var(--surface);color:var(--ink-base)}
+.mov .ico{background:var(--c);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
 /* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
@@ -162,10 +168,9 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
 /* Movimientos como tarjetas apiladas */
 .pila{display:flex;flex-direction:column}
-.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 rgba(255,255,255,.35)}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 var(--line)}
 .mov:first-child{margin-top:0}
 .mov:last-child{padding-bottom:16px}
-.mov .ico{background:rgba(255,255,255,.7);color:var(--on-color)}
 .mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
 .mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -214,16 +219,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
 /* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
 .toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
-/* Paletas elegibles en Ajustes: cada una redefine los colores; sin data-paleta, la app usa Viva (la base de :root) */
-:root[data-paleta="viva"],[data-paleta="viva"]{--bg:#ECECEA;--surface:#FFFFFF;--line:#DEDEDA;--ink:#121212;--muted:#77766F;--ink-base:#121212;--muted-base:#77766F;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#DEDEDA;--nav:#FFFFFF;--nav-on:#121212;--neutro:#FFFFFF;--hero:#121212;--salvia:#B9BDA6;--oliva:#5F6B4E;--cherry:#A3243B;--frambuesa:#D03876;--fucsia:#E8559B;--rosa:#F3A6DA;--rosa-claro:#F8CDE6;--ingreso:#C8DDA6;--rojo:#F05A2C;--cat1:#B9BDA6;--cat2:#F05A2C;--cat3:#F3A6DA;--cat4:#5F6B4E;--cat5:#E8559B;--cat6:#A3243B;--cat7:#F8CDE6;--cat8:#D9C9A8;--cat9:#9FC2A4;--cat10:#F6A36B;--cat11:#D03876;--cat12:#ACA696;--cat13:#C9B8F0;--cat14:#A9D6E8;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
-:root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#FFFFFF;--surface:#F2F1EC;--line:#E2E0D8;--ink:#121212;--muted:#6E6C64;--ink-base:#121212;--muted-base:#6E6C64;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#E2E0D8;--nav:#F2F1EC;--nav-on:#121212;--neutro:#F2F1EC;--hero:#121212;--salvia:#A9C4B6;--oliva:#3E5A47;--cherry:#B81C14;--frambuesa:#8E3B5A;--fucsia:#FF7A2E;--rosa:#ECE78A;--rosa-claro:#E7B9C6;--ingreso:#CFE3A8;--rojo:#E3241B;--cat1:#A9C4B6;--cat2:#F26B5B;--cat3:#FF8A3D;--cat4:#4A5E3A;--cat5:#ECE78A;--cat6:#2F4A6B;--cat7:#E7B9C6;--cat8:#9DB88A;--cat9:#9EC1DE;--cat10:#CDB57E;--cat11:#7A2E45;--cat12:#A9A391;--cat13:#C3B1E1;--cat14:#F2C1A0;--cat15:#4A3F7A;--cat16:#E8CF6A;--cat17:#8FC1BA;--cat18:#35607A;--cat19:#C5D98A;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75);--mancha1:#A9C4B6;--mancha2:#F26B5B;--mancha3:#FF8A3D;--mancha4:#8E9A5B;--mancha5:#3E5A47;}
-:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#FFFFFF;--surface:#F4F4F6;--line:#E4E4E9;--ink:#111113;--muted:#64646C;--ink-base:#111113;--muted-base:#64646C;--accent:#111113;--accent-ink:#FFFFFF;--accent-soft:#E4E4E9;--nav:#F4F4F6;--nav-on:#111113;--neutro:#F4F4F6;--hero:#111113;--salvia:#D4F36A;--oliva:#111113;--cherry:#2A2A31;--frambuesa:#5B3FB5;--fucsia:#C7B6F7;--rosa:#E3DAFB;--rosa-claro:#EEF9C8;--ingreso:#D4F36A;--rojo:#111113;--cat1:#C2E54F;--cat2:#A48CF0;--cat3:#7CC6F5;--cat4:#2E2E36;--cat5:#F6A06E;--cat6:#4B3A8C;--cat7:#F28CB3;--cat8:#58CFA0;--cat9:#F3CF4F;--cat10:#6D86F0;--cat11:#5B3FB5;--cat12:#9AA0AD;--cat13:#F5B7D3;--cat14:#FFD3A8;--cat15:#7A2E6B;--cat16:#FFB3A7;--cat17:#8EE0D4;--cat18:#1F5F7A;--cat19:#C9D6FF;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75);--mancha1:#A48CF0;--mancha2:#5B3FB5;--mancha3:#7CC6F5;--mancha4:#F28CB3;--mancha5:#8FB82E;}
-:root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#F6F0E4;--surface:#FFFCF6;--line:#E8DFCE;--ink:#151515;--muted:#6A6357;--ink-base:#151515;--muted-base:#6A6357;--accent:#151515;--accent-ink:#FFFFFF;--accent-soft:#E8DFCE;--nav:#FFFCF6;--nav-on:#151515;--neutro:#FFFCF6;--hero:#151515;--salvia:#B9C47F;--oliva:#BBD5F3;--cherry:#F4AFCF;--frambuesa:#E8A0C4;--fucsia:#D6C8F2;--rosa:#F5D86A;--rosa-claro:#FBE3EE;--ingreso:#CFE0A8;--rojo:#F4AFCF;--cat1:#B9C47F;--cat2:#F4AFCF;--cat3:#F5D86A;--cat4:#BBD5F3;--cat5:#D6C8F2;--cat6:#F7C59F;--cat7:#FAD1E3;--cat8:#CFE0A8;--cat9:#BFE3E0;--cat10:#F2DDA4;--cat11:#E8A0C4;--cat12:#C9BFAD;--cat13:#D9EBC6;--cat14:#F9D4C2;--cat15:#A99BE0;--cat16:#F2E48C;--cat17:#A5D6C8;--cat18:#8FB4D9;--cat19:#DDEA9A;--on-osc:#151515;--on-osc-muted:rgba(21,21,21,.62);--mancha1:#B9C47F;--mancha2:#F4AFCF;--mancha3:#F5D86A;--mancha4:#BBD5F3;--mancha5:#D6C8F2;}
-/* Apariencia oscura de cada paleta */
-:root[data-apariencia="oscura"][data-paleta="viva"],[data-apariencia="oscura"] [data-paleta="viva"]{--ink:#FBFAF7;--muted:#D9D5CF;--ink-base:#FBFAF7;--muted-base:#D9D5CF;--accent:#FBFAF7;--accent-ink:#1A0B12;--nav-on:#FBFAF7;--nav-ink:#B5B0A9;--bg:#1A0B12;--surface:#2A141D;--line:#4A2A36;--accent-soft:#3A1E29;--nav:#2A141D;--neutro:#2A141D;--hero:#2A141D;--velo:rgba(26,11,18,.45)}
-:root[data-apariencia="oscura"][data-paleta="editorial"],[data-apariencia="oscura"] [data-paleta="editorial"]{--ink:#FBFAF7;--muted:#D9D5CF;--ink-base:#FBFAF7;--muted-base:#D9D5CF;--accent:#FBFAF7;--accent-ink:#0D1A14;--nav-on:#FBFAF7;--nav-ink:#B5B0A9;--bg:#0D1A14;--surface:#16261E;--line:#2E4439;--accent-soft:#223529;--nav:#16261E;--neutro:#16261E;--hero:#16261E;--velo:rgba(13,26,20,.45)}
-:root[data-apariencia="oscura"][data-paleta="lima"],[data-apariencia="oscura"] [data-paleta="lima"]{--ink:#FBFAF7;--muted:#D9D5CF;--ink-base:#FBFAF7;--muted-base:#D9D5CF;--accent:#FBFAF7;--accent-ink:#130F22;--nav-on:#FBFAF7;--nav-ink:#B5B0A9;--bg:#130F22;--surface:#1E1933;--line:#3A3258;--accent-soft:#2D2646;--nav:#1E1933;--neutro:#1E1933;--hero:#1E1933;--oliva:#34343E;--cherry:#44444F;--rojo:#A48CF0;--velo:rgba(19,15,34,.45)}
-:root[data-apariencia="oscura"][data-paleta="pastel"],[data-apariencia="oscura"] [data-paleta="pastel"]{--mez-osc:40%;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75);--ink:#FBF7EF;--muted:#DCD5C8;--ink-base:#FBF7EF;--muted-base:#DCD5C8;--accent:#FBF7EF;--accent-ink:#221A14;--nav-on:#FBF7EF;--nav-ink:#B5B0A9;--bg:#221A14;--surface:#2E241C;--line:#4A3C2F;--accent-soft:#3A2E24;--nav:#2E241C;--neutro:#2E241C;--hero:#2E241C;--velo:rgba(34,26,20,.6)}
 .paletas{display:flex;flex-direction:column;gap:10px}
 .paleta-op{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink);width:100%;text-align:left}
 .paleta-op[aria-pressed=true]{border-color:var(--ink);font-weight:600}
@@ -240,7 +235,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </script>
 </head>
 <body>
-<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
 <header><div><h1 id="title">Este mes</h1><span class="m" id="mesLabel"></span></div><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></header>
 
 <main>
