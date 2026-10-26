@@ -120,7 +120,9 @@ t.test("actualizar el precio", async () => {
   const { page } = await abrir(con({ ops: [compra(1, 10, 10, 50)] }));
   await hojaInv(page);
   await page.click('[data-activo="10"]');
+  await page.waitForSelector("#aPrecioNuevo", { state: "visible" });
   await page.fill("#aPrecioNuevo", "55");
+  await page.waitForFunction(() => document.getElementById("aPrecioNuevo").value === "55");
   await page.click("#aPrecioBtn");
   await A.aviso(page, "Precio actualizado");
   await page.click("#aCerrar");

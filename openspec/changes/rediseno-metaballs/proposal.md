@@ -1,6 +1,6 @@
 ---
 cambio: rediseno-metaballs
-estado: diseno-aprobado
+estado: construida
 datos: amplia
 ---
 # Rediseño oscuro con fondo de manchas («metaballs»)
