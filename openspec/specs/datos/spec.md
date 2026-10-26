@@ -163,3 +163,87 @@ la app y al restaurar una copia, sin perder nada.
 - **Dado** una copia de seguridad con un gasto en Súper
 - **Cuando** la persona la restaura
 - **Entonces** el gasto aparece en Supermercado
+
+## Requisito: movimientos guardados antes de la moneda
+
+Los movimientos guardados antes de poder elegir la moneda siguen valiendo sin cambios y se tratan
+como euros, tanto al abrir la app como al restaurar una copia de seguridad vieja.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos con tres gastos sin moneda
+- **Cuando** la persona abre la app actualizada
+- **Entonces** Movimientos y los totales del mes son los de antes
+- **Y** ningún gasto muestra una moneda distinta de euros
+
+### Escenario: copia de seguridad vieja
+- **Dado** una copia de seguridad anterior a este cambio
+- **Cuando** la persona la restaura
+- **Entonces** sus movimientos aparecen en euros y la app funciona con normalidad
+
+### Escenario: la moneda viaja en la copia
+- **Dado** un gasto de 20 USD
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** el gasto vuelve con USD
+
+## Requisito: gastos de tarjeta guardados antes de las cuotas
+
+Los gastos guardados antes de poder fraccionar siguen valiendo sin cambios: no tienen cuotas y cuentan
+entero en su mes, tanto al abrir la app como al restaurar una copia de seguridad vieja. Las cuotas
+viajan en la copia.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos con un gasto de 100 € en «Tarjeta Y» sin cuotas
+- **Cuando** la persona abre la app actualizada
+- **Entonces** el gasto cuenta 100 € en su mes y la deuda de Tarjeta Y es la de antes
+
+### Escenario: la copia conserva las cuotas
+- **Dado** una compra de 700 € en 3 cuotas de 240 €
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** la compra vuelve con «Cuota 1 de 3» y 240 € como gasto del mes
+
+## Requisito: adjuntos guardados antes de los documentos de gastos
+
+Los adjuntos de cuenta y los extractos importados guardados antes de este cambio siguen en la hoja de
+su cuenta, sin cambios. Los documentos de gastos tampoco entran en la copia de seguridad.
+
+### Escenario: adjuntos anteriores intactos
+- **Dado** un extracto adjunto a «Banco A» de una versión anterior
+- **Cuando** la persona abre la app actualizada
+- **Entonces** el extracto sigue en la hoja de Banco A y ningún gasto lo muestra
+
+### Escenario: aviso en Ajustes cuenta los documentos de gastos
+- **Dado** un adjunto de cuenta y un documento de gastos
+- **Cuando** la persona abre Ajustes
+- **Entonces** ve «Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.»
+
+### Escenario: copia restaurada con gastos que ya no existen
+- **Dado** un documento vinculado a un gasto que la copia restaurada no trae
+- **Cuando** la persona restaura la copia
+- **Entonces** la app funciona con normalidad y el documento no aparece en ningún gasto
+
+## Requisito: inversiones guardadas antes de las posiciones
+
+Las cuentas de inversión guardadas antes de poder cargar activos siguen valiendo igual, con su valor y
+su total aportado, tanto al abrir la app como al restaurar una copia vieja. Activos y operaciones
+viajan en la copia de seguridad.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos con «Broker X», una inversión de 2100 € con 2000 € aportados y ningún activo
+- **Cuando** la persona abre la app actualizada
+- **Entonces** Broker X dice «+100 € (+5,0 %) sobre 2000 €» como antes
+- **Y** el patrimonio neto no cambia
+
+### Escenario: copia de seguridad vieja
+- **Dado** una copia de seguridad anterior a este cambio
+- **Cuando** la persona la restaura
+- **Entonces** la app funciona con normalidad y no hay activos
+
+### Escenario: la copia conserva las posiciones
+- **Dado** «Fondo A» con una compra de 10 unidades a 50 €
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** «Fondo A» vuelve con 10 unidades y la misma compra
+
+### Escenario: copia rota o con una operación huérfana
+- **Dado** una copia con una operación que apunta a un activo que no existe
+- **Cuando** la persona la restaura
+- **Entonces** la app ignora esa operación, funciona con normalidad y no pierde lo demás

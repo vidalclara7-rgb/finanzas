@@ -308,3 +308,39 @@ t.test("mismo ícono en todos los tamaños", async () => {
   const [a, b, c] = await Promise.all(["icon-180.png", "icon-192.png", "icon-512.png"].map((f) => pixeles(page, f, ps)));
   a.forEach((p, i) => { assert.ok(cerca(p, b[i]) && cerca(p, c[i]), `punto ${i}: ${p} / ${b[i]} / ${c[i]}`); });
 });
+
+// Escenario: color en la torta y en la tarjeta
+t.test("color en la torta y en la tarjeta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [A.cta(1, "Banco A", 1000)], movs: [A.gasto(1, "2026-10-03", 30, 1, "Alquiler"), A.gasto(2, "2026-10-04", 20, 1, "Supermercado")] }) });
+  const torta = await page.$eval('#torta circle[data-cat="Alquiler"]', (c) => c.style.stroke);
+  assert.ok(torta.includes("--cat18"));
+  await A.ir(page, "movs");
+  const fondo = await page.evaluate(() => { const m = [...document.querySelectorAll("#movs .mov")].find((x) => x.textContent.includes("Alquiler")); return getComputedStyle(m).backgroundColor; });
+  const esperado = await page.evaluate(() => { const e = document.createElement("i"); e.style.background = "var(--cat18)"; document.body.append(e); const c = getComputedStyle(e).backgroundColor; e.remove(); return c; });
+  assert.equal(fondo, esperado);
+  const otras = await page.evaluate(() => Array.from({ length: 19 }, (_, i) => getComputedStyle(document.documentElement).getPropertyValue("--cat" + (i + 1)).trim().toUpperCase()));
+  assert.equal(new Set(otras).size, 19, "las 19 categorías tienen colores distintos");
+});
+
+// Escenario: contraste en las cuatro paletas
+t.test("contraste en las cuatro paletas", async () => {
+  const NUEVAS = ["Salidas bar/disco", "Plan Iberia", "Servicios mensuales", "Alquiler", "Carga móvil"];
+  const movs = NUEVAS.map((c, i) => A.gasto(i + 1, "2026-10-03", 10 + i, 1, c));
+  for (const esquema of ["light", "dark"]) {
+    for (const paleta of ["viva", "editorial", "lima", "pastel"]) {
+      const datos = A.v2({ settings: { paleta }, cuentas: [A.cta(1, "Banco A", 1000)], movs });
+      const { page } = await abrir({ datos, esquema });
+      await A.ir(page, "movs");
+      const ratios = await page.evaluate(() => {
+        const lum = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+        return [...document.querySelectorAll("#movs .mov")].map((m) => {
+          const a = lum(getComputedStyle(m).backgroundColor), b = lum(getComputedStyle(m.querySelector(".cat")).color);
+          const [hi, lo] = a > b ? [a, b] : [b, a];
+          return [m.textContent.slice(0, 20), (hi + 0.05) / (lo + 0.05)];
+        });
+      });
+      assert.equal(ratios.length, 5);
+      for (const [n, r] of ratios) assert.ok(r >= 4.5, `${paleta} ${esquema} ${n}: ${r.toFixed(2)}`);
+    }
+  }
+});

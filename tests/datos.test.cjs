@@ -274,3 +274,161 @@ t.test("copia vieja con Súper", async () => {
   await A.ir(page, "movs");
   assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado · 03\/10/);
 });
+
+// Escenario: datos de la versión anterior
+t.test("datos de la versión anterior", async () => {
+  const movs = [1, 2, 3].map((d) => A.gasto(d, `2026-10-0${d}`, 10 * d, 1));
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "60 €");
+  const textos = await page.locator("#movs .mov .num").allInnerTexts();
+  assert.ok(textos.every((x) => x.includes("€") && !/USD|GBP/.test(x)));
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /−20 €/);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: la moneda viaja en la copia
+t.test("la moneda viaja en la copia", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-03", 20, 1), moneda: "USD" }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "movs");
+  assert.match(await A.texto(otra, '[data-mov="1"]'), /−20 USD/);
+});
+
+// Escenario: datos de la versión anterior (gastos de tarjeta sin cuotas)
+t.test("gastos de tarjeta guardados antes de las cuotas", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+  const { page } = await abrir({ datos: A.v2({ cuentas: [tarj], movs: [A.gasto(1, "2026-10-05", 100, 2)] }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "100 €");
+  assert.equal(await page.locator('[data-ui="chip-cuota"]').count(), 0);
+  await A.ir(page, "cuentas");
+  assert.equal(await A.texto(page, '[data-cta="2"] .v .num'), "-100 €");
+});
+
+// Escenario: la copia conserva las cuotas
+t.test("la copia conserva las cuotas", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+  const datos = A.v2({ cuentas: [tarj], movs: [{ ...A.gasto(1, "2026-10-15", 700, 2, "Compras"), cuotas: { n: 3, cuota: 240 } }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "movs");
+  assert.match(await A.texto(otra, '[data-mov="1"]'), /Cuota 1 de 3/);
+  assert.equal(await A.texto(otra, "#totGas"), "240 €");
+});
+
+// --- documentos de gastos
+const PDF3 = { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%%EOF") };
+const sembrarAdjunto = (page, reg) => page.evaluate((r) => new Promise((ok, mal) => {
+  const q = indexedDB.open("finanzas-adjuntos", 1);
+  q.onupgradeneeded = () => q.result.createObjectStore("archivos", { keyPath: "id" });
+  q.onsuccess = () => { const tx = q.result.transaction("archivos", "readwrite"); tx.objectStore("archivos").put({ ...r, datos: new ArrayBuffer(4) }); tx.oncomplete = ok; tx.onerror = mal; };
+}), reg);
+
+// Escenario: adjuntos anteriores intactos
+t.test("adjuntos anteriores intactos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 900, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await page.reload();
+  await A.ir(page, "movs");
+  assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
+  await A.ir(page, "cuentas");
+  await page.click('[data-cta="1"]');
+  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("extracto.pdf"));
+});
+
+// Escenario: aviso en Ajustes cuenta los documentos de gastos
+t.test("aviso en Ajustes cuenta los documentos de gastos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 901, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"] [data-sel]');
+  await page.setInputFiles("#docIn", PDF3);
+  await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await A.ir(page, "ajustes");
+  await page.waitForFunction(() => document.getElementById("avisoAdj").textContent.includes("2 adjuntos"));
+  assert.equal(await A.texto(page, "#avisoAdj"), "Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.");
+});
+
+// Escenario: copia restaurada con gastos que ya no existen
+t.test("copia restaurada con gastos que ya no existen", async () => {
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 902, cuenta: null, mes: "2026-10", nombre: "viejo.pdf", tipo: "pdf", mime: "application/pdf", movs: [77] });
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BANCO], movs: [A.gasto(2, "2026-10-04", 15, 1)] })));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
+  assert.deepEqual(errores, []);
+});
+
+// --- inversiones
+const BROKER_D = A.cta(1, "Broker X", 1000, { tipo: "inversion" });
+
+// Escenario: datos de la versión anterior
+t.test("inversiones guardadas antes de las posiciones", async () => {
+  const datos = A.v2({ cuentas: [A.cta(1, "Broker X", 2100, { tipo: "inversion", aportado: 2000 })] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "cuentas");
+  assert.match(await A.texto(page, '[data-cta="1"]'), /\+100 € \(\+5,0 %\) sobre 2000 €/);
+  assert.equal(await A.texto(page, "#activos"), "2100 €");
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja sin posiciones", async () => {
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BROKER_D] })));
+  await A.aviso(page, "Copia restaurada");
+  const g = await A.guardados(page);
+  assert.deepEqual([g.activos, g.ops], [[], []]);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: la copia conserva las posiciones
+t.test("la copia conserva las posiciones", async () => {
+  const datos = A.v2({ cuentas: [BROKER_D], activos: [{ id: 10, cuenta: 1, nombre: "Fondo A" }], ops: [{ id: 1, activo: 10, tipo: "compra", cantidad: 10, precio: 50, fecha: "2026-10-10" }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "cuentas");
+  await otra.click("[data-ver-rend]");
+  assert.match((await A.texto(otra, '[data-activo="10"]')).replace(/\s+/g, " "), /Fondo A.*10 unidades/);
+});
+
+// Escenario: copia rota o con una operación huérfana
+t.test("copia con una operación huérfana", async () => {
+  const datos = A.v2({ cuentas: [BROKER_D, A.cta(2, "Banco A", 500)], activos: [], ops: [{ id: 1, activo: 99, tipo: "compra", cantidad: 10, precio: 50, fecha: "2026-10-10" }] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(datos));
+  await A.aviso(page, "Copia restaurada");
+  const g = await A.guardados(page);
+  assert.equal(g.ops.length, 0);
+  assert.equal(g.cuentas.length, 2);
+  await A.ir(page, "cuentas");
+  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+  assert.deepEqual(errores, []);
+});

@@ -67,3 +67,98 @@ t.test("aviso en Ajustes", async () => {
   await page.waitForFunction(() => !document.getElementById("avisoAdj").hidden);
   assert.equal(await A.texto(page, "#avisoAdj"), "Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.");
 });
+
+// --- documentos de gastos
+const PDF = { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%%EOF") };
+const G = [A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-08", 42, 1, "Salud"), A.gasto(3, "2026-10-05", 18, 1, "Ocio")];
+const docs = (page) => page.evaluate(() => new Promise((ok) => {
+  const q = indexedDB.open("finanzas-adjuntos", 1);
+  q.onsuccess = () => { const r = q.result.transaction("archivos").objectStore("archivos").getAll(); r.onsuccess = () => ok(r.result.map((a) => ({ nombre: a.nombre, cuenta: a.cuenta, movs: a.movs }))); };
+}));
+async function seleccionar(page, ids) {
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  for (const id of ids) await page.click(`[data-mov="${id}"] [data-sel]`);
+}
+async function adjuntarGastos(page, ids, archivo = PDF) {
+  await seleccionar(page, ids);
+  await page.setInputFiles("#docIn", archivo);
+}
+const clip = (page, id) => page.locator(`[data-mov="${id}"] [data-ui="chip-documento"]`).count();
+
+// Escenario: un documento para dos gastos
+t.test("un documento para dos gastos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1, 2]);
+  await A.aviso(page, "Documento adjuntado a 2 gastos");
+  assert.equal(await clip(page, 1), 1);
+  assert.equal(await clip(page, 2), 1);
+  assert.equal(await clip(page, 3), 0);
+  await page.click('[data-mov="2"] .linea');
+  await A.hojaLista(page);
+  assert.match(await A.texto(page, "#mDocsLista"), /factura\.pdf/);
+  assert.deepEqual((await docs(page)).map((d) => [d.nombre, d.cuenta, d.movs.sort()]), [["factura.pdf", null, [1, 2]]]);
+});
+
+// Escenario: sin gastos marcados
+t.test("sin gastos marcados", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  assert.equal(await page.isDisabled("#selAdj"), true);
+  await page.click('[data-mov="1"] [data-sel]');
+  assert.equal(await page.isDisabled("#selAdj"), false);
+});
+
+// Escenario: archivo que no se puede guardar
+t.test("archivo que no se puede guardar", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1], { name: "notas.txt", mimeType: "text/plain", buffer: Buffer.from("hola") });
+  await A.aviso(page, "Elegí un PDF o una foto");
+  assert.deepEqual(await docs(page), []);
+});
+
+// Escenario: quitar un documento de un gasto
+t.test("quitar un documento de un gasto", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1, 2]);
+  await A.aviso(page, "Documento adjuntado a 2 gastos");
+  await page.click('[data-mov="1"] .linea');
+  await A.hojaLista(page);
+  await page.click("#mDocsLista [data-doc-x]");
+  await page.click("#mDocsLista [data-doc-del]");
+  await A.aviso(page, "Documento quitado");
+  assert.equal(await page.isVisible("#mDocs"), false);
+  assert.deepEqual((await docs(page)).map((d) => d.movs), [[2]]);
+  await page.click("#cerrar");
+  assert.equal(await clip(page, 1), 0);
+  assert.equal(await clip(page, 2), 1);
+});
+
+// Escenario: borrar el último gasto de un documento
+t.test("borrar el último gasto de un documento", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1]);
+  await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await page.click('[data-del="1"]');
+  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar y su documento");
+  await page.click('[data-del="1"]');
+  await A.aviso(page, "Movimiento borrado");
+  await page.waitForFunction(() => true);
+  await page.waitForTimeout(300);
+  assert.deepEqual(await docs(page), []);
+});
+
+// Escenario: borrar un gasto con documento compartido
+t.test("borrar un gasto con documento compartido", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1, 2]);
+  await A.aviso(page, "Documento adjuntado a 2 gastos");
+  await page.click('[data-del="1"]');
+  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar");
+  await page.click('[data-del="1"]');
+  await A.aviso(page, "Movimiento borrado");
+  await page.waitForTimeout(300);
+  assert.deepEqual((await docs(page)).map((d) => d.movs), [[2]]);
+  assert.equal(await clip(page, 2), 1);
+});

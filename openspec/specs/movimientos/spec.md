@@ -5,7 +5,8 @@
 Con el botón «+» la persona abre «Nuevo movimiento», elige Gasto y anota importe, una de sus
 cuentas, categoría, una nota opcional y la fecha, que por defecto es hoy. Las categorías de gasto
 son: Supermercado, Comida fuera, Delivery, Transporte, Ocio, Compras, Ropa, Belleza, Casa/Splitwise,
-Salud, Viajes, Regalos, Trabajo (reembolsable) y Otros. El gasto baja el saldo de la cuenta o, si es una tarjeta,
+Salud, Viajes, Regalos, Salidas bar/disco, Plan Iberia, Servicios mensuales, Alquiler, Carga móvil,
+Trabajo (reembolsable) y Otros. El gasto baja el saldo de la cuenta o, si es una tarjeta,
 sube su deuda.
 
 ### Escenario: gasto desde una cuenta propia
@@ -14,6 +15,18 @@ sube su deuda.
 - **Entonces** la app avisa «Gasto guardado»
 - **Y** el gasto aparece en Movimientos con «−12,5 €» y la fecha 15/10
 - **Y** Banco A tiene 987,5 €
+
+### Escenario: gasto en una categoría nueva
+- **Dado** que hoy es 2026-10-15 y «Banco A» con saldo inicial de 1000 € desde el 2026-10-01
+- **Cuando** la persona anota un gasto de 30 € en Carga móvil desde Banco A
+- **Entonces** el gasto aparece en Movimientos como «Carga móvil» con «−30 €»
+- **Y** Banco A tiene 970 €
+
+### Escenario: todas las categorías nuevas se pueden elegir
+- **Dado** el formulario de gasto abierto
+- **Cuando** la persona mira las categorías
+- **Entonces** ve Salidas bar/disco, Plan Iberia, Servicios mensuales, Alquiler y Carga móvil
+- **Y** «Otros» sigue siendo la última
 
 ### Escenario: importe en cero
 - **Dado** el formulario de movimiento abierto
@@ -36,8 +49,8 @@ sube su deuda.
 ## Requisito: anotar un ingreso
 
 En «Nuevo movimiento» la persona elige Ingreso y anota importe, cuenta, categoría, nota y fecha. Las
-categorías de ingreso son: Sueldo, Reembolso, Venta o trabajo extra, Regalo, Intereses y
-rendimientos, y Otros. El ingreso sube el saldo de la cuenta o, si es una tarjeta, baja su deuda.
+categorías de ingreso son: Sueldo, Reembolso, Reembolso por regalos, Venta o trabajo extra, Regalo,
+Intereses y rendimientos, y Otros. El ingreso sube el saldo de la cuenta o, si es una tarjeta, baja su deuda.
 
 ### Escenario: ingreso extra
 - **Dado** «Banco A» con 1000 €
@@ -50,6 +63,12 @@ rendimientos, y Otros. El ingreso sube el saldo de la cuenta o, si es una tarjet
 - **Dado** «Tarjeta Y» con 350 € de deuda
 - **Cuando** la persona anota un ingreso de 20 € en Reembolso en Tarjeta Y
 - **Entonces** Tarjeta Y debe 330 €
+
+### Escenario: reembolso por regalos
+- **Dado** «Banco A» con 1000 € y un gasto de 80 € en Regalos este mes
+- **Cuando** la persona anota un ingreso de 40 € en Reembolso por regalos en Banco A
+- **Entonces** el ingreso aparece en Movimientos con «+40 €»
+- **Y** el gasto en Regalos sigue siendo 80 € y los ingresos del mes suman 40 €
 
 ## Requisito: transferir entre cuentas
 
@@ -75,18 +94,20 @@ La pestaña Movimientos muestra los movimientos del mes en curso, del más recie
 como tarjetas apiladas: cada gasto del color de su categoría, los ingresos en verde claro, las
 transferencias y los ajustes en gris. Cada tarjeta lleva la categoría, la nota o la cuenta y el
 importe: ingresos con «+», gastos con «−», transferencias con la cuenta de origen y la de destino.
-Arriba, el total de ingresos y el de gastos del mes; transferencias y ajustes no suman en ninguno.
-Inicio muestra los cinco gastos más recientes en tarjetas chicas que se deslizan de costado.
+Si el movimiento no es en euros, el importe lleva su moneda. Arriba, el total de ingresos y el de
+gastos del mes; transferencias y ajustes no suman en ninguno. Inicio no repite la lista de gastos
+recientes: para verlos, se abre Movimientos.
 
 ### Escenario: movimientos de otro mes no aparecen
 - **Dado** que hoy es 2026-10-15, un gasto del 2026-09-28 y otro del 2026-10-03
 - **Cuando** la persona abre Movimientos
 - **Entonces** sólo ve el gasto del 2026-10-03
 
-### Escenario: últimos gastos en Inicio
+### Escenario: Inicio sin gastos recientes
 - **Dado** seis gastos este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** ve los cinco más recientes en tarjetas chicas, el más reciente primero
+- **Entonces** no ve tarjetas con los últimos gastos
+- **Y** Movimientos muestra los seis, el más reciente primero
 
 ### Escenario: mes sin movimientos
 - **Dado** que no hay movimientos en el mes en curso
@@ -97,6 +118,11 @@ Inicio muestra los cinco gastos más recientes en tarjetas chicas que se desliza
 - **Dado** un ingreso de 1500 €, un gasto de 80 € y una transferencia de 300 € este mes
 - **Cuando** la persona abre Movimientos
 - **Entonces** ve ingresos 1500 € y gastos 80 €
+
+### Escenario: movimiento en otra moneda
+- **Dado** un gasto de 20 USD este mes
+- **Cuando** la persona abre Movimientos
+- **Entonces** la tarjeta muestra «−20 USD»
 
 ## Requisito: editar un movimiento
 
@@ -235,3 +261,123 @@ hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota 
 - **Dado** que hoy es 2026-10-15 y gastos de 100 € en Supermercado sin nota en agosto, septiembre y octubre
 - **Cuando** la persona abre Inicio
 - **Entonces** no aparece ninguna sugerencia
+
+## Requisito: moneda de un movimiento
+
+Al anotar o editar un movimiento la persona elige su moneda: EUR (la de siempre), USD, GBP u Otra,
+con un código de tres letras. La moneda es una etiqueta: la app no convierte, así que saldos, topes y
+totales suman el importe tal cual. Un movimiento sin moneda es en euros.
+
+### Escenario: elegir USD
+- **Dado** el formulario de gasto abierto con la moneda en EUR
+- **Cuando** la persona elige USD, anota 20 y guarda
+- **Entonces** el gasto queda con la moneda USD
+- **Y** al editarlo, el selector muestra USD
+
+### Escenario: otra moneda
+- **Dado** el formulario de gasto abierto
+- **Cuando** la persona elige Otra, escribe «chf», anota 15 y guarda
+- **Entonces** el gasto queda con la moneda CHF
+
+### Escenario: código de moneda inválido
+- **Dado** el formulario con «Otra» elegida
+- **Cuando** la persona escribe «ab» y guarda
+- **Entonces** la app avisa «Poné un código de 3 letras, por ejemplo CHF» y no guarda nada
+
+### Escenario: sin conversión
+- **Dado** «Banco A» con 1000 € y un gasto de 20 USD desde Banco A
+- **Cuando** la persona abre Cuentas
+- **Entonces** Banco A tiene 980 €
+- **Y** la hoja del movimiento avisa «Los totales no convierten monedas»
+
+### Escenario: movimientos anteriores siguen en euros
+- **Dado** movimientos guardados antes de este cambio, sin moneda
+- **Cuando** la persona abre Movimientos
+- **Entonces** los ve igual que antes, en euros
+
+## Requisito: gasto en cuotas con la tarjeta
+
+Al anotar un gasto en una tarjeta de crédito, la persona puede activar «Pagar en cuotas» e indicar
+cuántas cuotas son (dos o más) y de cuánto es cada una. El importe del gasto es lo que debe en total
+por la compra. Como gasto de cada mes cuenta sólo la cuota, desde el mes de la compra hasta la última
+cuota. La tarjeta de la compra en Movimientos dice «Cuota 1 de 6», con la cuota de cada mes.
+
+### Escenario: compra fraccionada
+- **Dado** que hoy es 2026-10-15 y «Tarjeta Y» sin deuda
+- **Cuando** la persona anota un gasto de 700 € en Compras con Tarjeta Y, en 3 cuotas de 240 €
+- **Entonces** Tarjeta Y debe 700 €
+- **Y** el gasto del mes en Compras es 240 €
+- **Y** la tarjeta del gasto dice «Cuota 1 de 3»
+
+### Escenario: cuotas en los meses siguientes
+- **Dado** esa compra del 2026-10-15 en 3 cuotas de 240 €
+- **Cuando** la persona mira el mes de noviembre de 2026
+- **Entonces** el gasto de noviembre en Compras es 240 €
+- **Y** la tarjeta dice «Cuota 2 de 3»
+
+### Escenario: después de la última cuota
+- **Dado** esa compra del 2026-10-15 en 3 cuotas de 240 €
+- **Cuando** la persona mira el mes de enero de 2027
+- **Entonces** esa compra no cuenta en el gasto de enero
+
+### Escenario: cuota mayor que el total
+- **Dado** el formulario de gasto en tarjeta, con 700 € de importe
+- **Cuando** la persona pone 3 cuotas de 800 € y guarda
+- **Entonces** la app avisa «La cuota no puede ser mayor que el total» y no guarda nada
+
+### Escenario: menos de dos cuotas
+- **Dado** el formulario de gasto en tarjeta con «Pagar en cuotas» activado
+- **Cuando** la persona pone 1 cuota y guarda
+- **Entonces** la app avisa «Poné 2 cuotas o más» y no guarda nada
+
+### Escenario: cuota vacía
+- **Dado** el formulario de gasto en tarjeta con «Pagar en cuotas» activado y 3 cuotas
+- **Cuando** la persona guarda sin el valor de la cuota
+- **Entonces** la app avisa «Poné el valor de cada cuota» y no guarda nada
+
+### Escenario: cuotas y tope de la tarjeta
+- **Dado** «Tarjeta Y» con tope mensual de 500 € y un gasto de 700 € en 3 cuotas de 240 €
+- **Cuando** la persona abre Inicio en el mes de la compra
+- **Entonces** Tarjeta Y muestra 260 € disponibles del tope
+
+### Escenario: la opción sólo existe en tarjetas
+- **Dado** el formulario de gasto con «Banco A», una cuenta de bancos
+- **Cuando** la persona mira el formulario
+- **Entonces** no ve «Pagar en cuotas»
+
+### Escenario: borrar una compra en cuotas
+- **Dado** una compra de 700 € en 3 cuotas
+- **Cuando** la persona la borra y confirma
+- **Entonces** desaparecen todas sus cuotas y la deuda de la tarjeta baja 700 €
+
+## Requisito: seleccionar gastos
+
+En Movimientos, el botón «Seleccionar» activa un modo en el que cada gasto del mes tiene una casilla.
+La persona marca los que quiera y ve cuántos marcó. Ingresos, transferencias y ajustes no se pueden
+marcar. «Cancelar» sale del modo sin cambios. «Con documento» filtra los gastos que tienen documentos.
+
+### Escenario: marcar gastos
+- **Dado** tres gastos y un ingreso este mes
+- **Cuando** la persona toca «Seleccionar» y marca dos gastos
+- **Entonces** ve «2 seleccionados»
+- **Y** el ingreso no tiene casilla
+
+### Escenario: salir sin cambios
+- **Dado** el modo seleccionar con dos gastos marcados
+- **Cuando** la persona toca «Cancelar»
+- **Entonces** desaparecen las casillas y no cambia ningún gasto
+
+### Escenario: salir de Movimientos cancela el modo seleccionar
+- **Dado** el modo seleccionar con un gasto marcado
+- **Cuando** la persona va a Inicio y vuelve a Movimientos
+- **Entonces** no hay casillas ni gastos marcados y «Seleccionar» está disponible
+
+### Escenario: filtrar los gastos con documento
+- **Dado** cuatro gastos este mes, dos con documento
+- **Cuando** la persona toca el filtro «Con documento»
+- **Entonces** ve sólo esos dos gastos
+
+### Escenario: sin gastos con documento
+- **Dado** que ningún gasto del mes tiene documento
+- **Cuando** la persona toca el filtro «Con documento»
+- **Entonces** ve «Ningún gasto de este mes tiene documento.»

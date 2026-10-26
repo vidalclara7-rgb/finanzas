@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preview · moneda-y-movimientos</title>
+<!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
+<style>
+:root{
+  --bg:#ECECEA; --surface:#FFFFFF; --ink:#121212; --muted:#77766F; --line:#DEDEDA;
+  --ink-base:#121212; --muted-base:#77766F;
+  --accent:#121212; --accent-ink:#FFFFFF; --accent-soft:#E6E6E2;
+  --rojo:#F05A2C; --naranja:#F6A36B; --cherry:#A3243B; --frambuesa:#D03876; --rosa-claro:#F8CDE6; --rosa:#F3A6DA; --fucsia:#E8559B; --oliva:#5F6B4E; --salvia:#B9BDA6;
+  --on-color:#121212;
+  --hero:#121212; --hero-ink:#FFFFFF; --hero-muted:#A3A19A;
+  --nav:#FFFFFF; --nav-ink:#8E8C84; --nav-on:#121212;
+  --ingreso:#C8DDA6; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B85500; --warn-soft:#FFE6D3; --bad:#D61F16; --bad-soft:#FBE0DD;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista y tarjetas). Oliva y cherry van con texto blanco (osc) */
+  --cat1:#B9BDA6; --cat2:#F05A2C; --cat3:#F3A6DA; --cat4:#5F6B4E; --cat5:#E8559B; --cat6:#A3243B;
+  --cat7:#F8CDE6; --cat8:#D9C9A8; --cat9:#9FC2A4; --cat10:#F6A36B; --cat11:#D03876; --cat12:#ACA696; --cat13:#C9B8F0; --cat14:#A9D6E8;
+  --cat15:#5B3F9E; --cat16:#F2D064; --cat17:#7FB7B0; --cat18:#3F6E8C; --cat19:#C7E27A;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#101010; --surface:#1E1E1E; --ink:#F2F1EC; --muted:#A3A19A; --line:#2E2E2C;
+  --ink-base:#F2F1EC; --muted-base:#A3A19A;
+  --accent:#F2F1EC; --accent-ink:#121212; --accent-soft:#2A2A28;
+  --hero:#1E1E1E; --nav:#1E1E1E; --nav-ink:#8E8C84; --nav-on:#F2F1EC; --neutro:#1E1E1E;
+  --warn:#FF9A4D; --warn-soft:#3A2414; --bad:#FF7A70; --bad-soft:#3F1F1C; color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.num{font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
+.gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
+.gear svg{width:22px;height:22px}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+/* Tarjeta de color: el color sale de --c; el texto siempre oscuro */
+.card.color,.mov{background:var(--c);color:var(--on-color);--ink:var(--on-color);--muted:rgba(18,18,18,.6);--line:rgba(18,18,18,.14);--bad:#8E0E08;--accent-soft:rgba(255,255,255,.55)}
+/* Sobre colores oscuros (oliva, cherry) el texto es blanco */
+.card.color.osc,.mov.osc{--on-color:var(--on-osc);color:var(--on-osc);--ink:var(--on-osc);--muted:var(--on-osc-muted);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
+.mov.osc .ico{background:rgba(255,255,255,.22);color:var(--on-osc)}
+.mini .ico{color:var(--on-color)} .ico.osc,.mini .ico.osc{color:var(--on-osc)}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
+.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
+.sub{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
+.partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
+.partida i{display:block;height:100%;border-radius:10px;min-width:6px}
+.partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:var(--frambuesa)}
+.sub.exc{color:var(--bad);font-weight:600}
+.reparto{display:flex;flex-direction:column;gap:6px}
+.reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.rank .grupo{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rank .fila{display:flex;flex-direction:column;gap:5px;font-size:15px}
+.bar.cat{background:color-mix(in srgb,var(--ink) 6%,var(--surface))} .bar.cat>i{background:var(--c)}
+/* Hojas de detalle: flechas de mes, total grande y filas que se tocan */
+.mesnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
+.mesnav button:disabled{opacity:.3}
+.mesnav span{font-weight:600}
+.toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
+.gastos-cat .item{cursor:pointer}
+/* Importar extracto: borradores para revisar (casilla, descripción, importe y, debajo, qué es) */
+.borradores{display:flex;flex-direction:column}
+.borr{display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.borr:last-child{border-bottom:0}
+.borr>input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink);grid-row:span 2}
+.borr .d{display:flex;flex-direction:column;min-width:0} .borr .d b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.borr select{grid-column:2/4;font-size:15px;padding:9px 12px;border-radius:12px}
+.borr .marcas{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.borr.off .d,.borr.off .num{opacity:.5}
+.borr .cubre{grid-column:2/4}
+button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+/* Adjuntos de una cuenta */
+.adj{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.adj:last-child{border-bottom:0}
+.adj .d{flex:1;display:flex;flex-direction:column;min-width:0} .adj .d span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adj .x{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+/* Anillo del tope */
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+/* Torta (dona) de categorías */
+.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
+.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
+.torta circle{fill:none;stroke-width:26}
+.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.torta .centro span{font-size:13px;color:var(--muted)}
+/* Barras por semana: rayadas, la actual en negro */
+.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
+.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
+.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.tira{display:flex;gap:10px;overflow-x:auto;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px));scrollbar-width:none}
+.tira::-webkit-scrollbar{display:none}
+.mini{flex:0 0 128px;background:var(--surface);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:28px}
+.mini .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini b{font-size:26px;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos como tarjetas apiladas */
+.pila{display:flex;flex-direction:column}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 rgba(255,255,255,.35)}
+.mov:first-child{margin-top:0}
+.mov:last-child{padding-bottom:16px}
+.mov .ico{background:rgba(255,255,255,.7);color:var(--on-color)}
+.mov .cat{font-size:12px;color:var(--muted)}
+.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
+.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea .num{flex:none}
+.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.mov{position:relative}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item .d{display:flex;flex-direction:column;min-width:0}
+.item .d span:last-child{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
+.pos{color:var(--ink)} .neg{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+textarea{font-family:var(--mono);font-size:12px;min-height:120px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
+.btn.sec{background:var(--accent-soft);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:active{opacity:.8}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:23px;height:23px}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
+.sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet>*{flex-shrink:0} /* en hojas largas se desplaza la hoja, no se aplastan sus tarjetas */
+.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
+/* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
+.toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
+/* Paletas elegibles en Ajustes: cada una redefine los colores; sin data-paleta, la app usa Viva (la base de :root) */
+:root[data-paleta="viva"],[data-paleta="viva"]{--bg:#ECECEA;--surface:#FFFFFF;--line:#DEDEDA;--ink:#121212;--muted:#77766F;--ink-base:#121212;--muted-base:#77766F;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#DEDEDA;--nav:#FFFFFF;--nav-on:#121212;--neutro:#FFFFFF;--hero:#121212;--salvia:#B9BDA6;--oliva:#5F6B4E;--cherry:#A3243B;--frambuesa:#D03876;--fucsia:#E8559B;--rosa:#F3A6DA;--rosa-claro:#F8CDE6;--ingreso:#C8DDA6;--rojo:#F05A2C;--cat1:#B9BDA6;--cat2:#F05A2C;--cat3:#F3A6DA;--cat4:#5F6B4E;--cat5:#E8559B;--cat6:#A3243B;--cat7:#F8CDE6;--cat8:#D9C9A8;--cat9:#9FC2A4;--cat10:#F6A36B;--cat11:#D03876;--cat12:#ACA696;--cat13:#C9B8F0;--cat14:#A9D6E8;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
+:root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#FFFFFF;--surface:#F2F1EC;--line:#E2E0D8;--ink:#121212;--muted:#6E6C64;--ink-base:#121212;--muted-base:#6E6C64;--accent:#121212;--accent-ink:#FFFFFF;--accent-soft:#E2E0D8;--nav:#F2F1EC;--nav-on:#121212;--neutro:#F2F1EC;--hero:#121212;--salvia:#A9C4B6;--oliva:#3E5A47;--cherry:#B81C14;--frambuesa:#8E3B5A;--fucsia:#FF7A2E;--rosa:#ECE78A;--rosa-claro:#E7B9C6;--ingreso:#CFE3A8;--rojo:#E3241B;--cat1:#A9C4B6;--cat2:#F26B5B;--cat3:#FF8A3D;--cat4:#4A5E3A;--cat5:#ECE78A;--cat6:#2F4A6B;--cat7:#E7B9C6;--cat8:#9DB88A;--cat9:#9EC1DE;--cat10:#CDB57E;--cat11:#7A2E45;--cat12:#A9A391;--cat13:#C3B1E1;--cat14:#F2C1A0;--cat15:#4A3F7A;--cat16:#E8CF6A;--cat17:#8FC1BA;--cat18:#35607A;--cat19:#C5D98A;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
+:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#FFFFFF;--surface:#F4F4F6;--line:#E4E4E9;--ink:#111113;--muted:#64646C;--ink-base:#111113;--muted-base:#64646C;--accent:#111113;--accent-ink:#FFFFFF;--accent-soft:#E4E4E9;--nav:#F4F4F6;--nav-on:#111113;--neutro:#F4F4F6;--hero:#111113;--salvia:#D4F36A;--oliva:#111113;--cherry:#2A2A31;--frambuesa:#5B3FB5;--fucsia:#C7B6F7;--rosa:#E3DAFB;--rosa-claro:#EEF9C8;--ingreso:#D4F36A;--rojo:#111113;--cat1:#C2E54F;--cat2:#A48CF0;--cat3:#7CC6F5;--cat4:#2E2E36;--cat5:#F6A06E;--cat6:#4B3A8C;--cat7:#F28CB3;--cat8:#58CFA0;--cat9:#F3CF4F;--cat10:#6D86F0;--cat11:#5B3FB5;--cat12:#9AA0AD;--cat13:#F5B7D3;--cat14:#FFD3A8;--cat15:#7A2E6B;--cat16:#FFB3A7;--cat17:#8EE0D4;--cat18:#1F5F7A;--cat19:#C9D6FF;--on-osc:#FFFFFF;--on-osc-muted:rgba(255,255,255,.75)}
+:root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#F6F0E4;--surface:#FFFCF6;--line:#E8DFCE;--ink:#151515;--muted:#6A6357;--ink-base:#151515;--muted-base:#6A6357;--accent:#151515;--accent-ink:#FFFFFF;--accent-soft:#E8DFCE;--nav:#FFFCF6;--nav-on:#151515;--neutro:#FFFCF6;--hero:#151515;--salvia:#B9C47F;--oliva:#BBD5F3;--cherry:#F4AFCF;--frambuesa:#E8A0C4;--fucsia:#D6C8F2;--rosa:#F5D86A;--rosa-claro:#FBE3EE;--ingreso:#CFE0A8;--rojo:#F4AFCF;--cat1:#B9C47F;--cat2:#F4AFCF;--cat3:#F5D86A;--cat4:#BBD5F3;--cat5:#D6C8F2;--cat6:#F7C59F;--cat7:#FAD1E3;--cat8:#CFE0A8;--cat9:#BFE3E0;--cat10:#F2DDA4;--cat11:#E8A0C4;--cat12:#C9BFAD;--cat13:#D9EBC6;--cat14:#F9D4C2;--cat15:#A99BE0;--cat16:#F2E48C;--cat17:#A5D6C8;--cat18:#8FB4D9;--cat19:#DDEA9A;--on-osc:#151515;--on-osc-muted:rgba(21,21,21,.62)}
+@media (prefers-color-scheme: dark){
+:root[data-paleta="viva"],[data-paleta="viva"]{--bg:#101010;--surface:#1E1E1E;--line:#2E2E2C;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#101010;--accent-soft:#2E2E2C;--nav:#1E1E1E;--nav-on:#F2F1EC;--neutro:#1E1E1E;--hero:#1E1E1E}
+:root[data-paleta="editorial"],[data-paleta="editorial"]{--bg:#0E0E0E;--surface:#1C1C1B;--line:#2E2D2A;--ink:#F2F1EC;--muted:#A3A19A;--ink-base:#F2F1EC;--muted-base:#A3A19A;--accent:#F2F1EC;--accent-ink:#0E0E0E;--accent-soft:#2E2D2A;--nav:#1C1C1B;--nav-on:#F2F1EC;--neutro:#1C1C1B;--hero:#1C1C1B}
+:root[data-paleta="lima"],[data-paleta="lima"]{--bg:#0B0B0D;--surface:#1A1A1E;--line:#2B2B31;--ink:#F2F2F4;--muted:#A1A1AA;--ink-base:#F2F2F4;--muted-base:#A1A1AA;--accent:#F2F2F4;--accent-ink:#0B0B0D;--accent-soft:#2B2B31;--nav:#1A1A1E;--nav-on:#F2F2F4;--neutro:#1A1A1E;--hero:#1A1A1E;--oliva:#34343E;--cherry:#44444F;--rojo:#A48CF0}
+:root[data-paleta="pastel"],[data-paleta="pastel"]{--bg:#13120F;--surface:#1F1D19;--line:#302C26;--ink:#F4EEE3;--muted:#A79F92;--ink-base:#F4EEE3;--muted-base:#A79F92;--accent:#F4EEE3;--accent-ink:#13120F;--accent-soft:#302C26;--nav:#1F1D19;--nav-on:#F4EEE3;--neutro:#1F1D19;--hero:#1F1D19}
+}
+.paletas{display:flex;flex-direction:column;gap:10px}
+.paleta-op{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink);width:100%;text-align:left}
+.paleta-op[aria-pressed=true]{border-color:var(--ink);font-weight:600}
+.muestra{display:flex;gap:4px;padding:6px;border-radius:999px;background:var(--bg);flex:none}
+.muestra i{width:18px;height:18px;border-radius:50%;display:block}
+[hidden]{display:none!important}
+</style>
+<!-- estilos-app:fin -->
+<!-- revision:inicio · la banda de revisión no forma parte del diseño ni se copia a la app -->
+<style>
+  body{max-width:430px;margin:0 auto}
+  nav{max-width:402px;margin:0 auto}
+  .revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 16px;background:#000;color:#fff;font-size:13px}
+  .revision select{font:inherit;padding:2px 6px;border-radius:6px;border:0}
+  .revision label{display:flex;align-items:center;gap:6px}
+  .revision__nota{opacity:.7;width:100%}
+</style>
+<!-- revision:fin -->
+</head>
+<body>
+<!-- revision:inicio -->
+<div class="revision" role="region" aria-label="Revisión del preview">
+  <strong>Preview · moneda-y-movimientos</strong>
+  <label>Pantalla <select id="rev-pantalla"></select></label>
+  <label>Estado <select id="rev-estado"><option value="normal">con datos</option><option value="vacio">vacío</option></select></label>
+  <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const pantallas = [...document.querySelectorAll("[data-pantalla]")];
+    const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
+    for (const p of pantallas) selP.append(new Option(p.dataset.titulo || p.dataset.pantalla, p.dataset.pantalla));
+    const q = new URLSearchParams(location.search);
+    if (q.get("pantalla")) selP.value = q.get("pantalla");
+    if (q.get("estado")) selE.value = q.get("estado");
+    function aplicar() {
+      for (const p of pantallas) {
+        p.hidden = p.dataset.pantalla !== selP.value;
+        if (!p.hidden) { p.style.display = "flex"; document.getElementById("rev-titulo").textContent = p.dataset.titulo || ""; }
+        for (const e of p.querySelectorAll("[data-estado]")) e.hidden = e.dataset.estado !== selE.value;
+      }
+      for (const a of document.querySelectorAll("[data-ir]")) {
+        if (a.dataset.ir === selP.value) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+      history.replaceState(null, "", "?" + new URLSearchParams({ pantalla: selP.value, estado: selE.value }));
+    }
+    document.addEventListener("click", (ev) => {
+      const a = ev.target.closest("[data-ir]");
+      if (a) { ev.preventDefault(); selP.value = a.dataset.ir; aplicar(); }
+    });
+    for (const el of [selP, selE]) el.addEventListener("change", aplicar);
+    aplicar();
+  });
+</script>
+<!-- revision:fin -->
+<header><div><h1 id="rev-titulo"></h1><span class="m">octubre 2026</span></div></header>
+<main>
+<!-- pantallas:inicio
+  Una <section data-pantalla="<clave>" data-titulo="<título>" style="flex-direction:column;gap:14px">
+  por pantalla. Dentro, dos bloques: <div data-estado="normal"> (con datos de ejemplo) y
+  <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
+  Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
+-->
+<section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
+  <!-- Inicio ya no muestra las tarjetas chicas de últimos gastos: después del resultado vienen directo las cuentas con tope -->
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
+    <div class="grid2" data-ui="disponibles-color">
+      <div class="card color osc" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+    </div>
+    <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><span class="sub">Tocá una categoría para ver en qué se fue.</span><div class="list" data-ui="categorias-que-se-abren"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat10)"></i>Viajes</span><span class="num">42 €</span></div></div></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
+    <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="empty">Todavía no anotaste gastos este mes.</div></div>
+  </div>
+</section>
+<section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="pila" data-ui="lista-movimientos">
+      <div class="mov" style="--c:var(--cat10)"><button class="x">×</button><span class="ico">V</span><span class="cat">Viajes · 14/10</span><div class="linea"><span>entrada al museo</span><span class="num">−15 CHF</span></div></div>
+      <div class="mov" style="--c:var(--cat2)"><button class="x">×</button><span class="ico">C</span><span class="cat">Comida fuera · 12/10</span><div class="linea"><span>cena en el puerto</span><span class="num">−20 USD</span></div></div>
+      <div class="mov osc" style="--c:var(--cat6)"><button class="x">×</button><span class="ico">C</span><span class="cat">Compras · 10/10</span><div class="linea"><span>souvenirs</span><span class="num">−32,5 GBP</span></div></div>
+      <div class="mov" style="--c:var(--cat1)"><button class="x">×</button><span class="ico">S</span><span class="cat">Supermercado · 04/10</span><div class="linea"><span>verdulería</span><span class="num">−64,3 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><button class="x">×</button><span class="ico">+</span><span class="cat">Sueldo · 01/10</span><div class="linea"><span>Banco A</span><span class="num">+1700 €</span></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px"><div class="card"><div class="empty">Sin movimientos este mes.</div></div></div>
+</section>
+<section data-pantalla="hoja-movimiento" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <!-- «con datos»: un gasto en otra moneda (Otra, CHF); «vacío»: movimiento nuevo, en EUR -->
+  <div data-estado="normal"><div class="sheet-bg"></div><div class="sheet" data-ui="hoja-movimiento">
+    <div class="row"><h2>Editar movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px" data-ui="tipo-movimiento"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" value="20">
+    <div data-ui="moneda-movimiento"><span class="lbl">Moneda</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">EUR</button><button aria-pressed="false">USD</button><button aria-pressed="false">GBP</button><button aria-pressed="true">Otra</button></div>
+      <label class="f" style="margin-top:8px">Código de la moneda (3 letras)<input type="text" value="CHF"></label>
+      <span class="sub" data-ui="aviso-moneda" style="margin-top:6px">Los totales no convierten monedas.</span></div>
+    <div><span class="lbl">Cuenta</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Revolut</button><button aria-pressed="false">Banco A</button></div></div>
+    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px" data-ui="eleccion-categoria"><button aria-pressed="false">Supermercado</button><button aria-pressed="false">Comida fuera</button><button aria-pressed="true">Viajes</button><button aria-pressed="false">Regalos</button><button aria-pressed="false">Otros</button></div></div>
+    <label class="f">Nota (opcional)<input type="text" value="entrada al museo"></label>
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+  <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet" data-ui="hoja-movimiento">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px" data-ui="tipo-movimiento"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" placeholder="0,00 €">
+    <div data-ui="moneda-movimiento"><span class="lbl">Moneda</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">EUR</button><button aria-pressed="false">USD</button><button aria-pressed="false">GBP</button><button aria-pressed="false">Otra</button></div></div>
+    <div><span class="lbl">Cuenta</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Revolut</button><button aria-pressed="false">Banco A</button></div></div>
+    <div><span class="lbl">Categoría</span><div class="seg" style="margin-top:8px" data-ui="eleccion-categoria"><button aria-pressed="false">Supermercado</button><button aria-pressed="false">Comida fuera</button><button aria-pressed="true">Viajes</button><button aria-pressed="false">Regalos</button><button aria-pressed="false">Otros</button></div></div>
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+</section>
+<!-- pantallas:fin -->
+</main>
+<nav>
+<!-- nav:inicio · una entrada por pantalla, con data-ir="<clave de la pantalla>", como en la app
+  <button data-ir="inicio">…icono…Inicio</button>
+-->
+<button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+<button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
+<button class="fab" data-ir="hoja-movimiento" aria-label="Nuevo movimiento">+</button>
+<!-- nav:fin -->
+</nav>
+</body>
+</html>

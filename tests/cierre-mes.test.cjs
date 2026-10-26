@@ -12,6 +12,7 @@ t.test("agregar una tarea", async () => {
   const { page } = await abrir();
   await A.ir(page, "mes");
   await page.click("#addTarea");
+  await A.enfocado(page, "tTexto");
   await page.fill("#tTexto", "Pagar el alquiler");
   await page.click('#sheetT button[type="submit"]');
   await A.aviso(page, "Tarea guardada");
@@ -34,6 +35,7 @@ t.test("cambiar el texto de una tarea", async () => {
   const { page } = await abrir({ datos: A.v2({ tareas: [ALQUILER] }) });
   await A.ir(page, "mes");
   await page.click('[data-tarea="a1"]');
+  await A.enfocado(page, "tTexto");
   await page.fill("#tTexto", "Pagar alquiler y expensas");
   await page.click('#sheetT button[type="submit"]');
   await A.aviso(page, "Tarea guardada");
