@@ -9,22 +9,22 @@
 - [x] Gate 2: la persona aprueba el diseño
 
 ## Datos y migración
-- [ ] `movs[i].moneda` opcional (ausente = EUR): comprobar que `norm()` no lo toca y que copias viejas valen
-- [ ] La moneda viaja en la copia de seguridad y al restaurar
+- [x] `movs[i].moneda` opcional (ausente = EUR): comprobar que `norm()` no lo toca y que copias viejas valen
+- [x] La moneda viaja en la copia de seguridad y al restaurar
 
 ## Pantallas
-- [ ] Quitar las tarjetas de últimos gastos de Inicio (marcado, CSS y código)
-- [ ] Selector de moneda en la hoja de movimiento, con «Otra» y su validación de 3 letras
-- [ ] Mostrar la moneda en la tarjeta del movimiento y el aviso de que no se convierte
-- [ ] Subir la versión de `CACHE` en `sw.js`
+- [x] Quitar las tarjetas de últimos gastos de Inicio (marcado, CSS y código)
+- [x] Selector de moneda en la hoja de movimiento, con «Otra» y su validación de 3 letras
+- [x] Mostrar la moneda en la tarjeta del movimiento y el aviso de que no se convierte
+- [x] Subir la versión de `CACHE` en `sw.js`
 
 ## Tests
-- [ ] Un test por escenario de `movimientos` (Inicio sin gastos recientes, movimiento en otra moneda, elegir USD, otra moneda, código inválido, sin conversión, anteriores en euros)
-- [ ] Tests de `datos` (versión anterior, copia vieja, la moneda viaja en la copia)
+- [x] Un test por escenario de `movimientos` (Inicio sin gastos recientes, movimiento en otra moneda, elegir USD, otra moneda, código inválido, sin conversión, anteriores en euros)
+- [x] Tests de `datos` (versión anterior, copia vieja, la moneda viaja en la copia)
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado, claro y oscuro
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado, claro y oscuro
 
 ## Documentación
-- [ ] Actualizar el modelo de datos y las pantallas en `CLAUDE.md`
+- [x] Actualizar el modelo de datos y las pantallas en `CLAUDE.md`

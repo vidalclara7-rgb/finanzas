@@ -101,12 +101,14 @@ t.test("movimientos de otro mes no aparecen", async () => {
   assert.match(movs[0], /03\/10/);
 });
 
-// Escenario: últimos gastos en Inicio
-t.test("últimos gastos en Inicio", async () => {
+// Escenario: Inicio sin gastos recientes
+t.test("Inicio sin gastos recientes", async () => {
   const movs = [1, 2, 3, 4, 5, 6].map((d) => A.gasto(d, `2026-10-0${d}`, d, 1));
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
-  const ids = await page.locator("#ultimos .mini").evaluateAll((els) => els.map((e) => e.dataset.mini));
-  assert.deepEqual(ids, ["6", "5", "4", "3", "2"]);
+  assert.equal(await page.locator('[data-ui="ultimos-gastos"], #ultimos, .mini').count(), 0);
+  await A.ir(page, "movs");
+  const ids = await page.locator("#movs .mov").evaluateAll((els) => els.map((e) => e.dataset.mov));
+  assert.deepEqual(ids, ["6", "5", "4", "3", "2", "1"]);
 });
 
 // Escenario: mes sin movimientos
@@ -358,4 +360,78 @@ t.test("reembolso por regalos", async () => {
   assert.match(await A.texto(page, "#movs .mov.ing, #movs .mov:has-text('Reembolso por regalos')"), /\+40 €/);
   assert.equal(await A.texto(page, "#totIng"), "40 €");
   assert.equal(await A.texto(page, "#totGas"), "80 €");
+});
+
+// Escenario: movimiento en otra moneda
+t.test("movimiento en otra moneda", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-03", 20, 1, "Comida fuera"), moneda: "USD" }, A.gasto(2, "2026-10-04", 10, 1)] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /−20 USD/);
+  assert.match(await A.texto(page, '[data-mov="2"]'), /−10 €/);
+});
+
+// Escenario: elegir USD
+t.test("elegir USD", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segMoneda", "USD");
+  await page.fill("#mImporte", "20");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  assert.equal((await A.guardados(page)).movs[0].moneda, "USD");
+  await A.ir(page, "movs");
+  await page.click("#movs .mov .linea");
+  await A.hojaLista(page);
+  assert.equal(await page.$eval('#segMoneda button[aria-pressed="true"]', (b) => b.textContent), "USD");
+});
+
+// Escenario: otra moneda
+t.test("otra moneda", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segMoneda", "Otra");
+  await page.fill("#mOtra", "chf");
+  await page.fill("#mImporte", "15");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  assert.equal((await A.guardados(page)).movs[0].moneda, "CHF");
+});
+
+// Escenario: código de moneda inválido
+t.test("código de moneda inválido", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segMoneda", "Otra");
+  await page.fill("#mOtra", "ab");
+  await page.fill("#mImporte", "15");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Poné un código de 3 letras, por ejemplo CHF");
+  assert.equal((await A.guardados(page)).movs.length, 0);
+});
+
+// Escenario: sin conversión
+t.test("sin conversión", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  assert.equal(await page.isVisible("#mAvisoMoneda"), false);
+  await A.elegir(page, "segMoneda", "USD");
+  assert.equal(await A.texto(page, "#mAvisoMoneda"), "Los totales no convierten monedas.");
+  await page.fill("#mImporte", "20");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  await enCuentas(page);
+  assert.equal(await saldo(page, 1), "980 €");
+});
+
+// Escenario: movimientos anteriores siguen en euros
+t.test("movimientos anteriores siguen en euros", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /−20 €/);
+  assert.equal(await A.texto(page, "#totGas"), "20 €");
 });

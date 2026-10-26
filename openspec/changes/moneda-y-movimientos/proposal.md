@@ -1,6 +1,6 @@
 ---
 cambio: moneda-y-movimientos
-estado: diseno-aprobado
+estado: construida
 datos: amplia
 ---
 # Últimos gastos sólo en Movimientos, y con su moneda

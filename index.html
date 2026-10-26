@@ -54,7 +54,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 /* Sobre colores oscuros (oliva, cherry) el texto es blanco */
 .card.color.osc,.mov.osc{--on-color:var(--on-osc);color:var(--on-osc);--ink:var(--on-osc);--muted:var(--on-osc-muted);--line:rgba(255,255,255,.22);--bad:#FFD0CC;--accent-soft:rgba(255,255,255,.2)}
 .mov.osc .ico{background:rgba(255,255,255,.22);color:var(--on-osc)}
-.mini .ico{color:var(--on-color)} .ico.osc,.mini .ico.osc{color:var(--on-osc)}
+.ico.osc{color:var(--on-osc)}
 /* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
 .mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
@@ -139,11 +139,6 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .meses .col.neg small{color:var(--bad);font-weight:700}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 /* Tarjetas chicas que se deslizan de costado */
-.tira{display:flex;gap:10px;overflow-x:auto;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px));scrollbar-width:none}
-.tira::-webkit-scrollbar{display:none}
-.mini{flex:0 0 128px;background:var(--surface);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:28px}
-.mini .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini b{font-size:26px;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
 /* Movimientos como tarjetas apiladas */
 .pila{display:flex;flex-direction:column}
@@ -233,7 +228,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <div class="row sub"><span id="ingMes"></span><span id="gasMes"></span></div>
     </div>
     <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--rosa)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
-    <div class="tira" id="ultimos" data-ui="ultimos-gastos"></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><span class="sub" id="catsPista">Tocá una categoría para ver en qué se fue.</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="categorias-que-se-abren"></div></div>
     <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--rosa-claro)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
@@ -322,6 +316,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div id="mCampos" style="display:flex;flex-direction:column;gap:14px">
     <div class="seg" id="segMov" data-ui="tipo-movimiento"></div>
     <input type="text" inputmode="decimal" autocomplete="off" id="mImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
+    <div id="mMoneda" data-ui="moneda-movimiento"><span class="lbl">Moneda</span><div class="seg" id="segMoneda" style="margin-top:8px"></div>
+      <label class="f" id="mOtraL" for="mOtra" style="margin-top:8px" hidden>Código de la moneda (3 letras)<input type="text" id="mOtra" maxlength="3" autocomplete="off" autocapitalize="characters" placeholder="Ej: CHF"></label>
+      <span class="sub" id="mAvisoMoneda" data-ui="aviso-moneda" style="margin-top:6px" hidden>Los totales no convierten monedas.</span></div>
     <div id="mUna"><span class="lbl">Cuenta</span><div class="seg" id="segCuentaM" style="margin-top:8px"></div></div>
     <div id="mUnaCat"><span class="lbl">Categoría</span><div class="seg" id="segCat" data-ui="eleccion-categoria" style="margin-top:8px"></div></div>
     <div id="mReemb" data-pantalla="hoja-gasto-reembolso" data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" id="segReembM" style="margin-top:8px"></div></div>
@@ -443,6 +440,10 @@ const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 const r2=n=>Math.round(n*100)/100;
 const eur=n=>r2(n).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
+// Moneda de un movimiento: sólo una etiqueta (sin conversión). Ausente o no válida = euros
+const MONEDAS=["EUR","USD","GBP","Otra"];
+const monedaDe=m=>typeof m.moneda==="string"&&/^[A-Z]{3}$/.test(m.moneda)&&m.moneda!=="EUR"?m.moneda:"EUR";
+const eurM=(n,m)=>{const mo=monedaDe(m);return mo==="EUR"?eur(n):r2(n).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" "+mo;};
 const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
 const mesId=()=>hoy().slice(0,7);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -633,9 +634,9 @@ const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span 
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
 let filtroR=null;
 function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
-  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="−"+eur(m.importe);}
-  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eur(m.importe);}
-  else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eur(m.importe);}
+  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="−"+eurM(m.importe,m);}
+  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
+  else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
   else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
   return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span>${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
@@ -655,8 +656,6 @@ function render(){
   const pc=porCobrar(),nP=pc.filter(m=>m.reembolso.estado==="pendiente").length,nA=pc.length-nP;$("porCobrar").hidden=!pc.length;
   $("cobrarVal").textContent=eur(pc.reduce((a,m)=>a+m.importe,0));
   $("cobrarSub").textContent=`${nP} ${nP===1?"pendiente":"pendientes"} · ${nA} ${nA===1?"aprobado":"aprobados"}`;
-  const ult=ord.filter(m=>m.tipo==="gasto").slice(0,5);$("ultimos").hidden=!ult.length;
-  $("ultimos").innerHTML=ult.map(g=>`<div class="mini" data-mini="${g.id}"><span class="ico${osc(g.cat)}" style="background:${colorCat(g.cat)}">${esc(g.cat[0])}</span><div><div class="sub">${esc(g.cat)} · ${esc(nombreDe(g.cuenta))}</div><b>-${esc(eur(g.importe).slice(0,-2))}</b></div></div>`).join("");
   // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
   const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
   $("disponibles").innerHTML=conTope.map(c=>`<div class="card color${tipoOsc(c.tipo)}" style="--c:var(${COLOR[c.tipo]})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
@@ -725,9 +724,10 @@ function ir(v){vista=v;document.querySelectorAll("nav [data-v], header [data-v]"
 document.querySelectorAll("nav [data-v], header [data-v]").forEach(b=>b.addEventListener("click",()=>ir(b.dataset.v)));
 
 // Hoja de movimiento
-let mov={tipo:"gasto",cuenta:null,destino:null,cat:"Supermercado",reemb:"pendiente",cubre:[]}, movId=null;
+let mov={tipo:"gasto",cuenta:null,destino:null,cat:"Supermercado",moneda:"EUR",reemb:"pendiente",cubre:[]}, movId=null;
 const TXT={gasto:["Guardar gasto","Gasto guardado"],ingreso:["Guardar ingreso","Ingreso guardado"],transferencia:["Guardar transferencia","Transferencia guardada"]};
 function movUI(){const t=mov.tipo,ops=S.cuentas.map(c=>[c.id,c.nombre]);
+  seg($("segMoneda"),MONEDAS.map(x=>[x,x]),mov.moneda,v=>{mov.moneda=v;movUI();});$("mOtraL").hidden=mov.moneda!=="Otra";$("mAvisoMoneda").hidden=mov.moneda==="EUR";
   $("mUna").hidden=$("mUnaCat").hidden=t==="transferencia";$("mTransf").hidden=t!=="transferencia";$("mGuardar").textContent=TXT[t][0];
   seg($("segCuentaM"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segDesde"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segHacia"),ops,mov.destino,v=>mov.destino=+v);
   const cats=t==="ingreso"?INGRESOS:CATS;if(!cats.includes(mov.cat))mov.cat=cats[0];seg($("segCat"),cats.map(c=>[c,c]),mov.cat,v=>{mov.cat=v;movUI();});
@@ -746,6 +746,7 @@ function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?
   $("mTitulo").textContent=m?"Editar movimiento":"Nuevo movimiento";
   if(hay){const a=S.cuentas[0].id,b=(S.cuentas[1]||S.cuentas[0]).id;
     mov=m?{tipo:m.tipo,cuenta:m.cuenta,destino:m.destino??b,cat:m.cat||"Supermercado",reemb:m.reembolso?m.reembolso.estado:"pendiente",cubre:S.movs.filter(x=>x.reembolso&&x.reembolso.cobro===m.id).map(x=>x.id)}:{tipo:"gasto",cuenta:a,destino:b,cat:"Súper",reemb:"pendiente",cubre:[]};
+    {const mo=m?monedaDe(m):"EUR";mov.moneda=MONEDAS.includes(mo)?mo:"Otra";$("mOtra").value=MONEDAS.includes(mo)?"":mo;}
     seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
     $("mImporte").value=m?aTexto(m.importe):"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&m.fijo);movUI();}
   mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
@@ -754,6 +755,8 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   if(mov.tipo==="transferencia"&&mov.cuenta===mov.destino){toast("Elegí dos cuentas distintas");return;}
   const m={id:movId||nid(),tipo:mov.tipo,fecha:$("mFecha").value||hoy(),importe:v,cuenta:mov.cuenta,nota:$("mNota").value.trim()};
   if(m.tipo==="transferencia")m.destino=mov.destino;else m.cat=mov.cat;
+  let mo=mov.moneda;if(mo==="Otra"){mo=$("mOtra").value.trim().toUpperCase();if(!/^[A-Z]{3}$/.test(mo)){toast("Poné un código de 3 letras, por ejemplo CHF");return;}}
+  if(mo!=="EUR")m.moneda=mo;
   const viejo=S.movs.find(x=>x.id===movId);
   // Marcar fijo deja la regla para los siguientes con esa nota; desmarcar la cambia a «no es fijo»
   if(m.tipo==="gasto"&&m.cat!==REEMB){const k=claveFijo(m.cat,m.nota);if($("mFijo").checked){m.fijo=true;if(k)S.fijos[k]=true;}else if(k&&S.fijos[k]===true)S.fijos[k]=false;}

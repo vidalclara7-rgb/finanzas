@@ -274,3 +274,38 @@ t.test("copia vieja con Súper", async () => {
   await A.ir(page, "movs");
   assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado · 03\/10/);
 });
+
+// Escenario: datos de la versión anterior
+t.test("datos de la versión anterior", async () => {
+  const movs = [1, 2, 3].map((d) => A.gasto(d, `2026-10-0${d}`, 10 * d, 1));
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "60 €");
+  const textos = await page.locator("#movs .mov .num").allInnerTexts();
+  assert.ok(textos.every((x) => x.includes("€") && !/USD|GBP/.test(x)));
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /−20 €/);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: la moneda viaja en la copia
+t.test("la moneda viaja en la copia", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-03", 20, 1), moneda: "USD" }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "movs");
+  assert.match(await A.texto(otra, '[data-mov="1"]'), /−20 USD/);
+});
