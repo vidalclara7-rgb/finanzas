@@ -1,6 +1,6 @@
 ---
 cambio: compras-en-cuotas
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Compras de tarjeta fraccionadas en cuotas
