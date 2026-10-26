@@ -1,6 +1,6 @@
 ---
 cambio: fecha-sin-desborde
-estado: aprobada
+estado: construida
 datos: sin-cambios
 preview: no
 ---

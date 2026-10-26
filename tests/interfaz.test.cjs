@@ -344,3 +344,44 @@ t.test("contraste en las cuatro paletas", async () => {
     }
   }
 });
+
+// --- los campos de fecha caben en el ancho
+const holgura = (page, sel) => page.evaluate((s) => {
+  const c = document.querySelector(s).getBoundingClientRect();
+  const hoja = document.querySelector(s).closest(".sheet, .card, main").getBoundingClientRect();
+  return { derecha: Math.round(c.right), hojaDerecha: Math.round(hoja.right), ancho: document.documentElement.scrollWidth, vista: document.documentElement.clientWidth };
+}, sel);
+
+for (const esquema of ["light", "dark"]) {
+  // Escenario: fecha de un movimiento
+  t.test(`fecha de un movimiento (${esquema})`, async () => {
+    const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }), esquema });
+    await page.click("#fab");
+    await A.hojaLista(page);
+    const h = await holgura(page, "#mFecha");
+    assert.ok(h.derecha <= h.hojaDerecha, `fecha ${h.derecha} > hoja ${h.hojaDerecha}`);
+    assert.ok(h.ancho <= h.vista, `desplazamiento horizontal ${h.ancho} > ${h.vista}`);
+    assert.equal(await page.$eval("#mFecha", (e) => getComputedStyle(e).textAlign), "left");
+  });
+
+  // Escenario: fecha de una operación de inversión
+  t.test(`fecha de una operación de inversión (${esquema})`, async () => {
+    const datos = A.v2({ cuentas: [A.cta(3, "Broker X", 1000, { tipo: "inversion" })], activos: [{ id: 10, cuenta: 3, nombre: "Fondo A" }] });
+    const { page } = await abrir({ datos, esquema });
+    await A.ir(page, "cuentas");
+    await page.click("[data-ver-rend]");
+    await page.click("[data-nueva-op]");
+    await A.enfocado(page, "oCant");
+    const h = await holgura(page, "#oFecha");
+    assert.ok(h.derecha <= h.hojaDerecha, `fecha ${h.derecha} > hoja ${h.hojaDerecha}`);
+  });
+
+  // Escenario: mes en Ajustes
+  t.test(`mes en Ajustes (${esquema})`, async () => {
+    const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }), esquema });
+    await A.ir(page, "ajustes");
+    const h = await holgura(page, "#inicio");
+    assert.ok(h.derecha <= h.hojaDerecha, `mes ${h.derecha} > tarjeta ${h.hojaDerecha}`);
+    assert.ok(h.ancho <= h.vista);
+  });
+}

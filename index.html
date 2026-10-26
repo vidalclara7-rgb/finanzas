@@ -170,6 +170,9 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
 input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+/* Fechas y meses: el navegador de iOS les da un ancho propio y se salen de la hoja; aquí ocupan el ancho de su campo y alinean el texto como los demás */
+input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:48px;line-height:1.2}
+input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}
 textarea{font-family:var(--mono);font-size:12px;min-height:120px}
 .btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
 .btn.sec{background:var(--accent-soft);color:var(--ink)}
