@@ -102,6 +102,11 @@ guarda lo que había en ese momento.
 - **Entonces** la app avisa «Copia restaurada» y vuelve el gasto de 20 €
 - **Y** lo que había antes queda como nuevo respaldo
 
+### Escenario: restaurar sobre una app vacía no pisa el respaldo
+- **Dado** un respaldo de datos que no se pudieron leer y la app vacía
+- **Cuando** la persona restaura una copia con otros datos
+- **Entonces** el respaldo sigue siendo el texto original
+
 ### Escenario: descartar el respaldo
 - **Dado** un respaldo guardado
 - **Cuando** la persona toca «Descartar» dos veces

@@ -1,7 +1,8 @@
 ---
 cambio: proteger-los-datos
-estado: aprobada
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Que no se pierdan los datos
 

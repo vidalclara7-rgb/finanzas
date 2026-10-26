@@ -216,6 +216,8 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <main>
   <!-- INICIO -->
   <section id="v-inicio" data-pantalla="inicio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" id="avisoIlegible" data-ui="aviso-ilegible" style="--c:var(--naranja)" hidden><span class="lbl">No pude leer tus datos guardados</span><span>No se perdieron: guardé el texto original. Mirá Ajustes para copiarlo o restaurarlo.</span><button class="btn" id="avisoIlegibleBtn">Ver el respaldo</button></div>
+    <div class="card color" id="avisoCopia" data-ui="aviso-copia" style="--c:var(--rosa)" hidden><span class="lbl" id="avisoCopiaT"></span><span>Si borrás el ícono de la app o se limpian los datos del navegador, se pierde todo lo que cargaste.</span><button class="btn" id="avisoCopiaBtn">Hacer la copia</button></div>
     <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--rosa)" hidden>
       <span class="lbl">Primer paso</span>
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
@@ -293,13 +295,24 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <span class="sub">Copiá el resumen del mes y pegalo en el chat para revisarlo juntas.</span>
       <button class="btn sec" id="copiarResumen">Copiar resumen del mes</button>
     </div>
-    <div class="card">
+    <div class="card" data-ui="tarjeta-copia">
       <span class="lbl">Copia de seguridad</span>
-      <span class="sub">Tus datos viven solo en este iPhone. Hacé una copia cada tanto y guardala en Notas.</span>
+      <span class="sub" id="ultimaCopia" data-ui="ultima-copia"></span>
+      <span class="sub" data-ui="advertencia-copia">Tus datos viven sólo en este dispositivo. Si borrás el ícono de la app o limpiás los datos del navegador, se pierden: hacé una copia cada tanto y guardala en Archivos o en Notas.</span>
       <span class="sub" id="avisoAdj" data-ui="aviso-adjuntos" hidden></span>
-      <button class="btn sec" id="copiarBackup">Copiar copia de seguridad</button>
+      <button class="btn sec" id="copiarBackup" data-ui="copiar-copia">Copiar copia de seguridad</button>
+      <button class="btn sec" id="guardarArchivo" data-ui="guardar-archivo">Guardar copia en un archivo</button>
       <label class="f" for="backupIn">Restaurar: pegá una copia acá<textarea id="backupIn"></textarea></label>
-      <button class="btn danger" id="restaurar">Restaurar copia</button>
+      <button class="btn sec" id="elegirArchivo" data-ui="elegir-archivo">Elegir un archivo de copia</button>
+      <input type="file" id="archivoIn" accept=".json,application/json,text/plain" hidden>
+      <button class="btn danger" id="restaurar" data-ui="restaurar">Restaurar copia</button>
+    </div>
+    <div class="card" id="cardRespaldo" data-ui="tarjeta-respaldo" hidden>
+      <span class="lbl">Respaldo guardado</span>
+      <span class="sub" id="respaldoSub"></span>
+      <button class="btn sec" id="respaldoCopiar" data-ui="copiar-respaldo">Copiar texto</button>
+      <button class="btn sec" id="respaldoRestaurar" data-ui="restaurar-respaldo">Restaurar este respaldo</button>
+      <button class="btn danger" id="respaldoDescartar" data-ui="descartar-respaldo">Descartar</button>
     </div>
   </section>
 </main>
@@ -540,7 +553,15 @@ function categoriasNorm(s){const n=c=>RENOMBRADAS[c]||c;
 function reglasNorm(s){if(!s.reglas||typeof s.reglas!=="object"||Array.isArray(s.reglas))s.reglas={};return s;}
 function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
 const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{},reglas:{}});}
+// Claves aparte de los datos: la fecha de la última copia y el respaldo (lo que había antes de restaurar, o lo que no se pudo leer)
+const KEY_COPIA="finanzas-copia", KEY_RESP="finanzas-respaldo";
+const leerClave=k=>{try{const v=JSON.parse(localStorage.getItem(k));return v&&typeof v==="object"&&!Array.isArray(v)?v:null;}catch(e){return null;}};
+const guardarClave=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}};
+// Si hay algo guardado y no se puede leer, el original queda de respaldo antes de que la app vacía lo pise
+function load(){let crudo=null;try{crudo=localStorage.getItem(KEY);}catch(e){}
+  try{const s=JSON.parse(crudo);if(s&&(s.gastos||s.v===2))return norm(s);}catch(e){}
+  if(crudo)guardarClave(KEY_RESP,{texto:crudo,motivo:"ilegible",fecha:hoy()});
+  return norm({v:2,settings:{},cuentas:[],movs:[],tareas:[],meses:{},fijos:{},reglas:{}});}
 let S=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("No se pudo guardar");}}
 function mesData(id){if(!S.meses[id])S.meses[id]={checks:{}};if(!S.meses[id].checks)S.meses[id].checks={};return S.meses[id];}
@@ -719,7 +740,7 @@ function aplicarPaleta(){const p=S.settings.paleta||"viva";
   if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
   $("paletas").innerHTML=PALETAS.map(([k,n])=>`<button type="button" class="paleta-op" data-paleta-op="${k}" aria-pressed="${k===p}"><span>${n}</span><span class="muestra" data-paleta="${k}"><i style="background:var(--salvia)"></i><i style="background:var(--cherry)"></i><i style="background:var(--rosa)"></i><i style="background:var(--oliva)"></i><i style="background:var(--cat2)"></i></span></button>`).join("");}
 function render(){
-  aplicarPaleta();avisoAdj();
+  aplicarPaleta();avisoAdj();pintarCopia();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
@@ -783,7 +804,7 @@ function renderCuentas(){
 
 const hojaAbierta=()=>HOJAS.some(x=>!$(x).hidden);
 function toast(msg){const t=document.createElement("div");t.className="toast"+(hojaAbierta()?" arriba":"");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800);}
-async function copiar(txt,ok){try{await navigator.clipboard.writeText(txt);toast(ok);}catch(e){$("backupIn").value=txt;$("backupIn").select();toast("Seleccionado: copialo a mano");}}
+async function copiar(txt,ok){try{await navigator.clipboard.writeText(txt);toast(ok);return true;}catch(e){$("backupIn").value=txt;$("backupIn").select();toast("Seleccionado: copialo a mano");return false;}}
 // Importes: coma o punto decimal; con coma, los puntos son de miles («1.234,56»)
 const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.includes(","))t=t.replace(/\./g,"").replace(",",".");const v=parseFloat(t);return isNaN(v)?null:r2(v);};
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
@@ -1330,8 +1351,51 @@ $("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),P
     `Checklist: ${S.tareas.filter(x=>md.checks[x.id]).length}/${S.tareas.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`),
     `Patrimonio neto: ${eur(t.neto)} (tengo ${eur(t.activos)}, debo ${eur(t.deudas)}${t.cuotas>0?`, cuotas ${eur(t.cuotas)}/mes`:""})`];
   copiar(txt.join("\n"),"Resumen copiado");};
-$("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada");
-$("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!d.settings||!(Array.isArray(d.gastos)||Array.isArray(d.movs)))throw 0;S=norm(d);persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
+// Copias: la fecha de la última (texto o archivo), el aviso y el respaldo
+const FECHA=/^\d{4}-\d{2}-\d{2}$/;
+const diasDesde=f=>Math.round((Date.UTC(...hoy().split("-").map((x,i)=>i===1?x-1:+x))-Date.UTC(...f.split("-").map((x,i)=>i===1?x-1:+x)))/864e5);
+const hayDatos=()=>S.cuentas.length>0||S.movs.length>0;
+function ultimaCopia(){const c=leerClave(KEY_COPIA);return c&&typeof c.fecha==="string"&&FECHA.test(c.fecha)?c.fecha:null;}
+function respaldo(){const r=leerClave(KEY_RESP);return r&&typeof r.texto==="string"&&r.texto?r:null;}
+function marcarCopia(){guardarClave(KEY_COPIA,{fecha:hoy()});render();}
+function pintarCopia(){const f=ultimaCopia(),d=f?diasDesde(f):null,r=respaldo();
+  $("ultimaCopia").textContent=f?(d<=0?"Última copia: hoy":`Última copia: hace ${d} ${d===1?"día":"días"}`):"Todavía no hiciste ninguna copia.";
+  const pide=hayDatos()&&(!f||d>=7);$("avisoCopia").hidden=!pide;
+  if(pide)$("avisoCopiaT").textContent=f?`Hace ${d} ${d===1?"día":"días"} que no hacés una copia de seguridad`:"Todavía no hiciste ninguna copia de seguridad";
+  $("avisoIlegible").hidden=!(r&&r.motivo==="ilegible");$("cardRespaldo").hidden=!r;
+  if(r){const cuando=typeof r.fecha==="string"&&FECHA.test(r.fecha)?`, del ${diaMes(r.fecha)}`:"";
+    $("respaldoSub").textContent=r.motivo==="ilegible"?`Datos que no se pudieron leer${cuando}. El texto original está intacto.`:`Datos de antes de restaurar${cuando}. Quedaron guardados por si te arrepentís.`;}}
+$("avisoCopiaBtn").onclick=$("avisoIlegibleBtn").onclick=()=>ir("ajustes");
+$("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada").then(ok=>{if(ok)marcarCopia();});
+// Guardar en un archivo: la hoja de compartir del sistema (en iPhone, «Guardar en Archivos») y, si no hay, una descarga. Cancelar no cuenta
+$("guardarArchivo").onclick=async()=>{const nombre=`mis-finanzas-${hoy()}.json`,f=new File([JSON.stringify(S)],nombre,{type:"application/json"});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Copia de seguridad de Mis finanzas"});marcarCopia();toast("Copia guardada");return;}}
+  catch(e){if(e&&e.name==="AbortError")return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=nombre;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  marcarCopia();toast("Copia guardada");};
+$("elegirArchivo").onclick=()=>$("archivoIn").click();
+$("archivoIn").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{$("backupIn").value=await f.text();}catch(err){toast("No se pudo leer el archivo");return;}
+  resetRest();toast("Archivo cargado: tocá «Restaurar copia»");});
+// Restaurar: valida, pide un segundo toque y guarda lo que había antes de reemplazar (si había algo)
+let restConf=false,respConf=false,descConf=false,tRest=null;
+function resetRest(){restConf=false;$("restaurar").textContent="Restaurar copia";}
+function resetResp(){respConf=false;$("respaldoRestaurar").textContent="Restaurar este respaldo";descConf=false;$("respaldoDescartar").textContent="Descartar";}
+$("backupIn").addEventListener("input",resetRest);
+function copiaValida(texto){try{const d=JSON.parse(texto);if(!d||!d.settings||!(Array.isArray(d.gastos)||Array.isArray(d.movs)))return null;return norm(d);}catch(e){return null;}}
+function reemplazarCon(nuevo,anterior){if(hayDatos())guardarClave(KEY_RESP,{texto:JSON.stringify(S),motivo:"restaurar",fecha:hoy()});else if(anterior)guardarClave(KEY_RESP,{...anterior,motivo:"restaurar",fecha:hoy()});
+  S=nuevo;persist();render();}
+$("restaurar").onclick=()=>{const nuevo=copiaValida($("backupIn").value);
+  if(!nuevo){resetRest();toast("Esa copia no es válida");return;}
+  if(!restConf){restConf=true;$("restaurar").textContent="Tocá de nuevo: reemplaza todo lo que tenés";clearTimeout(tRest);tRest=setTimeout(resetRest,5000);return;}
+  resetRest();reemplazarCon(nuevo,null);$("backupIn").value="";toast("Copia restaurada");};
+$("respaldoCopiar").onclick=()=>{const r=respaldo();if(r)copiar(r.texto,"Respaldo copiado");};
+$("respaldoRestaurar").onclick=()=>{const r=respaldo();if(!r)return;const nuevo=copiaValida(r.texto);
+  if(!nuevo){toast("No se pudo restaurar este respaldo: copiá el texto y guardalo aparte");return;}
+  if(!respConf){respConf=true;$("respaldoRestaurar").textContent="Tocá de nuevo: reemplaza todo lo que tenés";setTimeout(resetResp,5000);return;}
+  resetResp();reemplazarCon(nuevo,r);toast("Copia restaurada");};
+$("respaldoDescartar").onclick=()=>{if(!descConf){descConf=true;$("respaldoDescartar").textContent="Tocá de nuevo para descartar";setTimeout(resetResp,5000);return;}
+  resetResp();try{localStorage.removeItem(KEY_RESP);}catch(e){}render();toast("Respaldo descartado");};
 
 persist();render();cargarDocs();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}

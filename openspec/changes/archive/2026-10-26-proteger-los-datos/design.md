@@ -22,6 +22,10 @@
   compartir del sistema (en iPhone permite «Guardar en Archivos») y, si no está disponible, se descarga.
 - **Restaurar desde archivo** carga el texto en el mismo cuadro de pegar y usa el mismo botón con su
   confirmación: un solo camino de restauración.
+- **Al construir (2026-10-26):** el primer toque de «Restaurar copia» ya valida: una copia inválida se rechaza
+  sin pasar a la confirmación. La confirmación vuelve sola a «Restaurar copia» a los 5 segundos. Si la app
+  está vacía, restaurar no guarda «lo anterior» (no hay nada) y así no pisa un respaldo de datos ilegibles.
+  Restaurar el respaldo sobre una app vacía deja el mismo texto guardado, ahora como «antes de restaurar».
 - **Datos ilegibles:** el texto guardado no es JSON, o no tiene la forma de la app, o convertirlo falla.
   Se guarda tal cual, la app abre vacía y avisa. Si no había nada guardado (primer uso), no hay respaldo
   ni aviso.

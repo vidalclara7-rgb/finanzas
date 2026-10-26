@@ -271,6 +271,7 @@ t.test("restaurar una copia de la primera versión", async () => {
   await A.ir(page, "ajustes");
   await page.fill("#backupIn", JSON.stringify(A.datosEjemplo()));
   await page.click("#restaurar");
+  await page.click("#restaurar");
   await A.aviso(page, "Copia restaurada");
   const s = await A.guardados(page);
   assert.equal(s.v, 2);
@@ -288,6 +289,7 @@ t.test("una copia con campos nuevos mal formados no rompe la app", async () => {
   const { page, errores } = await abrir();
   await A.ir(page, "ajustes");
   await page.fill("#backupIn", JSON.stringify(sucia));
+  await page.click("#restaurar");
   await page.click("#restaurar");
   await A.aviso(page, "Copia restaurada");
   const s = await A.guardados(page);
