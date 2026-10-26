@@ -13,35 +13,25 @@ const lum = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x
 const marcada = (page) => page.$eval('#segApariencia button[aria-pressed="true"]', (b) => b.dataset.v);
 const elegirAp = async (page, v) => { await A.ir(page, "ajustes"); await page.click(`#segApariencia button[data-v="${v}"]`); };
 
-// Escenario: clara por defecto
-t.test("clara por defecto", async () => {
-  const { page } = await abrir({ datos: conApariencia(), esquema: "dark", sinApariencia: true });
-  assert.equal(await attr(page), "clara");
-  assert.ok(lum(await fondoCuerpo(page)) > 0.7);
-  await A.ir(page, "ajustes");
-  assert.equal(await marcada(page), "clara");
-  assert.deepEqual((await page.locator("#segApariencia button").allInnerTexts()).map((x) => x.trim()), ["Clara", "Oscura", "Automática"]);
-});
-
-// Escenario: elegir oscura
-t.test("elegir oscura", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  await elegirAp(page, "oscura");
+// Escenario: oscura por defecto
+t.test("oscura por defecto", async () => {
+  const { page } = await abrir({ datos: conApariencia(), esquema: "light", sinApariencia: true });
   assert.equal(await attr(page), "oscura");
   assert.ok(lum(await fondoCuerpo(page)) < 0.05);
+  await A.ir(page, "ajustes");
   assert.equal(await marcada(page), "oscura");
-  assert.equal((await A.guardados(page)).settings.apariencia, "oscura");
+  assert.deepEqual((await page.locator("#segApariencia button").allInnerTexts()).map((x) => x.trim()), ["Oscura", "Clara", "Automática"]);
+  assert.equal(await page.locator("[data-paleta-op]").count(), 0, "ya no se elige paleta");
 });
 
-// Escenario: el fondo oscuro no es negro
-t.test("el fondo oscuro no es negro", async () => {
-  const { page } = await abrir({ datos: conApariencia("oscura") });
-  const m = (await fondoCuerpo(page)).match(/\d+/g).map(Number);
-  assert.ok(m[0] > m[1] + 6 && m[0] > m[2] + 3, "Viva: burdeos oscuro, con el rojo por encima");
-  await A.ir(page, "ajustes");
-  await page.click('[data-paleta-op="editorial"]');
-  const e = (await fondoCuerpo(page)).match(/\d+/g).map(Number);
-  assert.ok(e[1] > e[0] + 6, "Editorial: verde oscuro");
+// Escenario: elegir clara
+t.test("elegir clara", async () => {
+  const { page } = await abrir({ datos: conApariencia() });
+  await elegirAp(page, "clara");
+  assert.equal(await attr(page), "clara");
+  assert.ok(lum(await fondoCuerpo(page)) > 0.7);
+  assert.equal(await marcada(page), "clara");
+  assert.equal((await A.guardados(page)).settings.apariencia, "clara");
 });
 
 // Escenario: automática sigue al teléfono
@@ -57,20 +47,11 @@ t.test("automática sigue al teléfono", async () => {
 // Escenario: la apariencia se recuerda
 t.test("la apariencia se recuerda", async () => {
   const { page } = await abrir({ datos: conApariencia() });
-  await elegirAp(page, "oscura");
+  await elegirAp(page, "clara");
   await page.reload();
-  assert.equal(await attr(page), "oscura");
-  await A.ir(page, "ajustes");
-  assert.equal(await marcada(page), "oscura");
-});
-
-// Escenario: la paleta no cambia la apariencia
-t.test("la paleta no cambia la apariencia", async () => {
-  const { page } = await abrir({ datos: conApariencia("clara") });
-  await A.ir(page, "ajustes");
-  await page.click('[data-paleta-op="editorial"]');
   assert.equal(await attr(page), "clara");
-  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--mancha1").trim().toLowerCase()), "#a9c4b6");
+  await A.ir(page, "ajustes");
+  assert.equal(await marcada(page), "clara");
 });
 
 // Escenario: el fondo está en todas las pantallas
@@ -84,22 +65,34 @@ t.test("el fondo está en todas las pantallas", async () => {
   }
 });
 
-// Escenario: los colores siguen a la paleta
-t.test("los colores siguen a la paleta", async () => {
+// Escenario: los colores del fondo
+t.test("los colores del fondo", async () => {
   const { page } = await abrir({ datos: conApariencia() });
-  const mancha1 = () => page.evaluate(() => getComputedStyle(document.querySelector(".fondo i:nth-child(1)")).backgroundImage);
-  assert.match(await mancha1(), /rgb\(240, 90, 44\)/);
-  await A.ir(page, "ajustes");
-  await page.click('[data-paleta-op="lima"]');
-  assert.match(await mancha1(), /rgb\(164, 140, 240\)/);
+  const manchas = () => page.evaluate(() => { const cs = getComputedStyle(document.documentElement); return [1, 2, 3, 4, 5].map((i) => cs.getPropertyValue("--mancha" + i).trim().toUpperCase()); });
+  assert.deepEqual(await manchas(), ["#A9A92E", "#7A1030", "#D64C86", "#B5521F", "#8FB0DA"]);
+  await elegirAp(page, "clara");
+  assert.deepEqual(await manchas(), ["#8A9A3B", "#8A2D42", "#A9BDD6", "#E4702A", "#F1D5CD"]);
+});
+
+// Escenario: estrellas en las dos apariencias
+t.test("estrellas en las dos apariencias", async () => {
+  const { page } = await abrir({ datos: conApariencia() });
+  const estrellas = () => page.evaluate(() => { const e = document.querySelector(".fondo"), a = getComputedStyle(e, "::before"), b = getComputedStyle(e.querySelector("b")); return { puntos: a.backgroundImage.split("radial-gradient").length - 1, op: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--estrellas")), anim2: b.animationName, anim: a.animationName, color: getComputedStyle(document.documentElement).getPropertyValue("--e1").trim().toUpperCase() }; });
+  const o = await estrellas();
+  assert.ok(o.puntos >= 4 && o.op > 0.3 && o.anim === "titila", JSON.stringify(o));
+  assert.equal(o.color, "#FFFFFF");
+  await elegirAp(page, "clara");
+  const c = await estrellas();
+  assert.ok(c.op > 0.3);
+  assert.equal(c.color, "#7A1F33");
 });
 
 // Escenario: el texto se lee sobre el fondo
 t.test("el texto se lee sobre el fondo", async () => {
   const { page } = await abrir({ datos: conApariencia() });
   for (const ap of ["oscura", "clara"]) {
-    for (const p of ["viva", "editorial", "lima", "pastel"]) {
-      await page.evaluate(([a, q]) => { document.documentElement.dataset.apariencia = a; if (q === "viva") document.documentElement.removeAttribute("data-paleta"); else document.documentElement.dataset.paleta = q; }, [ap, p]);
+    {
+      await page.evaluate((a) => { document.documentElement.dataset.apariencia = a; }, ap);
       // peor caso: la mancha más clara bajo el velo, y dos manchas superpuestas
       const r = await page.evaluate(() => {
         const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
@@ -117,7 +110,7 @@ t.test("el texto se lee sobre el fondo", async () => {
         }
         return peor;
       });
-      assert.ok(r >= 4.5, `${p}/${ap}: peor contraste del texto sobre las manchas ${r.toFixed(2)}`);
+      assert.ok(r >= 4.5, `${ap}: peor contraste del texto sobre las manchas ${r.toFixed(2)}`);
     }
   }
 });
@@ -166,10 +159,10 @@ t.test("sin cargar nada de otros sitios", async () => {
 t.test("barra oscura y clara", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
   const barra = () => page.$eval('meta[name="theme-color"]', (m) => m.content.toLowerCase());
-  assert.equal(await barra(), "#1a0b12");
+  assert.equal(await barra(), "#16070d");
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "black-translucent");
   await elegirAp(page, "clara");
-  assert.equal(await barra(), "#ececea");
+  assert.equal(await barra(), "#f2e4de");
   await page.reload();
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "default");
 });

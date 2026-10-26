@@ -1,6 +1,6 @@
 ---
 cambio: rediseno-metaballs
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Rediseño oscuro con fondo de manchas («metaballs»)
@@ -14,13 +14,13 @@ muy claro, y el modo oscuro sólo sigue al teléfono.
 ## Qué cambia
 
 Replanteo (2026-10-26, Gate 3): con el fondo de manchas sobre las cuatro paletas, las tarjetas de color y las manchas
-se mezclaban demasiado. Ahora la app usa **una sola paleta, la de Paper Design**.
+se mezclaban demasiado. Ahora la app usa **una sola paleta, con dos temas tomados de dos moodboards de la persona**.
 
-- **Una sola paleta: azules y violetas de Paper** (azul oscuro, violeta, índigo). Se retiran Viva, Editorial, Lima y
+- **Una sola paleta, dos temas:** la clara en oliva, vino, azul polvo y naranja quemado; la oscura en cereza, chartreuse, rosa y óxido. Se retiran Viva, Editorial, Lima y
   lavanda y Pastel crema, y «Paleta de colores» desaparece de Ajustes.
 - **Apariencia:** nueva opción en Ajustes: **Oscura** (por defecto, aunque el teléfono esté en claro), **Clara**
-  (lavanda muy claro con las mismas manchas, más suaves) o **Automática** (sigue al teléfono).
-- **Fondo de manchas** detrás de toda la app, en azules y violetas, que se mueve despacio y se detiene con «Reducir
+  (crema rosado con tarjetas de vidrio) o **Automática** (sigue al teléfono).
+- **Fondo de manchas con estrellas** detrás de toda la app, con los colores de cada tema, que se mueve despacio y se detiene con «Reducir
   movimiento» y cuando la app no está visible.
 - **Tarjetas neutras y algo translúcidas**, sin colores vivos. El color queda para lo que lo necesita: la categoría
   (torta, lista, icono y borde de su tarjeta de movimiento) y el tipo de cuenta (su icono).

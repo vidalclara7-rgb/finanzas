@@ -1,5 +1,14 @@
 # Diseño: rediseno-metaballs
 
+## Colores definitivos (Gate 2, 2026-10-26)
+
+Tras varias rondas, la persona dio dos moodboards y dijo «la primera para la clara, la segunda para la oscura». Esto
+sustituye a los azules/violetas de Paper de abajo. **Clara:** fondo #F2E4DE; manchas oliva #8A9A3B, vino #6B1E2E, azul
+polvo #A9BDD6, naranja #E4702A, rosa pálido #F1D5CD (op .5); tinta #2B1218; acento vino #5A1A2A; estrellas vino.
+**Oscura:** fondo #16070D; manchas chartreuse #A9A92E, cereza #7A1030, rosa #D64C86, óxido #B5521F, azul #8FB0DA (op .6, velo
+.3); tinta #FBF1EE; estrellas blancas. **Categorías:** 19 colores en esas familias (olivas, vinos, azules polvo, naranjas,
+rosas, y unos neutros cálidos), todos con texto blanco ≥4,5:1. Las tarjetas siguen neutras, con franja de color.
+
 ## Replanteo del 2026-10-26 (Gate 3)
 
 La persona vio la app con las cuatro paletas bajo el fondo de manchas y dijo que había «mucha mezcla de colores»: pidió

@@ -7,36 +7,38 @@
 <!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
 <style>
 :root{
-  /* Una sola paleta, la de Paper Design: azules y violetas. La apariencia clara es lavanda muy claro */
-  --bg:#E4EEFF; --surface:#FFFFFF; --ink:#14152B; --muted:#62658A; --line:#DDDCEE;
-  --ink-base:#14152B; --muted-base:#62658A;
-  --accent:#14152B; --accent-ink:#FFFFFF; --accent-soft:#E6E5F5;
-  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#4338CA; --frambuesa:#6D28D9; --rosa-claro:#E6E5F5; --rosa:#5B8DEF; --fucsia:#9333EA; --oliva:#2A4BD7; --salvia:#6F8CF0;
-  --on-color:#14152B;
-  --hero:#14152B; --hero-ink:#FFFFFF; --hero-muted:#A9ACD0;
-  --nav:#FFFFFF; --nav-ink:#8B8EB0; --nav-on:#14152B;
-  --ingreso:#BFE6D0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C81E1E; --bad-soft:#FBE1E1;
+  /* Una sola paleta, dos temas: la clara sale de un moodboard retro (oliva, vino, azul polvo, naranja quemado, rosa pálido) */
+  --bg:#F2E4DE; --surface:#FFFFFF; --ink:#2B1218; --muted:#7A5A60; --line:#E6CFC8;
+  --ink-base:#2B1218; --muted-base:#7A5A60;
+  --accent:#5A1A2A; --accent-ink:#FFFFFF; --accent-soft:#EBD6D0;
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --on-color:#2B1218;
+  --hero:#5A1A2A; --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
+  --nav:#FFFFFF; --nav-ink:#9A7A7E; --nav-on:#2B1218;
+  --ingreso:#D3DDA0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
-  --cat1:#0369A1; --cat2:#2563EB; --cat3:#4F46E5; --cat4:#7C3AED; --cat5:#9333EA; --cat6:#C026D3;
-  --cat7:#0E7490; --cat8:#1D4ED8; --cat9:#4338CA; --cat10:#6D28D9; --cat11:#7E22CE; --cat12:#A21CAF; --cat13:#0F766E; --cat14:#3B5BDB;
-  --cat15:#5B5BD6; --cat16:#7048E8; --cat17:#A03BC9; --cat18:#BE3FA8; --cat19:#4A6FA5;
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
   /* Fondo de manchas: cinco colores, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
-  --mancha1:#3B82F6; --mancha2:#6366F1; --mancha3:#22D3EE; --mancha4:#A78BFA; --mancha5:#2DD4BF; --mancha-op:.55; --velo:transparent; --estrellas:.55; --e1:#3B5BDB; --e2:#0E7490;
+  --mancha1:#8A9A3B; --mancha2:#6B1E2E; --mancha3:#A9BDD6; --mancha4:#E4702A; --mancha5:#F1D5CD; --mancha-op:.5; --velo:transparent; --estrellas:.5; --e1:#7A1F33; --e2:#6B7A2B;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#090A1C; --surface:#14162F; --ink:#F4F5FF; --muted:#B4B8D6; --line:#2B2E55;
-  --ink-base:#F4F5FF; --muted-base:#B4B8D6;
-  --accent:#F4F5FF; --accent-ink:#090A1C; --accent-soft:#23264A;
-  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#8B7CF6; --frambuesa:#A78BFA; --rosa-claro:#23264A; --rosa:#7DA2FF; --fucsia:#C084FC; --oliva:#6D8BFF; --salvia:#8FA6F0;
-  --on-color:#F4F5FF;
-  --hero:#14162F; --nav:#14162F; --nav-ink:#9A9EC4; --nav-on:#F4F5FF; --neutro:#14162F;
-  --ingreso:#1F5C3E;
+  /* La oscura sale de otro moodboard: cereza, chartreuse, rosa, óxido y azul Nantucket */
+  --bg:#16070D; --surface:#241019; --ink:#FBF1EE; --muted:#CDB3B7; --line:#4A2431;
+  --ink-base:#FBF1EE; --muted-base:#CDB3B7;
+  --accent:#FBF1EE; --accent-ink:#16070D; --accent-soft:#3A1B27;
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --on-color:#FBF1EE;
+  --hero:#241019; --nav:#241019; --nav-ink:#B79BA0; --nav-on:#FBF1EE; --neutro:#241019;
+  --ingreso:#3E4A14;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
-  --mancha-op:.78; --velo:rgba(9,10,28,.22); --estrellas:.9; --e1:#FFFFFF; --e2:#C9D4FF; color-scheme:dark}
+  --mancha1:#A9A92E; --mancha2:#7A1030; --mancha3:#D64C86; --mancha4:#B5521F; --mancha5:#8FB0DA;
+  --mancha-op:.6; --velo:rgba(22,7,13,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCD0E8; color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -66,10 +68,10 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(165,180,255,.2);box-shadow:0 0 24px rgba(91,63,181,.18)}
+html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
-html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(37,99,235,.15)}
+html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
 .acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
 .mov::before{bottom:auto;height:44px}
 .mov{background:var(--surface);color:var(--ink-base)}

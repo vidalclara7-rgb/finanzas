@@ -29,7 +29,7 @@ elegido antes se ignora: la app tiene una sola paleta, y las copias que la traen
 ### Escenario: datos con una paleta elegida
 - **Dado** datos o una copia hechos cuando se podía elegir paleta (por ejemplo Pastel crema)
 - **Cuando** la persona abre la app o restaura la copia
-- **Entonces** los datos están intactos, la app usa la paleta de Paper y Ajustes no ofrece elegir paleta
+- **Entonces** los datos están intactos, la app usa su paleta única y Ajustes no ofrece elegir paleta
 
 ## Retirado: la paleta viaja con los datos
 Ya no hay paleta que elegir: lo sustituye «apariencia guardada antes del rediseño».

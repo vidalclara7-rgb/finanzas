@@ -13,36 +13,38 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{
-  /* Una sola paleta, la de Paper Design: azules y violetas. La apariencia clara es lavanda muy claro */
-  --bg:#E4EEFF; --surface:#FFFFFF; --ink:#14152B; --muted:#62658A; --line:#DDDCEE;
-  --ink-base:#14152B; --muted-base:#62658A;
-  --accent:#14152B; --accent-ink:#FFFFFF; --accent-soft:#E6E5F5;
-  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#4338CA; --frambuesa:#6D28D9; --rosa-claro:#E6E5F5; --rosa:#5B8DEF; --fucsia:#9333EA; --oliva:#2A4BD7; --salvia:#6F8CF0;
-  --on-color:#14152B;
-  --hero:#14152B; --hero-ink:#FFFFFF; --hero-muted:#A9ACD0;
-  --nav:#FFFFFF; --nav-ink:#8B8EB0; --nav-on:#14152B;
-  --ingreso:#BFE6D0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C81E1E; --bad-soft:#FBE1E1;
+  /* Una sola paleta, dos temas: la clara sale de un moodboard retro (oliva, vino, azul polvo, naranja quemado, rosa pálido) */
+  --bg:#F2E4DE; --surface:#FFFFFF; --ink:#2B1218; --muted:#7A5A60; --line:#E6CFC8;
+  --ink-base:#2B1218; --muted-base:#7A5A60;
+  --accent:#5A1A2A; --accent-ink:#FFFFFF; --accent-soft:#EBD6D0;
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --on-color:#2B1218;
+  --hero:#5A1A2A; --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
+  --nav:#FFFFFF; --nav-ink:#9A7A7E; --nav-on:#2B1218;
+  --ingreso:#D3DDA0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
-  --cat1:#0369A1; --cat2:#2563EB; --cat3:#4F46E5; --cat4:#7C3AED; --cat5:#9333EA; --cat6:#C026D3;
-  --cat7:#0E7490; --cat8:#1D4ED8; --cat9:#4338CA; --cat10:#6D28D9; --cat11:#7E22CE; --cat12:#A21CAF; --cat13:#0F766E; --cat14:#3B5BDB;
-  --cat15:#5B5BD6; --cat16:#7048E8; --cat17:#A03BC9; --cat18:#BE3FA8; --cat19:#4A6FA5;
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
   /* Fondo de manchas: cinco colores, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
-  --mancha1:#3B82F6; --mancha2:#6366F1; --mancha3:#22D3EE; --mancha4:#A78BFA; --mancha5:#2DD4BF; --mancha-op:.55; --velo:transparent; --estrellas:.55; --e1:#3B5BDB; --e2:#0E7490;
+  --mancha1:#8A9A3B; --mancha2:#8A2D42; --mancha3:#A9BDD6; --mancha4:#E4702A; --mancha5:#F1D5CD; --mancha-op:.5; --velo:rgba(242,228,222,.45); --estrellas:.5; --e1:#7A1F33; --e2:#6B7A2B;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#090A1C; --surface:#14162F; --ink:#F4F5FF; --muted:#B4B8D6; --line:#2B2E55;
-  --ink-base:#F4F5FF; --muted-base:#B4B8D6;
-  --accent:#F4F5FF; --accent-ink:#090A1C; --accent-soft:#23264A;
-  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#8B7CF6; --frambuesa:#A78BFA; --rosa-claro:#23264A; --rosa:#7DA2FF; --fucsia:#C084FC; --oliva:#6D8BFF; --salvia:#8FA6F0;
-  --on-color:#F4F5FF;
-  --hero:#14162F; --nav:#14162F; --nav-ink:#9A9EC4; --nav-on:#F4F5FF; --neutro:#14162F;
-  --ingreso:#1F5C3E;
+  /* La oscura sale de otro moodboard: cereza, chartreuse, rosa, óxido y azul Nantucket */
+  --bg:#16070D; --surface:#241019; --ink:#FBF1EE; --muted:#CDB3B7; --line:#4A2431;
+  --ink-base:#FBF1EE; --muted-base:#CDB3B7;
+  --accent:#FBF1EE; --accent-ink:#16070D; --accent-soft:#3A1B27;
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --on-color:#FBF1EE;
+  --hero:#241019; --nav:#241019; --nav-ink:#B79BA0; --nav-on:#FBF1EE; --neutro:#241019;
+  --ingreso:#3E4A14;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
-  --mancha-op:.78; --velo:rgba(9,10,28,.22); --estrellas:.9; --e1:#FFFFFF; --e2:#C9D4FF; color-scheme:dark}
+  --mancha1:#A9A92E; --mancha2:#7A1030; --mancha3:#D64C86; --mancha4:#B5521F; --mancha5:#8FB0DA;
+  --mancha-op:.6; --velo:rgba(22,7,13,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCD0E8; color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -72,10 +74,10 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(165,180,255,.2);box-shadow:0 0 24px rgba(91,63,181,.18)}
+html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
-html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(37,99,235,.15)}
+html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
 .acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
 .mov::before{bottom:auto;height:44px}
 .mov{background:var(--surface);color:var(--ink-base)}
@@ -219,17 +221,12 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
 /* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
 .toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
-.paletas{display:flex;flex-direction:column;gap:10px}
-.paleta-op{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink);width:100%;text-align:left}
-.paleta-op[aria-pressed=true]{border-color:var(--ink);font-weight:600}
-.muestra{display:flex;gap:4px;padding:6px;border-radius:999px;background:var(--bg);flex:none}
-.muestra i{width:18px;height:18px;border-radius:50%;display:block}
 [hidden]{display:none!important}
 </style>
 <script>
-// La apariencia se pone antes de pintar, para que no haya un destello: clara por defecto, oscura, o automática (sigue al teléfono)
-(function(){var r="clara";try{var s=JSON.parse(localStorage.getItem("finanzas-v1")),a=s&&s.settings&&s.settings.apariencia;
-  if(a==="oscura")r="oscura";else if(a==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)r="oscura";}catch(e){}
+// La apariencia se pone antes de pintar, para que no haya un destello: oscura por defecto, clara, o automática (sigue al teléfono)
+(function(){var r="oscura";try{var s=JSON.parse(localStorage.getItem("finanzas-v1")),a=s&&s.settings&&s.settings.apariencia;
+  if(a==="clara")r="clara";else if(a==="auto"&&window.matchMedia&&!matchMedia("(prefers-color-scheme: dark)").matches)r="clara";}catch(e){}
   document.documentElement.dataset.apariencia=r;
   var m=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(m)m.content=r==="oscura"?"black-translucent":"default";})();
 </script>
@@ -307,7 +304,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <!-- AJUSTES -->
   <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
     <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" id="segApariencia" style="margin-top:8px"></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
-    <div class="card" data-ui="selector-paleta"><span class="lbl">Paleta de colores</span><div class="paletas" id="paletas"></div></div>
     <div class="card" data-ui="plan-ajustes">
       <span class="lbl">Plan del fondo de emergencia</span>
       <label class="f" for="aporte">Aporte mensual al fondo (€)<input type="text" inputmode="decimal" autocomplete="off" id="aporte"></label>
@@ -507,11 +503,7 @@ const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",
   ["financiacion","Financiaciones","Ej: Klarna, Cetelem, préstamo",true],
   ["compartida","Deudas compartidas","Ej: Splitwise, gastos del piso",false]];
 // Color del punto de cada tipo de cuenta (variables --cat de la hoja de estilos)
-// Color de las tarjetas de cada tipo de cuenta; inversiones y tarjetas son oscuros (texto blanco)
 const COLOR={liquidez:"--salvia",inversion:"--oliva",tarjeta:"--cherry",financiacion:"--fucsia",compartida:"--rosa"};
-const tipoOsc=t=>t==="inversion"||t==="tarjeta"?" osc":"";
-// Paletas elegibles en Ajustes (las define la hoja de estilos con data-paleta)
-const PALETAS=[["viva","Viva"],["editorial","Editorial"],["lima","Lima y lavanda"],["pastel","Pastel crema"]];
 const ESTADOS_R=[["pendiente","Pendiente","warnc"],["aprobado","Aprobado","idle"],["pagado","Pagado","ok"]];
 const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
 
@@ -763,21 +755,18 @@ function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}">${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}<span class="ico">${ico}</span><span class="cat">${cat}</span>${(docsMov[m.id]||[]).length?`<span class="chip idle" data-ui="chip-documento" style="align-self:flex-start">${CLIP}${docsMov[m.id].length} ${docsMov[m.id].length===1?"documento":"documentos"}</span>`:""}${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 // Apariencia: oscura (por defecto), clara o automática (sigue al teléfono). El script del <head> la pone antes de pintar
-const APARIENCIAS=[["clara","Clara"],["oscura","Oscura"],["auto","Automática"]];
+const APARIENCIAS=[["oscura","Oscura"],["clara","Clara"],["auto","Automática"]];
 const mqOscuro=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
-const aparienciaDe=()=>{const a=S.settings.apariencia;return a==="oscura"||a==="auto"?a:"clara";};
+const aparienciaDe=()=>{const a=S.settings.apariencia;return a==="clara"||a==="auto"?a:"oscura";};
 const aparienciaVista=()=>{const a=aparienciaDe();return a==="auto"?(mqOscuro&&!mqOscuro.matches?"clara":"oscura"):a;};
 function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElement;d.dataset.apariencia=v;
-  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#1A0B12":"#ECECEA");
+  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#16070D":"#F2E4DE");
   seg($("segApariencia"),APARIENCIAS,aparienciaDe(),x=>{S.settings.apariencia=x;persist();render();});}
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
 // El fondo se detiene cuando la app no está visible
 document.addEventListener("visibilitychange",()=>document.documentElement.classList.toggle("en-pausa",document.hidden));
-function aplicarPaleta(){const p=S.settings.paleta||"viva";
-  if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
-  $("paletas").innerHTML=PALETAS.map(([k,n])=>`<button type="button" class="paleta-op" data-paleta-op="${k}" aria-pressed="${k===p}"><span>${n}</span><span class="muestra" data-paleta="${k}"><i style="background:var(--salvia)"></i><i style="background:var(--cherry)"></i><i style="background:var(--rosa)"></i><i style="background:var(--oliva)"></i><i style="background:var(--cat2)"></i></span></button>`).join("");}
 function render(){
-  aplicarPaleta();aplicarApariencia();avisoAdj();pintarCopia();
+  aplicarApariencia();avisoAdj();pintarCopia();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
@@ -791,7 +780,7 @@ function render(){
   $("cobrarSub").textContent=`${nP} ${nP===1?"pendiente":"pendientes"} · ${nA} ${nA===1?"aprobado":"aprobados"}`;
   // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
   const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
-  $("disponibles").innerHTML=conTope.map(c=>`<div class="card color${tipoOsc(c.tipo)}" style="--c:var(${COLOR[c.tipo]})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
+  $("disponibles").innerHTML=conTope.map(c=>`<div class="card color acento" style="--c:var(${COLOR[c.tipo]})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
   conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
     anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
@@ -835,7 +824,7 @@ function renderCuentas(){
   $("netoIniSub").textContent=`Tenés ${eur(t.activos)} · debés ${eur(t.deudas)}`+(t.cuotas>0?` · cuotas ${eur(t.cuotas)}/mes`:"");
   $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
     const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
-    return `<div class="card color${tipoOsc(tipo)}" style="--c:var(${COLOR[tipo]})"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
+    return `<div class="card color acento" style="--c:var(${COLOR[tipo]})"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
       return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${esc(det)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("")}</div>${tipo==="inversion"?`<button type="button" class="btn sec" data-ver-rend="1" data-ui="ver-rendimiento">Ver rendimiento</button>`:""}</div>`;}).join("");
 }
 
@@ -1376,8 +1365,7 @@ document.addEventListener("change",e=>{const c=e.target.dataset&&e.target.datase
 $("guardarAjustes").onclick=()=>{const of=num("objFondo"),ap=num("aporte"),ini=$("inicio").value;
   if(!(of>0)||!(ap>0)||!ini){toast("Completá el aporte, el objetivo y el mes de inicio");return;}
   const saltos=$("saltos").value.split(",").map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}$/.test(x)).join(", ");
-  S.settings={paleta:S.settings.paleta,apariencia:S.settings.apariencia,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
-$("paletas").addEventListener("click",e=>{const b=e.target.closest("[data-paleta-op]");if(!b)return;S.settings.paleta=b.dataset.paletaOp;persist();render();});
+  S.settings={apariencia:S.settings.apariencia,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
 $("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),PLAN=planMap(),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
   const porCat={};ms.filter(m=>m.tipo==="gasto").forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const fc=S.cuentas.find(c=>c.fondo),f=fc?valorCuenta(fc):null;

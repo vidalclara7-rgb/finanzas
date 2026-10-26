@@ -13,12 +13,12 @@ el teléfono en modo oscuro, el fondo es oscuro y todos los textos principales s
 
 ## Requisito: tarjetas neutras sobre el fondo de manchas
 
-Una sola paleta, la de Paper Design: azules y violetas sobre un fondo azul muy oscuro (apariencia oscura) o azul hielo
-(clara). Las tarjetas son neutras y translúcidas, sin colores vivos: oscuras en la apariencia oscura y
-blancas, de vidrio esmerilado, en la clara. El color queda para lo que lo necesita: cada categoría tiene su color, el mismo en la torta, en
-la lista, en el icono y en el borde de su tarjeta de movimiento, y cada tipo de cuenta tiene el suyo en su icono. Los
-importes principales son grandes, con los decimales en gris. El texto de las tarjetas es claro en la oscura y
-oscuro en la clara.
+Una sola paleta con dos temas, tomados de dos moodboards: la clara en oliva, vino, azul polvo y naranja quemado sobre
+crema rosado; la oscura en cereza, chartreuse, rosa y óxido sobre vino muy oscuro. Las tarjetas son neutras y
+translúcidas, sin colores vivos: oscuras en la apariencia oscura y blancas, de vidrio esmerilado, en la clara. El color
+queda para lo que lo necesita: cada categoría tiene su color, el mismo en la torta, en la lista, en el icono y en el
+borde de su tarjeta de movimiento, y cada tipo de cuenta tiene el suyo en la franja de su tarjeta. Los importes
+principales son grandes, con los decimales en gris. El texto de las tarjetas es claro en la oscura y oscuro en la clara.
 
 ### Escenario: tarjetas neutras sobre el fondo oscuro
 - **Dado** la apariencia Oscura y una tarjeta de crédito con tope
@@ -29,7 +29,7 @@ oscuro en la clara.
 ### Escenario: tarjetas neutras sobre el fondo claro
 - **Dado** la apariencia Clara y una tarjeta de crédito con tope
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es azul hielo y las tarjetas son blancas y translúcidas
+- **Entonces** el fondo de la pantalla es crema rosado y las tarjetas son blancas y translúcidas
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
@@ -78,7 +78,7 @@ al menos 4,5 a 1.
 Lo sustituyen «tarjetas neutras sobre el fondo de manchas» y la apariencia oscura o clara con fondo de manchas.
 
 ## Retirado: elegir la paleta de colores
-Hay una sola paleta, la de Paper Design: ya no se elige.
+Hay una sola paleta con sus dos temas (clara y oscura): ya no se elige.
 
 ## Retirado: todas las paletas se leen
 Lo sustituye «todo se lee sobre el fondo», en las dos apariencias.

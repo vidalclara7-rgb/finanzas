@@ -31,11 +31,11 @@ recuerda al volver a abrir.
 
 ## Requisito: fondo de manchas
 
-Detrás de todas las pantallas hay un fondo de manchas de color que se funden con un degradado suave, en azules y
-violetas de tonos cercanos entre sí, como una nebulosa (los de Paper Design), con estrellas pequeñas que titilan
-(blancas en la oscura, azules en la clara). En la apariencia oscura se ve sobre un fondo azul muy oscuro; en la
-clara, sobre un azul hielo, con manchas más frías (azul, cian, turquesa y lila) y con tarjetas de vidrio esmerilado (blancas y translúcidas). Las tarjetas quedan encima
-y su texto se lee con contraste de al menos 4,5 a 1.
+Detrás de todas las pantallas hay un fondo de manchas de color que se funden con un degradado suave, con estrellas
+pequeñas que titilan. Los colores salen de dos moodboards que eligió la persona: en la apariencia clara, oliva, vino,
+azul polvo, naranja quemado y rosa pálido sobre un fondo crema rosado, con tarjetas de vidrio esmerilado (blancas y
+translúcidas) y estrellas vino; en la oscura, chartreuse, cereza, rosa, óxido y azul claro sobre un fondo vino muy
+oscuro, con estrellas blancas. Las tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1.
 
 ### Escenario: el fondo está en todas las pantallas
 - **Dado** la app con datos de ejemplo
@@ -43,15 +43,16 @@ y su texto se lee con contraste de al menos 4,5 a 1.
 - **Entonces** en todas se ve el fondo de manchas detrás de las tarjetas
 
 ### Escenario: los colores del fondo
-- **Dado** el fondo de manchas visible en la apariencia Oscura
-- **Cuando** la persona mira las manchas
-- **Entonces** hay cinco manchas en azules y violetas de tonos cercanos, y ninguna es roja, anaranjada ni verde
+- **Dado** el fondo de manchas visible
+- **Cuando** la persona mira las manchas en la apariencia Clara y en la Oscura
+- **Entonces** en la clara predominan el oliva, el vino, el azul polvo y el naranja quemado, y en la oscura el chartreuse, la cereza, el rosa, el óxido y el azul claro
+- **Y** en ninguna hay violetas ni azules eléctricos
 
 ### Escenario: estrellas en las dos apariencias
 - **Dado** la apariencia Oscura
 - **Cuando** la persona abre la app
 - **Entonces** se ven estrellas pequeñas sobre el fondo, que titilan
-- **Y** al pasar a Clara se siguen viendo, en azul
+- **Y** al pasar a Clara se siguen viendo, en vino
 
 ### Escenario: el texto se lee sobre el fondo
 - **Dado** una tarjeta de gasto y el resultado del mes en las dos apariencias
