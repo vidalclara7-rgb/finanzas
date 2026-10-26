@@ -1,7 +1,8 @@
 ---
 cambio: cuotas-a-la-vista
-estado: diseno-aprobado
+estado: archivado
 datos: amplia
+archivado: 2026-10-26
 ---
 # Ver las cuotas del mes y los movimientos de cada cuenta
 
