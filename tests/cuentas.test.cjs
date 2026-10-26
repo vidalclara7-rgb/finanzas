@@ -75,6 +75,7 @@ t.test("movimientos anteriores al saldo de partida", async () => {
 t.test("renombrar una cuenta", async () => {
   const { page } = await enCuentas({ datos: A.v2({ cuentas: [A.cta(1, "Banco A", 1000)], movs: [A.gasto(1, "2026-10-05", 30, 1)] }) });
   await page.click('[data-cta="1"]');
+  await A.enfocado(page, "cNombre");
   await page.fill("#cNombre", "Banco principal");
   await page.click('#sheetC button[type="submit"]');
   await A.aviso(page, "Cuenta guardada");

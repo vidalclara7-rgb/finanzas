@@ -11,6 +11,7 @@ const estado = (page, id) => A.texto(page, `[data-conc="${id}"] .chip`);
 async function conciliar(page, id, real) {
   await A.ir(page, "mes");
   await page.click(`[data-conc="${id}"]`);
+  await A.enfocado(page, "kReal");
   if (real !== undefined) await page.fill("#kReal", String(real));
 }
 

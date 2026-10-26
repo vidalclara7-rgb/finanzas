@@ -15,6 +15,7 @@ const hojaInv = async (page) => { await A.ir(page, "cuentas"); await page.click(
 const activoTxt = (page, id) => A.texto(page, `[data-activo="${id}"]`).then((x) => x.replace(/\s+/g, " "));
 async function operacion(page, { tipo = "compra", cant, precio, com, fecha, activo } = {}) {
   await page.click("[data-nueva-op]");
+  await A.enfocado(page, "oCant");
   if (tipo === "venta") await page.click('#segOpTipo button[data-v="venta"]');
   if (activo) await A.elegir(page, "segOpActivo", activo);
   if (fecha) await page.fill("#oFecha", fecha);
@@ -30,6 +31,7 @@ t.test("alta de un activo", async () => {
   const { page } = await abrir(con({ activos: [] }));
   await hojaInv(page);
   await page.click("[data-nuevo-activo]");
+  await A.enfocado(page, "aNombre");
   await page.fill("#aNombre", "Fondo A");
   await page.click('#sheetAct button[type="submit"]');
   await A.aviso(page, "Activo guardado");

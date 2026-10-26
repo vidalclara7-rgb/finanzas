@@ -75,6 +75,8 @@ const elegir = (page, seg, texto) => page.locator(`#${seg} button`, { hasText: n
 
 // Nuevo movimiento desde el «+»: tipo gasto, ingreso o transferencia; cuentas por nombre
 // Al abrirse, la hoja pone el foco en el importe: se espera, para que lo que se escribe no caiga en otro campo
+// Las hojas dan foco a su primer campo a los 50 ms: si el test rellena otro campo antes, el texto cae en el equivocado
+const enfocado = (page, id) => page.waitForFunction((i) => document.activeElement && document.activeElement.id === i, id);
 const hojaLista = (page) => page.waitForFunction(() => document.activeElement && document.activeElement.id === "mImporte");
 async function nuevoMov(page, { tipo = "gasto", importe, cuenta, desde, hacia, cat, nota, fecha } = {}) {
   await page.click("#fab");
@@ -93,6 +95,7 @@ const nuevoGasto = (page, o = {}) => nuevoMov(page, { ...o, tipo: "gasto" });
 
 async function nuevaCuenta(page, { tipo, nombre, saldo, signo, fondo, extra = {} } = {}) {
   await page.click("#addCuenta");
+  await enfocado(page, "cNombre");
   if (tipo) await page.click(`#segTipo button[data-v="${tipo}"]`);
   if (signo) await page.click(`#segSigno button[data-v="${signo}"]`);
   if (nombre) await page.fill("#cNombre", nombre);
@@ -144,4 +147,4 @@ function preparar(nodeTest) {
   return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
 }
 
-module.exports = { hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
+module.exports = { enfocado, hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
