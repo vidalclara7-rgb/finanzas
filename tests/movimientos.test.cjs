@@ -548,3 +548,53 @@ t.test("borrar una compra en cuotas", async () => {
   await enCuentas(page);
   assert.match(await saldo(page, 2), /^-?0 €$/);
 });
+
+// --- seleccionar gastos
+const SEL = [A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-08", 42, 1, "Salud"), A.gasto(3, "2026-10-05", 18, 1, "Ocio"), A.ingreso(4, "2026-10-01", 1000, 1)];
+const PDF2 = { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%%EOF") };
+
+// Escenario: marcar gastos
+t.test("marcar gastos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: SEL }) });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"] [data-sel]');
+  await page.click('[data-mov="2"] [data-sel]');
+  assert.equal(await A.texto(page, "#selN"), "2 seleccionados");
+  assert.equal(await page.locator('[data-mov="4"] [data-sel]').count(), 0);
+  assert.equal(await page.locator("#movs [data-sel]").count(), 3);
+});
+
+// Escenario: salir sin cambios
+t.test("salir sin cambios", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: SEL }) });
+  const antes = JSON.stringify((await A.guardados(page)).movs);
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"] [data-sel]');
+  await page.click("#selCancel");
+  assert.equal(await page.locator("#movs [data-sel]").count(), 0);
+  assert.equal(JSON.stringify((await A.guardados(page)).movs), antes);
+});
+
+// Escenario: filtrar los gastos con documento
+t.test("filtrar los gastos con documento", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [...SEL, A.gasto(5, "2026-10-09", 10, 1)] }) });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"] [data-sel]');
+  await page.click('[data-mov="2"] [data-sel]');
+  await page.setInputFiles("#docIn", PDF2);
+  await A.aviso(page, "Documento adjuntado a 2 gastos");
+  await page.click('#segDoc button');
+  const ids = await page.locator("#movs .mov").evaluateAll((els) => els.map((e) => e.dataset.mov));
+  assert.deepEqual(ids.sort(), ["1", "2"]);
+});
+
+// Escenario: sin gastos con documento
+t.test("sin gastos con documento", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: SEL }) });
+  await A.ir(page, "movs");
+  await page.click('#segDoc button');
+  assert.equal(await A.texto(page, "#movs"), "Ningún gasto de este mes tiene documento.");
+});

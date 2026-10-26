@@ -336,3 +336,48 @@ t.test("la copia conserva las cuotas", async () => {
   assert.match(await A.texto(otra, '[data-mov="1"]'), /Cuota 1 de 3/);
   assert.equal(await A.texto(otra, "#totGas"), "240 €");
 });
+
+// --- documentos de gastos
+const PDF3 = { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%%EOF") };
+const sembrarAdjunto = (page, reg) => page.evaluate((r) => new Promise((ok, mal) => {
+  const q = indexedDB.open("finanzas-adjuntos", 1);
+  q.onupgradeneeded = () => q.result.createObjectStore("archivos", { keyPath: "id" });
+  q.onsuccess = () => { const tx = q.result.transaction("archivos", "readwrite"); tx.objectStore("archivos").put({ ...r, datos: new ArrayBuffer(4) }); tx.oncomplete = ok; tx.onerror = mal; };
+}), reg);
+
+// Escenario: adjuntos anteriores intactos
+t.test("adjuntos anteriores intactos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 900, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await page.reload();
+  await A.ir(page, "movs");
+  assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
+  await A.ir(page, "cuentas");
+  await page.click('[data-cta="1"]');
+  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("extracto.pdf"));
+});
+
+// Escenario: aviso en Ajustes cuenta los documentos de gastos
+t.test("aviso en Ajustes cuenta los documentos de gastos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 901, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"] [data-sel]');
+  await page.setInputFiles("#docIn", PDF3);
+  await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await A.ir(page, "ajustes");
+  await page.waitForFunction(() => document.getElementById("avisoAdj").textContent.includes("2 adjuntos"));
+  assert.equal(await A.texto(page, "#avisoAdj"), "Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.");
+});
+
+// Escenario: copia restaurada con gastos que ya no existen
+t.test("copia restaurada con gastos que ya no existen", async () => {
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
+  await sembrarAdjunto(page, { id: 902, cuenta: null, mes: "2026-10", nombre: "viejo.pdf", tipo: "pdf", mime: "application/pdf", movs: [77] });
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BANCO], movs: [A.gasto(2, "2026-10-04", 15, 1)] })));
+  await A.aviso(page, "Copia restaurada");
+  await A.ir(page, "movs");
+  assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
+  assert.deepEqual(errores, []);
+});

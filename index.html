@@ -247,6 +247,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <input type="file" id="pdfIn" accept="application/pdf,.pdf" hidden>
     <div data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" id="segReemb" style="margin-top:8px"></div></div>
     <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big" id="totIng"></div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big" id="totGas"></div></div></div>
+    <div class="row" id="accMov" data-ui="acciones-lista"><button type="button" class="btn sec" id="selBtn" style="padding:8px 14px">Seleccionar</button><div class="seg" id="segDoc"></div></div>
+    <div class="row" id="selBar" data-pantalla="movs-seleccion" data-ui="barra-seleccion" hidden><span class="lbl" id="selN"></span><div class="row" style="gap:8px"><button type="button" class="btn sec" id="selCancel" style="padding:8px 14px">Cancelar</button><button type="button" class="btn" id="selAdj" style="padding:8px 14px">Adjuntar documento</button></div></div>
+    <input type="file" id="docIn" accept="application/pdf,image/*" hidden>
     <div class="pila" id="movs" data-ui="lista-movimientos"></div>
     <div class="row" id="sumaFiltro" data-ui="suma-filtro" hidden><span class="sub" id="filtroN"></span><span class="lbl" id="filtroSuma"></span></div>
   </section>
@@ -334,6 +337,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <div data-ui="desde"><span class="lbl">Desde</span><div class="seg" id="segDesde" style="margin-top:8px"></div></div>
       <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" id="segHacia" style="margin-top:8px"></div></div>
     </div>
+    <div class="card" id="mDocs" data-ui="documentos-gasto" hidden><span class="lbl">Documentos</span><div id="mDocsLista"></div></div>
     <label class="f" for="mNota">Nota (opcional)<input type="text" id="mNota" placeholder="Ej: Consum, cena con amigas"></label>
     <label class="check" id="mFijoL" data-pantalla="hoja-gasto-fijo" data-ui="casilla-fijo"><input type="checkbox" id="mFijo"><span style="flex:1;display:flex;flex-direction:column"><span>Gasto fijo</span><span class="sub">Se repite al menos 12 meses: alquiler, cuotas, seguros, suscripciones</span></span></label>
     <label class="f" for="mFecha">Fecha<input type="date" id="mFecha"></label>
@@ -646,13 +650,13 @@ $("sugSi").onclick=()=>{if(!sug)return;S.movs.forEach(m=>{if(m.tipo==="gasto"&&m
 $("sugNo").onclick=()=>{if(!sug)return;S.fijos[sug.k]=false;persist();render();};
 const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-ui="estado-reembolso" data-estado-r="${x[0]}" style="align-self:flex-start">${x[1]}</span>`;};
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
-let filtroR=null;
+let filtroR=null,filtroDoc=false,seleccion=null,docsMov={};
 function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta))+(m.cuotaN?` · total ${eur(m.total)}`:"");imp="−"+eurM(m.importe,m);}
   else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
   else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
   else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
-  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button><span class="ico">${ico}</span><span class="cat">${cat}</span>${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
+  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}">${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}<span class="ico">${ico}</span><span class="cat">${cat}</span>${(docsMov[m.id]||[]).length?`<span class="chip idle" data-ui="chip-documento" style="align-self:flex-start">${CLIP}${docsMov[m.id].length} ${docsMov[m.id].length===1?"documento":"documentos"}</span>`:""}${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 function aplicarPaleta(){const p=S.settings.paleta||"viva";
   if(p==="viva")document.documentElement.removeAttribute("data-paleta");else document.documentElement.dataset.paleta=p;
@@ -687,7 +691,11 @@ function render(){
   seg($("segReemb"),ESTADOS_R.map(([k,l])=>[k,`${l} ${conR.filter(m=>m.reembolso.estado===k).length}`]),filtroR,v=>{filtroR=filtroR===v?null:v;render();});
   const lista=filtroR?conR.filter(m=>m.reembolso.estado===filtroR).sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id):ord;
   $("sumaFiltro").hidden=!filtroR;if(filtroR){$("filtroN").textContent=`${lista.length} ${lista.length===1?"gasto":"gastos"}`;$("filtroSuma").textContent="Suma "+eur(lista.reduce((a,m)=>a+m.importe,0));}
-  $("movs").innerHTML=lista.length?lista.map(movHTML).join(""):`<div class="card"><div class="empty">${filtroR?"No hay reembolsos en este estado.":"Sin movimientos este mes."}</div></div>`;
+  const listaF=filtroDoc?lista.filter(m=>m.tipo==="gasto"&&(docsMov[m.id]||[]).length):lista;
+  seg($("segDoc"),[["doc","Con documento"]],filtroDoc?"doc":null,()=>{filtroDoc=!filtroDoc;render();});
+  $("accMov").hidden=!!seleccion;$("selBar").hidden=!seleccion;
+  if(seleccion){$("selN").textContent=seleccion.size?`${seleccion.size} ${seleccion.size===1?"seleccionado":"seleccionados"}`:"Marcá los gastos";$("selAdj").disabled=!seleccion.size;}
+  $("movs").innerHTML=listaF.length?listaF.map(movHTML).join(""):`<div class="card"><div class="empty">${filtroDoc?"Ningún gasto de este mes tiene documento.":filtroR?"No hay reembolsos en este estado.":"Sin movimientos este mes."}</div></div>`;
   // Cierre: conciliación, checklist y plan
   const md=mesData(id), est=S.cuentas.map(c=>[c,estadoConc(c,id)]), nOk=est.filter(([,e])=>e.ok).length;
   $("concTitulo").textContent="Conciliación de "+MESES[+id.slice(5)-1];
@@ -732,7 +740,7 @@ function cambio(){guardarNeto();persist();render();}
 // Navegación
 const titles={inicio:"Este mes",movs:"Movimientos",cuentas:"Mis cuentas",mes:"Cierre del mes",ajustes:"Ajustes"};
 let vista="inicio";
-function ir(v){vista=v;document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
+function ir(v){vista=v;if(v!=="movs")seleccion=null;document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
   ["inicio","movs","cuentas","mes","ajustes"].forEach(k=>{const s=$("v-"+k);s.hidden=k!==v;if(!s.hidden)s.style.display="flex";});
   $("title").textContent=titles[v];$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Nuevo movimiento");window.scrollTo(0,0);}
 document.querySelectorAll("nav [data-v], header [data-v]").forEach(b=>b.addEventListener("click",()=>ir(b.dataset.v)));
@@ -767,7 +775,7 @@ function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?
     {const mo=m?monedaDe(m):"EUR";mov.moneda=MONEDAS.includes(mo)?mo:"Otra";$("mOtra").value=MONEDAS.includes(mo)?"":mo;}
     seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
     $("mImporte").value=m?aTexto(m.importe):"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&m.fijo);movUI();}
-  mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
+  docConfirm=null;pintarDocsMov();mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
 $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const v=num("mImporte");if(!(v>0)){toast("Poné un importe mayor que 0");return;}
   if(mov.tipo==="transferencia"&&mov.cuenta===mov.destino){toast("Elegí dos cuentas distintas");return;}
@@ -1104,6 +1112,37 @@ const adjGuardar=a=>adjTx("readwrite",st=>st.put(a));
 const adjBorrar=id=>adjTx("readwrite",st=>st.delete(id));
 const adjTodos=()=>adjTx("readonly",st=>st.getAll()).then(x=>x||[]).catch(()=>[]);
 let adjConfirm=null;
+// Documentos de gastos: registros de adjuntos con `movs` (ids de los gastos que respaldan) y sin cuenta
+const CLIP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>';
+async function cargarDocs(){const as=await adjTodos();docsMov={};
+  as.filter(a=>Array.isArray(a.movs)).forEach(a=>a.movs.forEach(id=>{(docsMov[id]=docsMov[id]||[]).push({id:a.id,nombre:a.nombre,tipo:a.tipo,mes:a.mes});}));
+  render();if(!$("mDocs").hidden)pintarDocsMov();}
+// ¿El documento sólo respalda este gasto? Se mira en la memoria (docsMov): si no hay otro gasto con él, queda huérfano
+const docsHuerfano=(aid,mid)=>!Object.keys(docsMov).some(k=>+k!==mid&&docsMov[k].some(a=>a.id===aid));
+async function quitarDeDocs(mid){const as=(await adjTodos()).filter(a=>Array.isArray(a.movs)&&a.movs.includes(mid));
+  for(const a of as){const resto=a.movs.filter(i=>i!==mid);try{if(resto.length)await adjGuardar({...a,movs:resto});else await adjBorrar(a.id);}catch(err){}}
+  if(as.length){await cargarDocs();avisoAdj();}}
+function abrirArchivo(f){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([f.datos],{type:f.mime}));l.target="_blank";l.rel="noopener";l.click();}
+let docConfirm=null;
+function pintarDocsMov(){const ds=movId!=null?(docsMov[movId]||[]):[];$("mDocs").hidden=!ds.length;
+  $("mDocsLista").innerHTML=ds.map(a=>`<div class="adj" data-adj="${a.id}"><span class="d" data-abrir="${a.id}"><span>${esc(a.nombre)}</span><span class="sub">${mesDe(a.mes)} · ${a.tipo==="pdf"?"PDF":"Foto"}</span></span>${docConfirm===a.id?`<button type="button" class="btn danger" style="padding:6px 12px;font-size:14px" data-doc-del="${a.id}">Borrar</button>`:`<button type="button" class="x" aria-label="Quitar documento" data-doc-x="${a.id}">×</button>`}</div>`).join("");}
+$("mDocsLista").addEventListener("click",async e=>{const x=e.target.closest("[data-doc-x]"),d=e.target.closest("[data-doc-del]"),a=e.target.closest("[data-abrir]");
+  if(x){docConfirm=+x.dataset.docX;pintarDocsMov();return;}
+  if(d){const id=+d.dataset.docDel,f=(await adjTodos()).find(y=>y.id===id);docConfirm=null;
+    if(f){const resto=(f.movs||[]).filter(i=>i!==movId);try{if(resto.length)await adjGuardar({...f,movs:resto});else await adjBorrar(id);}catch(err){}}
+    await cargarDocs();avisoAdj();toast("Documento quitado");return;}
+  if(a){const f=(await adjTodos()).find(y=>y.id===+a.dataset.abrir);if(f)abrirArchivo(f);}});
+// Modo seleccionar de Movimientos
+$("selBtn").onclick=()=>{seleccion=new Set();render();};
+$("selCancel").onclick=()=>{seleccion=null;render();};
+$("selAdj").onclick=()=>{if(seleccion&&seleccion.size)$("docIn").click();};
+$("docIn").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f||!seleccion||!seleccion.size)return;
+  const tipo=f.type==="application/pdf"||/\.pdf$/i.test(f.name)?"pdf":f.type.startsWith("image/")?"foto":null;
+  if(!tipo){toast("Elegí un PDF o una foto");return;}
+  const ids=[...seleccion];
+  try{await adjGuardar({id:nid(),cuenta:null,mes:mesId(),nombre:f.name,tipo,mime:f.type||"application/octet-stream",datos:await f.arrayBuffer(),movs:ids});}catch(err){toast("No se pudo guardar el archivo");return;}
+  seleccion=null;await cargarDocs();avisoAdj();toast(`Documento adjuntado a ${ids.length} ${ids.length===1?"gasto":"gastos"}`);});
+$("movs").addEventListener("click",e=>{const s=e.target.closest("[data-sel]");if(!s)return;const id=+s.dataset.sel;if(seleccion.has(id))seleccion.delete(id);else seleccion.add(id);render();});
 async function pintarAdj(){const cid=editId;if(cid==null)return;
   const as=(await adjTodos()).filter(a=>a.cuenta===cid).sort((a,b)=>b.mes.localeCompare(a.mes)||b.id-a.id);
   $("cAdjLista").innerHTML=as.length?as.map(a=>`<div class="adj" data-adj="${a.id}"><span class="d" data-abrir="${a.id}"><span>${esc(a.nombre)}</span><span class="sub">${mesDe(a.mes)} · ${a.tipo==="pdf"?"PDF":"Foto"}</span></span>${adjConfirm===a.id?`<button type="button" class="btn danger" style="padding:6px 12px;font-size:14px" data-ui="borrar-adjunto" data-adj-del="${a.id}">Borrar</button>`:`<button type="button" class="x" aria-label="Borrar adjunto" data-adj-x="${a.id}">×</button>`}</div>`).join("")
@@ -1144,10 +1183,12 @@ $("crearPrimera").onclick=()=>{ir("cuentas");abrirCuenta(null);};
 
 document.addEventListener("click",e=>{
   const d=e.target.closest("[data-del]");
-  if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent="Borrar";d.style.color="var(--bad)";d.style.fontSize="14px";setTimeout(()=>{if(d.isConnected){d.dataset.confirm="";d.textContent="×";d.style.color="";d.style.fontSize="";}},2500);return;}
+  if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent=(docsMov[d.dataset.del]||[]).some(a=>docsHuerfano(a.id,+d.dataset.del))?"Borrar y su documento":"Borrar";d.style.color="var(--bad)";d.style.fontSize="14px";setTimeout(()=>{if(d.isConnected){d.dataset.confirm="";d.textContent="×";d.style.color="";d.style.fontSize="";}},2500);return;}
     const m=S.movs.find(x=>String(x.id)===d.dataset.del);desconciliar(m);S.movs=S.movs.filter(x=>x!==m);
-    S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});cambio();toast("Movimiento borrado");return;}
-  const mv=e.target.closest("[data-mov]");if(mv&&mv.dataset.tipo!=="ajuste"){abrirMov(mv.dataset.mov);return;}
+    S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});quitarDeDocs(m.id);cambio();toast("Movimiento borrado");return;}
+  const mv=e.target.closest("[data-mov]");
+  if(mv&&seleccion){if(mv.dataset.tipo==="gasto"&&!e.target.closest("[data-sel]")){const id=+mv.dataset.mov;if(seleccion.has(id))seleccion.delete(id);else seleccion.add(id);render();}return;}
+  if(mv&&mv.dataset.tipo!=="ajuste"){abrirMov(mv.dataset.mov);return;}
   const c=e.target.closest("[data-cta]");if(c){abrirCuenta(c.dataset.cta);return;}
   const k=e.target.closest("[data-conc]");if(k){abrirConc(k.dataset.conc);return;}
   const t=e.target.closest("[data-tarea]");if(t)abrirTarea(t.dataset.tarea);});
@@ -1171,7 +1212,7 @@ $("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),P
 $("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada");
 $("restaurar").onclick=()=>{try{const d=JSON.parse($("backupIn").value);if(!d||!d.settings||!(Array.isArray(d.gastos)||Array.isArray(d.movs)))throw 0;S=norm(d);persist();render();$("backupIn").value="";toast("Copia restaurada");}catch(e){toast("Esa copia no es válida");}};
 
-persist();render();
+persist();render();cargarDocs();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 </body>
