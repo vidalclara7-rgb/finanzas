@@ -309,3 +309,30 @@ t.test("la moneda viaja en la copia", async () => {
   await A.ir(otra, "movs");
   assert.match(await A.texto(otra, '[data-mov="1"]'), /−20 USD/);
 });
+
+// Escenario: datos de la versión anterior (gastos de tarjeta sin cuotas)
+t.test("gastos de tarjeta guardados antes de las cuotas", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+  const { page } = await abrir({ datos: A.v2({ cuentas: [tarj], movs: [A.gasto(1, "2026-10-05", 100, 2)] }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "100 €");
+  assert.equal(await page.locator('[data-ui="chip-cuota"]').count(), 0);
+  await A.ir(page, "cuentas");
+  assert.equal(await A.texto(page, '[data-cta="2"] .v .num'), "-100 €");
+});
+
+// Escenario: la copia conserva las cuotas
+t.test("la copia conserva las cuotas", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+  const datos = A.v2({ cuentas: [tarj], movs: [{ ...A.gasto(1, "2026-10-15", 700, 2, "Compras"), cuotas: { n: 3, cuota: 240 } }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  await A.ir(otra, "movs");
+  assert.match(await A.texto(otra, '[data-mov="1"]'), /Cuota 1 de 3/);
+  assert.equal(await A.texto(otra, "#totGas"), "240 €");
+});

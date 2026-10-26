@@ -154,3 +154,20 @@ t.test("fin de una financiación", async () => {
   const { page } = await enCuentas({ datos: EJEMPLO() });
   assert.match(await A.texto(page, '[data-cta="14"]'), /50 €\/mes · faltan 12 \(hasta septiembre 2027\)/);
 });
+
+// Escenario: cuotas del mes
+t.test("cuotas del mes", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+  const movs = [{ ...A.gasto(1, "2026-10-15", 700, 2, "Compras"), cuotas: { n: 3, cuota: 240 } }, { ...A.gasto(2, "2026-10-02", 300, 2, "Ocio"), cuotas: { n: 2, cuota: 150 } }];
+  const { page } = await enCuentas({ datos: A.v2({ cuentas: [tarj], movs }) });
+  await page.click('[data-cta="2"]');
+  assert.equal(await A.texto(page, "#cCuotasMes"), "Cuotas de este mes: 390 € · 2 compras en cuotas");
+});
+
+// Escenario: sin compras en cuotas
+t.test("sin compras en cuotas", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 100, { tipo: "tarjeta" });
+  const { page } = await enCuentas({ datos: A.v2({ cuentas: [tarj] }) });
+  await page.click('[data-cta="2"]');
+  assert.equal(await page.isVisible("#cCuotasMes"), false);
+});

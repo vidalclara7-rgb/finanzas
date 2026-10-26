@@ -435,3 +435,116 @@ t.test("movimientos anteriores siguen en euros", async () => {
   assert.match(await A.texto(page, '[data-mov="1"]'), /−20 €/);
   assert.equal(await A.texto(page, "#totGas"), "20 €");
 });
+
+// --- compras en cuotas
+const TARJ0 = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta" });
+const COMPRA = { ...A.gasto(1, "2026-10-15", 700, 2, "Compras", "notebook"), cuotas: { n: 3, cuota: 240 } };
+const enCuotas = (page, n, q) => page.fill("#mCuotasN", String(n)).then(() => page.fill("#mCuotaV", String(q)));
+
+// Escenario: compra fraccionada
+t.test("compra fraccionada", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCuentaM", "Tarjeta Y");
+  await A.elegir(page, "segCat", "Compras");
+  await page.fill("#mImporte", "700");
+  await page.check("#mCuotasOn");
+  await enCuotas(page, 3, 240);
+  await page.click("#mGuardar");
+  await A.aviso(page, "Gasto guardado");
+  await enCuentas(page);
+  assert.equal(await saldo(page, 2), "-700 €");
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "240 €");
+  assert.match(await A.texto(page, '[data-mov="' + (await A.guardados(page)).movs[0].id + '"]'), /Cuota 1 de 3/);
+  await A.ir(page, "inicio");
+  assert.match(await A.texto(page, "#cats"), /Compras\s*240 €/);
+});
+
+// Escenario: cuotas en los meses siguientes
+t.test("cuotas en los meses siguientes", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0], movs: [COMPRA] }), hoy: "2026-11-15T12:00:00" });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, "#totGas"), "240 €");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /Cuota 2 de 3/);
+});
+
+// Escenario: después de la última cuota
+t.test("después de la última cuota", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0], movs: [COMPRA] }), hoy: "2027-01-15T12:00:00" });
+  await A.ir(page, "movs");
+  assert.equal(await page.locator('[data-mov="1"]').count(), 0);
+  assert.equal(await A.texto(page, "#totGas"), "0 €");
+});
+
+// Escenario: cuota mayor que el total
+t.test("cuota mayor que el total", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCuentaM", "Tarjeta Y");
+  await page.fill("#mImporte", "700");
+  await page.check("#mCuotasOn");
+  await enCuotas(page, 3, 800);
+  await page.click("#mGuardar");
+  await A.aviso(page, "La cuota no puede ser mayor que el total");
+  assert.equal((await A.guardados(page)).movs.length, 0);
+});
+
+// Escenario: menos de dos cuotas
+t.test("menos de dos cuotas", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCuentaM", "Tarjeta Y");
+  await page.fill("#mImporte", "700");
+  await page.check("#mCuotasOn");
+  await enCuotas(page, 1, 240);
+  await page.click("#mGuardar");
+  await A.aviso(page, "Poné 2 cuotas o más");
+  assert.equal((await A.guardados(page)).movs.length, 0);
+});
+
+// Escenario: cuota vacía
+t.test("cuota vacía", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCuentaM", "Tarjeta Y");
+  await page.fill("#mImporte", "700");
+  await page.check("#mCuotasOn");
+  await page.fill("#mCuotasN", "3");
+  await page.click("#mGuardar");
+  await A.aviso(page, "Poné el valor de cada cuota");
+  assert.equal((await A.guardados(page)).movs.length, 0);
+});
+
+// Escenario: cuotas y tope de la tarjeta
+t.test("cuotas y tope de la tarjeta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...TARJ0, tope: 500 }], movs: [COMPRA] }) });
+  assert.equal(await A.texto(page, '[data-disp="2"] .big'), "260 €");
+});
+
+// Escenario: la opción sólo existe en tarjetas
+t.test("la opción sólo existe en tarjetas", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ0] }) });
+  await page.click("#fab");
+  await A.hojaLista(page);
+  await A.elegir(page, "segCuentaM", "Banco A");
+  assert.equal(await page.isVisible("#mCuotas"), false);
+  await A.elegir(page, "segCuentaM", "Tarjeta Y");
+  assert.equal(await page.isVisible("#mCuotas"), true);
+});
+
+// Escenario: borrar una compra en cuotas
+t.test("borrar una compra en cuotas", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0], movs: [COMPRA] }) });
+  await A.ir(page, "movs");
+  await page.click('[data-mov="1"] [data-del]');
+  await page.click('[data-mov="1"] [data-del]');
+  await A.aviso(page, "Movimiento borrado");
+  assert.equal((await A.guardados(page)).movs.length, 0);
+  await enCuentas(page);
+  assert.match(await saldo(page, 2), /^-?0 €$/);
+});

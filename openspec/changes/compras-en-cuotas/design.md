@@ -16,6 +16,9 @@
   resultado del mes. «Disponible» de la tarjeta sigue calculándose con la deuda total.
 - No se puede indicar un número de cuotas menor que 2 ni una cuota mayor que el total.
 - Borrar la compra borra todas sus cuotas.
+- Una cuota vacía o en cero no se guarda: «Poné el valor de cada cuota» (escrito al construir, a confirmar en el Gate 3).
+- La compra aparece en la lista de Movimientos de cada mes en que tiene cuota, con el importe de esa cuota.
+- La sugerencia de gasto fijo sigue mirando el importe total de la compra, no las cuotas: una compra en cuotas es una sola compra.
 - Riesgo asumido: quien importe un extracto con «cuota fraccionar compra» y además anote la compra en
   cuotas contará la cuota dos veces. El aviso va en la hoja de importar, y el cambio posterior que
   automatice esto lo resolvería.
@@ -23,9 +26,9 @@
 ## Cómo se implementa en index.html
 
 - `movs[i].cuotas?: {n, cuota}` sólo en gastos de cuentas tipo `tarjeta`. Ausente = como hoy.
-- `valorCuenta()` no cambia: usa `importe` entero. Una función única `importeEnMes(m, mes)` devuelve
-  `cuota` si el mes cae en [mes de `fecha`, +n-1] y `importe` en los demás gastos sin cuotas;
-  todos los cálculos por mes (totales, `catsMes`, topes, resultado, `fijosVar`, `torta`, `barras`,
-  `mesesIG`, resumen para copiar) pasan por ella.
+- `valorCuenta()` no cambia: usa `importe` entero. `movsMes(mes)` (y `gastosCat`) devuelven, para una compra
+  en cuotas, una copia con el `importe` de la cuota si el mes cae en [mes de `fecha`, +n-1] (`cuotaEnMes()`,
+  con `cuotaN` y `total`); así todos los cálculos por mes (totales, categorías, topes, resultado, torta,
+  barras, ingresos y gastos, resumen) usan la cuota sin tocarse. `cuotasOk()` descarta las `cuotas` no válidas.
 - Ni `norm()` ni `localStorage` cambian: lo guardado sigue valiendo y las copias viejas no tienen
   `cuotas`. Sube la versión de `CACHE` en `sw.js`.

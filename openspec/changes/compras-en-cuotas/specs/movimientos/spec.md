@@ -35,6 +35,11 @@ cuota. La tarjeta de la compra en Movimientos dice «Cuota 1 de 6», con la cuot
 - **Cuando** la persona pone 1 cuota y guarda
 - **Entonces** la app avisa «Poné 2 cuotas o más» y no guarda nada
 
+### Escenario: cuota vacía
+- **Dado** el formulario de gasto en tarjeta con «Pagar en cuotas» activado y 3 cuotas
+- **Cuando** la persona guarda sin el valor de la cuota
+- **Entonces** la app avisa «Poné el valor de cada cuota» y no guarda nada
+
 ### Escenario: cuotas y tope de la tarjeta
 - **Dado** «Tarjeta Y» con tope mensual de 500 € y un gasto de 700 € en 3 cuotas de 240 €
 - **Cuando** la persona abre Inicio en el mes de la compra
