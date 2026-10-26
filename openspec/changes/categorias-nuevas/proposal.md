@@ -1,6 +1,6 @@
 ---
 cambio: categorias-nuevas
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Más categorías de gasto y de ingreso
