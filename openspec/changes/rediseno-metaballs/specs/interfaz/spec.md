@@ -18,12 +18,13 @@ Las tarjetas llevan color según su contenido: el disponible de cada cuenta y lo
 semana» rosa claro, «Ingresos y gastos» salvia, la conciliación verde oliva y el checklist rosa. «Gasto del mes»
 tiene un fondo que deja leer la torta. Cada categoría tiene su color, el mismo en la torta, en la lista y en su
 tarjeta de movimiento; sobre los colores oscuros el texto es blanco y sobre los claros, oscuro. Los importes
-principales son grandes, con los decimales en gris.
+principales son grandes, con los decimales en gris. En la apariencia oscura las tarjetas de color se tiñen del
+color sobre el fondo oscuro, con el texto claro, en vez de llevar el color pleno.
 
 ### Escenario: tarjetas de color sobre el fondo oscuro
 - **Dado** la apariencia Oscura y una tarjeta de crédito con tope
 - **Cuando** la persona abre la app
-- **Entonces** el fondo de la pantalla es oscuro, «Gasto del mes» deja leer su torta y la tarjeta del disponible de la tarjeta es cherry
+- **Entonces** el fondo de la pantalla es oscuro, «Gasto del mes» deja leer su torta y la tarjeta del disponible de la tarjeta está teñida de cherry
 - **Y** el resultado del mes se ve grande con los decimales en gris
 
 ### Escenario: mismo color por categoría

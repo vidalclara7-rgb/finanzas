@@ -173,9 +173,9 @@ t.test("copia anterior con reembolsables", async () => {
 // Escenario: datos sin paleta
 t.test("datos sin paleta", async () => {
   const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
-  const { page } = await abrir({ datos });
+  const { page } = await abrir({ datos, esquema: "dark" });
   assert.equal(await page.evaluate(() => document.documentElement.hasAttribute("data-paleta")), false);
-  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(236, 236, 234)");
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(26, 11, 18)");
   const d = await A.guardados(page);
   assert.deepEqual(d.cuentas, datos.cuentas);
   assert.deepEqual(d.movs, datos.movs);
@@ -185,12 +185,12 @@ t.test("datos sin paleta", async () => {
 
 // Escenario: copia con paleta
 t.test("copia con paleta", async () => {
-  const copia = A.v2({ settings: { paleta: "pastel" }, cuentas: [BANCO] });
+  const copia = A.v2({ settings: { paleta: "pastel", apariencia: "oscura" }, cuentas: [BANCO] });
   const { page } = await abrir();
   await restaurar(page, JSON.stringify(copia));
   await A.aviso(page, "Copia restaurada");
   assert.equal(await page.evaluate(() => document.documentElement.dataset.paleta), "pastel");
-  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(246, 240, 228)");
+  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), "rgb(34, 26, 20)");
   assert.equal((await A.guardados(page)).settings.paleta, "pastel");
 });
 
@@ -733,3 +733,47 @@ for (const esquema of ["light", "dark"]) {
     assert.deepEqual(errores, []);
   });
 }
+
+// --- apariencia
+const ap = (page) => page.evaluate(() => document.documentElement.dataset.apariencia);
+
+// Escenario: datos de la versión anterior
+t.test("apariencia: datos de la versión anterior se ven claros", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Ocio", "cine")] });
+  const { page } = await abrir({ datos, esquema: "dark", sinApariencia: true });
+  assert.equal(await ap(page), "clara");
+  assert.deepEqual((await A.guardados(page)).movs, datos.movs);
+});
+
+// Escenario: copia de seguridad vieja
+t.test("apariencia: copia de seguridad vieja se restaura clara", async () => {
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BANCO] })));
+  await A.aviso(page, "Copia restaurada");
+  assert.equal(await ap(page), "clara");
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: la apariencia viaja en la copia
+t.test("la apariencia viaja en la copia", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], settings: { apariencia: "oscura" } }) });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarBackup");
+  const copia = await A.portapapeles(page);
+  const { page: otra } = await abrir();
+  assert.equal(await ap(otra), "clara");
+  await restaurar(otra, copia);
+  await A.aviso(otra, "Copia restaurada");
+  assert.equal(await ap(otra), "oscura");
+});
+
+// Escenario: apariencia inválida
+t.test("apariencia inválida", async () => {
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(A.v2({ cuentas: [BANCO], settings: { apariencia: "rosa" } })));
+  await A.aviso(page, "Copia restaurada");
+  assert.equal(await ap(page), "clara");
+  await A.ir(page, "ajustes");
+  assert.equal(await page.$eval('#segApariencia button[aria-pressed="true"]', (b) => b.dataset.v), "clara");
+  assert.deepEqual(errores, []);
+});

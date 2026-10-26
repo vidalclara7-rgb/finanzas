@@ -2,8 +2,11 @@
 
 ## Decisiones de la persona (2026-10-26)
 
-- **Oscura por defecto, con opción de claro** (descartadas: siempre oscura con paletas como colores del efecto, y
+- **Oscura con opción de claro** (descartadas: siempre oscura con paletas como colores del efecto, y
   seguir al teléfono como hoy).
+- **Revisión en el Gate 3 (2026-10-26):** el negro casi puro chocaba con las paletas elegidas. Cambia: la apariencia
+  por defecto pasa a **Clara**, y el fondo de la oscura es un tono muy oscuro del color de cada paleta (burdeos en Viva,
+  verde en Editorial, violeta en Lima, marrón cálido en Pastel). En oscura, las tarjetas de color pasan a ser una mezcla del color con el fondo (texto claro) en vez de color pleno. Las manchas y el diseño no cambian.
 - **Fondo detrás de toda la app** (descartadas: sólo en tarjetas destacadas, y sólo en Inicio).
 - **Con CSS, degradados difuminados** (descartadas: shader de gráficos 3D propio, y copiar la librería de Paper en
   `vendor/`, que es una dependencia nueva cuya licencia y peso no se pudieron verificar).
@@ -28,7 +31,7 @@
 
 ## Cómo se implementa en index.html
 
-- `settings.apariencia?: "oscura"|"clara"|"auto"`; ausente o inválido = `"oscura"`. `norm()` no cambia: el valor se
+- `settings.apariencia?: "oscura"|"clara"|"auto"`; ausente o inválido = `"clara"`. `norm()` no cambia: el valor se
   interpreta al usarlo, así que lo guardado y las copias viejas siguen valiendo. Sin tocar `v` ni la clave de
   `localStorage`.
 - `<html data-apariencia="oscura|clara">` (resuelto; con `auto` sigue a `matchMedia("(prefers-color-scheme: dark)")`

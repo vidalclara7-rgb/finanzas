@@ -13,8 +13,8 @@ muy claro, y el modo oscuro sólo sigue al teléfono.
 
 ## Qué cambia
 
-- **Apariencia:** nueva opción en Ajustes, «Apariencia»: **Oscura** (la de siempre, desde ahora), **Clara** o
-  **Automática** (sigue al teléfono). Es independiente de la paleta de colores.
+- **Apariencia:** nueva opción en Ajustes, «Apariencia»: **Clara** (por defecto), **Oscura** o
+  **Automática** (sigue al teléfono). La oscura no es negra: su fondo es un tono muy oscuro del color de la paleta. Es independiente de la paleta de colores.
 - **Fondo de manchas** detrás de toda la app, con los colores de la paleta elegida. Las tarjetas quedan encima, con
   contraste suficiente para leer.
 - **Se mueve despacio**, y se detiene con «Reducir movimiento» del teléfono y cuando la app no está visible.
@@ -24,8 +24,8 @@ muy claro, y el modo oscuro sólo sigue al teléfono.
 
 ## A quién afecta
 
-A todas las personas, en todas las pantallas: quien no haya elegido apariencia pasa a verla oscura, aunque su
-teléfono esté en modo claro; puede cambiarla en Ajustes. Lo guardado sigue valiendo.
+A todas las personas, en todas las pantallas: quien no haya elegido apariencia la ve clara, aunque su
+teléfono esté en modo oscuro; puede cambiarla en Ajustes. Lo guardado sigue valiendo.
 
 ## Pantallas
 

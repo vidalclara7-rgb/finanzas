@@ -5,10 +5,12 @@ const A = require("./ayuda.cjs");
 
 const abrir = A.preparar(t);
 const BANCO = A.cta(1, "Banco A", 1000);
-const luminancia = (rgb) => { const [r, g, b] = rgb.match(/\d+/g).map(Number); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
+// Los colores calculados llegan como rgb(…), rgba(…) o color(srgb …) (las mezclas): se pasan a tres canales de 0 a 255
+const canales = (c) => { const m = c.match(/color\(srgb ([\d.]+) ([\d.]+) ([\d.]+)/); return m ? m.slice(1, 4).map((x) => Math.round(parseFloat(x) * 255)) : c.match(/[\d.]+/g).slice(0, 3).map(Number); };
+const luminancia = (rgb) => { const [r, g, b] = canales(rgb); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
 // Relación de contraste WCAG entre dos colores rgb()
 const contraste = (a, b) => {
-  const lum = (rgb) => { const v = rgb.match(/\d+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const lum = (rgb) => { const v = canales(rgb).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
   const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
   return (x + 0.05) / (y + 0.05);
 };
@@ -70,21 +72,24 @@ t.test("títulos con la letra del texto", async () => {
   assert.equal(await letra("#sheet h2"), cuerpo);
 });
 
-// Escenario: fondo gris claro con tarjetas de color
-t.test("fondo gris claro con tarjetas de color", async () => {
-  const { page } = await abrir({ datos: EJEMPLO() });
+// Escenario: tarjetas de color sobre el fondo oscuro
+t.test("tarjetas de color sobre el fondo oscuro", async () => {
+  const { page } = await abrir({ datos: EJEMPLO(), esquema: "dark" });
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.apariencia), "oscura");
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  assert.notEqual(fondo, "rgb(255, 255, 255)");
-  assert.ok(luminancia(fondo) > 0.85, `fondo ${fondo}`);
+  assert.ok(luminancia(fondo) < 0.1, `fondo ${fondo}`);
   const tarjeta = await page.$eval('[data-ui="gasto-categorias"]', (el) => getComputedStyle(el).backgroundColor);
-  assert.equal(tarjeta, "rgb(255, 255, 255)");
+  assert.ok(luminancia(tarjeta) < 0.2, `«Gasto del mes» ${tarjeta}`);
+  assert.equal(await page.locator('#torta circle').count() > 0, true);
   const disponible = await page.$eval('[data-disp="2"]', (el) => getComputedStyle(el).backgroundColor);
   const cherry = await page.evaluate(() => { const d = document.createElement("div"); d.style.background = "var(--cherry)"; document.body.append(d); const c = getComputedStyle(d).backgroundColor; d.remove(); return c; });
-  assert.equal(disponible, cherry);
+  const [dr, dg, db] = canales(disponible), [cr, cg, cb] = canales(cherry);
+  assert.notDeepEqual([dr, dg, db], [cr, cg, cb], "en oscura la tarjeta se tiñe, no lleva el color pleno");
+  assert.ok(dr > dg * 2 && dr > db * 1.5, `teñida de cherry: ${disponible}`);
   assert.equal(await A.texto(page, "#resultado .dec"), ",7 €");
   const [entero] = await colores(page, "#resultado");
   const [dec] = await colores(page, "#resultado .dec");
-  assert.ok(luminancia(dec) > luminancia(entero) + 0.2, `decimales ${dec} contra ${entero}`);
+  assert.ok(Math.abs(luminancia(dec) - luminancia(entero)) > 0.05, `decimales ${dec} contra ${entero}`);
 });
 
 // Escenario: texto legible sobre colores oscuros
@@ -109,7 +114,8 @@ t.test("mismo color por categoría", async () => {
 
 // Escenario: teléfono en modo oscuro
 t.test("teléfono en modo oscuro", async () => {
-  const { page } = await abrir({ datos: EJEMPLO(), esquema: "dark" });
+  const datos = EJEMPLO(); datos.settings.apariencia = "auto";
+  const { page } = await abrir({ datos, esquema: "dark" });
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   assert.ok(luminancia(fondo) < 0.1, `fondo ${fondo}`);
   for (const sel of ["#resultado", '[data-disp="2"] .big', "#netoIni", "#torta .centro b"]) {
@@ -155,10 +161,12 @@ async function elegirPaleta(page, p) {
 
 // Escenario: cambiar a pastel crema
 t.test("cambiar a pastel crema", async () => {
-  const { page } = await abrir({ datos: EJEMPLO() });
-  assert.equal(await fondoBody(page), "rgb(236, 236, 234)");
+  const { page } = await abrir({ datos: EJEMPLO(), esquema: "dark" });
+  const mancha = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--mancha1").trim().toLowerCase());
+  assert.equal(await mancha(), "#f05a2c");
   await elegirPaleta(page, "pastel");
-  assert.equal(await fondoBody(page), "rgb(246, 240, 228)");
+  assert.equal(await mancha(), "#b9c47f");
+  assert.equal(await fondoBody(page), "rgb(34, 26, 20)");
   assert.equal(await marcada(page), "pastel");
   assert.equal((await A.guardados(page)).settings.paleta, "pastel");
 });
@@ -167,10 +175,10 @@ t.test("cambiar a pastel crema", async () => {
 t.test("la paleta se recuerda", async () => {
   const datos = EJEMPLO();
   datos.settings.paleta = "editorial";
-  const { page } = await abrir({ datos });
+  const { page } = await abrir({ datos, esquema: "dark" });
   await page.reload();
   assert.equal(await page.evaluate(() => document.documentElement.dataset.paleta), "editorial");
-  assert.equal(await fondoBody(page), "rgb(255, 255, 255)");
+  assert.equal(await fondoBody(page), "rgb(13, 26, 20)");
   await A.ir(page, "ajustes");
   assert.equal(await marcada(page), "editorial");
 });
@@ -193,7 +201,7 @@ t.test("contraste en las cuatro paletas", async () => {
     { ...A.gasto(12, "2026-10-01", 600, 1, "Casa/Splitwise", "alquiler"), fijo: true },
     A.transf(11, "2026-10-08", 100, 1, 3));
   for (const esquema of ["light", "dark"]) {
-    const { page } = await abrir({ datos, esquema });
+    const { page } = await abrir({ datos: { ...datos, settings: { ...datos.settings, apariencia: esquema === "dark" ? "oscura" : "clara" } }, esquema });
     for (const p of PALETAS) {
       await elegirPaleta(page, p);
       await A.ir(page, "inicio");

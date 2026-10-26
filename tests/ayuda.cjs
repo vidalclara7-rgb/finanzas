@@ -34,7 +34,10 @@ async function iniciar() {
 
 // Abre la app con `datos` ya guardados (sólo en la primera carga del contexto).
 // `hoy` fija la fecha para que los meses sean previsibles. `sw: true` deja registrar el service worker.
-async function pagina(ent, { datos, esquema = "light", hoy = HOY, sw = false } = {}) {
+async function pagina(ent, { datos, esquema: esquemaPedido, hoy = HOY, sw = false, sinApariencia = false } = {}) {
+  const esquema = esquemaPedido || "light";
+  // Si el test pide un esquema (claro u oscuro) y los datos no traen apariencia, la app se ve en esa apariencia
+  if (!sinApariencia && datos && esquemaPedido && datos.settings && datos.settings.apariencia === undefined) datos = { ...datos, settings: { ...datos.settings, apariencia: esquemaPedido === "dark" ? "oscura" : "clara" } };
   const ctx = await ent.browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: esquema, serviceWorkers: sw ? "allow" : "block" });
   await ctx.grantPermissions(["clipboard-read", "clipboard-write"], { origin: ent.url });
   // Registra cada aviso al aparecer: duran 1,8 s y con la máquina cargada se pueden perder

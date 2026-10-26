@@ -3,19 +3,19 @@
 ## Requisito: elegir la apariencia
 
 En Ajustes, «Apariencia» ofrece Oscura, Clara y Automática (sigue al teléfono). Sin elección, la apariencia es
-Oscura, aunque el teléfono esté en modo claro. Al elegir otra, toda la app cambia al instante y la elección se
+Clara, aunque el teléfono esté en modo oscuro. Al elegir otra, toda la app cambia al instante y la elección se
 recuerda al volver a abrir. Es independiente de la paleta de colores.
 
-### Escenario: oscura por defecto
-- **Dado** una app recién abierta, sin datos, en un teléfono en modo claro
+### Escenario: clara por defecto
+- **Dado** una app recién abierta, sin datos, en un teléfono en modo oscuro
 - **Cuando** la persona abre la app y luego Ajustes
-- **Entonces** la app se ve oscura
-- **Y** «Apariencia» tiene marcada «Oscura»
+- **Entonces** la app se ve clara
+- **Y** «Apariencia» tiene marcada «Clara»
 
-### Escenario: elegir clara
-- **Dado** la app oscura
-- **Cuando** la persona elige «Clara» en Ajustes
-- **Entonces** el fondo de la pantalla pasa a claro y la opción queda marcada
+### Escenario: elegir oscura
+- **Dado** la app clara
+- **Cuando** la persona elige «Oscura» en Ajustes
+- **Entonces** el fondo de la pantalla pasa a oscuro y la opción queda marcada
 
 ### Escenario: automática sigue al teléfono
 - **Dado** «Automática» elegida y el teléfono en modo claro
@@ -24,9 +24,9 @@ recuerda al volver a abrir. Es independiente de la paleta de colores.
 - **Y** al pasar el teléfono a modo oscuro, la app pasa a oscura
 
 ### Escenario: la apariencia se recuerda
-- **Dado** «Clara» elegida
+- **Dado** «Oscura» elegida
 - **Cuando** la persona vuelve a abrir la app
-- **Entonces** la app se ve clara
+- **Entonces** la app se ve oscura
 
 ### Escenario: la paleta no cambia la apariencia
 - **Dado** la app en apariencia Clara
@@ -36,7 +36,7 @@ recuerda al volver a abrir. Es independiente de la paleta de colores.
 ## Requisito: fondo de manchas
 
 Detrás de todas las pantallas hay un fondo de manchas de color que se funden con un degradado suave, con los
-colores de la paleta elegida. En la apariencia oscura se ve sobre un fondo oscuro; en la clara, más suave. Las
+colores de la paleta elegida. En la apariencia oscura se ve sobre un fondo oscuro teñido del color de la paleta (no negro); en la clara, más suave. Las
 tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1.
 
 ### Escenario: el fondo está en todas las pantallas
