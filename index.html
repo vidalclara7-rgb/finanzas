@@ -16,7 +16,7 @@
 :root{
   --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
   --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
-  --ingreso:#D3DDA0; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --ingreso:#4E6B2A; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
   --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
@@ -26,43 +26,25 @@
   --bg:#F5E9CE; --surface:#FFFBF0; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
   --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
   --hero:#450E15; --nav:#FFFBF0; --nav-ink:#9A8480; --nav-on:#450E15; --neutro:#FFFBF0;
-  /* Fondo de manchas: sus colores, su opacidad y un velo para que el texto se lea; estrellas */
-  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5C97A; --mancha-op:.34; --velo:rgba(245,233,206,.45); --estrellas:.55; --e1:#432E6F; --e2:#BC2D29;
-  /* Degradado de las tarjetas destacadas y acento del logo */
-  --grad1:#FFA102; --grad2:#DD5533; --on-grad:#450E15; --on-grad-muted:rgba(69,14,21,.72); --acento:#DD5533;
+  /* Colores de las tarjetas de color sólido (k1 a k5) y del texto que se lee sobre cada uno (k1t a k5t) */
+  --k1:#FFA102; --k1t:#450E15; --k2:#432E6F; --k2t:#F5E9CE; --k3:#BC2D29; --k3t:#F5E9CE; --k4:#450E15; --k4t:#F5E9CE; --k5:#FFFBF0; --k5t:#450E15;
+  --acento:#DD5533;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
   --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
-  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#3E4A14;
+  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#2E7D4B;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
   --bg:#113C42; --surface:#17484F; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
   --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
   --hero:#17484F; --nav:#17484F; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#17484F;
-  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#1F8F6E; --mancha-op:.4; --velo:rgba(17,60,66,.3); --estrellas:.9; --e1:#EDEBE2; --e2:#E9B8DE;
-  --grad1:#136C51; --grad2:#9A5F8A; --on-grad:#EDEBE2; --on-grad-muted:rgba(237,235,226,.78); --acento:#EEDC5B;
+  --k1:#136C51; --k1t:#EDEBE2; --k2:#EEDC5B; --k2t:#0B2A2E; --k3:#E9B8DE; --k3t:#0B2A2E; --k4:#B97DA8; --k4t:#0B2A2E; --k5:#EDEBE2; --k5t:#113C42;
+  --acento:#EEDC5B;
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
-/* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
-.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
-.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
-/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
-.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
-.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
-.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
-@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
-.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
-.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
-.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
-.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
-.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
-.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
-@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
-@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
-html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
@@ -71,19 +53,14 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-html[data-apariencia="oscura"] .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
-html:not([data-apariencia="oscura"]) .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
-.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
-.mov::before{bottom:auto;height:44px}
-.mov{background:var(--surface);color:var(--ink-base)}
-.mov .ico{background:var(--c);color:#FFFFFF}
+.mov{background:var(--c,var(--surface));color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.8);--line:rgba(255,255,255,.24)}
+.mov .ico{background:rgba(255,255,255,.24);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
-/* Tarjetas con degradado difuso del color de la paleta: el texto se lee en todo el degradado (--on-grad) */
-.card.grad{background:radial-gradient(130% 150% at 0% 0%,color-mix(in srgb,var(--grad1) 50%,transparent) 0%,transparent 70%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
-html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)}
-.card.grad .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px;opacity:.9}
+/* Tarjeta de color sólido: el color sale de --c y el texto de --on-c; lo de dentro (barras, botones, líneas) toma el color del texto */
+.card.color{border:0;background:var(--c);color:var(--on-c);--ink:var(--on-c);--muted:color-mix(in srgb,var(--on-c) 72%,transparent);--line:color-mix(in srgb,var(--on-c) 24%,transparent);--accent:var(--on-c);--accent-ink:var(--c);--accent-soft:color-mix(in srgb,var(--on-c) 18%,transparent);}
+.card.color .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px}
 /* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
 .logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
 .logo i{font-style:normal;color:var(--acento)}
@@ -107,7 +84,7 @@ html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)
 .sub{font-size:14px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.ok{background:var(--ingreso);color:#FFFFFF} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
 .con-dot{display:flex;align-items:center;gap:8px;min-width:0}
 /* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
@@ -241,34 +218,33 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </script>
 </head>
 <body>
-<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
 <header><div><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="m" id="mesLabel"></span></div><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></header>
 
 <main>
   <!-- INICIO -->
   <section id="v-inicio" data-pantalla="inicio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="card color" id="avisoIlegible" data-ui="aviso-ilegible" style="--c:var(--naranja)" hidden><span class="lbl">No pude leer tus datos guardados</span><span>No se perdieron: guardé el texto original. Mirá Ajustes para copiarlo o restaurarlo.</span><button class="btn" id="avisoIlegibleBtn">Ver el respaldo</button></div>
-    <div class="card color" id="avisoCopia" data-ui="aviso-copia" style="--c:var(--rosa)" hidden><span class="lbl" id="avisoCopiaT"></span><span>Si borrás el ícono de la app o se limpian los datos del navegador, se pierde todo lo que cargaste.</span><button class="btn" id="avisoCopiaBtn">Hacer la copia</button></div>
-    <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--rosa)" hidden>
+    <div class="card color" id="avisoIlegible" data-ui="aviso-ilegible" style="--c:var(--k3);--on-c:var(--k3t)" hidden><span class="lbl">No pude leer tus datos guardados</span><span>No se perdieron: guardé el texto original. Mirá Ajustes para copiarlo o restaurarlo.</span><button class="btn" id="avisoIlegibleBtn">Ver el respaldo</button></div>
+    <div class="card color" id="avisoCopia" data-ui="aviso-copia" style="--c:var(--k3);--on-c:var(--k3t)" hidden><span class="lbl" id="avisoCopiaT"></span><span>Si borrás el ícono de la app o se limpian los datos del navegador, se pierde todo lo que cargaste.</span><button class="btn" id="avisoCopiaBtn">Hacer la copia</button></div>
+    <div class="card color" id="setupCard" data-ui="primer-paso" style="--c:var(--k3);--on-c:var(--k3t)" hidden>
       <span class="lbl">Primer paso</span>
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
       <button class="btn" id="crearPrimera">Crear cuenta</button>
     </div>
     <div class="card toca" id="fvCard" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
-    <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--rosa-claro)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
+    <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--k5);--on-c:var(--k5t)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
     <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px">
       <span class="sub" id="formaTxt" data-ui="porcentaje-ingresos"></span>
       <span class="sub">Resultado del mes</span>
       <span class="monto" id="resultado"></span>
       <div class="row sub"><span id="ingMes"></span><span id="gasMes"></span></div>
     </div>
-    <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--rosa)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
+    <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--k3);--on-c:var(--k3t)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
-    <button type="button" class="card color grad" id="cuotasCard" data-ui="tarjeta-cuotas" style="--c:var(--fucsia);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
+    <button type="button" class="card color" id="cuotasCard" data-ui="tarjeta-cuotas" style="--c:var(--k4);--on-c:var(--k4t);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><span class="sub" id="catsPista">Tocá una categoría para ver en qué se fue.</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="categorias-que-se-abren"></div></div>
-    <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--rosa-claro)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
-    <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--salvia)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses" id="meses"></div></div>
-    <div class="card color grad" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--cherry)" hidden>
+    <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--k5);--on-c:var(--k5t)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
+    <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--k1);--on-c:var(--k1t)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="meses" id="meses"></div></div>
+    <div class="card color" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--k1);--on-c:var(--k1t)" hidden>
       <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
       <span class="big" id="netoIni">–</span>
       <span class="sub" id="netoIniSub"></span>
@@ -290,14 +266,14 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
   <!-- CIERRE -->
   <section id="v-mes" data-pantalla="mes" hidden style="flex-direction:column;gap:14px">
-    <div class="card color osc" data-ui="conciliacion" style="--c:var(--oliva)"><div class="row"><span class="lbl" id="concTitulo">Conciliación</span><span class="chip idle" id="concChip"></span></div><span class="sub" id="concSub"></span><div class="list" id="concList"></div></div>
-    <div class="card color" data-ui="checklist" style="--c:var(--rosa)"><span class="lbl">Día de cobro</span><div id="checks"></div><button class="btn sec" id="addTarea">Agregar tarea</button></div>
+    <div class="card color osc" data-ui="conciliacion" style="--c:var(--k2);--on-c:var(--k2t)"><div class="row"><span class="lbl" id="concTitulo">Conciliación</span><span class="chip idle" id="concChip"></span></div><span class="sub" id="concSub"></span><div class="list" id="concList"></div></div>
+    <div class="card color" data-ui="checklist" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">Día de cobro</span><div id="checks"></div><button class="btn sec" id="addTarea">Agregar tarea</button></div>
     <div class="card" data-ui="plan-fondo"><span class="lbl">Plan del fondo</span><div class="list" id="plan"></div></div>
   </section>
 
   <!-- CUENTAS -->
   <section id="v-cuentas" data-pantalla="cuentas" hidden style="flex-direction:column;gap:14px">
-    <div class="card color" id="cuentasVacio" style="--c:var(--rosa)">
+    <div class="card color" id="cuentasVacio" style="--c:var(--k5);--on-c:var(--k5t)">
       <span class="lbl">Tu foto financiera</span>
       <span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span>
     </div>
@@ -363,7 +339,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <!-- Hoja de movimiento: gasto, ingreso o transferencia -->
 <form id="sheet" class="sheet" data-pantalla="hoja-movimiento" data-ui="hoja-movimiento" hidden autocomplete="off">
   <div class="row"><h2 id="mTitulo">Nuevo movimiento</h2><button type="button" class="btn sec" id="cerrar" style="padding:8px 12px">Cerrar</button></div>
-  <div class="card color" id="sinCuentas" data-ui="sin-cuentas" style="--c:var(--rosa)" hidden><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button type="button" class="btn" id="mCrearCuenta">Crear cuenta</button></div>
+  <div class="card color" id="sinCuentas" data-ui="sin-cuentas" style="--c:var(--k5);--on-c:var(--k5t)" hidden><span class="lbl">Primero creá una cuenta</span><span>Los movimientos se anotan en tus cuentas: tu banco, tu tarjeta, tu efectivo.</span><button type="button" class="btn" id="mCrearCuenta">Crear cuenta</button></div>
   <div id="mCampos" style="display:flex;flex-direction:column;gap:14px">
     <div class="seg" id="segMov" data-ui="tipo-movimiento"></div>
     <input type="text" inputmode="decimal" autocomplete="off" id="mImporte" class="amount" placeholder="0,00 €" required aria-label="Importe">
@@ -378,7 +354,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
         <span class="sub" id="mCuotasRes"></span></div></div>
     <label class="f" id="mUnaCat" for="mCat">Categoría<select id="mCat" data-ui="eleccion-categoria"></select></label>
     <div id="mReemb" data-pantalla="hoja-gasto-reembolso" data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" id="segReembM" style="margin-top:8px"></div></div>
-    <div class="card color" id="mCubre" data-pantalla="hoja-ingreso-reembolso" data-ui="gastos-que-cubre" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div id="mCubreList"></div><div class="row sub" id="mCubreTot"><span id="mMarcados"></span><span id="mIngTxt"></span></div></div>
+    <div class="card color" id="mCubre" data-pantalla="hoja-ingreso-reembolso" data-ui="gastos-que-cubre" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">¿Qué gastos cubre?</span><div id="mCubreList"></div><div class="row sub" id="mCubreTot"><span id="mMarcados"></span><span id="mIngTxt"></span></div></div>
     <div id="mTransf" data-pantalla="hoja-transferencia" style="display:flex;flex-direction:column;gap:14px">
       <div data-ui="desde"><span class="lbl">Desde</span><div class="seg" id="segDesde" style="margin-top:8px"></div></div>
       <div data-ui="hacia"><span class="lbl">Hacia</span><div class="seg" id="segHacia" style="margin-top:8px"></div></div>
@@ -449,7 +425,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="row"><h2 id="kTitulo">Conciliar</h2><button type="button" class="btn sec" id="kCerrar" style="padding:8px 12px">Cerrar</button></div>
   <div class="row"><span class="sub" id="kCalcLbl"></span><span class="num lbl" id="kCalc"></span></div>
   <label class="f" for="kReal"><span id="kRealLbl">Saldo real según tu banco (€)</span><input type="text" inputmode="decimal" autocomplete="off" id="kReal" class="amount" placeholder="0,00 €"></label>
-  <div class="card color" id="kDif" data-ui="diferencia" style="--c:var(--cat3)" hidden><div class="row"><span class="lbl">Diferencia</span><span class="lbl num" id="kDifVal"></span></div><span class="sub">Puede ser un gasto que no anotaste o una comisión. Si lo registrás como ajuste, la cuenta queda conciliada con el saldo real y el ajuste no cuenta como gasto.</span></div>
+  <div class="card color" id="kDif" data-ui="diferencia" style="--c:var(--k3);--on-c:var(--k3t)" hidden><div class="row"><span class="lbl">Diferencia</span><span class="lbl num" id="kDifVal"></span></div><span class="sub">Puede ser un gasto que no anotaste o una comisión. Si lo registrás como ajuste, la cuenta queda conciliada con el saldo real y el ajuste no cuenta como gasto.</span></div>
   <button class="btn" type="submit" id="kConciliar">Conciliar</button>
   <button class="btn" type="button" id="kAjuste" hidden>Registrar ajuste y conciliar</button>
   <button class="btn sec" type="button" id="kPendiente" hidden>Dejar pendiente</button>
@@ -459,7 +435,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <div id="sheetI" class="sheet" data-pantalla="hoja-importar" data-ui="hoja-importar" hidden>
   <div class="row"><h2>Importar extracto</h2><button type="button" class="btn sec" id="iCerrar" style="padding:8px 12px">Cerrar</button></div>
   <span class="sub" id="iSub"></span>
-  <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--rosa-claro)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
+  <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
   <button type="button" class="btn" id="iSeguir">Seguir</button>
   <div id="iCuentaBox" data-ui="cuenta-extracto"><span class="lbl">Cuenta</span><div class="seg" id="segICuenta" style="margin-top:8px"></div></div>
   <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
@@ -469,7 +445,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <div id="sheetIC" class="sheet" data-pantalla="hoja-importar-conciliar" hidden>
   <div class="row"><h2>Extracto importado</h2><button type="button" class="btn sec" id="icCerrar" style="padding:8px 12px">Cerrar</button></div>
   <span class="sub" id="icSub"></span>
-  <div class="card color osc" id="icCard" data-ui="conciliar-extracto" style="--c:var(--oliva)"><span class="lbl">Conciliar con el extracto</span>
+  <div class="card color osc" id="icCard" data-ui="conciliar-extracto" style="--c:var(--k2);--on-c:var(--k2t)"><span class="lbl">Conciliar con el extracto</span>
     <div class="list"><div class="item"><span id="icExtLbl"></span><span class="num" id="icExt"></span></div><div class="item"><span>Saldo calculado</span><span class="num" id="icCalc"></span></div><div class="item"><span>Diferencia</span><span class="num" id="icDif"></span></div></div>
     <button type="button" class="btn" id="icConciliar">Conciliar con el extracto</button></div>
   <button type="button" class="btn sec" id="icNo">Ahora no</button>
@@ -554,7 +530,9 @@ const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",
   ["financiacion","Financiaciones","Ej: Klarna, Cetelem, préstamo",true],
   ["compartida","Deudas compartidas","Ej: Splitwise, gastos del piso",false]];
 // Color del punto de cada tipo de cuenta (variables --cat de la hoja de estilos)
-const COLOR={liquidez:"--salvia",inversion:"--oliva",tarjeta:"--cherry",financiacion:"--fucsia",compartida:"--rosa"};
+const COLOR={liquidez:"--k1",inversion:"--k2",tarjeta:"--k3",financiacion:"--k4",compartida:"--k5"};
+// Estilo de una tarjeta de color: el color de su tipo y el del texto que se lee sobre él
+const cTipo=t=>`--c:var(${COLOR[t]});--on-c:var(${COLOR[t]}t)`;
 const ESTADOS_R=[["pendiente","Pendiente","warnc"],["aprobado","Aprobado","idle"],["pagado","Pagado","ok"]];
 const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
 
@@ -906,8 +884,6 @@ function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElemen
   const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#113C42":"#F5E9CE");
   seg($("segApariencia"),APARIENCIAS,aparienciaDe(),x=>{S.settings.apariencia=x;persist();render();});}
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
-// El fondo se detiene cuando la app no está visible
-document.addEventListener("visibilitychange",()=>document.documentElement.classList.toggle("en-pausa",document.hidden));
 function render(){
   aplicarApariencia();avisoAdj();pintarCopia();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
@@ -923,7 +899,7 @@ function render(){
   $("cobrarSub").textContent=`${nP} ${nP===1?"pendiente":"pendientes"} · ${nA} ${nA===1?"aprobado":"aprobados"}`;
   // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
   const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
-  $("disponibles").innerHTML=conTope.map(c=>`<div class="card color grad" style="--c:var(${COLOR[c.tipo]})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
+  $("disponibles").innerHTML=conTope.map(c=>`<div class="card color" style="${cTipo(c.tipo)}" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
   conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
     anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
   const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
@@ -971,7 +947,7 @@ function renderCuentas(){
   $("netoIniSub").textContent=`Tenés ${eur(t.activos)} · debés ${eur(t.deudas)}`+(t.cuotas>0?` · cuotas ${eur(t.cuotas)}/mes`:"");
   $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
     const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
-    return `<div class="card color acento" style="--c:var(${COLOR[tipo]})"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
+    return `<div class="card color" style="${cTipo(tipo)}"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row"><span class="lbl">${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="list">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);
       return `<button type="button" class="item tap" data-cta="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>${esc(det)}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("")}</div>${tipo==="inversion"?`<button type="button" class="btn sec" data-ver-rend="1" data-ui="ver-rendimiento">Ver rendimiento</button>`:""}</div>`;}).join("");
 }
 
@@ -1314,7 +1290,7 @@ function opcionesQue(x){const otras=S.cuentas.filter(c=>c.id!==imp.cuenta);
     ...otras.map(c=>["t|"+c.id,(x.s<0?"Transferencia a ":"Transferencia desde ")+c.nombre]),["n|cuenta","Nueva cuenta…"],["n|categoria","Nueva categoría…"]];
   return ops.map(([v,l])=>`<option value="${esc(v)}"${v===x.que?" selected":""}>${esc(l)}</option>`).join("");}
 function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.fecha));
-  return `<span class="card color cubre" style="--c:var(--rosa-claro)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
+  return `<span class="card color cubre" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
 function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
   $("iRevisa").textContent=`Revisá ${d.length} ${d.length===1?"movimiento":"movimientos"}`;
   $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+
@@ -1441,7 +1417,7 @@ $("cImportar").onclick=()=>{impPref=editId;$("pdfIn").click();};
 // Hojas de inversiones: resumen por cuenta, activo y operación
 function abrirInv(){const cs=S.cuentas.filter(c=>c.tipo==="inversion");
   $("invCuerpo").innerHTML=cs.map(c=>{const i=invCuenta(c),ef=r2(i.valor-i.enActivos);
-    return `<div class="card color osc" style="--c:var(--oliva)" data-ui="resumen-inversion"><div class="row"><span class="lbl">${esc(c.nombre)}</span><span class="big">${eur(i.valor)}</span></div>
+    return `<div class="card color" style="--c:var(--k2);--on-c:var(--k2t)" data-ui="resumen-inversion"><div class="row"><span class="lbl">${esc(c.nombre)}</span><span class="big">${eur(i.valor)}</span></div>
       <span class="sub">Efectivo ${eur(ef)}${i.as.length?` · en activos ${eur(i.enActivos)}`:""}</span>${i.as.length?`<span class="sub">Rendimiento ${i.pagado>0?rendTxt(i.rend,i.pagado):"sin datos todavía"}</span>`:""}${ef<-0.005?`<span class="sub" data-ui="aviso-efectivo">El efectivo de esta cuenta quedó en negativo: anotá la transferencia de entrada.</span>`:""}</div>
       ${i.as.length?`<div class="list" data-ui="lista-activos">${i.ps.map(([a,p])=>`<button type="button" class="item tap" data-activo="${a.id}" data-ui="activo"><div class="d"><span>${esc(a.nombre)}</span><span>${fq(p.qty)} ${p.qty===1?"unidad":"unidades"} · precio ${eur(p.precio)}</span></div><div class="v"><span class="num">${eur(p.valor)}</span><span class="chip ${p.pagado>0?(p.rend>=0?"ok":"badc"):"idle"}">${p.pagado>0?rendTxt(p.rend,p.pagado):"Sin datos todavía"}</span></div></button>`).join("")}</div>`:`<div class="card"><div class="empty">Todavía no cargaste activos. Creá uno para registrar compras y ventas.</div></div>`}
       <div class="row" style="gap:8px"><button type="button" class="btn sec" style="flex:1" data-nuevo-activo="${c.id}" data-ui="nuevo-activo">Nuevo activo</button>${i.as.length?`<button type="button" class="btn" style="flex:1" data-nueva-op="${c.id}" data-ui="nueva-operacion">Nueva operación</button>`:""}</div>`;}).join("")

@@ -10,7 +10,7 @@
 :root{
   --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
   --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
-  --ingreso:#D3DDA0; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --ingreso:#4E6B2A; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
   --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
@@ -20,43 +20,25 @@
   --bg:#F5E9CE; --surface:#FFFBF0; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
   --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
   --hero:#450E15; --nav:#FFFBF0; --nav-ink:#9A8480; --nav-on:#450E15; --neutro:#FFFBF0;
-  /* Fondo de manchas: sus colores, su opacidad y un velo para que el texto se lea; estrellas */
-  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5C97A; --mancha-op:.34; --velo:rgba(245,233,206,.45); --estrellas:.55; --e1:#432E6F; --e2:#BC2D29;
-  /* Degradado de las tarjetas destacadas y acento del logo */
-  --grad1:#FFA102; --grad2:#DD5533; --on-grad:#450E15; --on-grad-muted:rgba(69,14,21,.72); --acento:#DD5533;
+  /* Colores de las tarjetas de color sólido (k1 a k5) y del texto que se lee sobre cada uno (k1t a k5t) */
+  --k1:#FFA102; --k1t:#450E15; --k2:#432E6F; --k2t:#F5E9CE; --k3:#BC2D29; --k3t:#F5E9CE; --k4:#450E15; --k4t:#F5E9CE; --k5:#FFFBF0; --k5t:#450E15;
+  --acento:#DD5533;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
   --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
-  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#3E4A14;
+  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#2E7D4B;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
   --bg:#113C42; --surface:#17484F; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
   --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
   --hero:#17484F; --nav:#17484F; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#17484F;
-  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#1F8F6E; --mancha-op:.4; --velo:rgba(17,60,66,.3); --estrellas:.9; --e1:#EDEBE2; --e2:#E9B8DE;
-  --grad1:#136C51; --grad2:#9A5F8A; --on-grad:#EDEBE2; --on-grad-muted:rgba(237,235,226,.78); --acento:#EEDC5B;
+  --k1:#136C51; --k1t:#EDEBE2; --k2:#EEDC5B; --k2t:#0B2A2E; --k3:#E9B8DE; --k3t:#0B2A2E; --k4:#B97DA8; --k4t:#0B2A2E; --k5:#EDEBE2; --k5t:#113C42;
+  --acento:#EEDC5B;
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
-/* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
-.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
-.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
-/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
-.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
-.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
-.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
-@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
-.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
-.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
-.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
-.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
-.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
-.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
-@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
-@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
-html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
@@ -65,19 +47,14 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
 .card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-html[data-apariencia="oscura"] .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
 .card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
-html:not([data-apariencia="oscura"]) .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
-.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
-.mov::before{bottom:auto;height:44px}
-.mov{background:var(--surface);color:var(--ink-base)}
-.mov .ico{background:var(--c);color:#FFFFFF}
+.mov{background:var(--c,var(--surface));color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.8);--line:rgba(255,255,255,.24)}
+.mov .ico{background:rgba(255,255,255,.24);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
-/* Tarjetas con degradado difuso del color de la paleta: el texto se lee en todo el degradado (--on-grad) */
-.card.grad{background:radial-gradient(130% 150% at 0% 0%,color-mix(in srgb,var(--grad1) 50%,transparent) 0%,transparent 70%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
-html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)}
-.card.grad .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px;opacity:.9}
+/* Tarjeta de color sólido: el color sale de --c y el texto de --on-c; lo de dentro (barras, botones, líneas) toma el color del texto */
+.card.color{border:0;background:var(--c);color:var(--on-c);--ink:var(--on-c);--muted:color-mix(in srgb,var(--on-c) 72%,transparent);--line:color-mix(in srgb,var(--on-c) 24%,transparent);--accent:var(--on-c);--accent-ink:var(--c);--accent-soft:color-mix(in srgb,var(--on-c) 18%,transparent);}
+.card.color .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px}
 /* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
 .logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
 .logo i{font-style:normal;color:var(--acento)}
@@ -101,7 +78,7 @@ html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)
 .sub{font-size:14px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.ok{background:var(--ingreso);color:#FFFFFF} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
 .con-dot{display:flex;align-items:center;gap:8px;min-width:0}
 /* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
@@ -284,23 +261,23 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
   Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
 -->
-<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
 <section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
     <span class="logo chico" data-ui="logo-encabezado">mf<i>.</i></span>
     <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
     <div class="grid2" data-ui="disponibles-color">
-      <div class="card color grad" data-ui="disponible"><div class="row"><span class="lbl">Tarjeta Y</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
-      <div class="card color grad" data-ui="disponible"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+      <div class="card color" style="--c:var(--k3);--on-c:var(--k3t)" data-ui="disponible"><div class="row"><span class="lbl">Tarjeta Y</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color" style="--c:var(--k1);--on-c:var(--k1t)" data-ui="disponible"><div class="row"><span class="lbl">Banco A</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
     </div>
-    <button type="button" class="card color grad" style="text-align:left;font:inherit" data-ui="tarjeta-cuotas"><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big">290 €</span><span class="sub">2 cuotas · te quedan por pagar 1320 €</span></button>
+    <button type="button" class="card color" style="--c:var(--k4);--on-c:var(--k4t);text-align:left;font:inherit" data-ui="tarjeta-cuotas"><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big">290 €</span><span class="sub">2 cuotas · te quedan por pagar 1320 €</span></button>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="list" data-ui="categorias-que-se-abren"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat4)"></i>Alquiler</span><span class="num">42 €</span></div></div></div>
-    <div class="card color grad" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
+    <div class="card color" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="barras-semana"><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras"><div class="col"><em>82,3 €</em><i style="height:70px"></i><small>1–7</small></div><div class="col"><em>72 €</em><i style="height:60px"></i><small>8–14</small></div></div></div>
+    <div class="card color" style="--c:var(--k1);--on-c:var(--k1t)" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
     <span class="logo chico" data-ui="logo-encabezado">mf<i>.</i></span>
     <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
-    <div class="card color grad" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">0 €</span><span class="sub">Tenés 0 € · debés 0 €</span></div>
+    <div class="card color" style="--c:var(--k1);--on-c:var(--k1t)" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">0 €</span><span class="sub">Tenés 0 € · debés 0 €</span></div>
   </div>
 </section>
 <section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
@@ -310,10 +287,22 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <div class="mov" style="--c:var(--cat1)"><button class="x">×</button><span class="ico">S</span><span class="cat">Supermercado · 06/10</span><div class="linea"><span>Consum</span><span class="num">−29,85 €</span></div></div>
       <div class="mov" style="--c:var(--cat4)"><button class="x">×</button><span class="ico">A</span><span class="cat">Alquiler · 05/10</span><div class="linea"><span>Piso</span><span class="num">−600 €</span></div></div>
       <div class="mov" style="--c:var(--cat3)"><button class="x">×</button><span class="ico">C</span><span class="cat">Compras · 04/10</span><div class="linea"><span>notebook</span><span class="num">−240 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><button class="x">×</button><span class="ico">+</span><span class="cat">Sueldo · 01/10</span><div class="linea"><span>Banco A</span><span class="num">+1700 €</span></div></div>
     </div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
     <div class="card"><div class="empty">Sin movimientos este mes.</div></div>
+  </div>
+</section>
+<section data-pantalla="cuentas" data-titulo="Mis cuentas" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Patrimonio neto</span><span class="monto">4587<span class="dec">,9 €</span></span></div>
+    <div class="card color" style="--c:var(--k1);--on-c:var(--k1t)"><div class="row"><span class="lbl">Bancos y efectivo</span><span class="num sub">1200 €</span></div><div class="list"><div class="item tap"><div class="d"><span>Banco A</span><span>tope 300 €</span></div><div class="v"><span class="num">1200 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--k2);--on-c:var(--k2t)" data-ui="grupo-inversiones"><div class="row"><span class="lbl">Inversiones</span><span class="num sub">1053 €</span></div><div class="list"><div class="item tap"><div class="d"><span>Broker X</span><span>+53 € (+7,3 %) en activos</span></div><div class="v"><span class="num">1053 €</span></div></div></div></div>
+    <div class="card color" style="--c:var(--k3);--on-c:var(--k3t)"><div class="row"><span class="lbl">Tarjetas de crédito</span><span class="num sub">−106,3 €</span></div><div class="list"><div class="item tap"><div class="d"><span>Tarjeta Y</span><span>Disponible 1393,7 € de 1500 €</span></div><div class="v"><span class="num">−106,3 €</span></div></div></div></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">Todavía no hay cuentas</span><span>Creá tu primera cuenta: tu banco, tu tarjeta o tu efectivo.</span></div>
   </div>
 </section>
 <!-- pantallas:fin -->
@@ -324,6 +313,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 -->
 <button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
 <button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
+<button data-ir="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
 <!-- nav:fin -->
 </nav>
 </body>
