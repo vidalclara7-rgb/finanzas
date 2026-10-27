@@ -14,8 +14,8 @@ liso. Hoy la app tiene fondo de manchas con estrellas y tarjetas neutras de vidr
 
 ## Qué cambia
 
-- **Apariencia Oscura** con la paleta Jardín (fondo verde azulado oscuro; verde, rosa, amarillo, malva y blanco hueso) y
-  **Clara** con la paleta Brûlée (fondo crema; naranja, púrpura, granate, chocolate y tomate). Siguen siendo las
+- **Apariencia Oscura** con la paleta Jardín (fondo casi negro; verde azulado, verde, rosa, amarillo, malva y blanco hueso) y
+  **Clara** con la paleta Brûlée (fondo blanco; crema, naranja, púrpura, granate, chocolate y tomate). Siguen siendo las
   opciones de siempre (Oscura, Clara, Automática); no hay selector de paletas.
 - **Fondo liso:** desaparecen las manchas, las estrellas y su movimiento.
 - **Tarjetas de color sólido** en casi todo, como las referencias: el disponible de cada cuenta y los grupos de Cuentas

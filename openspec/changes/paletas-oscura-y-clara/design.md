@@ -20,10 +20,11 @@ manchas, las estrellas, su movimiento y los degradados.
 
 ## Decisiones tomadas al escribir (a confirmar en el Gate 1)
 
-- **Oscura (Jardín):** fondo #113C42; colores de tarjeta: verde #136C51 (texto blanco hueso), amarillo #EEDC5B, rosa
+- **Oscura (Jardín):** fondo casi negro #070B0C (por pedido de la persona, como en las referencias); las tarjetas
+  neutras llevan el verde azulado #113C42; colores de tarjeta: verde #136C51 (texto blanco hueso), amarillo #EEDC5B, rosa
   #E9B8DE, malva #B97DA8 y blanco hueso #EDEBE2 (texto verde muy oscuro #0B2A2E). Acento del logo: amarillo.
-- **Clara (Brûlée):** fondo #F5E9CE; colores de tarjeta: naranja #FFA102 (texto chocolate #450E15), púrpura #432E6F,
-  granate #BC2D29 y chocolate #450E15 (texto crema #F5E9CE) y blanco crema #FFFBF0. El tomate #DD5533 (3,9 a 1 con
+- **Clara (Brûlée):** fondo blanco #FFFFFF; las tarjetas neutras llevan el crema #F5E9CE; colores de tarjeta: naranja #FFA102 (texto chocolate #450E15), púrpura #432E6F,
+  granate #BC2D29 y chocolate #450E15 (texto crema #F5E9CE) y blanco crema #FFFBF0 (sobre el fondo blanco se distinguen por su borde). El tomate #DD5533 (3,9 a 1 con
   texto) sólo se usa de acento (logo, aros y barras), no de fondo de tarjeta con texto.
 - **Qué color lleva cada tarjeta:** cinco ranuras (k1 a k5) por paleta. Bancos k1, inversiones k2, tarjetas k3,
   financiaciones k4 y deudas compartidas k5; «Cuotas del mes» como las financiaciones; patrimonio k1; «Por semana» k5;

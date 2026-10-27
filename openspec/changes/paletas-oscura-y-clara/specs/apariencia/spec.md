@@ -2,19 +2,20 @@
 
 ## Requisito: colores de las dos paletas
 
-La apariencia oscura usa la paleta Jardín: fondo verde azulado oscuro, con verde, rosa, amarillo, malva y blanco hueso
-para las tarjetas y el texto. La clara usa la paleta Brûlée: fondo crema, con naranja, púrpura, granate, chocolate y
-tomate para las tarjetas, el texto y los acentos. El fondo es liso, sin manchas ni degradados.
+La apariencia oscura usa la paleta Jardín sobre un fondo casi negro: verde azulado oscuro, verde, rosa, amarillo,
+malva y blanco hueso para las tarjetas y el texto. La clara usa la paleta Brûlée sobre un fondo blanco: crema, naranja,
+púrpura, granate, chocolate y tomate para las tarjetas, el texto y los acentos. El fondo es liso, sin manchas ni
+degradados.
 
 ### Escenario: los colores de la oscura
 - **Dado** la apariencia Oscura
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es el verde azulado oscuro #113C42 y es liso, sin manchas, estrellas ni degradados
+- **Entonces** el fondo de la pantalla es casi negro (#070B0C) y es liso, sin manchas, estrellas ni degradados
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es el crema #F5E9CE y es liso, sin manchas, estrellas ni degradados
+- **Entonces** el fondo de la pantalla es blanco (#FFFFFF) y es liso, sin manchas, estrellas ni degradados
 
 ### Escenario: el texto se lee sobre el fondo
 - **Dado** el resultado del mes y los totales de Inicio en las dos apariencias
