@@ -123,21 +123,6 @@ seguridad anterior, quedan como Pendientes. Nada más cambia.
 - **Cuando** la persona la restaura
 - **Entonces** el gasto aparece como «Pendiente»
 
-## Requisito: la paleta viaja con los datos
-
-La paleta elegida se guarda con los datos y viaja en la copia de seguridad. Los datos y las copias de
-antes de este cambio, que no tienen paleta, se ven con Viva.
-
-### Escenario: datos sin paleta
-- **Dado** datos guardados antes de poder elegir paleta
-- **Cuando** la persona abre la app actualizada
-- **Entonces** la app se ve con la paleta Viva y sus datos siguen iguales
-
-### Escenario: copia con paleta
-- **Dado** una copia de seguridad hecha con la paleta Pastel crema
-- **Cuando** la persona la restaura
-- **Entonces** la app pasa a la paleta Pastel crema
-
 ## Requisito: gastos fijos en datos anteriores
 
 Los gastos guardados antes de este cambio no tienen la marca de fijo: cuentan como variables y entran
@@ -382,3 +367,113 @@ guardados (primer uso) no hay respaldo ni aviso.
 - **Dado** una copia de seguridad anterior a este cambio
 - **Cuando** la persona la restaura
 - **Entonces** la app avisa «Copia restaurada» y funciona con normalidad
+
+## Requisito: apariencia guardada antes del rediseño
+
+Quien usaba una versión anterior no pierde nada: sin una apariencia elegida, la app se ve Oscura. La apariencia viaja
+en la copia de seguridad. Un valor que no es válido se trata como si no hubiera elegido. La paleta que se hubiera
+elegido antes se ignora: la app tiene una sola paleta, y las copias que la traen siguen restaurándose sin error.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos guardados antes de poder elegir la apariencia, en un teléfono en modo claro
+- **Cuando** la persona abre la app actualizada
+- **Entonces** sus datos están intactos y la app se ve oscura
+
+### Escenario: copia de seguridad vieja
+- **Dado** una copia de seguridad anterior a este cambio
+- **Cuando** la persona la restaura
+- **Entonces** la app avisa «Copia restaurada», se ve oscura y funciona con normalidad
+
+### Escenario: la apariencia viaja en la copia
+- **Dado** la apariencia «Clara» elegida
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** la app se ve clara
+
+### Escenario: apariencia inválida
+- **Dado** una copia con una apariencia que no es ninguna de las tres
+- **Cuando** la persona la restaura
+- **Entonces** la app funciona con normalidad y se ve oscura
+
+### Escenario: datos con una paleta elegida
+- **Dado** datos o una copia hechos cuando se podía elegir paleta (por ejemplo Pastel crema)
+- **Cuando** la persona abre la app o restaura la copia
+- **Entonces** los datos están intactos, la app usa su paleta única y Ajustes no ofrece elegir paleta
+
+## Requisito: financiaciones guardadas antes de la cuenta regresiva
+
+Las financiaciones guardadas con «cuotas que faltan» siguen valiendo: toman como punto de partida el mes en que se
+abre la app actualizada, sin descontar nada hacia atrás. Pasa al abrir la app y al restaurar una copia vieja. El
+mes de partida viaja en la copia.
+
+### Escenario: datos de la versión anterior
+- **Dado** que hoy es 2026-10-15 y «Financiera Z» guardada con 12 cuotas que faltan y sin mes de partida
+- **Cuando** la persona abre la app actualizada
+- **Entonces** Cuentas dice «faltan 12 (hasta septiembre 2027)»
+
+### Escenario: copia de seguridad vieja
+- **Dado** una copia de seguridad anterior a este cambio con una financiación con 12 cuotas que faltan
+- **Cuando** la persona la restaura en 2026-11-15
+- **Entonces** Cuentas dice «faltan 12 (hasta octubre 2027)»
+
+### Escenario: el mes de partida viaja en la copia
+- **Dado** «Financiera Z» con 12 cuotas que faltan cargadas en octubre de 2026
+- **Cuando** la persona copia los datos y los restaura en 2026-11-15
+- **Entonces** Cuentas dice «faltan 11 (hasta septiembre 2027)»
+
+### Escenario: mes de partida inválido
+- **Dado** una copia con una financiación cuyo mes de partida no es un mes válido
+- **Cuando** la persona la restaura
+- **Entonces** la app funciona con normalidad y toma el mes actual como punto de partida
+
+## Requisito: destinos aprendidos guardados antes del cambio
+
+Lo que la app aprendió antes (categorías por comercio) sigue valiendo, y lo aprendido de las transferencias
+viaja en la copia de seguridad. Un destino aprendido que no se puede usar (cuenta inexistente o dato inválido)
+se ignora sin romper nada.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos guardados con «Bar Ejemplo» aprendido como Ocio y ninguna transferencia aprendida
+- **Cuando** la persona abre la app actualizada e importa un extracto con «Bar Ejemplo»
+- **Entonces** esa compra llega como Ocio
+
+### Escenario: el destino viaja en la copia
+- **Dado** «Traspaso Fondo» aprendido como transferencia a «Broker X»
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** importar un extracto con «Traspaso Fondo» la propone como transferencia a Broker X
+
+### Escenario: destino inválido en una copia
+- **Dado** una copia de seguridad con un destino aprendido que no es un número ni una cuenta existente
+- **Cuando** la persona la restaura e importa un extracto con esa descripción
+- **Entonces** la importación funciona con normalidad y propone la descripción como siempre
+
+## Requisito: categorías guardadas antes de poder editarlas
+
+Quien usaba una versión anterior no pierde nada: las categorías de siempre se crean solas, con sus colores,
+y cualquier categoría que ya use un movimiento se conserva aunque no esté en esa lista. Pasa al abrir la app
+y al restaurar una copia de seguridad vieja. Las categorías viajan en la copia.
+
+### Escenario: datos de la versión anterior
+- **Dado** datos guardados antes de poder editar categorías, con gastos en Ocio y Supermercado
+- **Cuando** la persona abre la app actualizada
+- **Entonces** Movimientos, la torta y los totales son los de antes
+- **Y** la hoja «Categorías» tiene las de siempre
+
+### Escenario: categoría que no está en la lista
+- **Dado** una copia de seguridad con un gasto en una categoría «Mascotas» que ninguna lista de categorías incluye
+- **Cuando** la persona la restaura
+- **Entonces** el gasto sigue en «Mascotas» y esa categoría aparece en la lista, antes de «Otros»
+
+### Escenario: copia de seguridad vieja
+- **Dado** una copia de seguridad anterior a este cambio
+- **Cuando** la persona la restaura
+- **Entonces** la app avisa «Copia restaurada» y las categorías de siempre están disponibles
+
+### Escenario: las categorías viajan en la copia
+- **Dado** una categoría «Mascotas» creada y «Siempre fija» activada en Alquiler
+- **Cuando** la persona copia los datos y los restaura
+- **Entonces** «Mascotas» y la marca de Alquiler siguen ahí
+
+### Escenario: categorías con datos inválidos
+- **Dado** una copia con categorías mal formadas (sin nombre, repetidas o con un color fuera de rango)
+- **Cuando** la persona la restaura
+- **Entonces** la app funciona con normalidad, ignora lo inválido y conserva las categorías que usan los movimientos

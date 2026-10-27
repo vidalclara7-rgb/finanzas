@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preview · rediseno-metaballs</title>
+<!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
+<style>
+:root{
+  /* Una sola paleta, dos temas: la clara sale de un moodboard retro (oliva, vino, azul polvo, naranja quemado, rosa pálido) */
+  --bg:#F2E4DE; --surface:#FFFFFF; --ink:#2B1218; --muted:#7A5A60; --line:#E6CFC8;
+  --ink-base:#2B1218; --muted-base:#7A5A60;
+  --accent:#5A1A2A; --accent-ink:#FFFFFF; --accent-soft:#EBD6D0;
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --on-color:#2B1218;
+  --hero:#5A1A2A; --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
+  --nav:#FFFFFF; --nav-ink:#9A7A7E; --nav-on:#2B1218;
+  --ingreso:#D3DDA0; --neutro:#FFFFFF; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
+  /* Fondo de manchas: cinco colores, su opacidad y un velo que oscurece para que el texto se lea (sólo en la apariencia oscura) */
+  --mancha1:#8A9A3B; --mancha2:#6B1E2E; --mancha3:#A9BDD6; --mancha4:#E4702A; --mancha5:#F1D5CD; --mancha-op:.5; --velo:transparent; --estrellas:.5; --e1:#7A1F33; --e2:#6B7A2B;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+:root[data-apariencia="oscura"]{
+  /* La oscura sale de otro moodboard: cereza, chartreuse, rosa, óxido y azul Nantucket */
+  --bg:#16070D; --surface:#241019; --ink:#FBF1EE; --muted:#CDB3B7; --line:#4A2431;
+  --ink-base:#FBF1EE; --muted-base:#CDB3B7;
+  --accent:#FBF1EE; --accent-ink:#16070D; --accent-soft:#3A1B27;
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --on-color:#FBF1EE;
+  --hero:#241019; --nav:#241019; --nav-ink:#B79BA0; --nav-on:#FBF1EE; --neutro:#241019;
+  --ingreso:#3E4A14;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --mancha1:#A9A92E; --mancha2:#7A1030; --mancha3:#D64C86; --mancha4:#B5521F; --mancha5:#8FB0DA;
+  --mancha-op:.6; --velo:rgba(22,7,13,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCD0E8; color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.num{font-variant-numeric:tabular-nums}
+/* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
+.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
+.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
+.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
+.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
+@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
+.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
+.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
+.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
+.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
+.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
+.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
+@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
+html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
+.gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
+.gear svg{width:22px;height:22px}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+html[data-apariencia="oscura"] .card:not(.hero){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
+.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+/* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
+html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
+.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
+.mov::before{bottom:auto;height:44px}
+.mov{background:var(--surface);color:var(--ink-base)}
+.mov .ico{background:var(--c);color:#FFFFFF}
+.ico.osc{color:var(--on-osc)}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
+.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
+.sub{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
+.partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
+.partida i{display:block;height:100%;border-radius:10px;min-width:6px}
+.partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:var(--frambuesa)}
+.sub.exc{color:var(--bad);font-weight:600}
+.reparto{display:flex;flex-direction:column;gap:6px}
+.reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.rank .grupo{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rank .fila{display:flex;flex-direction:column;gap:5px;font-size:15px}
+.bar.cat{background:color-mix(in srgb,var(--ink) 6%,var(--surface))} .bar.cat>i{background:var(--c)}
+/* Hojas de detalle: flechas de mes, total grande y filas que se tocan */
+.mesnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
+.mesnav button:disabled{opacity:.3}
+.mesnav span{font-weight:600}
+.toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
+.gastos-cat .item{cursor:pointer}
+/* Importar extracto: borradores para revisar (casilla, descripción, importe y, debajo, qué es) */
+.borradores{display:flex;flex-direction:column}
+.borr{display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.borr:last-child{border-bottom:0}
+.borr>input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink);grid-row:span 2}
+.borr .d{display:flex;flex-direction:column;min-width:0} .borr .d b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.borr select{grid-column:2/4;font-size:15px;padding:9px 12px;border-radius:12px}
+.borr .marcas{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.borr.off .d,.borr.off .num{opacity:.5}
+.borr .cubre{grid-column:2/4}
+button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+/* Adjuntos de una cuenta */
+.adj{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.adj:last-child{border-bottom:0}
+.adj .d{flex:1;display:flex;flex-direction:column;min-width:0} .adj .d span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adj .x{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+/* Anillo del tope */
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+/* Torta (dona) de categorías */
+.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
+.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
+.torta circle{fill:none;stroke-width:26}
+.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.torta .centro span{font-size:13px;color:var(--muted)}
+/* Barras por semana: rayadas, la actual en negro */
+.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
+.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
+.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos como tarjetas apiladas */
+.pila{display:flex;flex-direction:column}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 var(--line)}
+.mov:first-child{margin-top:0}
+.mov:last-child{padding-bottom:16px}
+.mov .cat{font-size:12px;color:var(--muted)}
+.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
+.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea .num{flex:none}
+.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.mov .sel{position:absolute;right:16px;top:14px;width:24px;height:24px;margin:0;accent-color:var(--ink)}
+.chip svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px}
+.mov{position:relative}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item .d{display:flex;flex-direction:column;min-width:0}
+.item .d span:last-child{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
+.pos{color:var(--ink)} .neg{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+/* Fechas y meses: el navegador de iOS les da un ancho propio y se salen de la hoja; aquí ocupan el ancho de su campo y alinean el texto como los demás */
+input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:48px;line-height:1.2}
+input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}
+textarea{font-family:var(--mono);font-size:12px;min-height:120px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
+.btn.sec{background:var(--accent-soft);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:active{opacity:.8}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:23px;height:23px}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
+.sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet>*{flex-shrink:0} /* en hojas largas se desplaza la hoja, no se aplastan sus tarjetas */
+.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
+/* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
+.toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.paletas{display:flex;flex-direction:column;gap:10px}
+.paleta-op{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink);width:100%;text-align:left}
+.paleta-op[aria-pressed=true]{border-color:var(--ink);font-weight:600}
+.muestra{display:flex;gap:4px;padding:6px;border-radius:999px;background:var(--bg);flex:none}
+.muestra i{width:18px;height:18px;border-radius:50%;display:block}
+[hidden]{display:none!important}
+</style>
+<!-- estilos-app:fin -->
+<!-- revision:inicio · la banda de revisión no forma parte del diseño ni se copia a la app -->
+<style>
+  body{max-width:430px;margin:0 auto}
+  nav{max-width:402px;margin:0 auto}
+  .revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 16px;background:#000;color:#fff;font-size:13px}
+  .revision select{font:inherit;padding:2px 6px;border-radius:6px;border:0}
+  .revision label{display:flex;align-items:center;gap:6px}
+  .revision__nota{opacity:.7;width:100%}
+</style>
+<!-- revision:fin -->
+</head>
+<body>
+<!-- revision:inicio -->
+<div class="revision" role="region" aria-label="Revisión del preview">
+  <strong>Preview · rediseno-metaballs</strong>
+  <label>Pantalla <select id="rev-pantalla"></select></label>
+  <label>Estado <select id="rev-estado"><option value="normal">con datos</option><option value="vacio">vacío</option></select></label>
+  <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
+</div>
+<script>
+  // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
+  document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
+  document.addEventListener("DOMContentLoaded", () => {
+    const pantallas = [...document.querySelectorAll("[data-pantalla]")];
+    const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
+    for (const p of pantallas) selP.append(new Option(p.dataset.titulo || p.dataset.pantalla, p.dataset.pantalla));
+    const q = new URLSearchParams(location.search);
+    if (q.get("pantalla")) selP.value = q.get("pantalla");
+    if (q.get("estado")) selE.value = q.get("estado");
+    function aplicar() {
+      for (const p of pantallas) {
+        p.hidden = p.dataset.pantalla !== selP.value;
+        if (!p.hidden) { p.style.display = "flex"; document.getElementById("rev-titulo").textContent = p.dataset.titulo || ""; }
+        for (const e of p.querySelectorAll("[data-estado]")) e.hidden = e.dataset.estado !== selE.value;
+      }
+      for (const a of document.querySelectorAll("[data-ir]")) {
+        if (a.dataset.ir === selP.value) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+      history.replaceState(null, "", "?" + new URLSearchParams({ pantalla: selP.value, estado: selE.value }));
+    }
+    document.addEventListener("click", (ev) => {
+      const a = ev.target.closest("[data-ir]");
+      if (a) { ev.preventDefault(); selP.value = a.dataset.ir; aplicar(); }
+    });
+    for (const el of [selP, selE]) el.addEventListener("change", aplicar);
+    aplicar();
+  });
+</script>
+<!-- revision:fin -->
+<header><div><h1 id="rev-titulo"></h1><span class="m">octubre 2026</span></div></header>
+<main>
+<!-- pantallas:inicio
+  Una <section data-pantalla="<clave>" data-titulo="<título>" style="flex-direction:column;gap:14px">
+  por pantalla. Dentro, dos bloques: <div data-estado="normal"> (con datos de ejemplo) y
+  <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
+  Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
+-->
+<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
+<section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="sub">Ver detalle ›</span></div><div class="partida"><i class="fij" style="flex:38"></i><i class="var" style="flex:62"></i></div><div class="reparto"><div class="row"><span class="con-dot"><i class="dot fij"></i>Fijos</span><span class="num">58,6 € · 38 %</span></div><div class="row"><span class="con-dot"><i class="dot var"></i>Variables</span><span class="num">95,7 € · 62 %</span></div></div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
+    <div class="grid2" data-ui="disponibles-color">
+      <div class="card color acento" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjeta</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color acento" style="--c:var(--salvia)"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+    </div>
+    <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="torta" data-ui="torta-categorias"><svg viewBox="0 0 180 180"><circle cx="90" cy="90" r="77" style="stroke:var(--cat1);stroke-dasharray:199.6 483.8;stroke-dashoffset:0.0"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat11);stroke-dasharray:129.7 483.8;stroke-dashoffset:-201.6"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat5);stroke-dasharray:92.1 483.8;stroke-dashoffset:-333.3"/><circle cx="90" cy="90" r="77" style="stroke:var(--cat3);stroke-dasharray:54.4 483.8;stroke-dashoffset:-427.4"/></svg><div class="centro"><b>154,3 €</b><span>gastado en octubre</span></div></div><div class="list" data-ui="categorias-que-se-abren"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat11)"></i>Trabajo (reembolsable)</span><span class="num">42 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat5)"></i>Ocio</span><span class="num">30 €</span></div></div></div>
+    <div class="card color" style="--c:var(--rosa-claro)" data-ui="barras-semana"><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras"><div class="col"><em>82,3 €</em><i style="height:100%"></i><small>1–7</small></div><div class="col"><em>72 €</em><i style="height:87%"></i><small>8–14</small></div><div class="col hoy"><em></em><i style="height:3%"></i><small>15–21</small></div><div class="col"><em></em><i style="height:3%"></i><small>22–28</small></div></div></div>
+    <div class="card color osc" style="--c:var(--cherry)" data-ui="patrimonio-inicio"><div class="row"><span class="lbl">Patrimonio neto</span></div><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--rosa)" data-ui="primer-paso"><span class="lbl">Primer paso</span><span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span><button class="btn">Crear cuenta</button></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
+  </div>
+</section>
+<section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <button class="btn sec" data-ui="importar-extracto">Importar extracto</button>
+    <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big">1700 €</div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big">154,3 €</div></div></div>
+    <div class="pila" data-ui="lista-movimientos">
+      <div class="mov" style="--c:var(--cat1)"><button class="x">×</button><span class="ico">S</span><span class="cat">Supermercado · 06/10</span><div class="linea"><span>Consum</span><span class="num">−29,85 €</span></div></div>
+      <div class="mov" style="--c:var(--cat16)"><button class="x">×</button><span class="ico">P</span><span class="cat">Plan Iberia · 05/10</span><div class="linea"><span>Tarifa plan</span><span class="num">−5 €</span></div></div>
+      <div class="mov osc" style="--c:var(--cat6)"><button class="x">×</button><span class="ico">C</span><span class="cat">Compras · 04/10</span><div class="linea"><span>notebook</span><span class="num">−240 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><button class="x">×</button><span class="ico">+</span><span class="cat">Sueldo · 01/10</span><div class="linea"><span>Banco A</span><span class="num">+1700 €</span></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px"><button class="btn sec" data-ui="importar-extracto">Importar extracto</button><div class="card"><div class="empty">Sin movimientos este mes.</div></div></div>
+</section>
+<section data-pantalla="cuentas" data-titulo="Mis cuentas" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Patrimonio neto</span><span class="monto">4587<span class="dec">,9 €</span></span><div class="row sub"><span>Tenés 4694,2 €</span><span>Debés 106,3 €</span></div></div>
+    <div data-ui="grupos-color" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card color acento" style="--c:var(--salvia)"><div class="row"><span class="lbl">Bancos y efectivo</span><span class="num sub">1200 €</span></div><div class="list"><button type="button" class="item tap"><div class="d"><span>Banco A</span><span></span></div><div class="v"><span class="num">1200 €</span><span class="chip idle">Sin conciliar</span></div></button></div></div>
+      <div class="card color acento" style="--c:var(--oliva)"><div class="row"><span class="lbl">Inversiones</span><span class="num sub">1053 €</span></div><div class="list"><button type="button" class="item tap"><div class="d"><span>Broker X</span><span>+53 € (+7,3 %) en activos</span></div><div class="v"><span class="num">1053 €</span><span class="chip idle">Sin conciliar</span></div></button></div></div>
+      <div class="card color acento" style="--c:var(--cherry)"><div class="row"><span class="lbl">Tarjetas de crédito</span><span class="num sub">−106,3 €</span></div><div class="list"><button type="button" class="item tap"><div class="d"><span>Tarjeta Y</span><span>Disponible 1393,7 € de 1500 €</span></div><div class="v"><span class="num">−106,3 €</span><span class="chip ok">Conciliada</span></div></button></div></div>
+    </div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px"><div class="card"><div class="empty">Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas.</div></div></div>
+</section>
+<section data-pantalla="mes" data-titulo="Cierre del mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color osc" style="--c:var(--oliva)" data-ui="conciliacion"><span class="lbl">Conciliación de octubre</span><span class="sub">1 de 2 cuentas conciliadas</span><div class="list"><button type="button" class="item tap"><div class="d"><span>Banco A</span><span></span></div><div class="v"><span class="num">1200 €</span><span class="chip ok">Conciliada</span></div></button><button type="button" class="item tap"><div class="d"><span>Tarjeta Y</span><span></span></div><div class="v"><span class="num">−106,3 €</span><span class="chip warnc">Diferencia 3,2 €</span></div></button></div></div>
+    <div class="card color" style="--c:var(--rosa)" data-ui="checklist"><span class="lbl">Checklist del mes</span><label class="check"><input type="checkbox" checked><span style="flex:1">Transferir el aporte al fondo</span></label><label class="check"><input type="checkbox"><span style="flex:1">Cargar los gastos de empresa</span></label></div>
+    <div class="card" data-ui="plan-fondo"><span class="lbl">Plan del fondo</span><div class="bar"><i style="width:40%"></i></div><span class="sub">Vas 400 € por encima del plan</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px"><div class="card"><div class="empty">Cargá tus cuentas para conciliar el mes.</div></div></div>
+</section>
+<section data-pantalla="ajustes" data-titulo="Ajustes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Oscura</button><button aria-pressed="false">Clara</button><button aria-pressed="false">Automática</button></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
+    <div class="card" data-ui="tarjeta-copia"><span class="lbl">Copia de seguridad</span><span class="sub" data-ui="ultima-copia"><b>Última copia: hace 3 días</b></span><button class="btn sec">Copiar copia de seguridad</button><button class="btn sec">Guardar copia en un archivo</button></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" style="margin-top:8px"><button aria-pressed="false">Oscura</button><button aria-pressed="true">Clara</button><button aria-pressed="false">Automática</button></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
+  </div>
+</section>
+<section data-pantalla="hoja-movimiento" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal"><div class="sheet-bg"></div><div class="sheet" data-ui="hoja-movimiento">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <div class="seg" style="margin-top:8px" data-ui="tipo-movimiento"><button aria-pressed="true">Gasto</button><button aria-pressed="false">Ingreso</button><button aria-pressed="false">Transferencia</button></div>
+    <input type="number" class="amount" value="29.85">
+    <div><span class="lbl">Cuenta</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Banco A</button><button aria-pressed="false">Tarjeta Y</button></div></div>
+    <label class="f">Nota (opcional)<input type="text" value="Consum"></label>
+    <label class="f">Fecha<input type="date" value="2026-10-06"></label>
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+  <div data-estado="vacio"><div class="sheet-bg"></div><div class="sheet" data-ui="hoja-movimiento">
+    <div class="row"><h2>Nuevo movimiento</h2><button class="btn sec" style="padding:8px 12px">Cerrar</button></div>
+    <input type="number" class="amount" placeholder="0,00 €">
+    <button class="btn">Guardar gasto</button>
+  </div></div>
+</section>
+<!-- pantallas:fin -->
+</main>
+<nav>
+<!-- nav:inicio · una entrada por pantalla, con data-ir="<clave de la pantalla>", como en la app
+  <button data-ir="inicio">…icono…Inicio</button>
+-->
+<button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+<button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
+<button class="fab" data-ir="hoja-movimiento" aria-label="Nuevo movimiento">+</button>
+<button data-ir="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
+<button data-ir="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Cierre</button>
+<!-- nav:fin -->
+</nav>
+</body>
+</html>

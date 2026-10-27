@@ -26,6 +26,8 @@
   <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
 </div>
 <script>
+  // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
+  document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
   document.addEventListener("DOMContentLoaded", () => {
     const pantallas = [...document.querySelectorAll("[data-pantalla]")];
     const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");

@@ -147,17 +147,12 @@ t.test("sin gastos para repartir", async () => {
 t.test("Otros se ve en su barra", async () => {
   const contraste = (a, b) => { const lum = (rgb) => { const v = rgb.match(/\d+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
     const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-  for (const esquema of ["light", "dark"]) {
-    const { page } = await abrir({ ...con([A.gasto(1, "2026-10-03", 30, 1, "Otros"), A.gasto(2, "2026-10-04", 70, 1)]), esquema });
-    for (const p of ["viva", "editorial", "lima", "pastel"]) {
-      await A.ir(page, "ajustes");
-      await page.click(`[data-paleta-op="${p}"]`);
-      await A.ir(page, "inicio");
-      await page.click("#fvCard");
-      const [lleno, pista] = await page.$eval('#fvHoja [data-rank="Otros"] .bar', (b) => [getComputedStyle(b.firstElementChild).backgroundColor, getComputedStyle(b).backgroundColor]);
-      assert.ok(contraste(lleno, pista) >= 1.5, `${p}/${esquema}: ${lleno} sobre ${pista} = ${contraste(lleno, pista).toFixed(2)}`);
-      await page.click("#fvCerrar");
-    }
+  for (const apariencia of ["clara", "oscura"]) {
+    const base = con([A.gasto(1, "2026-10-03", 30, 1, "Otros"), A.gasto(2, "2026-10-04", 70, 1)]);
+    const { page } = await abrir({ datos: { ...base.datos, settings: { ...base.datos.settings, apariencia } } });
+    await page.click("#fvCard");
+    const [lleno, pista] = await page.$eval('#fvHoja [data-rank="Otros"] .bar', (b) => [getComputedStyle(b.firstElementChild).backgroundColor, getComputedStyle(b).backgroundColor]);
+    assert.ok(contraste(lleno, pista) >= 1.5, `${apariencia}: ${lleno} sobre ${pista} = ${contraste(lleno, pista).toFixed(2)}`);
   }
 });
 
@@ -179,6 +174,7 @@ t.test("abrir desde la lista", async () => {
 // Escenario: abrir desde la torta
 t.test("abrir desde la torta", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-05", 18, 1, "Comida fuera")]));
+  await page.evaluate(() => document.getElementById("torta").scrollIntoView({ block: "center" }));
   const caja = await page.locator('#torta circle[data-cat="Comida fuera"]').boundingBox();
   // Un punto del anillo dentro de la porción: se toca donde el trazo es de esa categoría
   const punto = await page.evaluate(() => { const c = document.querySelector('#torta circle[data-cat="Comida fuera"]'), svg = c.ownerSVGElement.getBoundingClientRect();
