@@ -4,9 +4,10 @@
 
 Con el botón «+» la persona abre «Nuevo movimiento», elige Gasto y anota importe, una de sus
 cuentas, categoría, una nota opcional y la fecha, que por defecto es hoy. Las categorías de gasto
-son: Supermercado, Comida fuera, Delivery, Transporte, Ocio, Compras, Ropa, Belleza, Casa/Splitwise,
-Salud, Viajes, Regalos, Salidas bar/disco, Plan Iberia, Servicios mensuales, Alquiler, Carga móvil,
-Trabajo (reembolsable) y Otros. El gasto baja el saldo de la cuenta o, si es una tarjeta,
+son las de la persona; al empezar: Supermercado, Comida fuera, Delivery, Transporte, Ocio, Compras, Ropa,
+Belleza, Casa/Splitwise, Salud, Viajes, Regalos, Salidas bar/disco, Plan Iberia, Servicios mensuales,
+Alquiler, Carga móvil, Trabajo (reembolsable) y Otros. La categoría se elige en un
+desplegable, que termina con «Nueva categoría…» para crear una. El gasto baja el saldo de la cuenta o, si es una tarjeta,
 sube su deuda.
 
 ### Escenario: gasto desde una cuenta propia
@@ -21,6 +22,12 @@ sube su deuda.
 - **Cuando** la persona anota un gasto de 30 € en Carga móvil desde Banco A
 - **Entonces** el gasto aparece en Movimientos como «Carga móvil» con «−30 €»
 - **Y** Banco A tiene 970 €
+
+### Escenario: elegir la categoría en el desplegable
+- **Dado** el formulario de gasto abierto
+- **Cuando** la persona abre el desplegable de categoría y elige Alquiler
+- **Entonces** el desplegable muestra «Alquiler» elegida
+- **Y** la última opción de la lista es «Nueva categoría…»
 
 ### Escenario: todas las categorías nuevas se pueden elegir
 - **Dado** el formulario de gasto abierto
@@ -49,8 +56,8 @@ sube su deuda.
 ## Requisito: anotar un ingreso
 
 En «Nuevo movimiento» la persona elige Ingreso y anota importe, cuenta, categoría, nota y fecha. Las
-categorías de ingreso son: Sueldo, Reembolso, Reembolso por regalos, Venta o trabajo extra, Regalo,
-Intereses y rendimientos, y Otros. El ingreso sube el saldo de la cuenta o, si es una tarjeta, baja su deuda.
+categorías de ingreso son las de la persona; al empezar: Sueldo, Reembolso, Reembolso por regalos, Venta o
+trabajo extra, Regalo, Intereses y rendimientos, y Otros. El ingreso sube el saldo de la cuenta o, si es una tarjeta, baja su deuda.
 
 ### Escenario: ingreso extra
 - **Dado** «Banco A» con 1000 €
@@ -191,8 +198,10 @@ La hoja de gasto tiene la casilla «Gasto fijo», para lo que se repite al menos
 cuotas, seguros, suscripciones. No aparece en gastos de «Trabajo (reembolsable)». Al guardar un gasto
 fijo con nota, los gastos siguientes con la misma categoría y la misma nota (sin distinguir
 mayúsculas ni espacios de más) vienen con la casilla marcada. Desmarcar un gasto lo vuelve variable y
-hace que los siguientes con esa nota ya no vengan marcados; los anteriores no cambian. En
-Movimientos, los gastos fijos llevan la etiqueta «Fijo».
+hace que los siguientes con esa nota ya no vengan marcados; los anteriores no cambian. Si la
+categoría es «siempre fija», todo gasto de esa categoría cuenta como fijo y la casilla viene marcada, aunque
+cambie el importe o la nota; desmarcarla en un gasto lo deja variable sólo a él. En Movimientos, los gastos
+fijos llevan la etiqueta «Fijo».
 
 ### Escenario: gasto marcado como fijo
 - **Dado** «Banco A» y ningún gasto este mes
@@ -221,6 +230,12 @@ Movimientos, los gastos fijos llevan la etiqueta «Fijo».
 - **Cuando** la persona abre un gasto nuevo y elige Ocio sin escribir nota
 - **Entonces** la casilla «Gasto fijo» aparece sin marcar
 
+### Escenario: categoría siempre fija con importe que cambia
+- **Dado** «Siempre fija» activada en Servicios mensuales y gastos de 40 € en agosto y de 80 € en septiembre 2026 en esa categoría con notas distintas
+- **Cuando** la persona abre Movimientos y mira Inicio en septiembre
+- **Entonces** el gasto de septiembre dice «Fijo» aunque el importe haya cambiado
+- **Y** Inicio muestra «Fijos 80 €» en el reparto de septiembre
+
 ## Requisito: sugerir gastos fijos
 
 Cuando un mismo gasto (misma categoría y misma nota) aparece en tres meses de calendario seguidos,
@@ -228,8 +243,8 @@ con un importe parecido (lo de cada mes no se aparta más de un 10 % del promedi
 está marcado como fijo, Inicio muestra la tarjeta «¿“<nota>” es un gasto fijo?» con los botones «Sí,
 es fijo» y «No». Se muestra una sugerencia a la vez, la de mayor importe. «Sí, es fijo» marca como
 fijos todos los gastos ya anotados con esa categoría y nota, y los siguientes vienen marcados. «No»
-hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota ni de «Trabajo
-(reembolsable)».
+hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota, de «Trabajo
+(reembolsable)» ni de categorías «siempre fijas».
 
 ### Escenario: sugerencia tras tres meses
 - **Dado** que hoy es 2026-10-15 y gastos en Salud con la nota «gimnasio» de 30 € en agosto, 30 € en septiembre y 32 € en octubre
@@ -259,6 +274,11 @@ hace que no se vuelva a preguntar por ese gasto. No se sugieren gastos sin nota 
 
 ### Escenario: gastos sin nota
 - **Dado** que hoy es 2026-10-15 y gastos de 100 € en Supermercado sin nota en agosto, septiembre y octubre
+- **Cuando** la persona abre Inicio
+- **Entonces** no aparece ninguna sugerencia
+
+### Escenario: categoría siempre fija no se sugiere
+- **Dado** que hoy es 2026-10-15, «Siempre fija» activada en Salud y gastos en Salud con la nota «gimnasio» de 30 € en agosto, septiembre y octubre
 - **Cuando** la persona abre Inicio
 - **Entonces** no aparece ninguna sugerencia
 

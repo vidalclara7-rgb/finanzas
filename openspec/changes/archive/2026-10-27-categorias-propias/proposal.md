@@ -1,7 +1,8 @@
 ---
 cambio: categorias-propias
-estado: diseno-aprobado
+estado: archivado
 datos: amplia
+archivado: 2026-10-27
 ---
 # Categorías propias y gastos «siempre fijos»
 
