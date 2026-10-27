@@ -35,37 +35,45 @@ en el color de acento de la apariencia (amarillo en la oscura, tomate en la clar
 - **Cuando** la persona cambia a la apariencia Clara
 - **Entonces** las letras pasan al chocolate del texto y el punto, al tomate de la paleta Brûlée
 
-## Requisito: tarjetas con degradado
+## Requisito: tarjetas de color sólido
 
-El disponible de cada cuenta con tope, «Cuotas del mes» y el patrimonio son tarjetas con un degradado suave de los
-colores de la paleta, que se funde con el fondo. Las demás tarjetas son de vidrio neutro. El texto de las tarjetas con
-degradado se lee con un contraste de al menos 4,5 a 1 en todo su degradado.
+Casi todas las tarjetas son bloques de un color sólido de la paleta, planos y redondeados, sin degradados: el
+disponible de cada cuenta y los grupos de Cuentas llevan el color de su tipo (bancos, inversiones, tarjetas,
+financiaciones y deudas compartidas), y «Cuotas del mes», el patrimonio, «Por semana», «Ingresos y gastos», «Por
+cobrar», la conciliación y el checklist llevan cada uno el suyo. «Gasto del mes» y las hojas de formularios son
+neutras, para que se lean la torta y los campos. El texto de cada tarjeta es claro u oscuro según su color y se lee con
+contraste de al menos 4,5 a 1.
 
-### Escenario: tarjetas con degradado
+### Escenario: el disponible lleva el color de su tipo
+- **Dado** una cuenta de bancos con tope y una tarjeta de crédito con tope
+- **Cuando** la persona abre Inicio
+- **Entonces** el disponible de cada una es un bloque de color sólido, y los dos colores son distintos
+
+### Escenario: tarjetas sin degradado
 - **Dado** una tarjeta de crédito con tope y una financiación con cuota
 - **Cuando** la persona abre Inicio
-- **Entonces** el disponible de la tarjeta y «Cuotas del mes» tienen un fondo con degradado
-- **Y** «Gasto del mes» tiene el fondo neutro de siempre
+- **Entonces** el disponible y «Cuotas del mes» tienen un fondo sólido, sin degradado
+- **Y** «Gasto del mes» tiene el fondo neutro
 
-### Escenario: el degradado se lee en las dos apariencias
-- **Dado** esas mismas tarjetas y el patrimonio
+### Escenario: el texto se lee sobre cada color
+- **Dado** esas tarjetas, el patrimonio y los grupos de Cuentas
 - **Cuando** la persona los mira en las apariencias Clara y Oscura
-- **Entonces** el texto de las tarjetas con degradado tiene contraste de al menos 4,5 a 1 con el peor punto de su degradado
+- **Entonces** el texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 con su fondo
 
-## Requisito: color por categoría y por tipo de cuenta
+## Requisito: color por categoría
 
-Cada categoría tiene su color, el mismo en la torta, en la lista, en el icono y en el borde de su tarjeta de
-movimiento. Cada tipo de cuenta tiene el suyo en la franja de su tarjeta. Son los mismos en las dos apariencias.
+Cada gasto es una tarjeta del color de su categoría, el mismo en la torta, en la lista y en el icono. Los colores de las
+categorías son los mismos en las dos apariencias.
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
 - **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
-- **Entonces** la porción de Supermercado y el icono de su tarjeta tienen el mismo color
+- **Entonces** la porción de Supermercado y la tarjeta del gasto tienen el mismo color
 
 ### Escenario: texto legible en las tarjetas
 - **Dado** un gasto en Compras este mes
 - **Cuando** la persona abre Movimientos en las apariencias Oscura y Clara
-- **Entonces** el texto de su tarjeta y la letra de su icono se leen con contraste de al menos 4,5 a 1
+- **Entonces** el texto de su tarjeta se lee con contraste de al menos 4,5 a 1
 
 ### Escenario: reembolsos distinguibles
 - **Dado** un gasto en Trabajo (reembolsable) este mes
@@ -74,9 +82,9 @@ movimiento. Cada tipo de cuenta tiene el suyo en la franja de su tarjeta. Son lo
 
 ## Requisito: todo se lee sobre el fondo
 
-En las dos apariencias, con el fondo de manchas detrás, los importes principales y el texto de las tarjetas se leen con
-un contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables se distinguen de su tarjeta (al
-menos 1,5 a 1: el dato está en el texto que la acompaña).
+En las dos apariencias, los importes principales y el texto de las tarjetas se leen con un contraste de al menos
+4,5 a 1, y las dos partes de la barra de fijos y variables se distinguen de su tarjeta (al menos 1,5 a 1: el dato está
+en el texto que la acompaña).
 
 ### Escenario: contraste en las dos apariencias
 - **Dado** gastos fijos y variables, una tarjeta de crédito con tope y cuentas de varios tipos
@@ -84,4 +92,4 @@ menos 1,5 a 1: el dato está en el texto que la acompaña).
 - **Entonces** el resultado, el disponible, el patrimonio y el texto de las tarjetas tienen contraste de al menos 4,5 a 1, y las dos partes de la barra de fijos y variables, de al menos 1,5 a 1 contra su tarjeta
 
 ## Retirado: tarjetas neutras sobre el fondo de manchas
-Lo sustituyen «tarjetas con degradado» y «color por categoría y por tipo de cuenta».
+Lo sustituyen «tarjetas de color sólido» y «color por categoría».
