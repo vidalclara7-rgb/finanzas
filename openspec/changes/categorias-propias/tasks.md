@@ -20,12 +20,12 @@
 - [x] Subir la versión de `CACHE` en `sw.js`
 
 ## Tests
-- [ ] Un test por escenario de `categorias` (23), `datos` (5) y `movimientos` (los nuevos y los cambiados)
-- [ ] Pruebas extra: nombre escapado, 390 px en claro y oscuro
+- [x] Un test por escenario de `categorias` (23), `datos` (5) y `movimientos` (los nuevos y los cambiados)
+- [x] Pruebas extra: nombre escapado, 390 px en claro y oscuro
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado, claro y oscuro
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado, claro y oscuro
 
 ## Documentación
-- [ ] `CLAUDE.md`: modelo con `categorias`, `esFijo()`, hojas de categorías y selectores
+- [x] `CLAUDE.md`: modelo con `categorias`, `esFijo()`, hojas de categorías y selectores
