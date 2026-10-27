@@ -65,26 +65,33 @@ t.test("el fondo está en todas las pantallas", async () => {
   }
 });
 
-// Escenario: los colores del fondo
-t.test("los colores del fondo", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  const manchas = () => page.evaluate(() => { const cs = getComputedStyle(document.documentElement); return [1, 2, 3, 4, 5].map((i) => cs.getPropertyValue("--mancha" + i).trim().toUpperCase()); });
-  assert.deepEqual(await manchas(), ["#A9A92E", "#7A1030", "#D64C86", "#B5521F", "#8FB0DA"]);
-  await elegirAp(page, "clara");
-  assert.deepEqual(await manchas(), ["#8A9A3B", "#8A2D42", "#A9BDD6", "#E4702A", "#F1D5CD"]);
+const manchas = (page) => page.evaluate(() => { const cs = getComputedStyle(document.documentElement); return [1, 2, 3, 4, 5].map((i) => cs.getPropertyValue("--mancha" + i).trim().toUpperCase()); });
+
+// Escenario: los colores de la oscura
+t.test("los colores de la oscura", async () => {
+  const { page } = await abrir({ datos: conApariencia("oscura") });
+  assert.equal(await fondoCuerpo(page), "rgb(7, 11, 12)");
+  assert.deepEqual(await manchas(page), ["#136C51", "#E9B8DE", "#EEDC5B", "#B97DA8", "#113C42"]);
 });
 
-// Escenario: estrellas en las dos apariencias
-t.test("estrellas en las dos apariencias", async () => {
+// Escenario: los colores de la clara
+t.test("los colores de la clara", async () => {
+  const { page } = await abrir({ datos: conApariencia("clara") });
+  assert.equal(await fondoCuerpo(page), "rgb(255, 255, 255)");
+  assert.deepEqual(await manchas(page), ["#FFA102", "#DD5533", "#432E6F", "#BC2D29", "#F5E9CE"]);
+});
+
+// Escenario: manchas de la paleta, sin estrellas
+t.test("manchas de la paleta, sin estrellas", async () => {
   const { page } = await abrir({ datos: conApariencia() });
-  const estrellas = () => page.evaluate(() => { const e = document.querySelector(".fondo"), a = getComputedStyle(e, "::before"), b = getComputedStyle(e.querySelector("b")); return { puntos: a.backgroundImage.split("radial-gradient").length - 1, op: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--estrellas")), anim2: b.animationName, anim: a.animationName, color: getComputedStyle(document.documentElement).getPropertyValue("--e1").trim().toUpperCase() }; });
-  const o = await estrellas();
-  assert.ok(o.puntos >= 4 && o.op > 0.3 && o.anim === "titila", JSON.stringify(o));
-  assert.equal(o.color, "#FFFFFF");
-  await elegirAp(page, "clara");
-  const c = await estrellas();
-  assert.ok(c.op > 0.3);
-  assert.equal(c.color, "#7A1F33");
+  for (const ap of ["oscura", "clara"]) {
+    await page.evaluate((a) => { document.documentElement.dataset.apariencia = a; }, ap);
+    const f = await page.evaluate(() => { const e = document.querySelector(".fondo"); return { b: e.querySelectorAll("b").length, antes: getComputedStyle(e, "::before").content, grad: [...e.querySelectorAll("i")].map((i) => getComputedStyle(i).backgroundImage.startsWith("radial-gradient")) }; });
+    assert.equal(f.b, 0, ap);
+    assert.ok(["none", "normal"].includes(f.antes), `${ap}: ${f.antes}`);
+    assert.deepEqual(f.grad, [true, true, true, true, true], ap);
+  }
+  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--estrellas").trim()), "");
 });
 
 // Escenario: el texto se lee sobre el fondo
@@ -159,10 +166,10 @@ t.test("sin cargar nada de otros sitios", async () => {
 t.test("barra oscura y clara", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
   const barra = () => page.$eval('meta[name="theme-color"]', (m) => m.content.toLowerCase());
-  assert.equal(await barra(), "#16070d");
+  assert.equal(await barra(), "#070b0c");
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "black-translucent");
   await elegirAp(page, "clara");
-  assert.equal(await barra(), "#f2e4de");
+  assert.equal(await barra(), "#ffffff");
   await page.reload();
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "default");
 });
