@@ -120,7 +120,7 @@ html:not([data-apariencia="oscura"]) .card:not(.hero):not(.grad){background:colo
 .mov .ico{background:var(--c);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
 /* Tarjetas con degradado difuso del color del kit: el texto se lee en todo el degradado (--on-grad) */
-.card.grad{background:radial-gradient(120% 140% at 0% 0%,var(--grad1) 0%,transparent 64%),radial-gradient(110% 120% at 100% 100%,var(--grad2) 0%,transparent 60%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
+.card.grad{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--grad1) 55%,transparent) 0%,transparent 62%),radial-gradient(110% 120% at 100% 100%,color-mix(in srgb,var(--grad2) 55%,transparent) 0%,transparent 58%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
 html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)}
 .card.grad .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px;opacity:.9}
 /* Logo «mf.»: las letras en el color del texto y el punto en el acento del kit; la letra es la del kit */
