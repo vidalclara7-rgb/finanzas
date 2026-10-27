@@ -12,81 +12,36 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-/* Kits de diseño: cada kit trae su paleta (clara y oscura), su letra y su logo. Los colores de categorías y de tipos de cuenta son los mismos en todos */
+/* Dos paletas atadas a la apariencia: la clara es Jardín (blanco hueso, rosa, verde, amarillo y malva) y la oscura, Brûlée (chocolate, púrpura, naranja, tomate y granate) */
 :root{
   --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
-  --hero-ink:#FFFFFF; --hero-muted:#E0D8E8;
+  --hero-ink:#FFFFFF; --hero-muted:#C9D6D6;
   --ingreso:#D3DDA0; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
   --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
   --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
   --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace;
-  --mono:ui-monospace,"SF Mono",Menlo,monospace;
-  --bg:#F1ECF8; --surface:#FFFFFF; --ink:#23003F; --muted:#6B5A82; --line:#DCD2E8; --ink-base:#23003F; --muted-base:#6B5A82;
-  --accent:#23003F; --accent-ink:#FFFFFF; --accent-soft:#E7DEF2; --on-color:#23003F;
-  --hero:#23003F; --nav:#FFFFFF; --nav-ink:#8C7FA3; --nav-on:#23003F; --neutro:#FFFFFF;
-  --mancha1:#BCACCE; --mancha2:#F94500; --mancha3:#7A4DB8; --mancha4:#FFFDB4; --mancha5:#D9C8F0; --mancha-op:.5; --velo:rgba(241,236,248,.45); --estrellas:.55; --e1:#23003F; --e2:#F94500;
-  --grad1:#F94500; --grad2:#BCACCE; --on-grad:#23003F; --on-grad-muted:rgba(35,0,63,.72); --acento:#F94500;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --bg:#EDEBE2; --surface:#FBFAF5; --ink:#113C42; --muted:#5A7478; --line:#D8D6CA; --ink-base:#113C42; --muted-base:#5A7478;
+  --accent:#113C42; --accent-ink:#FFFFFF; --accent-soft:#E2E0D3; --on-color:#113C42;
+  --hero:#113C42; --nav:#FBFAF5; --nav-ink:#7F9496; --nav-on:#113C42; --neutro:#FBFAF5;
+  /* Fondo de manchas: sus colores, su opacidad y un velo para que el texto se lea; estrellas */
+  --mancha1:#E9B8DE; --mancha2:#136C51; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#F3D9EC; --mancha-op:.5; --velo:rgba(237,235,226,.45); --estrellas:.55; --e1:#136C51; --e2:#B97DA8;
+  /* Degradado de las tarjetas destacadas y acento del logo */
+  --grad1:#E9B8DE; --grad2:#EEDC5B; --on-grad:#113C42; --on-grad-muted:rgba(17,60,66,.72); --acento:#136C51;
   color-scheme:light;
 }
-:root[data-kit="indigo"],[data-kit-vista="indigo"]{
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace;
-  --bg:#F1ECF8; --surface:#FFFFFF; --ink:#23003F; --muted:#6B5A82; --line:#DCD2E8; --ink-base:#23003F; --muted-base:#6B5A82;
-  --accent:#23003F; --accent-ink:#FFFFFF; --accent-soft:#E7DEF2; --on-color:#23003F;
-  --hero:#23003F; --nav:#FFFFFF; --nav-ink:#8C7FA3; --nav-on:#23003F; --neutro:#FFFFFF;
-  --mancha1:#BCACCE; --mancha2:#F94500; --mancha3:#7A4DB8; --mancha4:#FFFDB4; --mancha5:#D9C8F0; --mancha-op:.5; --velo:rgba(241,236,248,.45); --estrellas:.55; --e1:#23003F; --e2:#F94500;
-  --grad1:#F94500; --grad2:#BCACCE; --on-grad:#23003F; --on-grad-muted:rgba(35,0,63,.72); --acento:#F94500;}
-:root[data-kit="nieve"],[data-kit-vista="nieve"]{
-  --font:ui-serif,"New York",Georgia,"Times New Roman",serif; --font-num:ui-serif,"New York",Georgia,"Times New Roman",serif;
-  --bg:#F5F4ED; --surface:#FFFFFF; --ink:#351E1C; --muted:#7A6360; --line:#E2DFD0; --ink-base:#351E1C; --muted-base:#7A6360;
-  --accent:#351E1C; --accent-ink:#FFFFFF; --accent-soft:#ECECDC; --on-color:#351E1C;
-  --hero:#351E1C; --nav:#FFFFFF; --nav-ink:#9A8784; --nav-on:#351E1C; --neutro:#FFFFFF;
-  --mancha1:#A0C9CB; --mancha2:#FF6037; --mancha3:#ECECDC; --mancha4:#733635; --mancha5:#7FB3B6; --mancha-op:.5; --velo:rgba(245,244,237,.45); --estrellas:.55; --e1:#733635; --e2:#4E8A8E;
-  --grad1:#A0C9CB; --grad2:#FF8A66; --on-grad:#351E1C; --on-grad-muted:rgba(53,30,28,.72); --acento:#FF6037;}
-:root[data-kit="jardin"],[data-kit-vista="jardin"]{
-  --font:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif; --font-num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-  --bg:#EDEBE2; --surface:#FFFFFF; --ink:#113C42; --muted:#5E7A7C; --line:#D8D6CA; --ink-base:#113C42; --muted-base:#5E7A7C;
-  --accent:#113C42; --accent-ink:#FFFFFF; --accent-soft:#E3E1D4; --on-color:#113C42;
-  --hero:#113C42; --nav:#FFFFFF; --nav-ink:#7F9496; --nav-on:#113C42; --neutro:#FFFFFF;
-  --mancha1:#E9B8DE; --mancha2:#136C51; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#A5D1BD; --mancha-op:.5; --velo:rgba(237,235,226,.45); --estrellas:.55; --e1:#136C51; --e2:#B97DA8;
-  --grad1:#E9B8DE; --grad2:#EEDC5B; --on-grad:#113C42; --on-grad-muted:rgba(17,60,66,.72); --acento:#136C51;}
-:root[data-kit="brulee"],[data-kit-vista="brulee"]{
-  --font:ui-serif,"New York",Georgia,"Times New Roman",serif; --font-num:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
-  --bg:#F5E9CE; --surface:#FFFBF0; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
-  --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
-  --hero:#450E15; --nav:#FFFBF0; --nav-ink:#9A8480; --nav-on:#450E15; --neutro:#FFFBF0;
-  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5C97A; --mancha-op:.5; --velo:rgba(245,233,206,.45); --estrellas:.55; --e1:#432E6F; --e2:#BC2D29;
-  --grad1:#FFA102; --grad2:#F28C45; --on-grad:#450E15; --on-grad-muted:rgba(69,14,21,.72); --acento:#DD5533;}
 :root[data-apariencia="oscura"]{
   --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
-  --hero-ink:#FFFFFF; --hero-muted:#C3B2D8; --ingreso:#3E4A14;
-  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A; color-scheme:dark}
-:root[data-kit="indigo"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="indigo"]{
-  --bg:#1A002C; --surface:#2A0A44; --ink:#F6F0FF; --muted:#C3B2D8; --line:#4A2A68; --ink-base:#F6F0FF; --muted-base:#C3B2D8;
-  --accent:#F6F0FF; --accent-ink:#1A002C; --accent-soft:#3A1B58; --on-color:#F6F0FF;
-  --hero:#2A0A44; --nav:#2A0A44; --nav-ink:#AE9AC8; --nav-on:#F6F0FF; --neutro:#2A0A44;
-  --mancha1:#F94500; --mancha2:#BCACCE; --mancha3:#7B3FE4; --mancha4:#FFFDB4; --mancha5:#4C1D95; --mancha-op:.55; --velo:rgba(26,0,44,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCACCE;
-  --grad1:#B2300A; --grad2:#5B2A9A; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#F94500;}
-:root[data-kit="nieve"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="nieve"]{
-  --bg:#2A1614; --surface:#351E1C; --ink:#F5F4ED; --muted:#CDBDB8; --line:#5A3A37; --ink-base:#F5F4ED; --muted-base:#CDBDB8;
-  --accent:#F5F4ED; --accent-ink:#2A1614; --accent-soft:#482A27; --on-color:#F5F4ED;
-  --hero:#351E1C; --nav:#351E1C; --nav-ink:#B19C97; --nav-on:#F5F4ED; --neutro:#351E1C;
-  --mancha1:#733635; --mancha2:#FF6037; --mancha3:#A0C9CB; --mancha4:#8A4B48; --mancha5:#52807F; --mancha-op:.6; --velo:rgba(42,22,20,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#A0C9CB;
-  --grad1:#A4422B; --grad2:#4F7273; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#FF6037;}
-:root[data-kit="jardin"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="jardin"]{
-  --bg:#0E2F33; --surface:#113C42; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
-  --accent:#EDEBE2; --accent-ink:#0E2F33; --accent-soft:#1A4B51; --on-color:#EDEBE2;
-  --hero:#113C42; --nav:#113C42; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#113C42;
-  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#1F8F6E; --mancha-op:.55; --velo:rgba(14,47,51,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#E9B8DE;
-  --grad1:#7A4A74; --grad2:#1B7A5E; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#EEDC5B;}
-:root[data-kit="brulee"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="brulee"]{
-  --bg:#2E0810; --surface:#450E15; --ink:#F5E9CE; --muted:#D6BFA0; --line:#6B2A2F; --ink-base:#F5E9CE; --muted-base:#D6BFA0;
-  --accent:#F5E9CE; --accent-ink:#2E0810; --accent-soft:#5A1F27; --on-color:#F5E9CE;
-  --hero:#450E15; --nav:#450E15; --nav-ink:#B59A85; --nav-on:#F5E9CE; --neutro:#450E15;
-  --mancha1:#432E6F; --mancha2:#FFA102; --mancha3:#DD5533; --mancha4:#6B4AA8; --mancha5:#BC2D29; --mancha-op:.6; --velo:rgba(46,8,16,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#FFA102;
-  --grad1:#A9560C; --grad2:#5B3C93; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#FFA102;}
+  --hero-ink:#F5E9CE; --hero-muted:#D8C2A4; --ingreso:#3E4A14;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --bg:#450E15; --surface:#52161F; --ink:#F5E9CE; --muted:#D8C2A4; --line:#70303A; --ink-base:#F5E9CE; --muted-base:#D8C2A4;
+  --accent:#F5E9CE; --accent-ink:#450E15; --accent-soft:#5E2230; --on-color:#F5E9CE;
+  --hero:#52161F; --nav:#52161F; --nav-ink:#BFA58E; --nav-on:#F5E9CE; --neutro:#52161F;
+  --mancha1:#432E6F; --mancha2:#FFA102; --mancha3:#DD5533; --mancha4:#BC2D29; --mancha5:#5A3F94; --mancha-op:.6; --velo:rgba(69,14,21,.3); --estrellas:.9; --e1:#F5E9CE; --e2:#FFA102;
+  --grad1:#DD5533; --grad2:#6B4AA8; --on-grad:#F5E9CE; --on-grad-muted:rgba(245,233,206,.78); --acento:#FFA102;
+  color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -125,22 +80,14 @@ html:not([data-apariencia="oscura"]) .card:not(.hero):not(.grad){background:colo
 .mov{background:var(--surface);color:var(--ink-base)}
 .mov .ico{background:var(--c);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
-/* Tarjetas con degradado difuso del color del kit: el texto se lee en todo el degradado (--on-grad) */
+/* Tarjetas con degradado difuso del color de la paleta: el texto se lee en todo el degradado (--on-grad) */
 .card.grad{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--grad1) 55%,transparent) 0%,transparent 62%),radial-gradient(110% 120% at 100% 100%,color-mix(in srgb,var(--grad2) 55%,transparent) 0%,transparent 58%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
 html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)}
 .card.grad .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px;opacity:.9}
-/* Logo «mf.»: las letras en el color del texto y el punto en el acento del kit; la letra es la del kit */
+/* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
 .logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
 .logo i{font-style:normal;color:var(--acento)}
 .logo.chico{font-size:22px}
-/* Una opción de kit en Ajustes: se ve con los colores y la letra del kit */
-.kits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-.kit-op{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px;border-radius:18px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-family:var(--font);text-align:left;cursor:pointer;overflow:hidden}
-.kit-op[aria-pressed=true]{border-color:var(--ink)}
-.kit-op .puntos{display:flex;gap:5px}
-.kit-op .puntos i{width:14px;height:14px;border-radius:50%;display:block}
-.kit-op .nombre{font-size:15px;font-weight:700}
-.kit-op .muestra{font-size:12px;color:var(--muted)}
 /* Elegir el color de una categoría: una fila de círculos, uno marcado */
 .colores{display:flex;flex-wrap:wrap;gap:10px}
 .color-op{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:var(--c);padding:0;cursor:pointer}
@@ -287,10 +234,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </style>
 <script>
 // La apariencia se pone antes de pintar, para que no haya un destello: oscura por defecto, clara, o automática (sigue al teléfono)
-(function(){var r="oscura",s=null;try{s=JSON.parse(localStorage.getItem("finanzas-v1"));var a=s&&s.settings&&s.settings.apariencia;
+(function(){var r="oscura";try{var s=JSON.parse(localStorage.getItem("finanzas-v1")),a=s&&s.settings&&s.settings.apariencia;
   if(a==="clara")r="clara";else if(a==="auto"&&window.matchMedia&&!matchMedia("(prefers-color-scheme: dark)").matches)r="clara";}catch(e){}
   document.documentElement.dataset.apariencia=r;
-  var k=s&&s.settings&&s.settings.kit;document.documentElement.dataset.kit=k==="nieve"||k==="jardin"||k==="brulee"?k:"indigo";
   var m=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(m)m.content=r==="oscura"?"black-translucent":"default";})();
 </script>
 </head>
@@ -367,7 +313,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
   <!-- AJUSTES -->
   <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
-    <div class="card" data-ui="diseno"><span class="lbl">Diseño</span><div class="kits" id="kits" data-ui="selector-kit"></div><span class="sub">Cada kit trae sus colores, su letra y su logo. «Apariencia» elige oscuro o claro.</span></div>
     <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" id="segApariencia" style="margin-top:8px"></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
     <button type="button" class="card" id="catsCard" data-ui="tarjeta-categorias" style="text-align:left;font:inherit"><div class="row"><span class="lbl">Categorías</span><span class="sub">Editar ›</span></div><span class="sub" id="catsSub"></span></button>
     <div class="card" data-ui="plan-ajustes">
@@ -957,20 +902,14 @@ const APARIENCIAS=[["oscura","Oscura"],["clara","Clara"],["auto","Automática"]]
 const mqOscuro=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
 const aparienciaDe=()=>{const a=S.settings.apariencia;return a==="clara"||a==="auto"?a:"oscura";};
 const aparienciaVista=()=>{const a=aparienciaDe();return a==="auto"?(mqOscuro&&!mqOscuro.matches?"clara":"oscura"):a;};
-// Kit de diseño: paleta, letra y logo juntos (las variables salen de html[data-kit]); el script del <head> lo pone antes de pintar
-const KITS=[["indigo","Índigo"],["nieve","Nieve"],["jardin","Jardín"],["brulee","Brûlée"]];
-const kitDe=()=>KITS.some(k=>k[0]===S.settings.kit)?S.settings.kit:"indigo";
-function aplicarKit(){const k=kitDe();document.documentElement.dataset.kit=k;
-  $("kits").innerHTML=KITS.map(([id,n])=>`<button type="button" class="kit-op" data-kit-vista="${id}" data-kit-op="${id}" aria-pressed="${id===k}"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">${n}</span><span class="muestra">Gasto del mes 1234,5</span></button>`).join("");}
-$("kits").addEventListener("click",e=>{const b=e.target.closest("[data-kit-op]");if(!b)return;S.settings.kit=b.dataset.kitOp;persist();render();});
 function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElement;d.dataset.apariencia=v;
-  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#16070D":"#F2E4DE");
+  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#450E15":"#EDEBE2");
   seg($("segApariencia"),APARIENCIAS,aparienciaDe(),x=>{S.settings.apariencia=x;persist();render();});}
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
 // El fondo se detiene cuando la app no está visible
 document.addEventListener("visibilitychange",()=>document.documentElement.classList.toggle("en-pausa",document.hidden));
 function render(){
-  aplicarKit();aplicarApariencia();avisoAdj();pintarCopia();
+  aplicarApariencia();avisoAdj();pintarCopia();
   const id=mesId(), ms=movsMes(id), st=S.settings, PLAN=planMap();
   $("setupCard").hidden=S.cuentas.length>0;
   $("mesLabel").textContent=mesDe(id);
@@ -1598,7 +1537,7 @@ document.addEventListener("change",e=>{const c=e.target.dataset&&e.target.datase
 $("guardarAjustes").onclick=()=>{const of=num("objFondo"),ap=num("aporte"),ini=$("inicio").value;
   if(!(of>0)||!(ap>0)||!ini){toast("Completá el aporte, el objetivo y el mes de inicio");return;}
   const saltos=$("saltos").value.split(",").map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}$/.test(x)).join(", ");
-  S.settings={kit:S.settings.kit,apariencia:S.settings.apariencia,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
+  S.settings={apariencia:S.settings.apariencia,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
 $("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),PLAN=planMap(),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
   const porCat={};ms.filter(m=>m.tipo==="gasto").forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const fc=S.cuentas.find(c=>c.fondo),f=fc?valorCuenta(fc):null;
