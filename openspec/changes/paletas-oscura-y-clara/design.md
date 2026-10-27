@@ -18,6 +18,14 @@ dos referencias de bloques de color sólido y plano. Decidido: **bloques sólido
 sólo en las destacadas) y **fondo liso del color de cada paleta** (descartado: negro y blanco). Se quitan el fondo de
 manchas, las estrellas, su movimiento y los degradados.
 
+## Ajuste (2026-10-27, Gate 2, 3.ª ronda)
+
+La persona dejó las capturas de Inicio clara, Inicio oscura y Cuentas oscura, y pidió **fondo dinámico detrás**: elegido
+**manchas difuminadas de la paleta que se mueven** (descartado: foto desenfocada, que necesita una imagen en el repo).
+Vuelven las cinco manchas (`.fondo`, `--mancha1..5`, `--mancha-op`, `--velo`), sin estrellas; opacidad .26 en la clara
+y .34 en la oscura. De otra referencia tomó **etiquetas en píldora** en el título de las tarjetas de color
+(`.card.color .lbl`). Sigue el movimiento con «Reducir movimiento» y la pausa con `html.en-pausa`.
+
 ## Decisiones tomadas al escribir (a confirmar en el Gate 1)
 
 - **Oscura (Jardín):** fondo casi negro #070B0C (por pedido de la persona, como en las referencias); las tarjetas

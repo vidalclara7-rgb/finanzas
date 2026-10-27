@@ -17,6 +17,7 @@
   --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
   --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5E9CE; --mancha-op:.26; --velo:rgba(255,255,255,.5);
   --bg:#FFFFFF; --surface:#F5E9CE; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
   --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
   --hero:#450E15; --nav:#F5E9CE; --nav-ink:#8A7470; --nav-on:#450E15; --neutro:#F5E9CE;
@@ -29,6 +30,7 @@
   --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
   --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#2E7D4B;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#113C42; --mancha-op:.34; --velo:rgba(7,11,12,.35);
   --bg:#070B0C; --surface:#113C42; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
   --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
   --hero:#113C42; --nav:#113C42; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#113C42;
@@ -37,6 +39,18 @@
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
+/* Fondo dinámico: cinco manchas de la paleta, muy difuminadas, que flotan despacio detrás de todo; el velo ayuda a que el texto se lea */
+.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
+.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
+.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
+.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
+.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
+.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
+@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.fondo i{animation:none}}
+html.en-pausa .fondo i{animation-play-state:paused}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -54,7 +68,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .ico.osc{color:var(--on-osc)}
 /* Tarjeta de color sólido: el color sale de --c y el texto de --on-c; lo de dentro (barras, botones, líneas) toma el color del texto */
 .card.color{border:0;background:var(--c);color:var(--on-c);--ink:var(--on-c);--muted:color-mix(in srgb,var(--on-c) 72%,transparent);--line:color-mix(in srgb,var(--on-c) 24%,transparent);--accent:var(--on-c);--accent-ink:var(--c);--accent-soft:color-mix(in srgb,var(--on-c) 18%,transparent);}
-.card.color .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.card.color .lbl{display:inline-block;width:fit-content;border:1px solid color-mix(in srgb,var(--on-c) 55%,transparent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;letter-spacing:.01em}
 /* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
 .logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
 .logo i{font-style:normal;color:var(--acento)}
@@ -316,5 +330,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <button data-ir="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>Cuentas</button>
 <!-- nav:fin -->
 </nav>
+<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 </body>
 </html>

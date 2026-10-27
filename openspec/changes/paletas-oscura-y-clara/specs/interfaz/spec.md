@@ -41,13 +41,19 @@ Casi todas las tarjetas son bloques de un color sólido de la paleta, planos y r
 disponible de cada cuenta y los grupos de Cuentas llevan el color de su tipo (bancos, inversiones, tarjetas,
 financiaciones y deudas compartidas), y «Cuotas del mes», el patrimonio, «Por semana», «Ingresos y gastos», «Por
 cobrar», la conciliación y el checklist llevan cada uno el suyo. «Gasto del mes» y las hojas de formularios son
-neutras, para que se lean la torta y los campos. El texto de cada tarjeta es claro u oscuro según su color y se lee con
+neutras, para que se lean la torta y los campos. Cada tarjeta de color lleva su título en una etiqueta en píldora
+(texto con borde redondeado), como en la referencia. El texto de cada tarjeta es claro u oscuro según su color y se lee con
 contraste de al menos 4,5 a 1.
 
 ### Escenario: el disponible lleva el color de su tipo
 - **Dado** una cuenta de bancos con tope y una tarjeta de crédito con tope
 - **Cuando** la persona abre Inicio
 - **Entonces** el disponible de cada una es un bloque de color sólido, y los dos colores son distintos
+
+### Escenario: títulos en píldora
+- **Dado** una cuenta de bancos con tope
+- **Cuando** la persona abre Inicio
+- **Entonces** el título de la tarjeta de color está en una etiqueta con borde redondeado (píldora)
 
 ### Escenario: tarjetas sin degradado
 - **Dado** una tarjeta de crédito con tope y una financiación con cuota
