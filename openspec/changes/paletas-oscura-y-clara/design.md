@@ -30,7 +30,7 @@ y .34 en la oscura. De otra referencia tomó **etiquetas en píldora** en el tí
 
 - **Oscura (Jardín):** fondo casi negro #070B0C (por pedido de la persona, como en las referencias); las tarjetas
   neutras llevan el verde azulado #113C42; colores de tarjeta: verde #136C51 (texto blanco hueso), amarillo #EEDC5B, rosa
-  #E9B8DE, malva #B97DA8 y blanco hueso #EDEBE2 (texto verde muy oscuro #0B2A2E). Acento del logo: amarillo.
+  #E9B8DE, malva #B97DA8 y blanco hueso #EDEBE2 (texto verde muy oscuro #0B2A2E; sobre el malva, #061A1D para llegar a 4,5 a 1 también en el texto secundario, que lleva el 94 % de la tinta). Acento del logo: amarillo.
 - **Clara (Brûlée):** fondo blanco #FFFFFF; las tarjetas neutras llevan el crema #F5E9CE; colores de tarjeta: naranja #FFA102 (texto chocolate #450E15), púrpura #432E6F,
   granate #BC2D29 y chocolate #450E15 (texto crema #F5E9CE) y blanco crema #FFFBF0 (sobre el fondo blanco se distinguen por su borde). El tomate #DD5533 (3,9 a 1 con
   texto) sólo se usa de acento (logo, aros y barras), no de fondo de tarjeta con texto.
