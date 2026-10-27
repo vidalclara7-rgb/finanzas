@@ -133,6 +133,8 @@ t.test("el disponible lleva el color de su tipo", async () => {
 // Escenario: títulos en píldora
 t.test("títulos en píldora", async () => {
   const { page } = await abrir({ datos: DATOS_COLOR() });
+  await page.waitForSelector('[data-disp="1"] .lbl', { state: "visible" });
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('[data-disp="1"] .lbl')).borderTopStyle === "solid");
   const r = await page.$eval('[data-disp="1"] .lbl', (e) => { const s = getComputedStyle(e); return [s.borderTopWidth, s.borderTopStyle, parseFloat(s.borderTopLeftRadius) >= e.getBoundingClientRect().height / 2 - 1]; });
   assert.deepEqual(r, ["1px", "solid", true]);
 });
