@@ -4,7 +4,8 @@
 
 En la revisión, la lista de cada movimiento tiene «Nueva cuenta…». Abre la hoja «Nueva cuenta» y, al guardar,
 vuelve a la revisión con ese movimiento como transferencia a la cuenta creada. El resto de la revisión queda
-como estaba. Cerrar la hoja sin guardar vuelve a la revisión sin cambios.
+como estaba. Cerrar la hoja sin guardar vuelve a la revisión sin cambios. La cuenta nueva parte desde la fecha
+del movimiento más viejo del extracto, para que las transferencias del extracto cuenten en su saldo.
 
 ### Escenario: mandar plata a una inversión que no existía
 - **Dado** «Banco A» y la revisión de un extracto con «Traspaso Fondo» de −200 € propuesto como gasto en Otros

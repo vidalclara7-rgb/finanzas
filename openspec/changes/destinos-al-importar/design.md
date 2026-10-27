@@ -30,3 +30,5 @@
 - `propuesta` del borrador consulta primero `S.reglas["t|"+k]`; el guardado la actualiza y limpia las `g|`/`i|`
   de la misma clave (y a la inversa).
 - Sin cambios en `norm()` ni en la clave de `localStorage`. Sube la versión de `CACHE` en `sw.js`.
+
+- **Fecha de partida de la cuenta nueva (decidido al construir):** una cuenta creada desde la revisión parte en la fecha del movimiento más viejo del extracto (o en hoy, si es anterior), para que las transferencias del extracto cuenten en su saldo. Es lo que dice el escenario «mandar plata a una inversión que no existía» (Broker X tiene 200 €).

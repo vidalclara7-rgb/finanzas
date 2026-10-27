@@ -1,6 +1,6 @@
 ---
 cambio: destinos-al-importar
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Mandar plata a otra cuenta al importar, sin que cuente como gasto
