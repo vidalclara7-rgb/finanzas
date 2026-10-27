@@ -3,9 +3,9 @@
 ## Requisito: fondo de manchas
 
 Detrás de todas las pantallas hay un fondo de manchas de color que se funden con un degradado suave, con estrellas
-pequeñas que titilan. En la apariencia oscura los colores son los de la paleta Brûlée (chocolate oscuro, púrpura,
-naranja, tomate y granate, con texto crema); en la clara, los de la paleta Jardín (blanco hueso, rosa, verde, amarillo
-y malva, con texto verde oscuro). En la clara las tarjetas son de vidrio esmerilado (blancas y translúcidas). Las
+pequeñas que titilan. En la apariencia oscura los colores son los de la paleta Jardín (verde azulado oscuro, verde, rosa, amarillo
+y malva, con texto blanco hueso); en la clara, los de la paleta Brûlée (crema, naranja, tomate, púrpura y granate,
+con texto chocolate). En la clara las tarjetas son de vidrio esmerilado (blancas y translúcidas). Las
 tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1.
 
 ### Escenario: el fondo está en todas las pantallas
@@ -16,12 +16,12 @@ tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1.
 ### Escenario: los colores de la oscura
 - **Dado** la apariencia Oscura
 - **Cuando** la persona mira el fondo
-- **Entonces** el fondo de la pantalla es el chocolate oscuro #450E15 y las manchas son el púrpura #432E6F, el naranja #FFA102, el tomate #DD5533 y el granate #BC2D29
+- **Entonces** el fondo de la pantalla es el verde azulado oscuro #113C42 y las manchas son el verde #136C51, el rosa #E9B8DE, el amarillo #EEDC5B y el malva #B97DA8
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara
 - **Cuando** la persona mira el fondo
-- **Entonces** el fondo de la pantalla es el blanco hueso #EDEBE2 y las manchas son el rosa #E9B8DE, el verde #136C51, el amarillo #EEDC5B y el malva #B97DA8
+- **Entonces** el fondo de la pantalla es el crema #F5E9CE y las manchas son el naranja #FFA102, el tomate #DD5533, el púrpura #432E6F y el granate #BC2D29
 
 ### Escenario: estrellas en las dos apariencias
 - **Dado** la apariencia Oscura

@@ -23,17 +23,17 @@ sistema. Los números (importes, totales y el resultado del mes) usan una letra 
 ## Requisito: el logo «mf.» dentro de la app
 
 El encabezado de Inicio muestra el monograma «mf.» con la letra de la app: las letras en el color del texto y el punto
-en el color de acento de la apariencia (naranja en la oscura, verde en la clara).
+en el color de acento de la apariencia (amarillo en la oscura, tomate en la clara).
 
 ### Escenario: logo en Inicio
 - **Dado** la apariencia Oscura
 - **Cuando** la persona abre Inicio
-- **Entonces** el encabezado muestra «mf.» con el punto en el naranja de la paleta
+- **Entonces** el encabezado muestra «mf.» con el punto en el amarillo de la paleta
 
 ### Escenario: el logo sigue a la apariencia
 - **Dado** el logo en Inicio
 - **Cuando** la persona cambia a la apariencia Clara
-- **Entonces** las letras pasan al verde oscuro del texto y el punto, al verde de la paleta Jardín
+- **Entonces** las letras pasan al chocolate del texto y el punto, al tomate de la paleta Brûlée
 
 ## Requisito: tarjetas con degradado
 

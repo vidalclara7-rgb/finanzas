@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-/* Dos paletas atadas a la apariencia: la clara es Jardín (blanco hueso, rosa, verde, amarillo y malva) y la oscura, Brûlée (chocolate, púrpura, naranja, tomate y granate) */
+/* Dos paletas atadas a la apariencia: la clara es Brûlée (crema, naranja, tomate, púrpura y granate) y la oscura, Jardín (verde azulado, verde, rosa, amarillo y malva) */
 :root{
   --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
-  --hero-ink:#FFFFFF; --hero-muted:#C9D6D6;
+  --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
   --ingreso:#D3DDA0; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
   /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
@@ -23,24 +23,24 @@
   --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
   --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
-  --bg:#EDEBE2; --surface:#FBFAF5; --ink:#113C42; --muted:#5A7478; --line:#D8D6CA; --ink-base:#113C42; --muted-base:#5A7478;
-  --accent:#113C42; --accent-ink:#FFFFFF; --accent-soft:#E2E0D3; --on-color:#113C42;
-  --hero:#113C42; --nav:#FBFAF5; --nav-ink:#7F9496; --nav-on:#113C42; --neutro:#FBFAF5;
+  --bg:#F5E9CE; --surface:#FFFBF0; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
+  --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
+  --hero:#450E15; --nav:#FFFBF0; --nav-ink:#9A8480; --nav-on:#450E15; --neutro:#FFFBF0;
   /* Fondo de manchas: sus colores, su opacidad y un velo para que el texto se lea; estrellas */
-  --mancha1:#E9B8DE; --mancha2:#136C51; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#F3D9EC; --mancha-op:.5; --velo:rgba(237,235,226,.45); --estrellas:.55; --e1:#136C51; --e2:#B97DA8;
+  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5C97A; --mancha-op:.5; --velo:rgba(245,233,206,.45); --estrellas:.55; --e1:#432E6F; --e2:#BC2D29;
   /* Degradado de las tarjetas destacadas y acento del logo */
-  --grad1:#E9B8DE; --grad2:#EEDC5B; --on-grad:#113C42; --on-grad-muted:rgba(17,60,66,.72); --acento:#136C51;
+  --grad1:#FFA102; --grad2:#DD5533; --on-grad:#450E15; --on-grad-muted:rgba(69,14,21,.72); --acento:#DD5533;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
   --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
-  --hero-ink:#F5E9CE; --hero-muted:#D8C2A4; --ingreso:#3E4A14;
+  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#3E4A14;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
-  --bg:#450E15; --surface:#52161F; --ink:#F5E9CE; --muted:#D8C2A4; --line:#70303A; --ink-base:#F5E9CE; --muted-base:#D8C2A4;
-  --accent:#F5E9CE; --accent-ink:#450E15; --accent-soft:#5E2230; --on-color:#F5E9CE;
-  --hero:#52161F; --nav:#52161F; --nav-ink:#BFA58E; --nav-on:#F5E9CE; --neutro:#52161F;
-  --mancha1:#432E6F; --mancha2:#FFA102; --mancha3:#DD5533; --mancha4:#BC2D29; --mancha5:#5A3F94; --mancha-op:.6; --velo:rgba(69,14,21,.3); --estrellas:.9; --e1:#F5E9CE; --e2:#FFA102;
-  --grad1:#DD5533; --grad2:#6B4AA8; --on-grad:#F5E9CE; --on-grad-muted:rgba(245,233,206,.78); --acento:#FFA102;
+  --bg:#113C42; --surface:#17484F; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
+  --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
+  --hero:#17484F; --nav:#17484F; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#17484F;
+  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#1F8F6E; --mancha-op:.6; --velo:rgba(17,60,66,.3); --estrellas:.9; --e1:#EDEBE2; --e2:#E9B8DE;
+  --grad1:#136C51; --grad2:#9A5F8A; --on-grad:#EDEBE2; --on-grad-muted:rgba(237,235,226,.78); --acento:#EEDC5B;
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
@@ -903,7 +903,7 @@ const mqOscuro=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null
 const aparienciaDe=()=>{const a=S.settings.apariencia;return a==="clara"||a==="auto"?a:"oscura";};
 const aparienciaVista=()=>{const a=aparienciaDe();return a==="auto"?(mqOscuro&&!mqOscuro.matches?"clara":"oscura"):a;};
 function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElement;d.dataset.apariencia=v;
-  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#450E15":"#EDEBE2");
+  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#113C42":"#F5E9CE");
   seg($("segApariencia"),APARIENCIAS,aparienciaDe(),x=>{S.settings.apariencia=x;persist();render();});}
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
 // El fondo se detiene cuando la app no está visible

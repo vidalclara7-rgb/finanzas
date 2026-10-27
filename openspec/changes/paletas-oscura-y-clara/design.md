@@ -3,7 +3,8 @@
 ## Decisiones de la persona (2026-10-27)
 
 - **Se acaban los cuatro kits** que se propusieron antes: quedan dos paletas atadas a la apariencia.
-- **Oscura = todos los colores de la referencia 1** (Brûlée); **Clara = todos los de la referencia 2** (Jardín). No se
+- **Oscura = todos los colores de la referencia Jardín**; **Clara = todos los de la referencia Brûlée** (la primera
+  propuesta las tenía al revés; la persona pidió intercambiarlas al verlas). No se
   usa nada de la paleta nieve/aqua/naranja.
 - **Letra de la referencia 1 y números de la referencia 2** (monoespaciada).
 - **Tarjetas con degradado, más suave** que en la primera prueba.
@@ -12,12 +13,12 @@
 
 ## Decisiones tomadas al escribir (a confirmar en el Gate 1)
 
-- **Oscura (Brûlée):** fondo Rum Chocolate #450E15; manchas Her Highness #432E6F, Vivid Orange Peel #FFA102, Frozen
-  Tomato #DD5533, Ginshu #BC2D29 y, muy tenue, Yoghurt Brûlée #F5E9CE; texto Yoghurt Brûlée; botones Yoghurt con
-  texto Rum Chocolate; acento (puntos, enlaces, logo) Vivid Orange Peel; degradados Frozen Tomato/Ginshu y Her Highness.
-- **Clara (Jardín):** fondo Arcade White #EDEBE2; manchas Pink Drink #E9B8DE, Martian Green #136C51, Dull Yellow
-  #EEDC5B, Romanov Mauve #B97DA8; texto y botones #113C42; acento (logo) Martian Green; degradados Pink Drink y Dull Yellow.
-  Las superficies son tonos de esos colores (translúcidos), no colores nuevos.
+- **Oscura (Jardín):** fondo verde azulado #113C42; manchas Martian Green #136C51, Pink Drink #E9B8DE, Dull Yellow
+  #EEDC5B y Romanov Mauve #B97DA8; texto Arcade White #EDEBE2; botones Arcade White con texto #113C42; acento (logo)
+  Dull Yellow; degradados Martian Green y Romanov Mauve. Las superficies son tonos del verde, translúcidos.
+- **Clara (Brûlée):** fondo Yoghurt Brûlée #F5E9CE; manchas Vivid Orange Peel #FFA102, Frozen Tomato #DD5533, Her
+  Highness #432E6F y Ginshu #BC2D29; texto y botones Rum Chocolate #450E15; acento (logo) Frozen Tomato; degradados
+  Vivid Orange Peel y Frozen Tomato.
 - **Letra:** `system-ui` sans (SF Pro) en textos y títulos, con peso 600 a 700 en títulos; números en `ui-monospace`
   (SF Mono). Una alternativa más parecida a la geométrica de la referencia es SF Rounded (`ui-rounded`); se cambia con una
   variable si no convence en el iPhone.
