@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preview · kits-de-diseno</title>
+<!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
+<style>
+/* Kits de diseño: cada kit trae su paleta (clara y oscura), su letra y su logo. Los colores de categorías y de tipos de cuenta son los mismos en todos */
+:root{
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --hero-ink:#FFFFFF; --hero-muted:#E0D8E8;
+  --ingreso:#D3DDA0; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --bg:#F1ECF8; --surface:#FFFFFF; --ink:#23003F; --muted:#6B5A82; --line:#DCD2E8; --ink-base:#23003F; --muted-base:#6B5A82;
+  --accent:#23003F; --accent-ink:#FFFFFF; --accent-soft:#E7DEF2; --on-color:#23003F;
+  --hero:#23003F; --nav:#FFFFFF; --nav-ink:#8C7FA3; --nav-on:#23003F; --neutro:#FFFFFF;
+  --mancha1:#BCACCE; --mancha2:#F94500; --mancha3:#7A4DB8; --mancha4:#FFFDB4; --mancha5:#D9C8F0; --mancha-op:.5; --velo:rgba(241,236,248,.45); --estrellas:.55; --e1:#23003F; --e2:#F94500;
+  --grad1:#F94500; --grad2:#BCACCE; --on-grad:#23003F; --on-grad-muted:rgba(35,0,63,.72); --acento:#F94500;
+  color-scheme:light;
+}
+:root[data-kit="indigo"],[data-kit-vista="indigo"]{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace;
+  --bg:#F1ECF8; --surface:#FFFFFF; --ink:#23003F; --muted:#6B5A82; --line:#DCD2E8; --ink-base:#23003F; --muted-base:#6B5A82;
+  --accent:#23003F; --accent-ink:#FFFFFF; --accent-soft:#E7DEF2; --on-color:#23003F;
+  --hero:#23003F; --nav:#FFFFFF; --nav-ink:#8C7FA3; --nav-on:#23003F; --neutro:#FFFFFF;
+  --mancha1:#BCACCE; --mancha2:#F94500; --mancha3:#7A4DB8; --mancha4:#FFFDB4; --mancha5:#D9C8F0; --mancha-op:.5; --velo:rgba(241,236,248,.45); --estrellas:.55; --e1:#23003F; --e2:#F94500;
+  --grad1:#F94500; --grad2:#BCACCE; --on-grad:#23003F; --on-grad-muted:rgba(35,0,63,.72); --acento:#F94500;}
+:root[data-kit="nieve"],[data-kit-vista="nieve"]{
+  --font:ui-serif,"New York",Georgia,"Times New Roman",serif; --font-num:ui-serif,"New York",Georgia,"Times New Roman",serif;
+  --bg:#F5F4ED; --surface:#FFFFFF; --ink:#351E1C; --muted:#7A6360; --line:#E2DFD0; --ink-base:#351E1C; --muted-base:#7A6360;
+  --accent:#351E1C; --accent-ink:#FFFFFF; --accent-soft:#ECECDC; --on-color:#351E1C;
+  --hero:#351E1C; --nav:#FFFFFF; --nav-ink:#9A8784; --nav-on:#351E1C; --neutro:#FFFFFF;
+  --mancha1:#A0C9CB; --mancha2:#FF6037; --mancha3:#ECECDC; --mancha4:#733635; --mancha5:#7FB3B6; --mancha-op:.5; --velo:rgba(245,244,237,.45); --estrellas:.55; --e1:#733635; --e2:#4E8A8E;
+  --grad1:#A0C9CB; --grad2:#FF8A66; --on-grad:#351E1C; --on-grad-muted:rgba(53,30,28,.72); --acento:#FF6037;}
+:root[data-kit="jardin"],[data-kit-vista="jardin"]{
+  --font:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif; --font-num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --bg:#EDEBE2; --surface:#FFFFFF; --ink:#113C42; --muted:#5E7A7C; --line:#D8D6CA; --ink-base:#113C42; --muted-base:#5E7A7C;
+  --accent:#113C42; --accent-ink:#FFFFFF; --accent-soft:#E3E1D4; --on-color:#113C42;
+  --hero:#113C42; --nav:#FFFFFF; --nav-ink:#7F9496; --nav-on:#113C42; --neutro:#FFFFFF;
+  --mancha1:#E9B8DE; --mancha2:#136C51; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#A5D1BD; --mancha-op:.5; --velo:rgba(237,235,226,.45); --estrellas:.55; --e1:#136C51; --e2:#B97DA8;
+  --grad1:#E9B8DE; --grad2:#EEDC5B; --on-grad:#113C42; --on-grad-muted:rgba(17,60,66,.72); --acento:#136C51;}
+:root[data-kit="brulee"],[data-kit-vista="brulee"]{
+  --font:ui-serif,"New York",Georgia,"Times New Roman",serif; --font-num:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --bg:#F5E9CE; --surface:#FFFBF0; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
+  --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
+  --hero:#450E15; --nav:#FFFBF0; --nav-ink:#9A8480; --nav-on:#450E15; --neutro:#FFFBF0;
+  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5C97A; --mancha-op:.5; --velo:rgba(245,233,206,.45); --estrellas:.55; --e1:#432E6F; --e2:#BC2D29;
+  --grad1:#FFA102; --grad2:#F28C45; --on-grad:#450E15; --on-grad-muted:rgba(69,14,21,.72); --acento:#DD5533;}
+:root[data-apariencia="oscura"]{
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --hero-ink:#FFFFFF; --hero-muted:#C3B2D8; --ingreso:#3E4A14;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A; color-scheme:dark}
+:root[data-kit="indigo"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="indigo"]{
+  --bg:#1A002C; --surface:#2A0A44; --ink:#F6F0FF; --muted:#C3B2D8; --line:#4A2A68; --ink-base:#F6F0FF; --muted-base:#C3B2D8;
+  --accent:#F6F0FF; --accent-ink:#1A002C; --accent-soft:#3A1B58; --on-color:#F6F0FF;
+  --hero:#2A0A44; --nav:#2A0A44; --nav-ink:#AE9AC8; --nav-on:#F6F0FF; --neutro:#2A0A44;
+  --mancha1:#F94500; --mancha2:#BCACCE; --mancha3:#7B3FE4; --mancha4:#FFFDB4; --mancha5:#4C1D95; --mancha-op:.55; --velo:rgba(26,0,44,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#BCACCE;
+  --grad1:#B2300A; --grad2:#5B2A9A; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#F94500;}
+:root[data-kit="nieve"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="nieve"]{
+  --bg:#2A1614; --surface:#351E1C; --ink:#F5F4ED; --muted:#CDBDB8; --line:#5A3A37; --ink-base:#F5F4ED; --muted-base:#CDBDB8;
+  --accent:#F5F4ED; --accent-ink:#2A1614; --accent-soft:#482A27; --on-color:#F5F4ED;
+  --hero:#351E1C; --nav:#351E1C; --nav-ink:#B19C97; --nav-on:#F5F4ED; --neutro:#351E1C;
+  --mancha1:#733635; --mancha2:#FF6037; --mancha3:#A0C9CB; --mancha4:#8A4B48; --mancha5:#52807F; --mancha-op:.6; --velo:rgba(42,22,20,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#A0C9CB;
+  --grad1:#A4422B; --grad2:#4F7273; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#FF6037;}
+:root[data-kit="jardin"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="jardin"]{
+  --bg:#0E2F33; --surface:#113C42; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
+  --accent:#EDEBE2; --accent-ink:#0E2F33; --accent-soft:#1A4B51; --on-color:#EDEBE2;
+  --hero:#113C42; --nav:#113C42; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#113C42;
+  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#1F8F6E; --mancha-op:.55; --velo:rgba(14,47,51,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#E9B8DE;
+  --grad1:#7A4A74; --grad2:#1B7A5E; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#EEDC5B;}
+:root[data-kit="brulee"][data-apariencia="oscura"],:root[data-apariencia="oscura"] [data-kit-vista="brulee"]{
+  --bg:#2E0810; --surface:#450E15; --ink:#F5E9CE; --muted:#D6BFA0; --line:#6B2A2F; --ink-base:#F5E9CE; --muted-base:#D6BFA0;
+  --accent:#F5E9CE; --accent-ink:#2E0810; --accent-soft:#5A1F27; --on-color:#F5E9CE;
+  --hero:#450E15; --nav:#450E15; --nav-ink:#B59A85; --nav-on:#F5E9CE; --neutro:#450E15;
+  --mancha1:#432E6F; --mancha2:#FFA102; --mancha3:#DD5533; --mancha4:#6B4AA8; --mancha5:#BC2D29; --mancha-op:.6; --velo:rgba(46,8,16,.3); --estrellas:.9; --e1:#FFFFFF; --e2:#FFA102;
+  --grad1:#A9560C; --grad2:#5B3C93; --on-grad:#FFFFFF; --on-grad-muted:rgba(255,255,255,.78); --acento:#FFA102;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+/* Fondo de manchas («metaballs»): cinco degradados radiales que flotan despacio detrás de todo; el velo oscurece para que el texto se lea */
+.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+/* Estrellas: dos capas de puntos que titilan (sólo cambian de opacidad) */
+.fondo::before,.fondo b{content:"";position:absolute;inset:0;z-index:3;opacity:var(--estrellas);background-repeat:repeat;animation:titila 7s ease-in-out infinite alternate}
+.fondo::before{background-image:radial-gradient(1.2px 1.2px at 22px 38px,var(--e1),transparent),radial-gradient(1px 1px at 96px 120px,var(--e2),transparent),radial-gradient(1.4px 1.4px at 170px 64px,var(--e1),transparent),radial-gradient(1px 1px at 60px 190px,var(--e2),transparent);background-size:210px 230px}
+.fondo b{background-image:radial-gradient(1.3px 1.3px at 130px 30px,var(--e1),transparent),radial-gradient(1px 1px at 40px 100px,var(--e2),transparent),radial-gradient(1.2px 1.2px at 190px 170px,var(--e1),transparent);background-size:260px 250px;animation-duration:11s;animation-delay:-4s}
+@keyframes titila{from{opacity:calc(var(--estrellas)*.35)}to{opacity:var(--estrellas)}}
+.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
+.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
+.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
+.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
+.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
+.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
+@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.fondo i,.fondo b,.fondo::before{animation:none}}
+html.en-pausa .fondo i,html.en-pausa .fondo b,html.en-pausa .fondo::before{animation-play-state:paused}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
+.gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
+.gear svg{width:22px;height:22px}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+html[data-apariencia="oscura"] .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 86%,transparent);border:1px solid rgba(255,200,215,.18);box-shadow:0 0 24px rgba(214,76,134,.16)}
+.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+/* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
+html:not([data-apariencia="oscura"]) .card:not(.hero):not(.grad){background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 32px rgba(122,31,51,.14)}
+.acento::before,.mov::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--c,transparent)}
+.mov::before{bottom:auto;height:44px}
+.mov{background:var(--surface);color:var(--ink-base)}
+.mov .ico{background:var(--c);color:#FFFFFF}
+.ico.osc{color:var(--on-osc)}
+/* Tarjetas con degradado difuso del color del kit: el texto se lee en todo el degradado (--on-grad) */
+.card.grad{background:radial-gradient(120% 140% at 0% 0%,var(--grad1) 0%,transparent 64%),radial-gradient(110% 120% at 100% 100%,var(--grad2) 0%,transparent 60%),var(--surface);color:var(--on-grad);--ink:var(--on-grad);--muted:var(--on-grad-muted);--line:var(--on-grad-muted);border:0}
+html[data-apariencia="oscura"] .card.grad{border:1px solid rgba(255,255,255,.12)}
+.card.grad .lbl{text-transform:uppercase;letter-spacing:.06em;font-size:12px;opacity:.9}
+/* Logo «mf.»: las letras en el color del texto y el punto en el acento del kit; la letra es la del kit */
+.logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
+.logo i{font-style:normal;color:var(--acento)}
+.logo.chico{font-size:22px}
+/* Una opción de kit en Ajustes: se ve con los colores y la letra del kit */
+.kits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.kit-op{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px;border-radius:18px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-family:var(--font);text-align:left;cursor:pointer;overflow:hidden}
+.kit-op[aria-pressed=true]{border-color:var(--ink)}
+.kit-op .puntos{display:flex;gap:5px}
+.kit-op .puntos i{width:14px;height:14px;border-radius:50%;display:block}
+.kit-op .nombre{font-size:15px;font-weight:700}
+.kit-op .muestra{font-size:12px;color:var(--muted)}
+/* Elegir el color de una categoría: una fila de círculos, uno marcado */
+.colores{display:flex;flex-wrap:wrap;gap:10px}
+.color-op{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:var(--c);padding:0;cursor:pointer}
+.color-op[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--surface)}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
+.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
+.sub{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ingreso);color:var(--on-color)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
+.partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
+.partida i{display:block;height:100%;border-radius:10px;min-width:6px}
+.partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:var(--frambuesa)}
+.sub.exc{color:var(--bad);font-weight:600}
+.reparto{display:flex;flex-direction:column;gap:6px}
+.reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.rank .grupo{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rank .fila{display:flex;flex-direction:column;gap:5px;font-size:15px}
+.bar.cat{background:color-mix(in srgb,var(--ink) 6%,var(--surface))} .bar.cat>i{background:var(--c)}
+/* Hojas de detalle: flechas de mes, total grande y filas que se tocan */
+.mesnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
+.mesnav button:disabled{opacity:.3}
+.mesnav span{font-weight:600}
+.toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
+.gastos-cat .item{cursor:pointer}
+/* Importar extracto: borradores para revisar (casilla, descripción, importe y, debajo, qué es) */
+.borradores{display:flex;flex-direction:column}
+.borr{display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.borr:last-child{border-bottom:0}
+.borr>input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink);grid-row:span 2}
+.borr .d{display:flex;flex-direction:column;min-width:0} .borr .d b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.borr select{grid-column:2/4;font-size:15px;padding:9px 12px;border-radius:12px}
+.borr .marcas{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.borr.off .d,.borr.off .num{opacity:.5}
+.borr .cubre{grid-column:2/4}
+button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+/* Adjuntos de una cuenta */
+.adj{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.adj:last-child{border-bottom:0}
+.adj .d{flex:1;display:flex;flex-direction:column;min-width:0} .adj .d span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adj .x{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+/* Anillo del tope */
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+/* Torta (dona) de categorías */
+.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
+.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
+.torta circle{fill:none;stroke-width:26}
+.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.torta .centro span{font-size:13px;color:var(--muted)}
+/* Barras por semana: rayadas, la actual en negro */
+.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
+.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
+.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos como tarjetas apiladas */
+.pila{display:flex;flex-direction:column}
+.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 var(--line)}
+.mov:first-child{margin-top:0}
+.mov:last-child{padding-bottom:16px}
+.mov .cat{font-size:12px;color:var(--muted)}
+.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
+.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea .num{flex:none}
+.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.mov .sel{position:absolute;right:16px;top:14px;width:24px;height:24px;margin:0;accent-color:var(--ink)}
+.chip svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px}
+.mov{position:relative}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item .d{display:flex;flex-direction:column;min-width:0}
+.item .d span:last-child{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
+.pos{color:var(--ink)} .neg{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+/* Fechas y meses: el navegador de iOS les da un ancho propio y se salen de la hoja; aquí ocupan el ancho de su campo y alinean el texto como los demás */
+input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:48px;line-height:1.2}
+input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}
+textarea{font-family:var(--mono);font-size:12px;min-height:120px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
+.btn.sec{background:var(--accent-soft);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:active{opacity:.8}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:23px;height:23px}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
+.sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet>*{flex-shrink:0} /* en hojas largas se desplaza la hoja, no se aplastan sus tarjetas */
+.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
+/* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
+.toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
+[hidden]{display:none!important}
+</style>
+<!-- estilos-app:fin -->
+<!-- revision:inicio · la banda de revisión no forma parte del diseño ni se copia a la app -->
+<style>
+  body{max-width:430px;margin:0 auto}
+  nav{max-width:402px;margin:0 auto}
+  .revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 16px;background:#000;color:#fff;font-size:13px}
+  .revision select{font:inherit;padding:2px 6px;border-radius:6px;border:0}
+  .revision label{display:flex;align-items:center;gap:6px}
+  .revision__nota{opacity:.7;width:100%}
+</style>
+<!-- revision:fin -->
+</head>
+<body>
+<!-- revision:inicio -->
+<div class="revision" role="region" aria-label="Revisión del preview">
+  <strong>Preview · kits-de-diseno</strong>
+  <label>Pantalla <select id="rev-pantalla"></select></label>
+  <label>Estado <select id="rev-estado"><option value="normal">con datos</option><option value="vacio">vacío</option></select></label>
+  <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
+</div>
+<script>
+  // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
+  document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
+  // El kit del preview: ?kit=indigo|nieve|jardin|brulee (por defecto, Índigo)
+  document.documentElement.dataset.kit = new URLSearchParams(location.search).get("kit") || "indigo";
+  document.addEventListener("DOMContentLoaded", () => {
+    const pantallas = [...document.querySelectorAll("[data-pantalla]")];
+    const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
+    for (const p of pantallas) selP.append(new Option(p.dataset.titulo || p.dataset.pantalla, p.dataset.pantalla));
+    const q = new URLSearchParams(location.search);
+    if (q.get("pantalla")) selP.value = q.get("pantalla");
+    if (q.get("estado")) selE.value = q.get("estado");
+    function aplicar() {
+      for (const p of pantallas) {
+        p.hidden = p.dataset.pantalla !== selP.value;
+        if (!p.hidden) { p.style.display = "flex"; document.getElementById("rev-titulo").textContent = p.dataset.titulo || ""; }
+        for (const e of p.querySelectorAll("[data-estado]")) e.hidden = e.dataset.estado !== selE.value;
+      }
+      for (const a of document.querySelectorAll("[data-ir]")) {
+        if (a.dataset.ir === selP.value) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+      history.replaceState(null, "", "?" + new URLSearchParams({ pantalla: selP.value, estado: selE.value }));
+    }
+    document.addEventListener("click", (ev) => {
+      const a = ev.target.closest("[data-ir]");
+      if (a) { ev.preventDefault(); selP.value = a.dataset.ir; aplicar(); }
+    });
+    for (const el of [selP, selE]) el.addEventListener("change", aplicar);
+    aplicar();
+  });
+</script>
+<!-- revision:fin -->
+<header><div><h1 id="rev-titulo"></h1><span class="m">octubre 2026</span></div></header>
+<main>
+<!-- pantallas:inicio
+  Una <section data-pantalla="<clave>" data-titulo="<título>" style="flex-direction:column;gap:14px">
+  por pantalla. Dentro, dos bloques: <div data-estado="normal"> (con datos de ejemplo) y
+  <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
+  Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
+-->
+<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
+<section data-pantalla="inicio" data-titulo="Este mes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <span class="logo chico" data-ui="logo-encabezado">mf<i>.</i></span>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">1545<span class="dec">,7 €</span></span><div class="row sub"><span>Ingresos 1700 €</span><span>Gastos 154,3 €</span></div></div>
+    <div class="grid2" data-ui="disponibles-color">
+      <div class="card color grad" data-ui="disponible"><div class="row"><span class="lbl">Tarjeta Y</span></div><span class="big">435,7 €</span><span class="sub">Gastado 64,3 € de 500 €</span></div>
+      <div class="card color grad" data-ui="disponible"><div class="row"><span class="lbl">Revolut</span></div><span class="big">252 €</span><span class="sub">Gastado 48 € de 300 €</span></div>
+    </div>
+    <button type="button" class="card color grad" style="text-align:left;font:inherit" data-ui="tarjeta-cuotas"><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big">290 €</span><span class="sub">2 cuotas · te quedan por pagar 1320 €</span></button>
+    <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="list" data-ui="categorias-que-se-abren"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">64,3 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat4)"></i>Alquiler</span><span class="num">42 €</span></div></div></div>
+    <div class="card color grad" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">4587,9 €</span><span class="sub">Tenés 4694,2 € · debés 106,3 €</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <span class="logo chico" data-ui="logo-encabezado">mf<i>.</i></span>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="sub">Resultado del mes</span><span class="monto">0<span class="dec"> €</span></span></div>
+    <div class="card color grad" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">0 €</span><span class="sub">Tenés 0 € · debés 0 €</span></div>
+  </div>
+</section>
+<section data-pantalla="ajustes" data-titulo="Ajustes" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="diseno"><span class="lbl">Diseño</span><div class="kits" data-ui="selector-kit"><button type="button" class="kit-op" data-kit-vista="indigo" data-kit-op="indigo" aria-pressed="true"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Índigo</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="nieve" data-kit-op="nieve" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Nieve</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="jardin" data-kit-op="jardin" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Jardín</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="brulee" data-kit-op="brulee" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Brûlée</span><span class="muestra">Gasto del mes 1234,5</span></button></div><span class="sub">Cada kit trae sus colores, su letra y su logo. «Apariencia» elige oscuro o claro.</span></div>
+    <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" style="margin-top:8px"><button aria-pressed="true">Oscura</button><button aria-pressed="false">Clara</button><button aria-pressed="false">Automática</button></div></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="diseno"><span class="lbl">Diseño</span><div class="kits" data-ui="selector-kit"><button type="button" class="kit-op" data-kit-vista="indigo" data-kit-op="indigo" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Índigo</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="nieve" data-kit-op="nieve" aria-pressed="true"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Nieve</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="jardin" data-kit-op="jardin" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Jardín</span><span class="muestra">Gasto del mes 1234,5</span></button><button type="button" class="kit-op" data-kit-vista="brulee" data-kit-op="brulee" aria-pressed="false"><span class="logo chico">mf<i>.</i></span><span class="puntos"><i style="background:var(--mancha1)"></i><i style="background:var(--mancha2)"></i><i style="background:var(--mancha3)"></i><i style="background:var(--mancha4)"></i></span><span class="nombre">Brûlée</span><span class="muestra">Gasto del mes 1234,5</span></button></div><span class="sub">Cada kit trae sus colores, su letra y su logo. «Apariencia» elige oscuro o claro.</span></div>
+  </div>
+</section>
+<!-- pantallas:fin -->
+</main>
+<nav>
+<!-- nav:inicio · una entrada por pantalla, con data-ir="<clave de la pantalla>", como en la app
+  <button data-ir="inicio">…icono…Inicio</button>
+-->
+<button data-ir="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+<button data-ir="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>Ajustes</button>
+<!-- nav:fin -->
+</nav>
+</body>
+</html>

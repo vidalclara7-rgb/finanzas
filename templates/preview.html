@@ -28,6 +28,8 @@
 <script>
   // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
   document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
+  // El kit del preview: ?kit=indigo|nieve|jardin|brulee (por defecto, Índigo)
+  document.documentElement.dataset.kit = new URLSearchParams(location.search).get("kit") || "indigo";
   document.addEventListener("DOMContentLoaded", () => {
     const pantallas = [...document.querySelectorAll("[data-pantalla]")];
     const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
