@@ -346,7 +346,7 @@ t.test("todas las categorías nuevas se pueden elegir", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
   await page.click("#fab");
   await A.hojaLista(page);
-  const cats = await page.$$eval("#segCat button", (bs) => bs.map((b) => b.textContent));
+  const cats = (await page.$$eval("#mCat option", (os) => os.map((o) => o.textContent))).filter((c) => c !== "Nueva categoría…");
   for (const c of ["Salidas bar/disco", "Plan Iberia", "Servicios mensuales", "Alquiler", "Carga móvil"]) assert.ok(cats.includes(c), c);
   assert.equal(cats[cats.length - 1], "Otros");
 });

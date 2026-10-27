@@ -83,6 +83,10 @@ html:not([data-apariencia="oscura"]) .card:not(.hero){background:color-mix(in sr
 .mov{background:var(--surface);color:var(--ink-base)}
 .mov .ico{background:var(--c);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
+/* Elegir el color de una categoría: una fila de círculos, uno marcado */
+.colores{display:flex;flex-wrap:wrap;gap:10px}
+.color-op{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:var(--c);padding:0;cursor:pointer}
+.color-op[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--surface)}
 /* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
 .mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
@@ -305,6 +309,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <!-- AJUSTES -->
   <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
     <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" id="segApariencia" style="margin-top:8px"></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
+    <button type="button" class="card" id="catsCard" data-ui="tarjeta-categorias" style="text-align:left;font:inherit"><div class="row"><span class="lbl">Categorías</span><span class="sub">Editar ›</span></div><span class="sub" id="catsSub"></span></button>
     <div class="card" data-ui="plan-ajustes">
       <span class="lbl">Plan del fondo de emergencia</span>
       <label class="f" for="aporte">Aporte mensual al fondo (€)<input type="text" inputmode="decimal" autocomplete="off" id="aporte"></label>
@@ -366,7 +371,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <div id="mCuotasCampos" style="display:flex;flex-direction:column;gap:10px" hidden>
         <div class="grid2"><label class="f" for="mCuotasN">Cuántas cuotas<input type="number" inputmode="numeric" step="1" id="mCuotasN"></label><label class="f" for="mCuotaV">Valor de cada cuota (€)<input type="text" inputmode="decimal" autocomplete="off" id="mCuotaV"></label></div>
         <span class="sub" id="mCuotasRes"></span></div></div>
-    <div id="mUnaCat"><span class="lbl">Categoría</span><div class="seg" id="segCat" data-ui="eleccion-categoria" style="margin-top:8px"></div></div>
+    <label class="f" id="mUnaCat" for="mCat">Categoría<select id="mCat" data-ui="eleccion-categoria"></select></label>
     <div id="mReemb" data-pantalla="hoja-gasto-reembolso" data-ui="estado-hoja"><span class="lbl">Reembolso</span><div class="seg" id="segReembM" style="margin-top:8px"></div></div>
     <div class="card color" id="mCubre" data-pantalla="hoja-ingreso-reembolso" data-ui="gastos-que-cubre" style="--c:var(--rosa-claro)"><span class="lbl">¿Qué gastos cubre?</span><div id="mCubreList"></div><div class="row sub" id="mCubreTot"><span id="mMarcados"></span><span id="mIngTxt"></span></div></div>
     <div id="mTransf" data-pantalla="hoja-transferencia" style="display:flex;flex-direction:column;gap:14px">
@@ -481,6 +486,24 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="card" id="catVacio" hidden><div class="empty" id="catVacioTxt"></div></div>
 </div>
 
+<!-- Categorías: la lista y la edición de una -->
+<div id="sheetCats" class="sheet" data-pantalla="hoja-categorias" data-ui="hoja-categorias" hidden>
+  <div class="row"><h2>Categorías</h2><button type="button" class="btn sec" id="ccCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="card" data-ui="lista-categorias-gasto"><span class="lbl">De gasto</span><div class="list" id="ccGasto"></div><button type="button" class="btn sec" id="ccNuevaG" data-ui="nueva-categoria">Nueva categoría</button></div>
+  <div class="card" data-ui="lista-categorias-ingreso"><span class="lbl">De ingreso</span><div class="list" id="ccIngreso"></div><button type="button" class="btn sec" id="ccNuevaI">Nueva categoría</button></div>
+</div>
+<form id="sheetCatEd" class="sheet" data-pantalla="hoja-editar-categoria" data-ui="hoja-editar-categoria" hidden autocomplete="off">
+  <div class="row"><h2 id="ceTitulo"></h2><button type="button" class="btn sec" id="ceCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <span class="sub" id="cePropia" data-ui="categoria-propia" hidden>Esta categoría tiene un comportamiento propio y no se puede cambiar.</span>
+  <div id="ceCampos" style="display:flex;flex-direction:column;gap:14px">
+    <label class="f" for="ceNombre">Nombre<input type="text" id="ceNombre"></label>
+    <div id="ceColorBox"><span class="lbl">Color</span><div style="margin-top:8px"><div class="colores" id="ceColores" data-ui="selector-color"></div></div></div>
+    <label class="check" id="ceFijaL" for="ceFija" data-ui="siempre-fija"><input type="checkbox" id="ceFija"><span style="flex:1;display:flex;flex-direction:column"><span>Siempre fija</span><span class="sub">Todo gasto de esta categoría cuenta como fijo, aunque cambie el importe.</span></span></label>
+    <button class="btn" type="submit">Guardar categoría</button>
+    <button class="btn danger" type="button" id="ceBorrar" hidden>Borrar categoría</button>
+  </div>
+</form>
+
 <!-- Cuotas del mes: financiaciones y compras en cuotas -->
 <div id="sheetCuotas" class="sheet" data-pantalla="hoja-cuotas" data-ui="hoja-cuotas" hidden>
   <div class="row"><h2>Cuotas del mes</h2><button type="button" class="btn sec" id="cuotasCerrar" style="padding:8px 12px">Cerrar</button></div>
@@ -507,12 +530,17 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 
 <script>
 const KEY="finanzas-v1";
-const CATS=["Supermercado","Comida fuera","Delivery","Transporte","Ocio","Compras","Ropa","Belleza","Casa/Splitwise","Salud","Viajes","Regalos","Salidas bar/disco","Plan Iberia","Servicios mensuales","Alquiler","Carga móvil","Trabajo (reembolsable)","Otros"];
-const INGRESOS=["Sueldo","Reembolso","Reembolso por regalos","Venta o trabajo extra","Regalo","Intereses y rendimientos","Otros"];
+const CATS_BASE=["Supermercado","Comida fuera","Delivery","Transporte","Ocio","Compras","Ropa","Belleza","Casa/Splitwise","Salud","Viajes","Regalos","Salidas bar/disco","Plan Iberia","Servicios mensuales","Alquiler","Carga móvil","Trabajo (reembolsable)","Otros"];
+const INGRESOS_BASE=["Sueldo","Reembolso","Reembolso por regalos","Venta o trabajo extra","Regalo","Intereses y rendimientos","Otros"];
 const REEMB="Trabajo (reembolsable)";
-// Categorías de color oscuro: su tarjeta lleva texto blanco
-const CATS_OSC=["Transporte","Compras","Trabajo (reembolsable)","Salidas bar/disco","Alquiler"];
-const osc=c=>CATS_OSC.includes(c)?" osc":"";
+const NUM_CAT={"Supermercado":1,"Comida fuera":2,"Delivery":3,"Transporte":4,"Ocio":5,"Compras":6,"Belleza":7,"Casa/Splitwise":8,"Salud":9,"Viajes":10,"Trabajo (reembolsable)":11,"Otros":12,"Regalos":13,"Ropa":14,"Salidas bar/disco":15,"Plan Iberia":16,"Servicios mensuales":17,"Alquiler":18,"Carga móvil":19};
+// Las categorías son de la persona (S.categorias); las de siempre son sólo el punto de partida.
+// «Otros» y «Trabajo (reembolsable)» (y, en ingresos, «Otros» y «Reembolso») tienen un comportamiento propio y no se editan
+const catsGasto=()=>S.categorias.gasto.map(c=>c.nombre), catsIngreso=()=>S.categorias.ingreso.map(c=>c.nombre);
+const catDe=n=>S.categorias.gasto.find(c=>c.nombre===n), catFija=n=>{const c=catDe(n);return !!(c&&c.fija);};
+const PROPIAS={gasto:["Otros","Trabajo (reembolsable)"],ingreso:["Otros","Reembolso"]};
+// Un gasto cuenta como fijo si lo marcó la persona o su categoría es «siempre fija» (salvo que lo haya desmarcado a él)
+const esFijo=m=>m.tipo==="gasto"&&m.cat!=="Trabajo (reembolsable)"&&(m.fijo===true||(m.fijo!==false&&catFija(m.cat)));
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 // Tipos de cuenta: [tipo, título del grupo, ejemplo de nombre, es deuda]
 const TIPOS=[["liquidez","Bancos y efectivo","Ej: Santander, Revolut, efectivo",false],
@@ -548,7 +576,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -567,7 +595,21 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return cuotasMesNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))));}
+  return cuotasMesNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))))));}
+// Las categorías de la persona: {gasto:[{nombre, color 1..19, fija?}], ingreso:[{nombre}]}. Si faltan, son las de siempre; se ignora lo inválido
+// (sin nombre, repetido, con «|») y se conserva toda categoría que use un movimiento. «Otros» va al final
+function categoriasDatosNorm(s){
+  const lista=(xs,conColor)=>{const vistos=new Set(),out=[];(Array.isArray(xs)?xs:[]).forEach(x=>{if(!x||typeof x!=="object"||typeof x.nombre!=="string")return;const n=x.nombre.trim(),k=n.toLowerCase();if(!n||n.includes("|")||vistos.has(k))return;vistos.add(k);
+    const e={nombre:n};if(conColor){e.color=Number.isInteger(x.color)&&x.color>=1&&x.color<=19?x.color:0;if(x.fija===true)e.fija=true;}out.push(e);});return out;};
+  const c=s.categorias&&typeof s.categorias==="object"&&!Array.isArray(s.categorias)?s.categorias:{};
+  const g=Array.isArray(c.gasto)?lista(c.gasto,true):CATS_BASE.map(n=>({nombre:n,color:NUM_CAT[n]})),i=Array.isArray(c.ingreso)?lista(c.ingreso,false):INGRESOS_BASE.map(n=>({nombre:n}));
+  const hay=(l,n)=>l.some(x=>x.nombre.toLowerCase()===n.toLowerCase());
+  ["Otros","Trabajo (reembolsable)"].forEach(n=>{if(!hay(g,n))g.push({nombre:n,color:NUM_CAT[n]});});["Otros","Reembolso"].forEach(n=>{if(!hay(i,n))i.push({nombre:n});});
+  s.movs.forEach(m=>{if(typeof m.cat!=="string"||!m.cat.trim()||m.cat.includes("|"))return;if(m.tipo==="gasto"&&!hay(g,m.cat))g.push({nombre:m.cat,color:0});else if(m.tipo==="ingreso"&&!hay(i,m.cat))i.push({nombre:m.cat});});
+  const libre=()=>{const u=new Set(g.map(x=>x.color));for(let k=1;k<=19;k++)if(!u.has(k))return k;return 1;};
+  g.forEach(x=>{if(!x.color)x.color=libre();});
+  const alFinal=l=>{const k=l.findIndex(x=>x.nombre==="Otros");if(k>=0)l.push(l.splice(k,1)[0]);};alFinal(g);alFinal(i);
+  s.categorias={gasto:g,ingreso:i};return s;}
 // Cuotas que faltan de una financiación: «cuotasMes» es el mes en que se cargó el número (la cuenta regresiva parte de ahí).
 // Si falta o no es un mes válido, parte del mes actual; sin «cuotas», se descarta
 let cuotasNuevo=false;
@@ -693,8 +735,7 @@ function anillo(el,usado,tope){el.hidden=!(tope>0);if(el.hidden)return;
   el.className="ring"+(usado>tope?" bad":p>=75?" warn":"");
   el.innerHTML=`<svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:${v.toFixed(1)} ${C.toFixed(1)}"/></svg><b>${Math.round(p)} %</b>`;}
 // Color de cada categoría por su nombre: Regalos llegó después y tiene el 13, sin mover los demás
-const NUM_CAT={"Supermercado":1,"Comida fuera":2,"Delivery":3,"Transporte":4,"Ocio":5,"Compras":6,"Belleza":7,"Casa/Splitwise":8,"Salud":9,"Viajes":10,"Trabajo (reembolsable)":11,"Otros":12,"Regalos":13,"Ropa":14,"Salidas bar/disco":15,"Plan Iberia":16,"Servicios mensuales":17,"Alquiler":18,"Carga móvil":19};
-const colorCat=c=>`var(--cat${NUM_CAT[c]||12})`;
+const colorCat=c=>`var(--cat${(catDe(c)||{}).color||12})`;
 // Torta (dona) de gastos por categoría, con el total al centro
 function torta(el,cs,mes){el.hidden=!cs.length;if(el.hidden)return;
   const tot=cs.reduce((a,[,v])=>a+v,0),C=2*Math.PI*77;let off=0;
@@ -722,7 +763,7 @@ let fvDatos=null;
 function fijosVar(gs){const g=gs.filter(x=>x.cat!==REEMB),tot=r2(g.reduce((a,x)=>a+x.importe,0));
   fvDatos=null;$("fvMas").hidden=!(tot>0);
   if(!(tot>0)){$("fv").innerHTML=`<div class="empty">Todavía no anotaste gastos este mes.</div>`;return;}
-  const grupos=[["fij","Fijos",g.filter(x=>x.fijo)],["var","Variables",g.filter(x=>!x.fijo)]].map(([k,n,xs])=>{const pc={};xs.forEach(x=>pc[x.cat]=(pc[x.cat]||0)+x.importe);
+  const grupos=[["fij","Fijos",g.filter(esFijo)],["var","Variables",g.filter(x=>!esFijo(x))]].map(([k,n,xs])=>{const pc={};xs.forEach(x=>pc[x.cat]=(pc[x.cat]||0)+x.importe);
     return {k,n,v:r2(xs.reduce((a,x)=>a+x.importe,0)),cats:Object.entries(pc).sort((a,b)=>b[1]-a[1])};}).filter(x=>x.v>0);
   fvDatos={tot,grupos};$("fv").innerHTML=resumenFV();}
 const pctFV=v=>Math.round(v/fvDatos.tot*100)+" %";
@@ -760,6 +801,48 @@ $("catSig").onclick=()=>{if(catMesSel>=mesId())return;catMesSel=mesSig(catMesSel
 $("catRank").addEventListener("click",e=>{if(e.target.closest("[data-resto]")){catResto=true;pintarCat();}});
 $("catLista").addEventListener("click",e=>{const it=e.target.closest("[data-edit]");if(it)abrirMov(it.dataset.edit);});
 $("fvCerrar").onclick=$("catCerrar").onclick=cerrar;
+// Categorías de la persona: lista, creación, edición y borrado
+function abrirCats(){
+  const fila=(t,c)=>`<button type="button" class="item tap" data-ui="fila-categoria" data-ed="${t}" data-n="${esc(c.nombre)}"><span class="con-dot"><i class="dot" style="--c:${t==="g"?"var(--cat"+c.color+")":"var(--muted)"}"></i>${esc(c.nombre)}</span>${c.fija?`<span class="chip idle">Siempre fija</span>`:`<span class="mas sub">›</span>`}</button>`;
+  $("ccGasto").innerHTML=S.categorias.gasto.map(c=>fila("g",c)).join("");$("ccIngreso").innerHTML=S.categorias.ingreso.map(c=>fila("i",c)).join("");
+  mostrar("sheetCats");}
+const colorLibre=()=>{const u=new Set(S.categorias.gasto.map(c=>c.color));for(let k=1;k<=19;k++)if(!u.has(k))return k;return 1;};
+function abrirEdCat({tipo,nombre=null,retorno="lista"}){
+  const c=nombre!=null?S.categorias[tipo].find(x=>x.nombre===nombre):null,propia=!!c&&PROPIAS[tipo].includes(nombre);
+  ce={tipo,nombre:c?c.nombre:null,color:c&&c.color?c.color:colorLibre(),retorno};
+  $("ceTitulo").textContent=c?c.nombre:"Nueva categoría";$("cePropia").hidden=!propia;$("ceCampos").hidden=propia;
+  $("ceNombre").value=c?c.nombre:"";$("ceColorBox").hidden=$("ceFijaL").hidden=tipo!=="gasto";$("ceFija").checked=!!(c&&c.fija);
+  $("ceBorrar").hidden=!c;$("ceBorrar").dataset.confirm="";$("ceBorrar").textContent="Borrar categoría";
+  pintarColoresEd();mostrar("sheetCatEd");if(!c&&!propia)setTimeout(()=>$("ceNombre").focus(),50);}
+function pintarColoresEd(){$("ceColores").innerHTML=Array.from({length:19},(_,i)=>`<button type="button" class="color-op" style="--c:var(--cat${i+1})" data-color="${i+1}" aria-pressed="${ce.color===i+1}" aria-label="Color ${i+1}"></button>`).join("");}
+$("ceColores").addEventListener("click",e=>{const b=e.target.closest("[data-color]");if(!b||!ce)return;ce.color=+b.dataset.color;pintarColoresEd();});
+// Vuelve a lo que se estaba haciendo; «nombre» es la categoría recién creada (o null si se canceló)
+function volverDeEd(rt,nombre,tipo){
+  if(rt==="mov"){if(nombre&&(tipo==="ingreso")===(mov.tipo==="ingreso"))mov.cat=nombre;mostrar("sheet");movUI();}
+  else if(rt==="imp"){const x=borrDe(imp.nuevaCatPara);if(x&&nombre){x.que=(tipo==="gasto"?"g|":"i|")+nombre;x.cubre=[];fijoDe(x);}imp.nuevaCatPara=null;mostrar("sheetI");pintarBorr();}
+  else abrirCats();}
+function renombrarCat(tipo,viejo,nuevo){if(viejo===nuevo)return;
+  S.movs.forEach(m=>{if(m.tipo===tipo&&m.cat===viejo)m.cat=nuevo;});
+  const p=tipo==="gasto"?"g|":"i|";Object.keys(S.reglas).forEach(k=>{if(k.startsWith(p)&&S.reglas[k]===viejo)S.reglas[k]=nuevo;});
+  if(tipo==="gasto")S.fijos=Object.fromEntries(Object.entries(S.fijos).map(([k,v])=>[k.startsWith(viejo+"|")?nuevo+k.slice(viejo.length):k,v]));}
+$("sheetCatEd").addEventListener("submit",e=>{e.preventDefault();if(!ce)return;
+  const nombre=$("ceNombre").value.trim(),lista=S.categorias[ce.tipo];
+  if(!nombre){toast("Poné un nombre para la categoría");return;}
+  if(nombre.includes("|")){toast("El nombre no puede llevar el signo |");return;}
+  if(lista.some(x=>x.nombre!==ce.nombre&&x.nombre.toLowerCase()===nombre.toLowerCase())){toast("Ya tenés una categoría con ese nombre");return;}
+  const nueva=ce.nombre==null;
+  if(nueva){const x={nombre};if(ce.tipo==="gasto"){x.color=ce.color;if($("ceFija").checked)x.fija=true;}const k=lista.findIndex(y=>y.nombre==="Otros");lista.splice(k<0?lista.length:k,0,x);}
+  else{const c=lista.find(x=>x.nombre===ce.nombre);renombrarCat(ce.tipo,c.nombre,nombre);c.nombre=nombre;if(ce.tipo==="gasto"){c.color=ce.color;if($("ceFija").checked)c.fija=true;else delete c.fija;}}
+  const rt=ce.retorno,tipo=ce.tipo;ce=null;volverDeEd(rt,nueva?nombre:null,tipo);cambio();toast("Categoría guardada");});
+$("ceBorrar").onclick=()=>{if(!ce||ce.nombre==null)return;const b=$("ceBorrar"),tipo=ce.tipo,n=S.movs.filter(m=>m.tipo===tipo&&m.cat===ce.nombre).length;
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent=n?`Tocá de nuevo: ${n===1?"su movimiento pasa":`sus ${n} movimientos pasan`} a Otros`:"Tocá de nuevo para borrar";return;}
+  const nombre=ce.nombre;S.movs.forEach(m=>{if(m.tipo===tipo&&m.cat===nombre)m.cat="Otros";});
+  const p=tipo==="gasto"?"g|":"i|";Object.keys(S.reglas).forEach(k=>{if(k.startsWith(p)&&S.reglas[k]===nombre)delete S.reglas[k];});
+  if(tipo==="gasto")Object.keys(S.fijos).forEach(k=>{if(k.startsWith(nombre+"|"))delete S.fijos[k];});
+  S.categorias[tipo]=S.categorias[tipo].filter(x=>x.nombre!==nombre);ce=null;abrirCats();cambio();toast("Categoría borrada");};
+$("catsCard").onclick=abrirCats;$("ccCerrar").onclick=cerrar;$("ceCerrar").onclick=cerrar;
+$("ccNuevaG").onclick=()=>abrirEdCat({tipo:"gasto"});$("ccNuevaI").onclick=()=>abrirEdCat({tipo:"ingreso"});
+$("sheetCats").addEventListener("click",e=>{const f=e.target.closest("[data-ed]");if(f)abrirEdCat({tipo:f.dataset.ed==="g"?"gasto":"ingreso",nombre:f.dataset.n});});
 // Cuotas del mes: el detalle de cada financiación y de cada compra en cuotas
 function abrirCuotas(){const cd=cuotasDelMes(mesId());monto($("cuTotal"),cd.total);
   $("cuSub").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");
@@ -785,7 +868,7 @@ $("mcCerrar").onclick=()=>{volverCta=null;cerrar();};
 // Sugerencia de gasto fijo: misma categoría y nota en tres meses seguidos, cada mes a ±10 % del promedio
 const mesSig=(id,n)=>{const [y,m]=id.split("-").map(Number),d=new Date(y,m-1+n,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");};
 function sugerirFijo(){const gr={};
-  S.movs.forEach(m=>{if(m.tipo!=="gasto"||m.cat===REEMB||m.fijo)return;const k=claveFijo(m.cat,m.nota);if(!k||k in S.fijos)return;
+  S.movs.forEach(m=>{if(m.tipo!=="gasto"||m.cat===REEMB||esFijo(m))return;const k=claveFijo(m.cat,m.nota);if(!k||k in S.fijos)return;
     const x=gr[k]=gr[k]||{k,cat:m.cat,nota:m.nota.trim(),meses:{}},mes=m.fecha.slice(0,7);x.meses[mes]=(x.meses[mes]||0)+m.importe;});
   let mejor=null;
   Object.values(gr).forEach(x=>Object.keys(x.meses).sort().forEach(a=>{const ms=[a,mesSig(a,1),mesSig(a,2)];if(!ms.every(q=>x.meses[q]))return;
@@ -807,7 +890,7 @@ function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
   else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
   else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
   else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
-  return `<div class="mov${c?(m.tipo==="gasto"?osc(m.cat):""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}">${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}<span class="ico">${ico}</span><span class="cat">${cat}</span>${(docsMov[m.id]||[]).length?`<span class="chip idle" data-ui="chip-documento" style="align-self:flex-start">${CLIP}${docsMov[m.id].length} ${docsMov[m.id].length===1?"documento":"documentos"}</span>`:""}${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${m.fijo?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
+  return `<div class="mov${c?(m.tipo==="gasto"?"":""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}">${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}<span class="ico">${ico}</span><span class="cat">${cat}</span>${(docsMov[m.id]||[]).length?`<span class="chip idle" data-ui="chip-documento" style="align-self:flex-start">${CLIP}${docsMov[m.id].length} ${docsMov[m.id].length===1?"documento":"documentos"}</span>`:""}${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${esFijo(m)?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
 
 // Apariencia: oscura (por defecto), clara o automática (sigue al teléfono). El script del <head> la pone antes de pintar
 const APARIENCIAS=[["oscura","Oscura"],["clara","Clara"],["auto","Automática"]];
@@ -841,6 +924,7 @@ function render(){
   const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
   if(cd.n){$("cuotasMes").textContent=eur(cd.total);$("cuotasSubI").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");}
   if(!$("sheetMovsCta").hidden)pintarMovsCta();
+  $("catsSub").textContent=`${S.categorias.gasto.length} de gasto · ${S.categorias.ingreso.length} de ingreso`;
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const cs=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
   torta($("torta"),cs,id); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"));
@@ -894,14 +978,16 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetMovsCta"];
+const HOJAS=["sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetMovsCta","sheetCats","sheetCatEd"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 // Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
-let volverCta=null;
-function cerrar(){const eraMov=!$("sheet").hidden,eraCuenta=!$("sheetC").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
+let volverCta=null,ce=null;
+function cerrar(){const eraMov=!$("sheet").hidden,eraCuenta=!$("sheetC").hidden,eraEd=!$("sheetCatEd").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
   if(volverCta){const v=volverCta;volverCta=null;if(eraMov)abrirMovsCta(v.id,v.mes);}
   // Una cuenta nueva abierta desde la revisión de un extracto: al cerrar sin guardar se vuelve a la revisión, sin cambios
-  if(imp&&imp.nuevaPara!=null&&eraCuenta){imp.nuevaPara=null;mostrar("sheetI");pintarBorr();}}
+  if(imp&&imp.nuevaPara!=null&&eraCuenta){imp.nuevaPara=null;mostrar("sheetI");pintarBorr();}
+  // Una categoría nueva abierta desde un selector (o desde la lista): al cerrar sin guardar se vuelve a donde se estaba, sin cambios
+  if(ce&&eraEd){const rt=ce.retorno;ce=null;volverDeEd(rt,null);}}
 function cambio(){guardarNeto();persist();render();}
 
 // Navegación
@@ -922,11 +1008,12 @@ function movUI(){const t=mov.tipo,ops=S.cuentas.map(c=>[c.id,c.nombre]);
   if(conCuotas&&mov.cuotas){const tot=num("mImporte"),q=num("mCuotaV");$("mCuotasRes").textContent=tot>0&&q>0?`Debés ${eur(tot)} en total; este mes y los siguientes cuentan ${eur(q)} de gasto.`:"Poné el importe total arriba y el valor de cada cuota.";}
   $("mUna").hidden=$("mUnaCat").hidden=t==="transferencia";$("mTransf").hidden=t!=="transferencia";$("mGuardar").textContent=TXT[t][0];
   seg($("segCuentaM"),ops,mov.cuenta,v=>{mov.cuenta=+v;movUI();});seg($("segDesde"),ops,mov.cuenta,v=>mov.cuenta=+v);seg($("segHacia"),ops,mov.destino,v=>mov.destino=+v);
-  const cats=t==="ingreso"?INGRESOS:CATS;if(!cats.includes(mov.cat))mov.cat=cats[0];seg($("segCat"),cats.map(c=>[c,c]),mov.cat,v=>{mov.cat=v;movUI();});
+  const cats=t==="ingreso"?catsIngreso():catsGasto();if(!cats.includes(mov.cat))mov.cat=cats[0];
+  $("mCat").innerHTML=cats.map(c=>`<option value="${esc(c)}"${c===mov.cat?" selected":""}>${esc(c)}</option>`).join("")+`<option value="n|categoria">Nueva categoría…</option>`;
   // Estado del reembolso (gasto reembolsable) y gastos que cubre (ingreso de Reembolso)
   $("mReemb").hidden=!(t==="gasto"&&mov.cat===REEMB);
   // Gasto fijo: en uno nuevo, la casilla sigue a la regla de su categoría y nota hasta que la persona la toque
-  $("mFijoL").hidden=!(t==="gasto"&&mov.cat!==REEMB);if(!movId&&!mov.fijoTocado)$("mFijo").checked=S.fijos[claveFijo(mov.cat,$("mNota").value)]===true;seg($("segReembM"),ESTADOS_R.map(([k,l])=>[k,l]),mov.reemb,v=>mov.reemb=v);
+  $("mFijoL").hidden=!(t==="gasto"&&mov.cat!==REEMB);if(!movId&&!mov.fijoTocado)$("mFijo").checked=catFija(mov.cat)||S.fijos[claveFijo(mov.cat,$("mNota").value)]===true;seg($("segReembM"),ESTADOS_R.map(([k,l])=>[k,l]),mov.reemb,v=>mov.reemb=v);
   const cubre=t==="ingreso"&&mov.cat==="Reembolso";$("mCubre").hidden=!cubre;
   if(cubre){const ops=S.movs.filter(m=>m.reembolso&&(m.reembolso.estado!=="pagado"||(movId&&m.reembolso.cobro===movId))).sort((a,b)=>b.fecha.localeCompare(a.fecha));
     $("mCubreList").innerHTML=ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-cubre="${m.id}" ${mov.cubre.includes(m.id)?"checked":""}><span style="flex:1;display:flex;flex-direction:column"><span>${m.nota?esc(m.nota):esc(m.cat)}</span><span class="sub">${diaMes(m.fecha)} · ${(ESTADOS_R.find(x=>x[0]===m.reembolso.estado)||ESTADOS_R[0])[1]}</span></span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<div class="empty">No tenés reembolsos por cobrar.</div>`;
@@ -941,7 +1028,7 @@ function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?
     mov.cuotas=!!(m&&cuotasOk(m));$("mCuotasOn").checked=mov.cuotas;$("mCuotasN").value=mov.cuotas?m.cuotas.n:"";$("mCuotaV").value=mov.cuotas?aTexto(m.cuotas.cuota):"";
     {const mo=m?monedaDe(m):"EUR";mov.moneda=MONEDAS.includes(mo)?mo:"Otra";$("mOtra").value=MONEDAS.includes(mo)?"":mo;}
     seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
-    $("mImporte").value=m?aTexto(m.importe):"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&m.fijo);movUI();}
+    $("mImporte").value=m?aTexto(m.importe):"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&esFijo(m));movUI();}
   docConfirm=null;pintarDocsMov();mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
 $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const v=num("mImporte");if(!(v>0)){toast("Poné un importe mayor que 0");return;}
@@ -959,7 +1046,9 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   if(mo!=="EUR")m.moneda=mo;
   const viejo=S.movs.find(x=>x.id===movId);
   // Marcar fijo deja la regla para los siguientes con esa nota; desmarcar la cambia a «no es fijo»
-  if(m.tipo==="gasto"&&m.cat!==REEMB){const k=claveFijo(m.cat,m.nota);if($("mFijo").checked){m.fijo=true;if(k)S.fijos[k]=true;}else if(k&&S.fijos[k]===true)S.fijos[k]=false;}
+  if(m.tipo==="gasto"&&m.cat!==REEMB){const k=claveFijo(m.cat,m.nota),fija=catFija(m.cat);
+    // En una categoría «siempre fija» sólo se guarda la excepción (desmarcarlo deja ese gasto variable)
+    if($("mFijo").checked){if(!fija){m.fijo=true;if(k)S.fijos[k]=true;}}else if(fija)m.fijo=false;else if(k&&S.fijos[k]===true)S.fijos[k]=false;}
   if(m.tipo==="gasto"&&m.cat===REEMB)m.reembolso={estado:mov.reemb,...(viejo&&viejo.reembolso&&viejo.reembolso.cobro&&mov.reemb==="pagado"?{cobro:viejo.reembolso.cobro}:{})};
   const i=S.movs.findIndex(x=>x.id===movId);if(i>=0){desconciliar(S.movs[i]);S.movs[i]=m;}else S.movs.push(m);
   // Un ingreso de Reembolso paga los gastos marcados; los que dejó de cubrir vuelven a Aprobado
@@ -971,6 +1060,7 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   if(cubre.length){const dif=r2(v-sumaCubre());if(Math.abs(dif)>=0.005)aviso=`El ingreso es ${eur(Math.abs(dif))} ${dif>0?"más":"menos"} que los gastos marcados`;}
   desconciliar(m);cerrar();cambio();toast(aviso);});
 $("mCubreList").addEventListener("change",e=>{const id=+e.target.dataset.cubre;if(!id)return;mov.cubre=e.target.checked?[...mov.cubre,id]:mov.cubre.filter(x=>x!==id);cubreTot();});
+$("mCat").addEventListener("change",e=>{if(e.target.value==="n|categoria"){abrirEdCat({tipo:mov.tipo==="ingreso"?"ingreso":"gasto",retorno:"mov"});return;}mov.cat=e.target.value;movUI();});
 $("mNota").addEventListener("input",movUI);$("mCuotasOn").addEventListener("change",()=>{mov.cuotas=$("mCuotasOn").checked;movUI();});$("mCuotasN").addEventListener("input",movUI);$("mCuotaV").addEventListener("input",movUI);$("mFijo").addEventListener("change",()=>mov.fijoTocado=true);
 $("mImporte").addEventListener("input",()=>{if(!$("mCubre").hidden)cubreTot();if(mov.cuotas)movUI();});
 $("verCobrar").onclick=()=>{filtroR="pendiente";ir("movs");render();};
@@ -1172,10 +1262,10 @@ const PALABRAS=[["Delivery",["glovo","just eat","uber eats","deliveroo"]],
   ["Viajes",["hotel","booking","airbnb","ryanair","vueling","iberia"]],
   ["Casa/Splitwise",["alquiler","endesa","iberdrola","naturgy","vodafone","movistar","orange","digi","splitwise"]]];
 function propuestaCat(s,com,txt){const k=claveCom(com),w=" "+claveCom(txt)+" ";
-  if(s<0){const r=S.reglas["g|"+k];if(r&&CATS.includes(r))return r;if(w.includes(" transferencia internacional "))return "Regalos";const p=PALABRAS.find(([,ws])=>ws.some(x=>w.includes(" "+x+" ")));return p?p[0]:"Otros";}
-  const r=S.reglas["i|"+k];if(r&&INGRESOS.includes(r))return r;
-  if(w.includes(" gastos "))return "Reembolso";if(w.includes(" nomina "))return "Sueldo";
-  if(/ (interes|intereses|bonificacion|rendimiento|rendimientos) /.test(w))return "Intereses y rendimientos";return "Otros";}
+  if(s<0){const r=S.reglas["g|"+k];if(r&&catsGasto().includes(r))return r;if(w.includes(" transferencia internacional "))return catDe("Regalos")?"Regalos":"Otros";const p=PALABRAS.find(([,ws])=>ws.some(x=>w.includes(" "+x+" ")));return p&&catDe(p[0])?p[0]:"Otros";}
+  const r=S.reglas["i|"+k],ing=catsIngreso(),si=n=>ing.includes(n)?n:"Otros";if(r&&ing.includes(r))return r;
+  if(w.includes(" gastos "))return si("Reembolso");if(w.includes(" nomina "))return si("Sueldo");
+  if(/ (interes|intereses|bonificacion|rendimiento|rendimientos) /.test(w))return si("Intereses y rendimientos");return "Otros";}
 // Plata entre tus cuentas: los últimos dígitos de otra cuenta, su nombre, tu nombre o una recarga
 function otraCuenta(m,cid,r){const otras=S.cuentas.filter(c=>c.id!==cid);if(!otras.length)return null;
   const txt=m.texto+" "+m.extra,w=" "+claveCom(txt)+" ";
@@ -1212,11 +1302,11 @@ function borradores(){const r=imp.r,cid=imp.cuenta;
   // En orden de fecha, del más viejo al más nuevo (cada borrador conserva su número del extracto)
   d.forEach(fijoDe);imp.d=d.sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.i-b.i);}
 // Un gasto que coincide con una regla de fijo llega marcado
-function fijoDe(x){x.fijoRegla=x.que.startsWith("g|")&&x.que!=="g|"+REEMB&&S.fijos[claveFijo(x.que.slice(2),x.nota)]===true;x.fijo=x.fijoRegla;}
+function fijoDe(x){x.fijoRegla=x.que.startsWith("g|")&&x.que!=="g|"+REEMB&&(catFija(x.que.slice(2))||S.fijos[claveFijo(x.que.slice(2),x.nota)]===true);x.fijo=x.fijoRegla;}
 const borrDe=k=>imp.d.find(x=>x.i===+k);
 function opcionesQue(x){const otras=S.cuentas.filter(c=>c.id!==imp.cuenta);
-  const ops=[...(x.s<0?CATS.map(c=>["g|"+c,"Gasto · "+c]):INGRESOS.map(c=>["i|"+c,"Ingreso · "+c])),
-    ...otras.map(c=>["t|"+c.id,(x.s<0?"Transferencia a ":"Transferencia desde ")+c.nombre]),["n|cuenta","Nueva cuenta…"]];
+  const ops=[...(x.s<0?catsGasto().map(c=>["g|"+c,"Gasto · "+c]):catsIngreso().map(c=>["i|"+c,"Ingreso · "+c])),
+    ...otras.map(c=>["t|"+c.id,(x.s<0?"Transferencia a ":"Transferencia desde ")+c.nombre]),["n|cuenta","Nueva cuenta…"],["n|categoria","Nueva categoría…"]];
   return ops.map(([v,l])=>`<option value="${esc(v)}"${v===x.que?" selected":""}>${esc(l)}</option>`).join("");}
 function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.fecha));
   return `<span class="card color cubre" style="--c:var(--rosa-claro)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
@@ -1250,6 +1340,7 @@ $("iBorr").addEventListener("change",e=>{const t=e.target;
   else if(t.dataset.que!=null){const x=borrDe(t.dataset.que);
     // «Nueva cuenta…»: se oculta la revisión (sin cerrarla), se crea la cuenta y se vuelve a ella
     if(t.value==="n|cuenta"){imp.nuevaPara=x.i;abrirCuenta(null);return;}
+    if(t.value==="n|categoria"){imp.nuevaCatPara=x.i;abrirEdCat({tipo:x.s<0?"gasto":"ingreso",retorno:"imp"});return;}
     x.que=t.value;x.cubre=[];fijoDe(x);pintarBorr();}
   else if(t.dataset.icubre!=null){const x=borrDe(t.dataset.icubre),id=+t.value;x.cubre=t.checked?[...x.cubre,id]:x.cubre.filter(y=>y!==id);}});
 $("iBorr").addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();});
@@ -1264,7 +1355,7 @@ $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on);if(!sel.length){
       if(kc){S.reglas["t|"+kc]=+v;delete S.reglas["g|"+kc];delete S.reglas["i|"+kc];}}
     else{m.tipo=t==="g"?"gasto":"ingreso";m.cat=v;S.reglas[t+"|"+kc]=v;delete S.reglas["t|"+kc];
       if(m.tipo==="gasto"&&v===REEMB)m.reembolso={estado:"pendiente"};
-      if(m.tipo==="gasto"&&v!==REEMB){const k=claveFijo(v,x.nota);if(x.fijo){m.fijo=true;if(k)S.fijos[k]=true;}else if(x.fijoRegla&&k)S.fijos[k]=false;}}
+      if(m.tipo==="gasto"&&v!==REEMB){const k=claveFijo(v,x.nota),fija=catFija(v);if(x.fijo){if(!fija){m.fijo=true;if(k)S.fijos[k]=true;}}else if(fija)m.fijo=false;else if(x.fijoRegla&&k)S.fijos[k]=false;}}
     S.movs.push(m);desconciliar(m);
     if(m.tipo==="ingreso"&&v==="Reembolso")S.movs.forEach(g=>{if(g.reembolso&&x.cubre.includes(g.id))g.reembolso={estado:"pagado",cobro:m.id};});});
   const n=sel.length,ult=r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");

@@ -1,6 +1,6 @@
 ---
 cambio: categorias-propias
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Categorías propias y gastos «siempre fijos»

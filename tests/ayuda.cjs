@@ -74,7 +74,7 @@ const texto = (page, sel) => page.locator(sel).innerText();
 const portapapeles = (page) => page.evaluate(() => navigator.clipboard.readText());
 
 // Botón de un selector por su texto (las cuentas se eligen por nombre)
-const elegir = (page, seg, texto) => page.locator(`#${seg} button`, { hasText: new RegExp(`^${texto.replace(/[()]/g, "\\$&")}$`) }).click();
+const elegir = (page, seg, texto) => seg === "segCat" ? page.selectOption("#mCat", { label: texto }) : page.locator(`#${seg} button`, { hasText: new RegExp(`^${texto.replace(/[()]/g, "\\$&")}$`) }).click();
 
 // Nuevo movimiento desde el «+»: tipo gasto, ingreso o transferencia; cuentas por nombre
 // Al abrirse, la hoja pone el foco en el importe: se espera, para que lo que se escribe no caiga en otro campo

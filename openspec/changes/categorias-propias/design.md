@@ -17,7 +17,7 @@
   ni vacíos ni con «|» (esa barra separa partes en lo fijo y en lo aprendido).
 - **Categorías con comportamiento propio, no editables:** «Otros» (gasto e ingreso: es el destino al borrar),
   «Trabajo (reembolsable)» (estados de reembolso) y, en ingresos, «Reembolso» (cubre gastos).
-- **Colores:** los 19 que ya existen en todas las paletas, elegibles. Una categoría nueva recibe el primero
+- **Colores:** los 19 que ya existen de la paleta única (19), elegibles. Una categoría nueva recibe el primero
   libre y, si no queda ninguno, repite. Si el color es oscuro, el texto de la tarjeta es blanco (según el
   color, ya no según el nombre). Las categorías de ingreso no llevan color propio.
 - **Siempre fija:** el gasto cuenta como fijo y la casilla «Gasto fijo» viene marcada; si la persona la
