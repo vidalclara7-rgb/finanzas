@@ -154,7 +154,7 @@ t.test("tarjetas sin degradado", async () => {
 t.test("el texto se lee sobre cada color", async () => {
   for (const ap of ["clara", "oscura"]) {
     const d = DATOS_COLOR(); d.settings.apariencia = ap;
-    d.cuentas.push(A.cta(4, "Broker", 500, { tipo: "inversion" }), A.cta(5, "Tarjeta W", 0, { tipo: "tarjeta" }), A.cta(6, "Depósito", 100, { tipo: "compartida" }));
+    d.cuentas.push(A.cta(4, "Broker", 500, { tipo: "inversion" }), A.cta(5, "Tarjeta W", 200, { tipo: "tarjeta" }), A.cta(6, "Depósito", 100, { tipo: "compartida" }));
     const { page } = await abrir({ datos: d });
     for (const v of ["inicio", "cuentas"]) {
       await A.ir(page, v);
@@ -166,7 +166,7 @@ t.test("el texto se lee sobre cada color", async () => {
         for (const card of document.querySelectorAll(`#v-${vista} .card.color`)) {
           if (!card.offsetParent) continue;
           const [b] = rgb(getComputedStyle(card).backgroundColor);
-          for (const sel of [".lbl", ".big", ".sub"]) for (const el of card.querySelectorAll(sel)) {
+          for (const sel of [".lbl", ".big", ".sub", ".num", ".neg", ".badc", ".warnc"]) for (const el of card.querySelectorAll(sel)) {
             if (!el.offsetParent) continue;
             const [t, a] = rgb(getComputedStyle(el).color), m = t.map((x, i) => x * a + b[i] * (1 - a));
             const [x, y] = [L(m), L(b)].sort((p, q) => q - p);
@@ -175,7 +175,7 @@ t.test("el texto se lee sobre cada color", async () => {
         }
         return out;
       }, v);
-      assert.ok(r.length >= 6, `${ap} ${v}: ${r.length} textos`);
+      assert.ok(r.length >= 6 && (v !== "cuentas" || r.some(([q]) => q.endsWith(".neg"))), `${ap} ${v}: ${r.length} textos`);
       for (const [que, c] of r) assert.ok(c >= 4.5, `${ap} ${v} ${que}: ${c.toFixed(2)}`);
     }
   }
