@@ -1,6 +1,6 @@
 ---
 cambio: paletas-oscura-y-clara
-estado: diseno-aprobado
+estado: construida
 datos: sin-cambios
 ---
 # Dos paletas (oscura y clara), bloques de color sólido, letra y números
