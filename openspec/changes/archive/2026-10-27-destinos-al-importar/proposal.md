@@ -1,7 +1,8 @@
 ---
 cambio: destinos-al-importar
-estado: diseno-aprobado
+estado: archivado
 datos: amplia
+archivado: 2026-10-27
 ---
 # Mandar plata a otra cuenta al importar, sin que cuente como gasto
 
