@@ -1,7 +1,8 @@
 ---
 cambio: paletas-oscura-y-clara
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-10-27
 ---
 # Dos paletas (oscura y clara), bloques de color sólido, letra y números
 
