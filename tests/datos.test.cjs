@@ -266,7 +266,8 @@ t.test("copia vieja con Súper", async () => {
   await restaurar(page, JSON.stringify(copia));
   await A.aviso(page, "Copia restaurada");
   await A.ir(page, "movs");
-  assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado · 03\/10/);
+  assert.equal((await A.guardados(page)).movs[0].cat, "Supermercado");
+  assert.match(await A.texto(page, '[data-mov="1"]'), /03\/10/);
 });
 
 // Escenario: datos de la versión anterior
@@ -343,12 +344,15 @@ const sembrarAdjunto = (page, reg) => page.evaluate((r) => new Promise((ok, mal)
 t.test("adjuntos anteriores intactos", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] }) });
   await sembrarAdjunto(page, { id: 900, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await sembrarAdjunto(page, { id: 903, cuenta: 1, mes: "2026-09", nombre: "recibo.jpg", tipo: "foto", mime: "image/jpeg" });
   await page.reload();
   await A.ir(page, "movs");
   assert.equal(await page.locator('[data-ui="chip-documento"]').count(), 0);
   await A.ir(page, "cuentas");
   await page.click('[data-cta="1"]');
-  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("extracto.pdf"));
+  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("extracto.pdf") && document.querySelector("#cAdjLista").textContent.includes("recibo.jpg"));
+  const etiquetas = (await page.locator("#cAdjLista .adj .d").allInnerTexts()).map((x) => x.replace(/\s+/g, " ").trim()).sort();
+  assert.deepEqual(etiquetas, ["extracto.pdf octubre 2026 · PDF", "recibo.jpg septiembre 2026 · Foto"]);
 });
 
 // Escenario: aviso en Ajustes cuenta los documentos de gastos
@@ -360,6 +364,17 @@ t.test("aviso en Ajustes cuenta los documentos de gastos", async () => {
   await page.click('[data-mov="1"] [data-sel]');
   await page.setInputFiles("#docIn", PDF3);
   await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await A.ir(page, "ajustes");
+  await page.waitForFunction(() => document.getElementById("avisoAdj").textContent.includes("2 adjuntos"));
+  assert.equal(await A.texto(page, "#avisoAdj"), "Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.");
+});
+
+// Escenario: el aviso cuenta todos los tipos
+t.test("el aviso cuenta todos los tipos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, A.cta(2, "Banco B", 0)] }) });
+  await sembrarAdjunto(page, { id: 904, cuenta: 1, mes: "2026-10", nombre: "extracto.pdf", tipo: "pdf", mime: "application/pdf" });
+  await sembrarAdjunto(page, { id: 905, cuenta: 2, mes: "2026-10", nombre: "movimientos.xlsx", tipo: "excel", mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  await page.reload();
   await A.ir(page, "ajustes");
   await page.waitForFunction(() => document.getElementById("avisoAdj").textContent.includes("2 adjuntos"));
   assert.equal(await A.texto(page, "#avisoAdj"), "Tus 2 adjuntos no entran en la copia: guardalos aparte si los necesitás.");

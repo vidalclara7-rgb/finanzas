@@ -1,0 +1,38 @@
+---
+cambio: buscar-movimientos
+estado: archivado
+datos: sin-cambios
+archivado: 2026-10-28
+---
+# Buscar movimientos y verlos en una línea
+
+## Por qué
+
+En Movimientos cada tarjeta ocupa unos 120 px y se apila sobre la anterior: con un mes de movimientos hay que
+desplazarse mucho. Y para encontrar un gasto concreto (una compra, un comercio, un importe) hay que ir mes por mes.
+
+## Qué cambia
+
+- **Lupa arriba a la derecha** en Movimientos, junto al engranaje. Abre un campo de búsqueda que filtra **todos los
+  meses** por descripción, categoría, cuenta o importe, con los resultados del más reciente al más antiguo y su fecha
+  completa.
+- **Movimientos en una línea**: sólo el concepto, la fecha corta y el importe, de unos 48 px (sin icono ni categoría: la
+  categoría se reconoce por el color y se ve al abrir el movimiento). Sin el efecto apilado. Se mantiene el color de la categoría. Las marcas (documento, cuota,
+  reembolso, fijo) pasan a una segunda fila fina sólo en los movimientos que las tienen.
+- **Sin cruz en la fila** (pedido al revisar el resultado): el texto gana ese sitio. Borrar pasa a la **hoja del movimiento**,
+  con un botón «Borrar movimiento» de dos toques. Los ajustes de conciliación, que no se abren, conservan la cruz.
+
+## A quién afecta
+
+A todas las personas: cambia el aspecto de la lista. Lo guardado no cambia.
+
+## Pantallas
+
+- Movimientos: lupa en el encabezado, campo de búsqueda con resultados y lista en una línea, sin cruz.
+- Hoja del movimiento: botón «Borrar movimiento» al pie.
+
+## Fuera de alcance
+
+- Buscar desde otras pestañas, filtros por fecha, categoría o cuenta, y guardar búsquedas.
+- Seleccionar gastos desde los resultados de la búsqueda (el modo seleccionar sigue siendo del mes en curso).
+- Cambiar las tarjetas de Inicio, Cuentas o las hojas.

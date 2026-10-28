@@ -199,9 +199,8 @@ t.test("texto legible en las tarjetas", async () => {
     await A.ir(page, "movs");
     const [texto, detras] = await colores(page, '[data-mov="9"] .linea');
     assert.ok(contraste(texto, detras) >= 4.5, `${ap}: contraste ${contraste(texto, detras).toFixed(2)}`);
-    const [letra] = await colores(page, '[data-mov="9"] .ico');
-    const ico = await fondoDe(page, '[data-mov="9"]');
-    assert.ok(contraste(letra, ico) >= 4.5, `${ap}: icono ${contraste(letra, ico).toFixed(2)}`);
+    const [fecha, tarjeta] = await colores(page, '[data-mov="9"] .fecha');
+    assert.ok(contraste(fecha, tarjeta) >= 4.5, `${ap}: fecha ${contraste(fecha, tarjeta).toFixed(2)}`);
   }
 });
 
@@ -373,12 +372,12 @@ t.test("contraste con cada categoría nueva", async () => {
       const lum = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
       const par = (a, b) => { const [hi, lo] = a > b ? [a, b] : [b, a]; return (hi + 0.05) / (lo + 0.05); };
       return [...document.querySelectorAll("#movs .mov")].map((m) => {
-        const ico = m.querySelector(".ico");
-        return [m.textContent.slice(0, 20), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(m.querySelector(".cat")).color)), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(ico).color))];
+        const ico = m.querySelector(".fecha");
+        return [m.textContent.slice(0, 20), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(m.querySelector(".desc")).color)), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(ico).color))];
       });
     });
     assert.equal(ratios.length, 5);
-    for (const [n, r, ri] of ratios) { assert.ok(r >= 4.5, `${apariencia} ${n}: ${r.toFixed(2)}`); assert.ok(ri >= 4.5, `${apariencia} icono ${n}: ${ri.toFixed(2)}`); }
+    for (const [n, r, ri] of ratios) { assert.ok(r >= 4.5, `${apariencia} ${n}: ${r.toFixed(2)}`); assert.ok(ri >= 4.5, `${apariencia} fecha ${n}: ${ri.toFixed(2)}`); }
   }
 });
 

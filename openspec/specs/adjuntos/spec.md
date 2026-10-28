@@ -2,8 +2,8 @@
 
 ## Requisito: el extracto queda adjunto
 
-El PDF importado queda guardado en el teléfono con su cuenta y el mes de su último movimiento. La
-hoja de la cuenta lista sus adjuntos con nombre y mes, y se pueden abrir.
+El archivo importado queda guardado en el teléfono con su cuenta y el mes de su último movimiento. La hoja de la cuenta lista
+sus adjuntos con nombre y mes, y se pueden abrir.
 
 ### Escenario: extracto importado queda en la cuenta
 - **Dado** un extracto de Banco A de octubre 2026 importado
@@ -12,13 +12,48 @@ hoja de la cuenta lista sus adjuntos con nombre y mes, y se pueden abrir.
 
 ## Requisito: adjuntar a mano
 
-Desde la hoja de una cuenta, la persona adjunta un PDF o una foto, que queda en el mes en curso. Un
-adjunto se borra con dos toques.
+Desde la hoja de una cuenta, un solo botón, «Adjuntar archivo», adjunta una foto o un archivo de cualquier tipo, que queda en
+el mes en curso. Si el archivo trae movimientos que la app puede leer, pregunta «Encontré N movimientos. ¿Querés revisarlos?»,
+con «Revisar» y «Ahora no»; si la persona los importa, el adjunto pasa al mes de su último movimiento. Un adjunto se borra con
+dos toques.
 
 ### Escenario: adjuntar una foto
 - **Dado** la hoja de Banco A abierta
-- **Cuando** la persona adjunta una foto «recibo.jpg»
+- **Cuando** la persona adjunta una foto «recibo.jpg» sin texto legible
 - **Entonces** aparece en los adjuntos de Banco A con el mes en curso
+
+### Escenario: adjuntar un archivo de cualquier tipo
+- **Dado** la hoja de Banco A abierta
+- **Cuando** la persona adjunta «contrato.docx»
+- **Entonces** aparece en los adjuntos de Banco A y se puede abrir
+- **Y** la app no pregunta por movimientos
+
+### Escenario: un solo botón
+- **Dado** la hoja de una cuenta abierta
+- **Cuando** la persona mira la sección de adjuntos
+- **Entonces** ve el botón «Adjuntar archivo» y no ve «Importar extracto»
+
+### Escenario: archivo con movimientos
+- **Dado** la hoja de Banco A abierta
+- **Cuando** la persona adjunta un Excel con 3 movimientos
+- **Entonces** el Excel queda en los adjuntos
+- **Y** la app pregunta «Encontré 3 movimientos. ¿Querés revisarlos?»
+
+### Escenario: revisar y guardar los movimientos
+- **Dado** esa pregunta con un Excel de movimientos de octubre 2026
+- **Cuando** la persona toca «Revisar» y guarda los 3 movimientos
+- **Entonces** los movimientos son de Banco A
+- **Y** el adjunto muestra «octubre 2026»
+
+### Escenario: no revisar ahora
+- **Dado** esa pregunta
+- **Cuando** la persona toca «Ahora no»
+- **Entonces** no se guarda ningún movimiento y el archivo sigue adjunto
+
+### Escenario: archivo vacío
+- **Dado** la hoja de Banco A abierta
+- **Cuando** la persona elige un archivo de 0 bytes
+- **Entonces** la app avisa «El archivo está vacío.» y no adjunta nada
 
 ### Escenario: borrar un adjunto
 - **Dado** un adjunto en Banco A
@@ -37,9 +72,9 @@ dice junto a la copia, con cuántos adjuntos hay.
 
 ## Requisito: adjuntar un documento a varios gastos
 
-Con gastos marcados, «Adjuntar documento» permite elegir un PDF o una foto, que queda vinculado a todos
-los gastos marcados. Cada gasto con documento muestra un clip, y su hoja lista sus documentos, que se
-abren y se pueden quitar con dos toques. Un gasto puede tener varios documentos.
+Con gastos marcados, «Adjuntar documento» permite elegir una foto o un archivo de cualquier tipo, que queda vinculado a todos
+los gastos marcados. Cada gasto con documento muestra un clip, y su hoja lista sus documentos, que se abren y se pueden quitar
+con dos toques. Un gasto puede tener varios documentos.
 
 ### Escenario: un documento para dos gastos
 - **Dado** el modo seleccionar con dos gastos marcados
@@ -53,10 +88,15 @@ abren y se pueden quitar con dos toques. Un gasto puede tener varios documentos.
 - **Cuando** la persona mira la barra
 - **Entonces** «Adjuntar documento» está desactivado
 
-### Escenario: archivo que no se puede guardar
+### Escenario: documento de cualquier tipo
 - **Dado** el modo seleccionar con un gasto marcado
-- **Cuando** la persona elige un archivo que no es PDF ni foto
-- **Entonces** la app avisa «Elegí un PDF o una foto» y no adjunta nada
+- **Cuando** la persona adjunta «presupuesto.xlsx»
+- **Entonces** la app avisa «Documento adjuntado a 1 gasto» y la hoja del gasto lista «presupuesto.xlsx»
+
+### Escenario: documento vacío
+- **Dado** el modo seleccionar con un gasto marcado
+- **Cuando** la persona elige un archivo de 0 bytes
+- **Entonces** la app avisa «El archivo está vacío.» y no adjunta nada
 
 ### Escenario: quitar un documento de un gasto
 - **Dado** «factura.pdf» vinculado a dos gastos

@@ -3,6 +3,7 @@ const t = require("node:test");
 const assert = require("node:assert/strict");
 const A = require("./ayuda.cjs");
 const X = require("./extractos.cjs");
+const F = require("./archivos.cjs");
 
 const abrir = A.preparar(t);
 const BANCO = { ...A.cta(1, "Banco A", 1000, { desde: "2026-10-01" }), ref: "4321" };
@@ -41,6 +42,82 @@ t.test("adjuntar una foto", async () => {
   await adjuntar(page, FOTO);
   await A.aviso(page, "Archivo adjuntado");
   assert.deepEqual((await lista(page)).map((x) => x.replace(/\s+/g, " ").trim()), ["recibo.jpg octubre 2026 · Foto"]);
+});
+
+const SEPT = [["Fecha", "Concepto", "Importe"], [{ f: "2026-09-03" }, "Tienda Uno", "−10,00"], [{ f: "2026-09-10" }, "Tienda Dos", "−20,00"], [{ f: "2026-09-24" }, "Tienda Tres", "−30,00"]];
+const MOVS_XLSX = () => F.XLSX(F.xlsx(SEPT), "septiembre.xlsx");
+async function conPregunta(page) {
+  await hojaCuenta(page);
+  await page.setInputFiles("#adjIn", MOVS_XLSX());
+  await page.waitForSelector("#sheetAdjQ:not([hidden])", { timeout: 20000 });
+}
+
+// Escenario: adjuntar un archivo de cualquier tipo
+t.test("adjuntar un archivo de cualquier tipo", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await hojaCuenta(page);
+  await adjuntar(page, { name: "contrato.docx", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", buffer: Buffer.from("PK contrato de ejemplo") });
+  assert.deepEqual((await lista(page)).map((x) => x.replace(/\s+/g, " ").trim()), ["contrato.docx octubre 2026 · Archivo"]);
+  assert.equal(await page.isVisible("#sheetAdjQ"), false);
+  const [abierto] = await Promise.all([Promise.race([page.waitForEvent("popup"), page.waitForEvent("download")]), page.click("#cAdjLista [data-abrir]")]);
+  assert.ok(abierto);
+});
+
+// Escenario: un solo botón
+t.test("un solo botón", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await A.ir(page, "cuentas");
+  await page.click('[data-cta="1"]');
+  assert.equal(await page.isVisible("#cAdjuntar"), true);
+  assert.equal(await A.texto(page, "#cAdjuntar"), "Adjuntar archivo");
+  assert.equal(await page.locator("#cAdj button.btn").count(), 1);
+  assert.equal(await page.locator("#cImportar").count(), 0);
+  assert.equal((await A.texto(page, "#cAdj")).includes("Importar extracto"), false);
+});
+
+// Escenario: archivo con movimientos
+t.test("archivo con movimientos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await conPregunta(page);
+  assert.equal(await A.texto(page, "#aqTxt"), "Encontré 3 movimientos. ¿Querés revisarlos?");
+  await page.click("#aqNo");
+  assert.deepEqual((await lista(page)).map((x) => x.replace(/\s+/g, " ").trim()), ["septiembre.xlsx octubre 2026 · Excel"]);
+});
+
+// Escenario: revisar y guardar los movimientos
+t.test("revisar y guardar los movimientos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await conPregunta(page);
+  await page.click("#aqRevisar");
+  await page.waitForSelector("#sheetI:not([hidden])");
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+  await page.click("#iGuardar");
+  await A.aviso(page, "3 movimientos importados");
+  assert.deepEqual((await A.guardados(page)).movs.map((m) => m.cuenta), [1, 1, 1]);
+  await page.click("#icNo");
+  await hojaCuenta(page);
+  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("septiembre 2026"));
+  assert.deepEqual((await lista(page)).map((x) => x.replace(/\s+/g, " ").trim()), ["septiembre.xlsx septiembre 2026 · Excel"]);
+});
+
+// Escenario: no revisar ahora
+t.test("no revisar ahora", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await conPregunta(page);
+  await page.click("#aqNo");
+  assert.equal(await page.isVisible("#sheetC"), true);
+  assert.deepEqual((await A.guardados(page)).movs, []);
+  assert.equal((await lista(page)).length, 1);
+});
+
+// Escenario: archivo vacío
+t.test("archivo vacío", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await A.ir(page, "cuentas");
+  await page.click('[data-cta="1"]');
+  await page.setInputFiles("#adjIn", { name: "vacio.txt", mimeType: "text/plain", buffer: Buffer.alloc(0) });
+  await A.aviso(page, "El archivo está vacío.");
+  assert.match(await A.texto(page, "#cAdjLista"), /Todavía no hay adjuntos/);
 });
 
 // Escenario: borrar un adjunto
@@ -110,11 +187,22 @@ t.test("sin gastos marcados", async () => {
   assert.equal(await page.isDisabled("#selAdj"), false);
 });
 
-// Escenario: archivo que no se puede guardar
-t.test("archivo que no se puede guardar", async () => {
+// Escenario: documento de cualquier tipo
+t.test("documento de cualquier tipo", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
-  await adjuntarGastos(page, [1], { name: "notas.txt", mimeType: "text/plain", buffer: Buffer.from("hola") });
-  await A.aviso(page, "Elegí un PDF o una foto");
+  await adjuntarGastos(page, [1], F.XLSX(F.xlsx([["Concepto", "Importe"], ["Material", "10,00"]]), "presupuesto.xlsx"));
+  await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await page.click('[data-mov="1"] .linea');
+  await A.hojaLista(page);
+  assert.match(await A.texto(page, "#mDocsLista"), /presupuesto\.xlsx/);
+  assert.deepEqual((await docs(page)).map((d) => d.nombre), ["presupuesto.xlsx"]);
+});
+
+// Escenario: documento vacío
+t.test("documento vacío", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
+  await adjuntarGastos(page, [1], { name: "vacio.txt", mimeType: "text/plain", buffer: Buffer.alloc(0) });
+  await A.aviso(page, "El archivo está vacío.");
   assert.deepEqual(await docs(page), []);
 });
 
@@ -140,9 +228,10 @@ t.test("borrar el último gasto de un documento", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1]);
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-del="1"]');
-  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar y su documento");
-  await page.click('[data-del="1"]');
+  await page.click('[data-mov="1"] .linea');
+  await page.click("#mBorrar");
+  assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo: se borra también su documento");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   await page.waitForFunction(() => true);
   await page.waitForTimeout(300);
@@ -154,9 +243,10 @@ t.test("borrar un gasto con documento compartido", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1, 2]);
   await A.aviso(page, "Documento adjuntado a 2 gastos");
-  await page.click('[data-del="1"]');
-  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar");
-  await page.click('[data-del="1"]');
+  await page.click('[data-mov="1"] .linea');
+  await page.click("#mBorrar");
+  assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo para borrar");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   await page.waitForTimeout(300);
   assert.deepEqual((await docs(page)).map((d) => d.movs), [[2]]);
