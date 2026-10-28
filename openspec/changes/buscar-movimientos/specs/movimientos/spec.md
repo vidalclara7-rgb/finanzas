@@ -3,14 +3,13 @@
 ## Requisito: ver los movimientos del mes
 
 La pestaña Movimientos muestra los movimientos del mes en curso, del más reciente al más antiguo, cada uno en una
-sola línea de poca altura: un icono con la inicial de su categoría, la descripción (la nota o, si no hay, la cuenta)
-con la categoría en gris, la fecha corta y el importe. Cada gasto lleva el color de su categoría, los ingresos van en
-verde, y las transferencias y los ajustes en gris. Ingresos con «+», gastos con «−», transferencias con la cuenta de
-origen y la de destino. Si el movimiento no es en euros, el importe lleva su moneda. Las marcas de un movimiento
-(documento, cuota, reembolso, fijo) van en una segunda fila fina, sólo en los que las tienen. Sólo los ajustes llevan una
-cruz en la fila. Arriba, el total de
-ingresos y el de gastos del mes; transferencias y ajustes no suman en ninguno. Inicio no repite la lista de gastos
-recientes: para verlos, se abre Movimientos.
+sola línea de poca altura: el concepto (la nota o, si no hay, la categoría), la fecha corta y el importe, sin icono. Cada
+gasto lleva el color de su categoría, los ingresos van en verde, y las transferencias y los ajustes en gris. Ingresos con
+«+», gastos con «−», transferencias con la cuenta de origen y la de destino como concepto. Si el movimiento no es en euros,
+el importe lleva su moneda. Las marcas de un movimiento (documento, cuota, reembolso, fijo) van en una segunda fila fina, sólo
+en los que las tienen. Sólo los ajustes llevan una cruz en la fila. Arriba, el total de ingresos y el de gastos del mes;
+transferencias y ajustes no suman en ninguno. Inicio no repite la lista de gastos recientes: para verlos, se abre
+Movimientos.
 
 ### Escenario: movimientos de otro mes no aparecen
 - **Dado** que hoy es 2026-10-15, un gasto del 2026-09-28 y otro del 2026-10-03
@@ -42,7 +41,12 @@ recientes: para verlos, se abre Movimientos.
 - **Dado** diez gastos este mes, uno de ellos con nota
 - **Cuando** la persona abre Movimientos con un teléfono de 390 px de ancho
 - **Entonces** cada movimiento sin marcas mide como máximo 56 px de alto y no se solapa con el siguiente
-- **Y** el que tiene nota muestra la nota y, en gris, su categoría
+- **Y** el que tiene nota muestra la nota y no muestra su categoría ni ningún icono
+
+### Escenario: sin nota se ve la categoría
+- **Dado** un gasto de Transporte sin nota
+- **Cuando** la persona abre Movimientos
+- **Entonces** el concepto del movimiento es «Transporte»
 
 ### Escenario: marcas en una segunda fila
 - **Dado** un gasto con un documento adjunto y otro sin marcas

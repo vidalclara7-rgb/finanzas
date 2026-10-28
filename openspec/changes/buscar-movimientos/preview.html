@@ -162,17 +162,16 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 /* Tarjetas chicas que se deslizan de costado */
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
-/* Movimientos en una línea: icono, descripción con categoría, fecha corta, importe y cruz; las marcas, en una segunda fila fina */
+/* Movimientos en una línea: concepto, fecha corta e importe (y la cruz sólo en los ajustes); las marcas, en una segunda fila fina */
 .pila{display:flex;flex-direction:column;gap:6px}
-.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
-.mov .ico{width:28px;height:28px;font-size:13px}
+.mov{border-radius:18px;padding:12px 10px 12px 16px;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:48px}
 .mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
 .mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mov .fecha{flex:none;font-size:12px;color:var(--muted)}
 .mov .linea .num{flex:none}
-.mov .x,.mov .sel{grid-column:3}
-.mov .marcas{grid-column:2;display:flex;flex-wrap:wrap;gap:6px}
+.mov .x,.mov .sel{grid-column:2}
+.mov .marcas{grid-column:1;display:flex;flex-wrap:wrap;gap:6px}
 .mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0 4px;min-width:28px;height:28px;line-height:1}
 .mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
 .acc{display:flex;align-items:center;gap:8px}
@@ -285,14 +284,14 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="row" data-ui="encabezado-movimientos"><span class="sub">Encabezado de Movimientos: la lupa va junto al engranaje</span><div class="acc"><button class="gear" aria-label="Buscar" data-ui="lupa-movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button></div></div>
     <div class="row" data-ui="totales-mes"><div style="display:flex;flex-direction:column"><span class="sub">Ingresos</span><span class="big">1700 €</span></div><div style="display:flex;flex-direction:column;align-items:flex-end"><span class="sub">Gastos</span><span class="big">779,8 €</span></div></div>
     <div class="pila" data-ui="lista-movimientos">
-      <div class="mov" style="--c:var(--cat1)"><span class="ico">S</span><div class="linea"><span class="desc">Compra semanal<span class="cat"> · Supermercado</span></span><span class="fecha">06/10</span><span class="num">−64,3 €</span></div></div>
-      <div class="mov" style="--c:var(--cat2)"><span class="ico">T</span><div class="linea"><span class="desc">Abono mensual<span class="cat"> · Transporte</span></span><span class="fecha">05/10</span><span class="num">−25,5 €</span></div><div class="marcas"><span class="chip idle">Fijo</span></div></div>
-      <div class="mov" style="--c:var(--cat3)"><span class="ico">C</span><div class="linea"><span class="desc">Zapatillas<span class="cat"> · Compras</span></span><span class="fecha">04/10</span><span class="num">−48 €</span></div><div class="marcas"><span class="chip idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>1 documento</span></div></div>
-      <div class="mov" style="--c:var(--cat5)"><span class="ico">T</span><div class="linea"><span class="desc">Reembolso de viaje a la oficina central de Madrid con la comida y el taxi del aeropuerto<span class="cat"> · Trabajo (reembolsable)</span></span><span class="fecha">03/10</span><span class="num">−42 €</span></div><div class="marcas"><span class="chip idle">Pendiente</span></div></div>
-      <div class="mov" style="--c:var(--cat4)"><span class="ico">A</span><div class="linea"><span class="desc">Banco A<span class="cat"> · Alquiler</span></span><span class="fecha">02/10</span><span class="num">−600 €</span></div><div class="marcas"><span class="chip idle">Cuota 2 de 6</span></div></div>
-      <div class="mov neutro"><span class="ico">→</span><div class="linea"><span class="desc">Banco A → Tarjeta Y</span><span class="fecha">02/10</span><span class="num">100 €</span></div></div>
-      <div class="mov" style="--c:var(--ingreso)"><span class="ico">+</span><div class="linea"><span class="desc">Banco A<span class="cat"> · Sueldo</span></span><span class="fecha">01/10</span><span class="num">+1700 €</span></div></div>
-      <div class="mov neutro"><span class="ico">≈</span><div class="linea"><span class="desc">Ajuste de conciliación</span><span class="fecha">01/10</span><span class="num">−12 €</span></div><button class="x" aria-label="Borrar movimiento">×</button></div>
+      <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Compra semanal</span><span class="fecha">06/10</span><span class="num">−64,3 €</span></div></div>
+      <div class="mov" style="--c:var(--cat2)"><div class="linea"><span class="desc">Abono mensual</span><span class="fecha">05/10</span><span class="num">−25,5 €</span></div><div class="marcas"><span class="chip idle">Fijo</span></div></div>
+      <div class="mov" style="--c:var(--cat3)"><div class="linea"><span class="desc">Zapatillas</span><span class="fecha">04/10</span><span class="num">−48 €</span></div><div class="marcas"><span class="chip idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>1 documento</span></div></div>
+      <div class="mov" style="--c:var(--cat5)"><div class="linea"><span class="desc">Reembolso de viaje a la oficina central de Madrid con la comida y el taxi del aeropuerto</span><span class="fecha">03/10</span><span class="num">−42 €</span></div><div class="marcas"><span class="chip idle">Pendiente</span></div></div>
+      <div class="mov" style="--c:var(--cat4)"><div class="linea"><span class="desc">Alquiler</span><span class="fecha">02/10</span><span class="num">−600 €</span></div><div class="marcas"><span class="chip idle">Cuota 2 de 6</span></div></div>
+      <div class="mov neutro"><div class="linea"><span class="desc">Banco A → Tarjeta Y</span><span class="fecha">02/10</span><span class="num">100 €</span></div></div>
+      <div class="mov" style="--c:var(--ingreso)"><div class="linea"><span class="desc">Sueldo</span><span class="fecha">01/10</span><span class="num">+1700 €</span></div></div>
+      <div class="mov neutro"><div class="linea"><span class="desc">Ajuste de conciliación</span><span class="fecha">01/10</span><span class="num">−12 €</span></div><button class="x" aria-label="Borrar movimiento">×</button></div>
     </div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
@@ -305,9 +304,9 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="busca" data-ui="campo-busqueda"><input type="search" value="panaderia" aria-label="Buscar movimientos"><button class="btn sec" style="padding:8px 14px">Cerrar</button></div>
     <span class="sub" data-ui="cantidad-resultados">3 resultados</span>
     <div class="pila" data-ui="resultados-busqueda">
-      <div class="mov" style="--c:var(--cat1)"><span class="ico">S</span><div class="linea"><span class="desc">Panadería<span class="cat"> · Alimentación</span></span><span class="fecha">03/10/2026</span><span class="num">−4,2 €</span></div></div>
-      <div class="mov" style="--c:var(--cat1)"><span class="ico">S</span><div class="linea"><span class="desc">Panadería<span class="cat"> · Alimentación</span></span><span class="fecha">10/09/2026</span><span class="num">−6,8 €</span></div><div class="marcas"><span class="chip idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>1 documento</span></div></div>
-      <div class="mov" style="--c:var(--cat1)"><span class="ico">S</span><div class="linea"><span class="desc">Panadería<span class="cat"> · Alimentación</span></span><span class="fecha">22/07/2026</span><span class="num">−3,5 €</span></div></div>
+      <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">03/10/2026</span><span class="num">−4,2 €</span></div></div>
+      <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">10/09/2026</span><span class="num">−6,8 €</span></div><div class="marcas"><span class="chip idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>1 documento</span></div></div>
+      <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">22/07/2026</span><span class="num">−3,5 €</span></div></div>
     </div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">

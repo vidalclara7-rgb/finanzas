@@ -168,17 +168,15 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 /* Tarjetas chicas que se deslizan de costado */
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
-/* Movimientos en una línea: icono, descripción con categoría, fecha corta, importe y cruz; las marcas, en una segunda fila fina */
+/* Movimientos en una línea: concepto, fecha corta e importe (y la cruz sólo en los ajustes); las marcas, en una segunda fila fina */
 .pila{display:flex;flex-direction:column;gap:6px}
-.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
-.mov .ico{width:28px;height:28px;font-size:13px}
-.mov .cat{font-size:12px;color:var(--muted)}
+.mov{border-radius:18px;padding:12px 10px 12px 16px;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:48px}
 .mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
 .mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mov .fecha{flex:none;font-size:12px;color:var(--muted)}
 .mov .linea .num{flex:none}
-.mov .x,.mov .sel{grid-column:3}
-.mov .marcas{grid-column:2;display:flex;flex-wrap:wrap;gap:6px}
+.mov .x,.mov .sel{grid-column:2}
+.mov .marcas{grid-column:1;display:flex;flex-wrap:wrap;gap:6px}
 .mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0 4px;min-width:28px;height:28px;line-height:1}
 .mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
 .acc{display:flex;align-items:center;gap:8px}
@@ -386,6 +384,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <label class="check" id="mFijoL" data-pantalla="hoja-gasto-fijo" data-ui="casilla-fijo"><input type="checkbox" id="mFijo"><span style="flex:1;display:flex;flex-direction:column"><span>Gasto fijo</span><span class="sub">Se repite al menos 12 meses: alquiler, cuotas, seguros, suscripciones</span></span></label>
     <label class="f" for="mFecha">Fecha<input type="date" id="mFecha"></label>
     <button class="btn" type="submit" id="mGuardar">Guardar gasto</button>
+    <button class="btn danger" type="button" id="mBorrar" data-ui="borrar-movimiento" hidden>Borrar movimiento</button>
   </div>
 </form>
 
@@ -891,13 +890,14 @@ const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span 
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
 let filtroR=null,filtroDoc=false,seleccion=null,docsMov={},busq=null;
 const fechaLarga=f=>f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(0,4);
-function movHTML(m,larga){let c,ico,desc,cat="",imp;const f=larga?fechaLarga(m.fecha):diaMes(m.fecha);
-  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=esc(m.cat);desc=esc(m.nota||nombreDe(m.cuenta))+(m.cuotaN?` · total ${eur(m.total)}`:"");imp="−"+eurM(m.importe,m);}
-  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=esc(m.cat);desc=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
-  else if(m.tipo==="transferencia"){c="";ico="→";desc=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
-  else{c="";ico="≈";desc="Ajuste de conciliación";cat=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
+function movHTML(m,larga){let c,desc,imp;const f=larga?fechaLarga(m.fecha):diaMes(m.fecha);
+  if(m.tipo==="gasto"){c=colorCat(m.cat);desc=esc(m.nota||m.cat)+(m.cuotaN?` · total ${eur(m.total)}`:"");imp="−"+eurM(m.importe,m);}
+  else if(m.tipo==="ingreso"){c="var(--ingreso)";desc=esc(m.nota||m.cat);imp="+"+eurM(m.importe,m);}
+  else if(m.tipo==="transferencia"){c="";desc=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
+  else{c="";desc="Ajuste de conciliación";imp=eur(m.importe);}
   const nd=(docsMov[m.id]||[]).length,marcas=(nd?`<span class="chip idle" data-ui="chip-documento">${CLIP}${nd} ${nd===1?"documento":"documentos"}</span>`:"")+(m.cuotaN?`<span class="chip idle" data-ui="chip-cuota">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:"")+(m.reembolso?chipR(m.reembolso.estado):"")+(esFijo(m)?`<span class="chip idle" data-ui="chip-fijo">Fijo</span>`:"");
-  return `<div class="mov${c?"":" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><span class="ico">${ico}</span><div class="linea"><span class="desc">${desc}${cat?`<span class="cat"> · ${cat}</span>`:""}</span><span class="fecha">${f}</span><span class="num">${imp}</span></div>${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:"<span></span>"):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}${marcas?`<div class="marcas">${marcas}</div>`:""}</div>`;}
+  // Sólo el ajuste lleva cruz (no se abre); el resto se borra desde su hoja
+  return `<div class="mov${c?"":" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><div class="linea"><span class="desc">${desc}</span><span class="fecha">${f}</span><span class="num">${imp}</span></div>${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):m.tipo==="ajuste"?`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`:""}${marcas?`<div class="marcas">${marcas}</div>`:""}</div>`;}
 
 // Apariencia: oscura (por defecto), clara o automática (sigue al teléfono). El script del <head> la pone antes de pintar
 const APARIENCIAS=[["oscura","Oscura"],["clara","Clara"],["auto","Automática"]];
@@ -1038,7 +1038,7 @@ function abrirMov(id){const m=S.movs.find(x=>String(x.id)===String(id));movId=m?
     {const mo=m?monedaDe(m):"EUR";mov.moneda=MONEDAS.includes(mo)?mo:"Otra";$("mOtra").value=MONEDAS.includes(mo)?"":mo;}
     seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();
     $("mImporte").value=m?aTexto(m.importe):"";$("mNota").value=m?m.nota||"":"";$("mFecha").value=m?m.fecha:hoy();$("mFijo").checked=!!(m&&esFijo(m));movUI();}
-  docConfirm=null;pintarDocsMov();mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
+  docConfirm=null;$("mBorrar").hidden=!m;$("mBorrar").dataset.confirm="";$("mBorrar").textContent="Borrar movimiento";pintarDocsMov();mostrar("sheet");if(hay)setTimeout(()=>$("mImporte").focus(),50);}
 $("sheet").addEventListener("submit",e=>{e.preventDefault();
   const v=num("mImporte");if(!(v>0)){toast("Poné un importe mayor que 0");return;}
   if(mov.tipo==="transferencia"&&mov.cuenta===mov.destino){toast("Elegí dos cuentas distintas");return;}
@@ -1537,11 +1537,15 @@ $("addTarea").onclick=()=>abrirTarea(null);
 $("irCuentas").onclick=()=>ir("cuentas");
 $("crearPrimera").onclick=()=>{ir("cuentas");abrirCuenta(null);};
 
+function borrarMov(m){desconciliar(m);S.movs=S.movs.filter(x=>x!==m);
+  S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});quitarDeDocs(m.id);cambio();}
+$("mBorrar").onclick=()=>{const b=$("mBorrar"),m=S.movs.find(x=>x.id===movId);if(!m)return;
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent=(docsMov[m.id]||[]).some(a=>docsHuerfano(a.id,m.id))?"Tocá de nuevo: se borra también su documento":"Tocá de nuevo para borrar";return;}
+  borrarMov(m);cerrar();toast("Movimiento borrado");};
 document.addEventListener("click",e=>{
   const d=e.target.closest("[data-del]");
   if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent=(docsMov[d.dataset.del]||[]).some(a=>docsHuerfano(a.id,+d.dataset.del))?"Borrar y su documento":"Borrar";d.style.color="var(--bad)";d.style.fontSize="14px";setTimeout(()=>{if(d.isConnected){d.dataset.confirm="";d.textContent="×";d.style.color="";d.style.fontSize="";}},2500);return;}
-    const m=S.movs.find(x=>String(x.id)===d.dataset.del);desconciliar(m);S.movs=S.movs.filter(x=>x!==m);
-    S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});quitarDeDocs(m.id);cambio();toast("Movimiento borrado");return;}
+    borrarMov(S.movs.find(x=>String(x.id)===d.dataset.del));toast("Movimiento borrado");return;}
   const mv=e.target.closest("[data-mov]");
   if(mv&&seleccion){if(mv.dataset.tipo==="gasto"&&!e.target.closest("[data-sel]")){const id=+mv.dataset.mov;if(seleccion.has(id))seleccion.delete(id);else seleccion.add(id);render();}return;}
   if(mv&&mv.dataset.tipo!=="ajuste"){if(mv.closest("#mcLista"))volverCta={id:mcId,mes:mcMes};abrirMov(mv.dataset.mov);return;}

@@ -140,9 +140,10 @@ t.test("borrar el último gasto de un documento", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1]);
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-del="1"]');
-  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar y su documento");
-  await page.click('[data-del="1"]');
+  await page.click('[data-mov="1"] .linea');
+  await page.click("#mBorrar");
+  assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo: se borra también su documento");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   await page.waitForFunction(() => true);
   await page.waitForTimeout(300);
@@ -154,9 +155,10 @@ t.test("borrar un gasto con documento compartido", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1, 2]);
   await A.aviso(page, "Documento adjuntado a 2 gastos");
-  await page.click('[data-del="1"]');
-  assert.equal(await A.texto(page, '[data-del="1"]'), "Borrar");
-  await page.click('[data-del="1"]');
+  await page.click('[data-mov="1"] .linea');
+  await page.click("#mBorrar");
+  assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo para borrar");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   await page.waitForTimeout(300);
   assert.deepEqual((await docs(page)).map((d) => d.movs), [[2]]);

@@ -11,6 +11,8 @@
 - [x] Sin datos nuevos: nada que migrar ni guardar
 
 ## Pantallas
+- [x] Fila sin icono ni categoría (concepto: nota o categoría), sin cruz salvo en los ajustes
+- [x] Hoja del movimiento: «Borrar movimiento» con dos toques (y la variante con documento); los tests de la cruz pasan a borrar desde la hoja
 - [x] `movHTML()` en una línea, con marcas en una segunda fila sólo si las hay, sin apilado
 - [x] Lupa en el encabezado (sólo Movimientos) y campo `#busca`
 - [x] `buscarMovs()`: palabras, importe exacto, fecha, sin mayúsculas ni tildes, todos los meses

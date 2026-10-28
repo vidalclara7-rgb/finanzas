@@ -190,8 +190,9 @@ t.test("no se avanza más allá del mes actual", async () => {
 t.test("borrar un movimiento desde la lista de la cuenta", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ], movs: GASTOS }) });
   await verMovs(page, 2);
-  await page.click('#mcLista [data-mov="2"] [data-del]');
-  await page.click('#mcLista [data-mov="2"] [data-del]');
+  await page.click('#mcLista [data-mov="2"] .linea');
+  await page.click("#mBorrar");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   assert.equal(await page.locator('#mcLista [data-mov="2"]').count(), 0);
   assert.equal((await A.guardados(page)).movs.length, 1);

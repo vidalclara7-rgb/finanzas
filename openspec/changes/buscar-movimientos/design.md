@@ -20,6 +20,16 @@ quitar la categoría, o poner la fecha en una fila por día).
 - **Desde una búsqueda o desde la lista de una cuenta:** abrir, borrar y volver a donde se estaba (`volverCta` ya lo hace).
 - Cambian los tests que pulsaban la cruz de la fila (`[data-del]`): pasan a borrar desde la hoja.
 
+## Segundo ajuste al revisar el resultado (2026-10-28)
+
+La persona pidió que **no aparezca la inicial de la categoría, sólo el concepto**: la fila estaba muy cargada y tiene que
+reconocerse a simple vista. Elegido **concepto, fecha e importe** (descartado: concepto con la categoría en gris). La categoría
+se reconoce por el color de la tarjeta y se ve al abrir el movimiento; la búsqueda sigue encontrando por categoría.
+
+- **Concepto:** la nota; si no hay nota, la categoría (antes era el nombre de la cuenta; la categoría reconoce mejor un gasto
+  anotado a mano). Transferencias «Cuenta → Cuenta»; ajustes «Ajuste de conciliación».
+- Sin icono: `.mov` pasa a una columna (más la cruz de los ajustes o la casilla del modo seleccionar). Alto de unos 48 px.
+
 ## Decisiones tomadas al escribir (a confirmar en el Gate 1)
 
 - **Qué coincide:** nota, categoría, nombre de la cuenta (y de la de destino en una transferencia) y fecha como texto
@@ -31,7 +41,7 @@ quitar la categoría, o poner la fecha en una fila por día).
   «N resultados». Tocar uno abre su hoja y al cerrar se vuelve a la búsqueda (como `volverCta`). Se borra abriéndolo. Mientras se busca se ocultan los totales del mes, el filtro de reembolsos y las acciones de la lista.
 - **Cerrar la búsqueda:** la cruz del campo, o la lupa otra vez; al salir de Movimientos también se cierra. Vuelve al
   mes en curso.
-- **Fila en una línea:** `[icono 28 px] descripción · categoría … fecha  importe` (y `×` sólo en los ajustes). La descripción es la nota o, si no
+- **Fila en una línea:** `concepto … fecha  importe` (y `×` sólo en los ajustes). La descripción es la nota o, si no
   hay, el nombre de la cuenta; la categoría va en gris. Las transferencias muestran «Cuenta → Cuenta» y los ajustes
   «Ajuste de conciliación» (con su cuenta en gris). Las marcas (clip de documento, «Cuota n de m», estado de reembolso, «Fijo») van en una
   segunda fila más fina sólo si el movimiento las tiene. El apilado (`margin-top` negativo) desaparece.

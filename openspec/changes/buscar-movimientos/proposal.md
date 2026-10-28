@@ -1,6 +1,6 @@
 ---
 cambio: buscar-movimientos
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Buscar movimientos y verlos en una línea
@@ -15,8 +15,8 @@ desplazarse mucho. Y para encontrar un gasto concreto (una compra, un comercio, 
 - **Lupa arriba a la derecha** en Movimientos, junto al engranaje. Abre un campo de búsqueda que filtra **todos los
   meses** por descripción, categoría, cuenta o importe, con los resultados del más reciente al más antiguo y su fecha
   completa.
-- **Movimientos en una línea**: icono con la inicial de la categoría, descripción con la categoría, fecha corta e
-  importe, de unos 52 px. Sin el efecto apilado. Se mantiene el color de la categoría. Las marcas (documento, cuota,
+- **Movimientos en una línea**: sólo el concepto, la fecha corta y el importe, de unos 48 px (sin icono ni categoría: la
+  categoría se reconoce por el color y se ve al abrir el movimiento). Sin el efecto apilado. Se mantiene el color de la categoría. Las marcas (documento, cuota,
   reembolso, fijo) pasan a una segunda fila fina sólo en los movimientos que las tienen.
 - **Sin cruz en la fila** (pedido al revisar el resultado): el texto gana ese sitio. Borrar pasa a la **hoja del movimiento**,
   con un botón «Borrar movimiento» de dos toques. Los ajustes de conciliación, que no se abren, conservan la cruz.
