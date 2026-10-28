@@ -1,7 +1,8 @@
 ---
 cambio: leer-cualquier-archivo
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-10-28
 ---
 # Importar desde cualquier archivo y adjuntar con un solo botón
 

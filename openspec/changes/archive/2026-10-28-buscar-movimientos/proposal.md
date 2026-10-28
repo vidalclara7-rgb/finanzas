@@ -1,7 +1,8 @@
 ---
 cambio: buscar-movimientos
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-10-28
 ---
 # Buscar movimientos y verlos en una línea
 
