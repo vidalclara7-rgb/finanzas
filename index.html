@@ -168,17 +168,21 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 /* Tarjetas chicas que se deslizan de costado */
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
-/* Movimientos como tarjetas apiladas */
-.pila{display:flex;flex-direction:column}
-.mov{border-radius:28px;padding:14px 18px 40px;margin-top:-28px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -1px 0 var(--line)}
-.mov:first-child{margin-top:0}
-.mov:last-child{padding-bottom:16px}
+/* Movimientos en una línea: icono, descripción con categoría, fecha corta, importe y cruz; las marcas, en una segunda fila fina */
+.pila{display:flex;flex-direction:column;gap:6px}
+.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr) 28px;align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
+.mov .ico{width:28px;height:28px;font-size:13px}
 .mov .cat{font-size:12px;color:var(--muted)}
-.mov .linea{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:18px}
-.mov .linea span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
+.mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .fecha{flex:none;font-size:12px;color:var(--muted)}
 .mov .linea .num{flex:none}
-.mov .x{position:absolute;right:14px;top:12px;background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
-.mov .sel{position:absolute;right:16px;top:14px;width:24px;height:24px;margin:0;accent-color:var(--ink)}
+.mov .marcas{grid-column:2 / -1;display:flex;flex-wrap:wrap;gap:6px}
+.mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0;width:28px;height:28px;line-height:1}
+.mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
+.acc{display:flex;align-items:center;gap:8px}
+.busca{display:flex;align-items:center;gap:8px}
+.busca input{flex:1;min-width:0}
 .chip svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px}
 .mov{position:relative}
 .list{display:flex;flex-direction:column}
@@ -196,7 +200,7 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .check:last-child{border-bottom:0}
 .check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
-input[type=number],input[type=text],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+input[type=number],input[type=text],input[type=search],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
 /* Fechas y meses: el navegador de iOS les da un ancho propio y se salen de la hoja; aquí ocupan el ancho de su campo y alinean el texto como los demás */
 input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:48px;line-height:1.2}
 input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}

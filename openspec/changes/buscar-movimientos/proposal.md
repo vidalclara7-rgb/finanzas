@@ -1,6 +1,6 @@
 ---
 cambio: buscar-movimientos
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Buscar movimientos y verlos en una línea
