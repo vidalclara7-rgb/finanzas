@@ -50,14 +50,162 @@ t.test("primera vez con una cuenta", async () => {
   assert.equal(await A.texto(page, '#segICuenta [aria-pressed="true"]'), "Revolut");
 });
 
-// Escenario: archivo no reconocido
-t.test("archivo no reconocido", async () => {
+// --- cualquier archivo: Excel, PDF, CSV y fotos
+const F = require("./archivos.cjs");
+// Elige el archivo desde Movimientos y espera la hoja de importación, la pregunta de signo o un aviso de lectura (no «Leyendo la foto…»)
+async function importaArchivo(page, archivo) {
+  await A.ir(page, "movs");
+  await page.setInputFiles("#pdfIn", archivo);
+  await page.waitForFunction(() => !document.getElementById("sheetI").hidden || !document.getElementById("sheetSigno").hidden || window.__avisos.some((a) => a !== "Leyendo la foto…"), null, { timeout: 60000 });
+}
+// Primera vez con ese archivo: elige la cuenta y sigue a la revisión
+async function eligeBanco(page) {
+  await page.click('#segIElegir button:has-text("Banco A")');
+  await page.click("#iSeguir");
+}
+const notas = (page) => page.evaluate(() => imp.d.map((x) => [x.nota, x.s]));
+const TARJETA_XLSX = [["", "", "CREDITO EJEMPLO", "Date"], ["", "", "Tarjeta ejemplo", "28/10/2026"], ["Transactions"], ["Transaction date", "Description", "Amount", "Currency"],
+  [{ f: "2026-10-01" }, "Tienda Uno", "−11,11", "EUR"], [{ f: "2026-10-06" }, "Cafeteria Dos", "−2,25", "EUR"], [{ f: "2026-10-10" }, "Taller Tres", "−35,00", "EUR"]];
+
+// Escenario: tabla en Excel con cabeceras en inglés
+t.test("tabla en Excel con cabeceras en inglés", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.XLSX(F.xlsx(TARJETA_XLSX)));
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+  assert.deepEqual(await notas(page), [["Tienda Uno", -11.11], ["Cafeteria Dos", -2.25], ["Taller Tres", -35]]);
+  assert.deepEqual(await page.evaluate(() => imp.d.map((x) => x.fecha)), ["2026-10-01", "2026-10-06", "2026-10-10"]);
+  assert.match(await A.texto(page, "#iBorr"), /−11,11 €/);
+});
+
+// Escenario: la misma tabla en un PDF
+t.test("la misma tabla en un PDF", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const filas = [["01/10/2026", "Tienda Uno", "−11,11"], ["06/10/2026", "Cafeteria Dos", "−2,25"], ["10/10/2026", "Taller Tres", "−35,00"]];
+  const buf = await X.pdf(page, [[[40, 760, "Transaction date"], [160, 760, "Description"], [360, 760, "Amount"], [440, 760, "Currency"],
+    ...filas.flatMap((f, i) => [[40, 740 - i * 20, f[0]], [160, 740 - i * 20, f[1]], [360, 740 - i * 20, f[2]], [440, 740 - i * 20, "EUR"]])]]);
+  await importaArchivo(page, { name: "tarjeta.pdf", mimeType: "application/pdf", buffer: buf });
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+  assert.deepEqual(await notas(page), [["Tienda Uno", -11.11], ["Cafeteria Dos", -2.25], ["Taller Tres", -35]]);
+});
+
+// Escenario: CSV con punto y coma y coma decimal
+t.test("CSV con punto y coma y coma decimal", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.CSV("Fecha;Concepto;Importe\n05/10/2026;Tienda Uno;-12,50\n06/10/2026;Cobro ejemplo;1.200,00\n"));
+  await eligeBanco(page);
+  assert.deepEqual(await notas(page), [["Tienda Uno", -12.5], ["Cobro ejemplo", 1200]]);
+});
+
+// Escenario: columnas de cargo y abono
+t.test("columnas de cargo y abono", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.CSV("Fecha;Concepto;Cargo;Abono\n05/10/2026;Tienda Uno;30,00;\n06/10/2026;Ingreso ejemplo;;100,00\n"));
+  await eligeBanco(page);
+  assert.deepEqual(await notas(page), [["Tienda Uno", -30], ["Ingreso ejemplo", 100]]);
+});
+
+// Escenario: todos los importes positivos
+t.test("todos los importes positivos", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.CSV("Fecha;Concepto;Importe\n01/10/2026;Pago A;10,00\n02/10/2026;Pago B;20,00\n03/10/2026;Pago C;30,00\n04/10/2026;Pago D;40,00\n"));
+  assert.equal(await page.isVisible("#sheetSigno"), true);
+  assert.match(await A.texto(page, "#sheetSigno"), /Todos los importes son positivos\. ¿Son gastos o ingresos\?/);
+  await page.click("#sgGastos");
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 4 movimientos");
+  assert.deepEqual((await notas(page)).map((x) => x[1]), [-10, -20, -30, -40]);
+});
+
+// Escenario: filas que no son movimientos
+t.test("filas que no son movimientos", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.CSV("Extracto ejemplo\nFecha;Concepto;Importe\n01/10/2026;Pago A;-10,00\n02/10/2026;Pago B;-20,00\nTotal;;-30,00\n"));
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 2 movimientos");
+});
+
+// Escenario: cuenta reconocida por el número de tarjeta
+t.test("cuenta reconocida por el número de tarjeta", async () => {
+  const datos = A.v2({ cuentas: [A.cta(1, "Banco A", 0), A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", ref: "0123" })] });
+  const { page } = await abrir({ datos });
+  const numero = ["4000", "0000", "0000", "0123"].join(" ");
+  await importaArchivo(page, F.XLSX(F.xlsx([["Tarjeta", numero], ["Fecha", "Concepto", "Importe"], [{ f: "2026-10-01" }, "Tienda Uno", "−11,11"], [{ f: "2026-10-02" }, "Tienda Dos", "−5,00"]])));
+  assert.equal(await page.isVisible("#iElegir"), false);
+  assert.equal(await A.texto(page, '#segICuenta [aria-pressed="true"]'), "Tarjeta Y");
+});
+
+// Escenario: archivo sin movimientos
+t.test("archivo sin movimientos", async () => {
   const { page } = await abrir({ datos: cuentas() });
   const antes = await A.guardados(page);
-  await importar(page, await X.otroPdf(page), "factura.pdf");
-  await A.aviso(page, "No reconozco este extracto. Por ahora leo Revolut (cuenta en euros) y Santander (cuenta y tarjeta de crédito).");
+  await importaArchivo(page, F.TXT("Una nota cualquiera\nsin fechas ni importes\n"));
+  await A.aviso(page, "No encontré movimientos en este archivo.");
   assert.equal(await page.isVisible("#sheetI"), false);
   assert.deepEqual(await A.guardados(page), antes);
+});
+
+// Escenario: archivo que no se puede leer
+t.test("archivo que no se puede leer", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const antes = await A.guardados(page);
+  await importaArchivo(page, F.XLSX(Buffer.from("esto no es un zip"), "datos.xlsx"));
+  await A.aviso(page, "No pude leer este archivo.");
+  assert.equal(await page.isVisible("#sheetI"), false);
+  assert.deepEqual(await A.guardados(page), antes);
+});
+
+// Escenario: foto de una tabla de movimientos
+t.test("foto de una tabla de movimientos", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importaArchivo(page, F.PNG(await F.imagenTabla(page, F.FOTO_TABLA)));
+  await A.aviso(page, "Leyendo la foto…");
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+  assert.deepEqual((await notas(page)).map((x) => x[1]), [-12.5, -3.2, -45]);
+  assert.equal(await page.locator("#leyendoFoto").count(), 0);
+});
+
+// Escenario: PDF escaneado
+t.test("PDF escaneado", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const pdf = await F.pdfEscaneado(page, await F.imagenTabla(page, F.FOTO_TABLA));
+  await importaArchivo(page, { name: "escaneado.pdf", mimeType: "application/pdf", buffer: pdf });
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+});
+
+// Escenario: foto sin texto
+t.test("foto sin texto", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const antes = await A.guardados(page);
+  await importaArchivo(page, F.PNG(await F.imagenTabla(page, [])));
+  await A.aviso(page, "No pude leer texto en la foto.");
+  assert.equal(await page.isVisible("#sheetI"), false);
+  assert.deepEqual(await A.guardados(page), antes);
+});
+
+// Escenario: el lector de fotos no se puede cargar
+t.test("el lector de fotos no se puede cargar", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await page.route("**/vendor/tesseract/**", (r) => r.abort());
+  const antes = await A.guardados(page);
+  await importaArchivo(page, F.PNG(await F.imagenTabla(page, F.FOTO_TABLA)));
+  await A.aviso(page, "No pude cargar el lector de fotos. Probá de nuevo con conexión.");
+  assert.equal(await page.isVisible("#sheetI"), false);
+  assert.deepEqual(await A.guardados(page), antes);
+});
+
+// Escenario: la lectura no pide nada a otros sitios
+t.test("la lectura no pide nada a otros sitios", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const afuera = [];
+  page.on("request", (r) => { const u = new URL(r.url()); if (u.protocol.startsWith("http") && u.origin !== new URL(page.url()).origin) afuera.push(r.url()); });
+  await importaArchivo(page, F.PNG(await F.imagenTabla(page, F.FOTO_TABLA)));
+  await eligeBanco(page);
+  assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
+  assert.deepEqual(afuera, []);
 });
 
 // Escenario: guardar sólo lo marcado
