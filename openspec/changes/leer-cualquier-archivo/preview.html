@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preview · leer-cualquier-archivo</title>
+<!-- estilos-app:inicio · los copia kit.py desde index.html; no se editan a mano -->
+<style>
+/* Dos paletas atadas a la apariencia: la clara es Brûlée (crema, naranja, tomate, púrpura y granate) y la oscura, Jardín (verde azulado, verde, rosa, amarillo y malva) */
+:root{
+  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
+  --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
+  --ingreso:#4E6B2A; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
+  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
+  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
+  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
+  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5E9CE; --mancha-op:.26; --velo:rgba(255,255,255,.5);
+  --bg:#FFFFFF; --surface:#F5E9CE; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
+  --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
+  --hero:#450E15; --nav:#F5E9CE; --nav-ink:#8A7470; --nav-on:#450E15; --neutro:#F5E9CE;
+  /* Colores de las tarjetas de color sólido (k1 a k5) y del texto que se lee sobre cada uno (k1t a k5t) */
+  --k1:#FFA102; --k1t:#450E15; --k2:#432E6F; --k2t:#F5E9CE; --k3:#BC2D29; --k3t:#F5E9CE; --k4:#450E15; --k4t:#F5E9CE; --k5:#FFFBF0; --k5t:#450E15;
+  --acento:#DD5533;
+  color-scheme:light;
+}
+:root[data-apariencia="oscura"]{
+  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
+  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#2E7D4B;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
+  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#113C42; --mancha-op:.34; --velo:rgba(7,11,12,.35);
+  --bg:#070B0C; --surface:#113C42; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
+  --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
+  --hero:#113C42; --nav:#113C42; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#113C42;
+  --k1:#136C51; --k1t:#EDEBE2; --k2:#EEDC5B; --k2t:#0B2A2E; --k3:#E9B8DE; --k3t:#0B2A2E; --k4:#B97DA8; --k4t:#061A1D; --k5:#EDEBE2; --k5t:#113C42;
+  --acento:#EEDC5B;
+  color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+/* Fondo dinámico: cinco manchas de la paleta, muy difuminadas, que flotan despacio detrás de todo; el velo ayuda a que el texto se lea */
+.fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
+.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
+.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
+.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
+.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
+.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
+.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
+@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.fondo i{animation:none}}
+html.en-pausa .fondo i{animation-play-state:paused}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
+.gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
+.gear svg{width:22px;height:22px}
+.gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+/* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
+.mov{background:var(--c,var(--surface));color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.8);--line:rgba(255,255,255,.24)}
+.mov .ico{background:rgba(255,255,255,.24);color:#FFFFFF}
+.ico.osc{color:var(--on-osc)}
+/* Tarjeta de color sólido: el color sale de --c y el texto de --on-c; lo de dentro (barras, botones, líneas) toma el color del texto */
+.card.color{border:0;background:var(--c);color:var(--on-c);--ink:var(--on-c);--muted:color-mix(in srgb,var(--on-c) 94%,transparent);--line:color-mix(in srgb,var(--on-c) 24%,transparent);--accent:var(--on-c);--accent-ink:var(--c);--accent-soft:color-mix(in srgb,var(--on-c) 18%,transparent);--bad:var(--on-c);--warn:var(--on-c);--bad-soft:color-mix(in srgb,var(--on-c) 18%,transparent);--warn-soft:color-mix(in srgb,var(--on-c) 18%,transparent);}
+.card.color .lbl{display:inline-block;width:fit-content;border:1px solid color-mix(in srgb,var(--on-c) 55%,transparent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;letter-spacing:.01em}
+/* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
+.logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
+.logo i{font-style:normal;color:var(--acento)}
+.logo.chico{font-size:22px}
+/* Elegir el color de una categoría: una fila de círculos, uno marcado */
+.colores{display:flex;flex-wrap:wrap;gap:10px}
+.color-op{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:var(--c);padding:0;cursor:pointer}
+.color-op[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--surface)}
+/* Transferencias y ajustes: tarjeta como las demás, con los colores de la pantalla */
+.mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
+.mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
+.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+/* Importe grande con los decimales en gris */
+.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto .dec{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.bar.warn>i{background:var(--warn)} .bar.bad>i{background:var(--bad)}
+.sub{font-size:14px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ingreso);color:#FFFFFF} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.con-dot{display:flex;align-items:center;gap:8px;min-width:0}
+/* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
+.partida{display:flex;gap:4px;height:34px;margin:6px 0 4px}
+.partida i{display:block;height:100%;border-radius:10px;min-width:6px}
+.partida .fij,.dot.fij{background:var(--ink)} .partida .var,.dot.var{background:var(--frambuesa)}
+.sub.exc{color:var(--bad);font-weight:600}
+.reparto{display:flex;flex-direction:column;gap:6px}
+.reparto .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.rank .grupo{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rank .fila{display:flex;flex-direction:column;gap:5px;font-size:15px}
+.bar.cat{background:color-mix(in srgb,var(--ink) 6%,var(--surface))} .bar.cat>i{background:var(--c)}
+/* Hojas de detalle: flechas de mes, total grande y filas que se tocan */
+.mesnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
+.mesnav button:disabled{opacity:.3}
+.mesnav span{font-weight:600}
+.toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
+.gastos-cat .item{cursor:pointer}
+/* Importar extracto: borradores para revisar (casilla, descripción, importe y, debajo, qué es) */
+.borradores{display:flex;flex-direction:column}
+.borr{display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.borr:last-child{border-bottom:0}
+.borr>input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink);grid-row:span 2}
+.borr .d{display:flex;flex-direction:column;min-width:0} .borr .d b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.borr select{grid-column:2/4;font-size:15px;padding:9px 12px;border-radius:12px}
+.borr .marcas{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.borr.off .d,.borr.off .num{opacity:.5}
+.borr .cubre{grid-column:2/4}
+button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+/* Adjuntos de una cuenta */
+.adj{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.adj:last-child{border-bottom:0}
+.adj .d{flex:1;display:flex;flex-direction:column;min-width:0} .adj .d span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adj .x{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+/* Anillo del tope */
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
+.ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+/* Torta (dona) de categorías */
+.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
+.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
+.torta circle{fill:none;stroke-width:26}
+.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.torta .centro span{font-size:13px;color:var(--muted)}
+/* Barras por semana: rayadas, la actual en negro */
+.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 6px);opacity:.55}
+.barras .col.hoy i{background:var(--ink);opacity:1}
+.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
+.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barras .col.hoy small{color:var(--ink);font-weight:700}
+/* Ingresos contra gastos por mes: dos barras por mes */
+.meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.meses .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.meses .par{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.meses .par i{display:block;width:40%;max-width:14px;min-height:3px;border-radius:6px}
+.meses .ing{background:var(--ingreso)} .meses .gas{background:var(--ink)}
+.meses .col small{font-size:12px;color:var(--muted)}
+.meses .col.neg small{color:var(--bad);font-weight:700}
+.leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+/* Tarjetas chicas que se deslizan de costado */
+.ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
+/* Movimientos en una línea: concepto, fecha corta e importe (y la cruz sólo en los ajustes); las marcas, en una segunda fila fina */
+.pila{display:flex;flex-direction:column;gap:6px}
+.mov{border-radius:18px;padding:12px 10px 12px 16px;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:48px}
+.mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
+.mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mov .fecha{flex:none;font-size:12px;color:var(--muted)}
+.mov .linea .num{flex:none}
+.mov .x,.mov .sel{grid-column:2}
+.mov .marcas{grid-column:1;display:flex;flex-wrap:wrap;gap:6px}
+.mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0 4px;min-width:28px;height:28px;line-height:1}
+.mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
+.acc{display:flex;align-items:center;gap:8px}
+.busca{display:flex;align-items:center;gap:8px}
+.busca input{flex:1;min-width:0}
+.chip svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px}
+.mov{position:relative}
+.list{display:flex;flex-direction:column}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.item:last-child{border-bottom:0}
+.item .d{display:flex;flex-direction:column;min-width:0}
+.item .d span:last-child{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item button{background:none;border:0;color:var(--muted);font-size:20px;padding:4px 8px}
+.item.tap{width:100%;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.item.tap:last-child{border-bottom:0}
+.item .v{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-weight:600;gap:4px}
+.pos{color:var(--ink)} .neg{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.check{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ink);flex:none}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+input[type=number],input[type=text],input[type=search],input[type=date],input[type=month],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:100%}
+/* Fechas y meses: el navegador de iOS les da un ancho propio y se salen de la hoja; aquí ocupan el ancho de su campo y alinean el texto como los demás */
+input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:48px;line-height:1.2}
+input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}
+textarea{font-family:var(--mono);font-size:12px;min-height:120px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
+.btn.sec{background:var(--accent-soft);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:active{opacity:.8}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:23px;height:23px}
+nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
+.fab{justify-self:center;width:58px;height:58px;border-radius:29px;border:0;background:var(--accent);color:var(--accent-ink);font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:300}
+.sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:28px 28px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet>*{flex-shrink:0} /* en hojas largas se desplaza la hoja, no se aplastan sus tarjetas */
+.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
+/* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
+.toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center} .toast.arriba{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
+[hidden]{display:none!important}
+</style>
+<!-- estilos-app:fin -->
+<!-- revision:inicio · la banda de revisión no forma parte del diseño ni se copia a la app -->
+<style>
+  body{max-width:430px;margin:0 auto}
+  nav{max-width:402px;margin:0 auto}
+  .revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 16px;background:#000;color:#fff;font-size:13px}
+  .revision select{font:inherit;padding:2px 6px;border-radius:6px;border:0}
+  .revision label{display:flex;align-items:center;gap:6px}
+  .revision__nota{opacity:.7;width:100%}
+</style>
+<!-- revision:fin -->
+</head>
+<body>
+<!-- revision:inicio -->
+<div class="revision" role="region" aria-label="Revisión del preview">
+  <strong>Preview · leer-cualquier-archivo</strong>
+  <label>Pantalla <select id="rev-pantalla"></select></label>
+  <label>Estado <select id="rev-estado"><option value="normal">con datos</option><option value="vacio">vacío</option></select></label>
+  <span class="revision__nota">Datos de ejemplo inventados. Esta banda no es parte del diseño.</span>
+</div>
+<script>
+  // La apariencia del preview sigue al esquema del navegador (claro/oscuro) o a ?apariencia=oscura|clara, como la app con «Automática»
+  document.documentElement.dataset.apariencia = new URLSearchParams(location.search).get("apariencia") || (matchMedia("(prefers-color-scheme: dark)").matches ? "oscura" : "clara");
+  document.addEventListener("DOMContentLoaded", () => {
+    const pantallas = [...document.querySelectorAll("[data-pantalla]")];
+    const selP = document.getElementById("rev-pantalla"), selE = document.getElementById("rev-estado");
+    for (const p of pantallas) selP.append(new Option(p.dataset.titulo || p.dataset.pantalla, p.dataset.pantalla));
+    const q = new URLSearchParams(location.search);
+    if (q.get("pantalla")) selP.value = q.get("pantalla");
+    if (q.get("estado")) selE.value = q.get("estado");
+    function aplicar() {
+      for (const p of pantallas) {
+        p.hidden = p.dataset.pantalla !== selP.value;
+        if (!p.hidden) { p.style.display = "flex"; document.getElementById("rev-titulo").textContent = p.dataset.titulo || ""; }
+        for (const e of p.querySelectorAll("[data-estado]")) e.hidden = e.dataset.estado !== selE.value;
+      }
+      for (const a of document.querySelectorAll("[data-ir]")) {
+        if (a.dataset.ir === selP.value) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+      history.replaceState(null, "", "?" + new URLSearchParams({ pantalla: selP.value, estado: selE.value }));
+    }
+    document.addEventListener("click", (ev) => {
+      const a = ev.target.closest("[data-ir]");
+      if (a) { ev.preventDefault(); selP.value = a.dataset.ir; aplicar(); }
+    });
+    for (const el of [selP, selE]) el.addEventListener("change", aplicar);
+    aplicar();
+  });
+</script>
+<!-- revision:fin -->
+<header><div><h1 id="rev-titulo"></h1><span class="m">octubre 2026</span></div></header>
+<main>
+<!-- pantallas:inicio
+  Una <section data-pantalla="<clave>" data-titulo="<título>" style="flex-direction:column;gap:14px">
+  por pantalla. Dentro, dos bloques: <div data-estado="normal"> (con datos de ejemplo) y
+  <div data-estado="vacio"> (primer uso). Sólo clases de la app (.card, .p-pink, .item, .btn…).
+  Marca con data-ui="<nombre>" las piezas que la app tiene que conservar.
+-->
+<section data-pantalla="adjuntos-cuenta" data-titulo="Hoja de cuenta · Adjuntos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="adjuntos"><span class="lbl">Adjuntos</span>
+      <div><div class="adj"><span class="d"><span>tarjeta-octubre.xlsx</span><span class="sub">octubre 2026 · Excel</span></span><button type="button" class="x" aria-label="Borrar adjunto">×</button></div><div class="adj"><span class="d"><span>recibo.jpg</span><span class="sub">octubre 2026 · Foto</span></span><button type="button" class="x" aria-label="Borrar adjunto">×</button></div><div class="adj"><span class="d"><span>contrato.docx</span><span class="sub">octubre 2026 · Archivo</span></span><button type="button" class="x" aria-label="Borrar adjunto">×</button></div></div>
+      <div class="row"><button type="button" class="btn sec" style="flex:1" data-ui="adjuntar">Adjuntar archivo</button></div>
+    </div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" data-ui="adjuntos"><span class="lbl">Adjuntos</span>
+      <div class="empty">Todavía no hay adjuntos. Adjuntá extractos, recibos, fotos o cualquier archivo: quedan sólo en este teléfono.</div>
+      <div class="row"><button type="button" class="btn sec" style="flex:1" data-ui="adjuntar">Adjuntar archivo</button></div>
+    </div>
+  </div>
+</section>
+<section data-pantalla="leyendo-foto" data-titulo="Leyendo una foto" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="leyendo-foto"><span class="lbl">Leyendo la foto…</span><span class="sub">Reconozco el texto en tu teléfono; no se envía a ningún sitio. La primera vez descarga el lector y necesita conexión.</span></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card"><span class="lbl">No pude leer texto en la foto.</span><span class="sub">Probá con una foto más clara y de frente. El archivo sigue adjunto.</span></div>
+  </div>
+</section>
+<section data-pantalla="pregunta-importar" data-titulo="Encontré movimientos" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--k2);--on-c:var(--k2t)" data-ui="pregunta-importar"><span class="lbl">tarjeta-octubre.xlsx</span><span style="font-size:20px;font-weight:700">Encontré 3 movimientos. ¿Querés revisarlos?</span><span class="sub">Quedan adjuntos a la cuenta aunque no los importes.</span>
+      <div class="row" style="gap:8px"><button type="button" class="btn" style="flex:1">Revisar</button><button type="button" class="btn sec" style="flex:1">Ahora no</button></div></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card"><span class="lbl">No encontré movimientos en este archivo.</span><span class="sub">Un archivo con fecha, descripción e importe en cada fila se lee solo.</span></div>
+  </div>
+</section>
+<section data-pantalla="signo-importes" data-titulo="¿Gastos o ingresos?" style="flex-direction:column;gap:14px">
+  <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card color" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="signo-importes"><span class="lbl">Todos los importes son positivos. ¿Son gastos o ingresos?</span><span class="sub">4 movimientos, del 01/10 al 20/10.</span>
+      <div class="row" style="gap:8px"><button type="button" class="btn" style="flex:1">Gastos</button><button type="button" class="btn sec" style="flex:1">Ingresos</button></div></div>
+  </div>
+  <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card"><span class="lbl">No pude leer este archivo.</span><span class="sub">Puede estar dañado o protegido con contraseña. Se adjunta igual.</span></div>
+  </div>
+</section>
+<!-- pantallas:fin -->
+</main>
+<nav>
+<!-- nav:inicio · una entrada por pantalla, con data-ir="<clave de la pantalla>", como en la app
+  <button data-ir="inicio">…icono…Inicio</button>
+-->
+<button data-ir="adjuntos-cuenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>Adjuntos</button>
+<button data-ir="leyendo-foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Foto</button>
+<button data-ir="pregunta-importar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Importar</button>
+<button data-ir="signo-importes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>Signo</button>
+<!-- nav:fin -->
+</nav>
+</body>
+</html>
