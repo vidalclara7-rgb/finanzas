@@ -93,8 +93,9 @@ t.test("el importe no coincide", async () => {
 t.test("borrar el ingreso que pagó", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [reemb(1, "2026-10-12", 12.4, "pagado", "parking", { cobro: 9 }), A.ingreso(9, "2026-10-14", 12.4, 1, "Reembolso")] }) });
   await A.ir(page, "movs");
-  await page.click('[data-del="9"]');
-  await page.click('[data-del="9"]');
+  await page.click('[data-mov="9"] .linea');
+  await page.click("#mBorrar");
+  await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");
   assert.equal(await estadoDe(page, 1), "Aprobado");
 });

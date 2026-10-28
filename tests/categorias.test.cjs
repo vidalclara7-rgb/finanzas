@@ -110,7 +110,7 @@ t.test("renombrar con movimientos", async () => {
   await A.aviso(page, "Categoría guardada");
   await page.click("#ccCerrar");
   await A.ir(page, "movs");
-  assert.match(await A.texto(page, '[data-mov="1"]'), /Salidas/);
+  assert.equal((await A.guardados(page)).movs[0].cat, "Salidas");
   await A.ir(page, "inicio");
   assert.equal(await page.locator('#torta circle[data-cat="Salidas"]').count(), 1);
   await page.click('#cats [data-cat="Salidas"]');
