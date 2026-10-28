@@ -165,7 +165,6 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 /* Movimientos en una línea: concepto, fecha corta e importe (y la cruz sólo en los ajustes); las marcas, en una segunda fila fina */
 .pila{display:flex;flex-direction:column;gap:6px}
 .mov{border-radius:18px;padding:12px 10px 12px 16px;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:48px}
-.mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
 .mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mov .fecha{flex:none;font-size:12px;color:var(--muted)}
@@ -281,7 +280,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 -->
 <section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="encabezado-movimientos"><span class="sub">Encabezado de Movimientos: la lupa va junto al engranaje</span><div class="acc"><button class="gear" aria-label="Buscar" data-ui="lupa-movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button></div></div>
+    <div class="row"><span class="sub">Encabezado de Movimientos: la lupa va junto al engranaje</span><div class="acc"><button class="gear" aria-label="Buscar" data-ui="lupa-movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button></div></div>
     <div class="row" data-ui="totales-mes"><div style="display:flex;flex-direction:column"><span class="sub">Ingresos</span><span class="big">1700 €</span></div><div style="display:flex;flex-direction:column;align-items:flex-end"><span class="sub">Gastos</span><span class="big">779,8 €</span></div></div>
     <div class="pila" data-ui="lista-movimientos">
       <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Compra semanal</span><span class="fecha">06/10</span><span class="num">−64,3 €</span></div></div>
@@ -295,7 +294,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     </div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="encabezado-movimientos"><span class="sub">Encabezado de Movimientos: la lupa va junto al engranaje</span><div class="acc"><button class="gear" aria-label="Buscar" data-ui="lupa-movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button></div></div>
+    <div class="row"><span class="sub">Encabezado de Movimientos: la lupa va junto al engranaje</span><div class="acc"><button class="gear" aria-label="Buscar" data-ui="lupa-movimientos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button></div></div>
     <div class="card"><div class="empty">Sin movimientos este mes.</div></div>
   </div>
 </section>
@@ -303,7 +302,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
     <div class="busca" data-ui="campo-busqueda"><input type="search" value="panaderia" aria-label="Buscar movimientos"><button class="btn sec" style="padding:8px 14px">Cerrar</button></div>
     <span class="sub" data-ui="cantidad-resultados">3 resultados</span>
-    <div class="pila" data-ui="resultados-busqueda">
+    <div class="pila">
       <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">03/10/2026</span><span class="num">−4,2 €</span></div></div>
       <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">10/09/2026</span><span class="num">−6,8 €</span></div><div class="marcas"><span class="chip idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5l-8.5 8.5a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3L15 8.5"/></svg>1 documento</span></div></div>
       <div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Panadería</span><span class="fecha">22/07/2026</span><span class="num">−3,5 €</span></div></div>
@@ -314,7 +313,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="card"><div class="empty">Sin resultados para «zzz».</div></div>
   </div>
 </section>
-<section data-pantalla="hoja" data-titulo="Hoja del movimiento" style="flex-direction:column;gap:14px">
+<section data-pantalla="hoja-movimiento" data-titulo="Hoja del movimiento" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
     <div class="row"><h2>Editar movimiento</h2><button type="button" class="btn sec" style="padding:8px 12px">Cerrar</button></div>
     <label class="f">Importe (€)<input type="text" value="12,5" readonly></label>
@@ -336,7 +335,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <button data-ir="inicio">…icono…Inicio</button>
 -->
 <button data-ir="movs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Movimientos</button>
-<button data-ir="hoja"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Hoja</button>
+<button data-ir="hoja-movimiento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Hoja</button>
 <button data-ir="busqueda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Búsqueda</button>
 <!-- nav:fin -->
 </nav>
