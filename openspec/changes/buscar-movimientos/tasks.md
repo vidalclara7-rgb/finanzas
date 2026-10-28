@@ -8,23 +8,23 @@
 - [x] Gate 2: la persona aprueba el diseño
 
 ## Datos y migración
-- [ ] Sin datos nuevos: nada que migrar ni guardar
+- [x] Sin datos nuevos: nada que migrar ni guardar
 
 ## Pantallas
-- [ ] `movHTML()` en una línea, con marcas en una segunda fila sólo si las hay, sin apilado
-- [ ] Lupa en el encabezado (sólo Movimientos) y campo `#busca`
-- [ ] `buscarMovs()`: palabras, importe exacto, fecha, sin mayúsculas ni tildes, todos los meses
-- [ ] Resultados con fecha completa y «N resultados»; «Sin resultados para «…».»; totales y acciones ocultos
-- [ ] Abrir un resultado y volver a la búsqueda; borrar desde los resultados; cerrar la búsqueda al salir
-- [ ] Subir la versión de `CACHE` en `sw.js`
+- [x] `movHTML()` en una línea, con marcas en una segunda fila sólo si las hay, sin apilado
+- [x] Lupa en el encabezado (sólo Movimientos) y campo `#busca`
+- [x] `buscarMovs()`: palabras, importe exacto, fecha, sin mayúsculas ni tildes, todos los meses
+- [x] Resultados con fecha completa y «N resultados»; «Sin resultados para «…».»; totales y acciones ocultos
+- [x] Abrir un resultado y volver a la búsqueda; borrar desde los resultados; cerrar la búsqueda al salir
+- [x] Subir la versión de `CACHE` en `sw.js`
 
 ## Tests
-- [ ] Un test por escenario de `movimientos` (los nuevos y los que cambian a una línea); actualizar los que miran `.cat` y `.linea`
-- [ ] 390 px sin desbordes con descripción larga
+- [x] Un test por escenario de `movimientos` (los nuevos y los que cambian a una línea); actualizar los que miran `.cat` y `.linea`
+- [x] 390 px sin desbordes con descripción larga
 
 ## Prueba en el navegador
 - [ ] `python3 kit.py check` en verde
 - [ ] `python3 kit.py capturas` y comparar con el preview aprobado
 
 ## Documentación
-- [ ] `CLAUDE.md`: pantalla Movimientos (una línea, búsqueda)
+- [x] `CLAUDE.md`: pantalla Movimientos (una línea, búsqueda)

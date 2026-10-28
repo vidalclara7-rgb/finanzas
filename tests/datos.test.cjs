@@ -266,7 +266,8 @@ t.test("copia vieja con Súper", async () => {
   await restaurar(page, JSON.stringify(copia));
   await A.aviso(page, "Copia restaurada");
   await A.ir(page, "movs");
-  assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado · 03\/10/);
+  assert.match(await A.texto(page, '[data-mov="1"]'), /Supermercado/);
+  assert.match(await A.texto(page, '[data-mov="1"]'), /03\/10/);
 });
 
 // Escenario: datos de la versión anterior

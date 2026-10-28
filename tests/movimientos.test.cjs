@@ -16,7 +16,8 @@ t.test("gasto desde una cuenta propia", async () => {
   await A.aviso(page, "Gasto guardado");
   await A.ir(page, "movs");
   const tarjeta = await A.texto(page, "#movs .mov");
-  assert.match(tarjeta, /Supermercado · 15\/10/);
+  assert.match(tarjeta, /Supermercado/);
+  assert.match(tarjeta, /15\/10/);
   assert.match(tarjeta, /verdulería/);
   assert.match(tarjeta, /−12,5 €/);
   await enCuentas(page);
@@ -597,4 +598,153 @@ t.test("sin gastos con documento", async () => {
   await A.ir(page, "movs");
   await page.click('#segDoc button');
   assert.equal(await A.texto(page, "#movs"), "Ningún gasto de este mes tiene documento.");
+});
+
+// --- una línea por movimiento y búsqueda
+const altos = (page) => page.$$eval("#movs .mov", (e) => e.map((x) => { const r = x.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, alto: r.height }; }));
+const buscar = async (page, q) => { if (!(await page.isVisible("#busca"))) await page.click("#lupaBtn"); await page.fill("#busca", q); };
+
+// Escenario: cada movimiento en una línea
+t.test("cada movimiento en una línea", async () => {
+  const movs = Array.from({ length: 10 }, (_, i) => A.gasto(i + 1, "2026-10-" + String(i + 1).padStart(2, "0"), 10 + i, 1, "Supermercado", i === 3 ? "Compra semanal" : ""));
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
+  await A.ir(page, "movs");
+  const h = await altos(page);
+  assert.equal(h.length, 10);
+  h.forEach((x, i) => { assert.ok(x.alto <= 56, `alto ${x.alto}`); if (i) assert.ok(x.top >= h[i - 1].bottom - 0.5, "no se solapa"); });
+  const con = await A.texto(page, '[data-mov="4"]');
+  assert.match(con, /Compra semanal/);
+  assert.match(con, /Supermercado/);
+  assert.equal(await page.$eval('[data-mov="4"] .cat', (e) => e.textContent.includes("Supermercado")), true);
+});
+
+// Escenario: marcas en una segunda fila
+t.test("marcas en una segunda fila", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", "con marca"), A.gasto(2, "2026-10-04", 30, 1, "Supermercado", "sin marca")] }) });
+  await A.ir(page, "movs");
+  await page.click("#selBtn");
+  await page.click('[data-mov="1"]');
+  await page.setInputFiles("#docIn", { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 prueba") });
+  await A.aviso(page, "Documento adjuntado a 1 gasto");
+  await page.waitForSelector('[data-mov="1"] .marcas [data-ui="chip-documento"]');
+  const [a, b] = await Promise.all([page.$eval('[data-mov="1"]', (e) => e.getBoundingClientRect().height), page.$eval('[data-mov="2"]', (e) => e.getBoundingClientRect().height)]);
+  assert.ok(a > b, `${a} contra ${b}`);
+  assert.ok(b <= 56);
+  assert.equal(await page.locator('[data-mov="2"] .marcas').count(), 0);
+  const [yLinea, yMarcas] = await Promise.all([page.$eval('[data-mov="1"] .linea', (e) => e.getBoundingClientRect().bottom), page.$eval('[data-mov="1"] .marcas', (e) => e.getBoundingClientRect().top)]);
+  assert.ok(yMarcas >= yLinea - 0.5, "las marcas van debajo de la línea");
+});
+
+// Escenario: una descripción larga no desborda
+t.test("una descripción larga no desborda", async () => {
+  const larga = "x".repeat(80);
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", larga)] }) });
+  await A.ir(page, "movs");
+  const r = await page.evaluate(() => { const d = document.querySelector(".mov .desc"), n = document.querySelector(".mov .num"), m = document.querySelector(".mov"); return { cortada: d.scrollWidth > d.clientWidth, numDentro: n.getBoundingClientRect().right <= m.getBoundingClientRect().right, sinScroll: document.documentElement.scrollWidth <= window.innerWidth, estilo: getComputedStyle(d).textOverflow }; });
+  assert.deepEqual([r.cortada, r.numDentro, r.sinScroll, r.estilo], [true, true, true, "ellipsis"]);
+  assert.match(await A.texto(page, ".mov .num"), /−20 €/);
+});
+
+const BUSQ = () => A.v2({ cuentas: [BANCO, TARJETA], movs: [
+  A.gasto(1, "2026-09-10", 6.8, 1, "Supermercado", "Panadería"), A.gasto(2, "2026-10-03", 4.2, 1, "Supermercado", "Panadería"), A.gasto(3, "2026-10-05", 18, 1, "Comida fuera", "Cine"),
+  A.gasto(4, "2026-10-06", 12.5, 1, "Compras", "Libro"), A.gasto(5, "2026-10-07", 125, 1, "Compras", "Abrigo"), A.gasto(6, "2026-10-08", 20, 2, "Transporte", "Abono"),
+  A.gasto(7, "2026-08-02", 30, 1, "Comida fuera", "Cena con amigos"), A.gasto(8, "2026-08-09", 35, 1, "Comida fuera", "Cena en casa")] });
+const filas = (page) => page.$$eval("#movs .mov", (e) => e.map((x) => x.dataset.mov));
+
+// Escenario: buscar por comercio en todos los meses
+t.test("buscar por comercio en todos los meses", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "panaderia");
+  assert.equal(await A.texto(page, "#buscaN"), "2 resultados");
+  assert.deepEqual(await filas(page), ["2", "1"]);
+  const t1 = await page.locator("#movs .mov").allInnerTexts();
+  assert.match(t1[0], /03\/10\/2026/);
+  assert.match(t1[1], /10\/09\/2026/);
+  assert.equal((await A.texto(page, "#movs")).includes("Cine"), false);
+});
+
+// Escenario: buscar por categoría y cuenta
+t.test("buscar por categoría y cuenta", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "supermercado");
+  assert.deepEqual(await filas(page), ["2", "1"]);
+  await buscar(page, "tarjeta y");
+  assert.deepEqual(await filas(page), ["6"]);
+});
+
+// Escenario: buscar por importe
+t.test("buscar por importe", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "12,50");
+  assert.deepEqual(await filas(page), ["4"]);
+});
+
+// Escenario: varias palabras
+t.test("varias palabras", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "amigos cena");
+  assert.deepEqual(await filas(page), ["7"]);
+});
+
+// Escenario: sin resultados
+t.test("sin resultados", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "zzz");
+  assert.equal(await A.texto(page, "#movs"), "Sin resultados para «zzz».");
+  assert.equal(await A.texto(page, "#buscaN"), "0 resultados");
+});
+
+// Escenario: abrir un resultado y volver
+t.test("abrir un resultado y volver", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "panaderia");
+  await page.click('[data-mov="1"] .linea');
+  await page.waitForSelector("#sheet:not([hidden])");
+  await page.click("#cerrar");
+  await page.waitForSelector("#sheet", { state: "hidden" });
+  assert.equal(await page.inputValue("#busca"), "panaderia");
+  assert.deepEqual(await filas(page), ["2", "1"]);
+});
+
+// Escenario: cerrar la búsqueda
+t.test("cerrar la búsqueda", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "panaderia");
+  await page.click("#buscaCerrar");
+  assert.equal(await page.isVisible("#busca"), false);
+  assert.equal(await page.isVisible("#totMesRow"), true);
+  assert.deepEqual((await filas(page)).sort(), ["2", "3", "4", "5", "6"]);
+});
+
+// Escenario: salir de Movimientos cierra la búsqueda
+t.test("salir de Movimientos cierra la búsqueda", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  assert.equal(await page.isVisible("#lupaBtn"), true);
+  await buscar(page, "panaderia");
+  await A.ir(page, "inicio");
+  assert.equal(await page.isVisible("#lupaBtn"), false);
+  await A.ir(page, "movs");
+  assert.equal(await page.isVisible("#busca"), false);
+  assert.equal(await page.inputValue("#busca"), "");
+  assert.equal(await page.isVisible("#lupaBtn"), true);
+});
+
+// Escenario: borrar desde los resultados
+t.test("borrar desde los resultados", async () => {
+  const { page } = await abrir({ datos: BUSQ() });
+  await A.ir(page, "movs");
+  await buscar(page, "panaderia");
+  await page.click('[data-mov="1"] [data-del]');
+  await page.click('[data-mov="1"] [data-del]');
+  await A.aviso(page, "Movimiento borrado");
+  assert.deepEqual(await filas(page), ["2"]);
+  assert.equal(await A.texto(page, "#buscaN"), "1 resultado");
 });

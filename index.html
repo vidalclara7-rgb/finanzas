@@ -170,7 +170,7 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
 /* Movimientos en una línea: icono, descripción con categoría, fecha corta, importe y cruz; las marcas, en una segunda fila fina */
 .pila{display:flex;flex-direction:column;gap:6px}
-.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr) 28px;align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
+.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
 .mov .ico{width:28px;height:28px;font-size:13px}
 .mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
@@ -178,7 +178,7 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .mov .fecha{flex:none;font-size:12px;color:var(--muted)}
 .mov .linea .num{flex:none}
 .mov .marcas{grid-column:2 / -1;display:flex;flex-wrap:wrap;gap:6px}
-.mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0;width:28px;height:28px;line-height:1}
+.mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0 4px;min-width:28px;height:28px;line-height:1}
 .mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
 .acc{display:flex;align-items:center;gap:8px}
 .busca{display:flex;align-items:center;gap:8px}
@@ -237,7 +237,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </head>
 <body>
 <div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-<header><div><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="m" id="mesLabel"></span></div><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></header>
+<header><div><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="m" id="mesLabel"></span></div><div class="acc"><button class="gear" id="lupaBtn" data-ui="lupa-movimientos" aria-label="Buscar movimientos" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div></header>
 
 <main>
   <!-- INICIO -->
@@ -273,9 +273,11 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <!-- MOVIMIENTOS -->
   <section id="v-movs" data-pantalla="movs" hidden style="flex-direction:column;gap:14px">
     <button class="btn sec" id="importar" data-ui="importar-extracto">Importar extracto</button>
+    <div class="busca" id="buscaBox" data-ui="campo-busqueda" hidden><input type="search" id="busca" placeholder="Buscar movimientos" aria-label="Buscar movimientos" autocomplete="off"><button type="button" class="btn sec" id="buscaCerrar" style="padding:8px 14px">Cerrar</button></div>
+    <span class="sub" id="buscaN" data-ui="cantidad-resultados" hidden></span>
     <input type="file" id="pdfIn" accept="application/pdf,.pdf" hidden>
-    <div data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" id="segReemb" style="margin-top:8px"></div></div>
-    <div class="row" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big" id="totIng"></div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big" id="totGas"></div></div></div>
+    <div id="filtroReembBox" data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" id="segReemb" style="margin-top:8px"></div></div>
+    <div class="row" id="totMesRow" data-ui="totales-mes"><div><span class="sub">Ingresos</span><div class="big" id="totIng"></div></div><div style="text-align:right"><span class="sub">Gastos</span><div class="big" id="totGas"></div></div></div>
     <div class="row" id="accMov" data-ui="acciones-lista"><button type="button" class="btn sec" id="selBtn" style="padding:8px 14px">Seleccionar</button><div class="seg" id="segDoc"></div></div>
     <div class="row" id="selBar" data-pantalla="movs-seleccion" data-ui="barra-seleccion" hidden><span class="lbl" id="selN"></span><div class="row" style="gap:8px"><button type="button" class="btn sec" id="selCancel" style="padding:8px 14px">Cancelar</button><button type="button" class="btn" id="selAdj" style="padding:8px 14px">Adjuntar documento</button></div></div>
     <input type="file" id="docIn" accept="application/pdf,image/*" hidden>
@@ -861,7 +863,7 @@ function abrirMovsCta(id,mes){mcId=id;mcMes=mes||mesId();pintarMovsCta();mostrar
 function pintarMovsCta(){const c=S.cuentas.find(x=>x.id===mcId);if(!c){cerrar();return;}
   $("mcTitulo").textContent=c.nombre;$("mcMes").textContent=mesDe(mcMes);$("mcSig").disabled=mcMes>=mesId();
   const ms=movsMes(mcMes).filter(m=>m.cuenta===mcId||m.destino===mcId).sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
-  $("mcLista").innerHTML=ms.map(movHTML).join("");$("mcLista").hidden=$("mcPista").hidden=!ms.length;$("mcVacio").hidden=!!ms.length;
+  $("mcLista").innerHTML=ms.map(x=>movHTML(x)).join("");$("mcLista").hidden=$("mcPista").hidden=!ms.length;$("mcVacio").hidden=!!ms.length;
   $("mcVacioTxt").textContent=`Sin movimientos de ${c.nombre} en ${MESES[+mcMes.slice(5)-1]} de ${mcMes.slice(0,4)}.`;}
 $("cVerMovs").onclick=()=>{if(editId!=null)abrirMovsCta(editId);};
 $("mcAnt").onclick=()=>{mcMes=mesSig(mcMes,-1);pintarMovsCta();};
@@ -884,15 +886,17 @@ function pintarSugerencia(){sug=sugerirFijo();$("sugFijo").hidden=!sug;if(!sug)r
   $("sugSub").textContent=`${sug.cat} · se repite en ${ns[0]}, ${ns[1]} y ${ns[2]}, unos ${eur(Math.round(sug.prom))} al mes`;}
 $("sugSi").onclick=()=>{if(!sug)return;S.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat!==REEMB&&claveFijo(m.cat,m.nota)===sug.k)m.fijo=true;});S.fijos[sug.k]=true;persist();render();};
 $("sugNo").onclick=()=>{if(!sug)return;S.fijos[sug.k]=false;persist();render();};
-const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-ui="estado-reembolso" data-estado-r="${x[0]}" style="align-self:flex-start">${x[1]}</span>`;};
+const chipR=e=>{const x=ESTADOS_R.find(y=>y[0]===e)||ESTADOS_R[0];return `<span class="chip ${x[2]}" data-ui="estado-reembolso" data-estado-r="${x[0]}">${x[1]}</span>`;};
 const porCobrar=()=>S.movs.filter(m=>m.reembolso&&m.reembolso.estado!=="pagado");
-let filtroR=null,filtroDoc=false,seleccion=null,docsMov={};
-function movHTML(m){let c,ico,cat,linea,imp;const f=diaMes(m.fecha);
-  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta))+(m.cuotaN?` · total ${eur(m.total)}`:"");imp="−"+eurM(m.importe,m);}
-  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=`${esc(m.cat)} · ${f}`;linea=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
-  else if(m.tipo==="transferencia"){c="";ico="→";cat=`Transferencia · ${f}`;linea=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
-  else{c="";ico="≈";cat=`Ajuste de conciliación · ${f}`;linea=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
-  return `<div class="mov${c?(m.tipo==="gasto"?"":""):" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}">${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:""):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}<span class="ico">${ico}</span><span class="cat">${cat}</span>${(docsMov[m.id]||[]).length?`<span class="chip idle" data-ui="chip-documento" style="align-self:flex-start">${CLIP}${docsMov[m.id].length} ${docsMov[m.id].length===1?"documento":"documentos"}</span>`:""}${m.cuotaN?`<span class="chip idle" data-ui="chip-cuota" style="align-self:flex-start">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:""}${m.reembolso?chipR(m.reembolso.estado):""}${esFijo(m)?`<span class="chip idle" data-ui="chip-fijo" style="align-self:flex-start">Fijo</span>`:""}<div class="linea"><span>${linea}</span><span class="num">${imp}</span></div></div>`;}
+let filtroR=null,filtroDoc=false,seleccion=null,docsMov={},busq=null;
+const fechaLarga=f=>f.slice(8,10)+"/"+f.slice(5,7)+"/"+f.slice(0,4);
+function movHTML(m,larga){let c,ico,desc,cat="",imp;const f=larga?fechaLarga(m.fecha):diaMes(m.fecha);
+  if(m.tipo==="gasto"){c=colorCat(m.cat);ico=esc(m.cat[0]);cat=esc(m.cat);desc=esc(m.nota||nombreDe(m.cuenta))+(m.cuotaN?` · total ${eur(m.total)}`:"");imp="−"+eurM(m.importe,m);}
+  else if(m.tipo==="ingreso"){c="var(--ingreso)";ico="+";cat=esc(m.cat);desc=esc(m.nota||nombreDe(m.cuenta));imp="+"+eurM(m.importe,m);}
+  else if(m.tipo==="transferencia"){c="";ico="→";desc=`${esc(nombreDe(m.cuenta))} → ${esc(nombreDe(m.destino))}`;imp=eurM(m.importe,m);}
+  else{c="";ico="≈";desc="Ajuste de conciliación";cat=esc(nombreDe(m.cuenta));imp=eur(m.importe);}
+  const nd=(docsMov[m.id]||[]).length,marcas=(nd?`<span class="chip idle" data-ui="chip-documento">${CLIP}${nd} ${nd===1?"documento":"documentos"}</span>`:"")+(m.cuotaN?`<span class="chip idle" data-ui="chip-cuota">Cuota ${m.cuotaN} de ${m.cuotas.n}</span>`:"")+(m.reembolso?chipR(m.reembolso.estado):"")+(esFijo(m)?`<span class="chip idle" data-ui="chip-fijo">Fijo</span>`:"");
+  return `<div class="mov${c?"":" neutro"}"${c?` style="--c:${c}"`:""} data-mov="${m.id}" data-tipo="${m.tipo}"><span class="ico">${ico}</span><div class="linea"><span class="desc">${desc}${cat?`<span class="cat"> · ${cat}</span>`:""}</span><span class="fecha">${f}</span><span class="num">${imp}</span></div>${seleccion?(m.tipo==="gasto"?`<input type="checkbox" class="sel" data-sel="${m.id}" aria-label="Seleccionar gasto"${seleccion.has(m.id)?" checked":""}>`:"<span></span>"):`<button type="button" class="x" aria-label="Borrar movimiento" data-del="${m.id}">×</button>`}${marcas?`<div class="marcas">${marcas}</div>`:""}</div>`;}
 
 // Apariencia: oscura (por defecto), clara o automática (sigue al teléfono). El script del <head> la pone antes de pintar
 const APARIENCIAS=[["oscura","Oscura"],["clara","Clara"],["auto","Automática"]];
@@ -941,7 +945,9 @@ function render(){
   seg($("segDoc"),[["doc","Con documento"]],filtroDoc?"doc":null,()=>{filtroDoc=!filtroDoc;render();});
   $("accMov").hidden=!!seleccion;$("selBar").hidden=!seleccion;
   if(seleccion){$("selN").textContent=seleccion.size?`${seleccion.size} ${seleccion.size===1?"seleccionado":"seleccionados"}`:"Marcá los gastos";$("selAdj").disabled=!seleccion.size;}
-  $("movs").innerHTML=listaF.length?listaF.map(movHTML).join(""):`<div class="card"><div class="empty">${filtroDoc?"Ningún gasto de este mes tiene documento.":filtroR?"No hay reembolsos en este estado.":"Sin movimientos este mes."}</div></div>`;
+  ["importar","filtroReembBox","totMesRow"].forEach(k=>$(k).hidden=busq!==null);$("buscaBox").hidden=$("buscaN").hidden=busq===null;
+  if(busq!==null){$("accMov").hidden=$("selBar").hidden=$("sumaFiltro").hidden=true;pintarBusca();}
+  else $("movs").innerHTML=listaF.length?listaF.map(x=>movHTML(x)).join(""):`<div class="card"><div class="empty">${filtroDoc?"Ningún gasto de este mes tiene documento.":filtroR?"No hay reembolsos en este estado.":"Sin movimientos este mes."}</div></div>`;
   // Cierre: conciliación, checklist y plan
   const md=mesData(id), est=S.cuentas.map(c=>[c,estadoConc(c,id)]), nOk=est.filter(([,e])=>e.ok).length;
   $("concTitulo").textContent="Conciliación de "+MESES[+id.slice(5)-1];
@@ -993,7 +999,7 @@ function cambio(){guardarNeto();persist();render();}
 // Navegación
 const titles={inicio:"Este mes",movs:"Movimientos",cuentas:"Mis cuentas",mes:"Cierre del mes",ajustes:"Ajustes"};
 let vista="inicio";
-function ir(v){vista=v;if(v!=="movs"&&seleccion){seleccion=null;render();}document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
+function ir(v){vista=v;if(v!=="movs"&&(seleccion||busq!==null)){seleccion=null;busq=null;$("busca").value="";render();}$("lupaBtn").hidden=v!=="movs";document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
   ["inicio","movs","cuentas","mes","ajustes"].forEach(k=>{const s=$("v-"+k);s.hidden=k!==v;if(!s.hidden)s.style.display="flex";});
   $("title").textContent=titles[v];$("logoHdr").hidden=v!=="inicio";$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Nuevo movimiento");window.scrollTo(0,0);}
 // El fondo se detiene cuando la app no está visible
@@ -1406,6 +1412,19 @@ $("mDocsLista").addEventListener("click",async e=>{const x=e.target.closest("[da
     if(f){const resto=(f.movs||[]).filter(i=>i!==movId);try{if(resto.length)await adjGuardar({...f,movs:resto});else await adjBorrar(id);}catch(err){}}
     await cargarDocs();avisoAdj();toast("Documento quitado");return;}
   if(a){const f=(await adjTodos()).find(y=>y.id===+a.dataset.abrir);if(f)abrirArchivo(f);}});
+// Buscar movimientos: en todos los meses, por nota, categoría, cuenta, fecha o importe; todas las palabras, sin mayúsculas ni tildes
+function buscarMovs(q){const pal=normTxt(q).split(" ").filter(Boolean);if(!pal.length)return [];
+  return S.movs.filter(m=>{const t=normTxt([m.nota,m.cat,nombreDe(m.cuenta),m.destino!=null?nombreDe(m.destino):"",m.tipo==="ajuste"?"ajuste de conciliacion":"",m.fecha,fechaLarga(m.fecha)].join(" "));
+    return pal.every(w=>t.includes(w)||(/^\d+([.,]\d+)?$/.test(w)&&Math.abs(m.importe-parseFloat(w.replace(",",".")))<0.005));})
+    .sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);}
+function pintarBusca(){const q=$("busca").value.trim(),r=buscarMovs(q);
+  $("buscaN").textContent=!q?"Escribí para buscar en todos los meses.":`${r.length} ${r.length===1?"resultado":"resultados"}`;
+  $("movs").innerHTML=!q?"":r.length?r.map(m=>movHTML(m,true)).join(""):`<div class="card"><div class="empty">${esc("Sin resultados para «"+q+"».")}</div></div>`;}
+function abrirBusca(){seleccion=null;busq="";$("busca").value="";render();$("busca").focus();}
+function cerrarBusca(){busq=null;$("busca").value="";render();}
+$("lupaBtn").onclick=()=>{if(busq===null)abrirBusca();else cerrarBusca();};
+$("buscaCerrar").onclick=cerrarBusca;
+$("busca").addEventListener("input",()=>{busq=$("busca").value;pintarBusca();});
 // Modo seleccionar de Movimientos
 $("selBtn").onclick=()=>{seleccion=new Set();render();};
 $("selCancel").onclick=()=>{seleccion=null;render();};
