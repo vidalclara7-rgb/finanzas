@@ -7,7 +7,8 @@ sola línea de poca altura: un icono con la inicial de su categoría, la descrip
 con la categoría en gris, la fecha corta y el importe. Cada gasto lleva el color de su categoría, los ingresos van en
 verde, y las transferencias y los ajustes en gris. Ingresos con «+», gastos con «−», transferencias con la cuenta de
 origen y la de destino. Si el movimiento no es en euros, el importe lleva su moneda. Las marcas de un movimiento
-(documento, cuota, reembolso, fijo) van en una segunda fila fina, sólo en los que las tienen. Arriba, el total de
+(documento, cuota, reembolso, fijo) van en una segunda fila fina, sólo en los que las tienen. Sólo los ajustes llevan una
+cruz en la fila. Arriba, el total de
 ingresos y el de gastos del mes; transferencias y ajustes no suman en ninguno. Inicio no repite la lista de gastos
 recientes: para verlos, se abre Movimientos.
 
@@ -107,5 +108,37 @@ la lista. Cerrar la búsqueda devuelve la lista del mes en curso.
 
 ### Escenario: borrar desde los resultados
 - **Dado** un resultado de búsqueda
+- **Cuando** la persona lo abre y borra el movimiento con dos toques
+- **Entonces** vuelve a la búsqueda, el movimiento ya no está y la cantidad baja en uno
+
+## Requisito: borrar un movimiento con confirmación
+
+Borrar se hace desde la hoja del movimiento, abajo, con «Borrar movimiento»: el primer toque pide confirmar con «Tocá de
+nuevo para borrar» y el segundo borra y cierra la hoja. Si el movimiento es el último gasto de un documento, la
+confirmación dice «Tocá de nuevo: se borra también su documento». Los ajustes de conciliación, que no se abren, se borran
+con dos toques sobre la cruz de su fila. Un movimiento nuevo no tiene «Borrar movimiento».
+
+### Escenario: borrar con dos toques
+- **Dado** un movimiento en la lista del mes
+- **Cuando** la persona lo abre, toca «Borrar movimiento» y después «Tocá de nuevo para borrar»
+- **Entonces** la app avisa «Movimiento borrado», la hoja se cierra y desaparece de la lista
+
+### Escenario: un solo toque no borra
+- **Dado** un movimiento en la lista del mes
+- **Cuando** la persona lo abre, toca «Borrar movimiento» una vez y cierra la hoja
+- **Entonces** el movimiento sigue en la lista
+
+### Escenario: un movimiento nuevo no se borra
+- **Dado** la hoja de nuevo movimiento abierta
+- **Cuando** la persona mira el pie de la hoja
+- **Entonces** no hay «Borrar movimiento»
+
+### Escenario: borrar un ajuste de conciliación
+- **Dado** un ajuste de conciliación en la lista del mes
 - **Cuando** la persona toca su cruz y después «Borrar»
-- **Entonces** el movimiento desaparece de los resultados y la cantidad baja en uno
+- **Entonces** la app avisa «Movimiento borrado» y el ajuste desaparece
+
+### Escenario: borrar el último gasto de un documento
+- **Dado** un gasto con un documento que no tiene otros gastos
+- **Cuando** la persona abre el gasto y toca «Borrar movimiento»
+- **Entonces** el botón dice «Tocá de nuevo: se borra también su documento»

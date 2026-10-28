@@ -170,14 +170,15 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ico{width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
 /* Movimientos en una línea: icono, descripción con categoría, fecha corta, importe y cruz; las marcas, en una segunda fila fina */
 .pila{display:flex;flex-direction:column;gap:6px}
-.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
+.mov{border-radius:18px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:6px;min-height:52px}
 .mov .ico{width:28px;height:28px;font-size:13px}
 .mov .cat{font-size:12px;color:var(--muted)}
 .mov .linea{display:flex;align-items:baseline;gap:8px;font-size:16px;min-width:0}
 .mov .desc{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mov .fecha{flex:none;font-size:12px;color:var(--muted)}
 .mov .linea .num{flex:none}
-.mov .marcas{grid-column:2 / -1;display:flex;flex-wrap:wrap;gap:6px}
+.mov .x,.mov .sel{grid-column:3}
+.mov .marcas{grid-column:2;display:flex;flex-wrap:wrap;gap:6px}
 .mov .x{background:none;border:0;color:var(--muted);font-size:20px;padding:0 4px;min-width:28px;height:28px;line-height:1}
 .mov .sel{width:24px;height:24px;margin:0;accent-color:var(--ink)}
 .acc{display:flex;align-items:center;gap:8px}

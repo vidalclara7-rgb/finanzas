@@ -1,6 +1,6 @@
 ---
 cambio: buscar-movimientos
-estado: diseno-aprobado
+estado: aprobada
 datos: sin-cambios
 ---
 # Buscar movimientos y verlos en una línea
@@ -18,6 +18,8 @@ desplazarse mucho. Y para encontrar un gasto concreto (una compra, un comercio, 
 - **Movimientos en una línea**: icono con la inicial de la categoría, descripción con la categoría, fecha corta e
   importe, de unos 52 px. Sin el efecto apilado. Se mantiene el color de la categoría. Las marcas (documento, cuota,
   reembolso, fijo) pasan a una segunda fila fina sólo en los movimientos que las tienen.
+- **Sin cruz en la fila** (pedido al revisar el resultado): el texto gana ese sitio. Borrar pasa a la **hoja del movimiento**,
+  con un botón «Borrar movimiento» de dos toques. Los ajustes de conciliación, que no se abren, conservan la cruz.
 
 ## A quién afecta
 
@@ -25,7 +27,8 @@ A todas las personas: cambia el aspecto de la lista. Lo guardado no cambia.
 
 ## Pantallas
 
-- Movimientos: lupa en el encabezado, campo de búsqueda con resultados y lista en una línea.
+- Movimientos: lupa en el encabezado, campo de búsqueda con resultados y lista en una línea, sin cruz.
+- Hoja del movimiento: botón «Borrar movimiento» al pie.
 
 ## Fuera de alcance
 
