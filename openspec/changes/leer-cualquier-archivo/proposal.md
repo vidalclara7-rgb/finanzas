@@ -1,6 +1,6 @@
 ---
 cambio: leer-cualquier-archivo
-estado: propuesta
+estado: aprobada
 datos: amplia
 ---
 # Importar desde cualquier archivo y adjuntar con un solo botón

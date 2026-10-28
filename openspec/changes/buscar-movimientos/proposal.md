@@ -1,6 +1,6 @@
 ---
 cambio: buscar-movimientos
-estado: propuesta
+estado: aprobada
 datos: sin-cambios
 ---
 # Buscar movimientos y verlos en una línea
