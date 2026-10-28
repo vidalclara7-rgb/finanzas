@@ -26,8 +26,8 @@
 - [x] Pruebas extra: ZIP con entradas deflate y stored, fechas y importes en formatos distintos
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado
 
 ## Documentación
 - [x] `CLAUDE.md`: Tesseract entre las dependencias de `vendor/`, lectura de cualquier archivo y adjuntos de cualquier tipo

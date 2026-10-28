@@ -159,12 +159,13 @@ t.test("archivo que no se puede leer", async () => {
 // Escenario: foto de una tabla de movimientos
 t.test("foto de una tabla de movimientos", async () => {
   const { page } = await abrir({ datos: cuentas() });
+  await page.evaluate(() => { window.__leyendo = false; const e = document.getElementById("leyendoFoto"); new MutationObserver(() => { if (!e.hidden && e.textContent === "Leyendo la foto…") window.__leyendo = true; }).observe(e, { attributes: true }); });
   await importaArchivo(page, F.PNG(await F.imagenTabla(page, F.FOTO_TABLA)));
-  await A.aviso(page, "Leyendo la foto…");
   await eligeBanco(page);
+  assert.equal(await page.evaluate(() => window.__leyendo), true, "mostró «Leyendo la foto…»");
   assert.equal(await A.texto(page, "#iRevisa"), "Revisá 3 movimientos");
   assert.deepEqual((await notas(page)).map((x) => x[1]), [-12.5, -3.2, -45]);
-  assert.equal(await page.locator("#leyendoFoto").count(), 0);
+  assert.equal(await page.isVisible("#leyendoFoto"), false);
 });
 
 // Escenario: PDF escaneado
