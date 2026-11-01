@@ -1325,11 +1325,12 @@ function lectorSantanderTarjeta(L){
   const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
   // La descripción de cada fraccionada: la de su línea «CUOTA FRACCIONAR COMPRA …» (se compara sin espacios, porque la tabla parte las palabras)
   const cands=movs.filter(m=>/^CUOTA FRACCIONAR COMPRA /i.test(m.texto)).map(m=>m.texto.replace(/^CUOTA FRACCIONAR COMPRA /i,""));
-  const fraccionadas=fracs.filter(f=>f.k<f.m&&f.pendiente>0).map(f=>{const junto=f.partes.join("").replace(/\s/g,""),jl=junto.toLowerCase();let desc=f.partes.join(" ").replace(/\s+/g," ").trim();
+  const fraccTodas=fracs.map(f=>{const junto=f.partes.join("").replace(/\s/g,""),jl=junto.toLowerCase();let desc=f.partes.join(" ").replace(/\s+/g," ").trim();
     for(const c of cands){const cl=c.replace(/\s/g,"").toLowerCase();if(cl&&jl===cl){desc=c;break;}if(cl&&jl.startsWith(cl)){desc=c+" "+junto.slice(cl.length);break;}}
     return {fecha:f.fecha,desc,total:f.total,k:f.k,m:f.m,cuota:f.cuota,pendiente:f.pendiente};});
+  const fraccionadas=fraccTodas.filter(f=>f.k<f.m&&f.pendiente>0);
   const pendiente=r2(fraccionadas.reduce((a,f)=>a+f.pendiente,0));
-  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,fraccionadas,saldoAnterior:saldoAnt,
+  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,fraccionadas,fraccTodas,saldoAnterior:saldoAnt,
     saldo:aPagar!=null&&(hasta||ult)?{importe:-r2(aPagar+pendiente),fecha:hasta||ult,aPagar,pendiente}:null,movs:movs.filter(m=>m.importe)};}
 
 // Reconoce el formato por textos fijos del documento
@@ -1519,6 +1520,10 @@ function borradores(){const r=imp.r,cid=imp.cuenta;
   d.filter(a=>a.s>0&&/^anulaci/.test(normTxt(r.movs[a.i].texto))).forEach(a=>{
     const c=d.find(y=>y.s<0&&y.marca!=="anulada"&&y.fecha===a.fecha&&Math.abs(y.s+a.s)<0.005&&claveCom(y.nota)===claveCom(a.nota));
     if(c){a.on=c.on=false;a.marca=c.marca="anulada";}});
+  // La cuota de una compra fraccionada ya anotada con un resumen anterior ya cuenta en esa compra: no se anota otra vez
+  d.forEach(x=>{if(x.marca)return;const m=r.movs[x.i],mm=/^CUOTA FRACCIONAR COMPRA (.+)/i.exec(m.texto||"");if(!mm||!r.fraccTodas)return;
+    const cn=mm[1].replace(/\s/g,"").toLowerCase(),f=r.fraccTodas.find(y=>{const fn=y.desc.replace(/\s/g,"").toLowerCase();return cn&&(fn===cn||fn.startsWith(cn));});
+    if(f&&S.movs.some(y=>y.fracc===claveFr(f)&&(desdeOk(y.cuotas)||"")<=x.fecha.slice(0,7))){x.on=false;x.marca="cuota";}});
   // En orden de fecha, del más viejo al más nuevo (cada borrador conserva su número del extracto)
   d.forEach(fijoDe);imp.d=d.sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.i-b.i);}
 // Un gasto que coincide con una regla de fijo llega marcado
@@ -1532,7 +1537,7 @@ function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.
   return `<span class="card color cubre" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
 function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
   $("iRevisa").textContent=`Revisá ${d.length} ${d.length===1?"movimiento":"movimientos"}`;
-  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+
+  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+(x.marca==="cuota"?`<span class="chip idle" data-ui="marca-cuota-anotada">Cuota ya anotada</span>`:"")+
       (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
     return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
   pintarInicio();pintarFracc();$("iGuardar").textContent=textoGuardar();}

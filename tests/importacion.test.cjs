@@ -602,3 +602,77 @@ t.test("un resumen sin saldo anterior no lo ofrece", async () => {
   await importar(page, await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [{ fecha: "2026-10-05", desc: "Comercio Uno", importe: -10 }] }));
   assert.equal(await page.isVisible("#iInicio"), false);
 });
+
+// --- cuotas de compras fraccionadas ya anotadas
+const frUno = (k, m, pend) => ({ fecha: "2026-09-28", partes: ["Tienda Uno"], total: 63, k, m, cuota: 21, intereses: 0, pendiente: pend });
+const lineaCuota = (fecha, imp = 21, quien = "Tienda Uno") => ({ fecha, desc: "CUOTA FRACCIONAR COMPRA " + quien, importe: imp });
+const compra = (fecha, imp) => ({ fecha, desc: "PAGO MOVIL COMERCIO " + imp, importe: imp });
+const stmt = (page, desde, hasta, extra) => X.santanderTarjeta(page, { ref: "5566", desde, hasta, ...extra });
+const frDatos = () => A.v2({ cuentas: [BANCO, { ...TARJETA_Y, saldoInicial: 0, desde: "2026-08-01" }] });
+const guardaTodo = async (page) => { await page.click("#iGuardar"); await page.waitForSelector("#sheetIC:not([hidden])"); };
+const borrCuota = (page) => page.evaluate(() => imp.d.filter((x) => /uno|dos/i.test(x.nota) && !/intereses/i.test(x.nota)).map((x) => [x.nota, x.on, x.marca]));
+
+// Escenario: cuota de una compra ya anotada
+t.test("cuota de una compra ya anotada", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  await importar(page, await stmt(page, "2026-08-29", "2026-09-29", { compras: [compra("2026-09-05", 100), lineaCuota("2026-09-29")], fraccionadas: [frUno(1, 3, 42)] }));
+  await guardaTodo(page);
+  await page.click("#icNo");
+  await importar(page, await stmt(page, "2026-09-29", "2026-10-29", { anterior: 121, pagos: [{ fecha: "2026-10-02", importe: 121 }], compras: [compra("2026-10-05", 50), lineaCuota("2026-10-29")], fraccionadas: [frUno(2, 3, 21)] }));
+  assert.deepEqual(await borrCuota(page), [["Tienda Uno", false, "cuota"]]);
+  assert.equal(await page.isVisible('[data-ui="marca-cuota-anotada"]'), true);
+});
+
+// Escenario: la última cuota también
+t.test("la última cuota también", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  await importar(page, await stmt(page, "2026-08-29", "2026-09-29", { compras: [compra("2026-09-05", 100), lineaCuota("2026-09-29")], fraccionadas: [frUno(2, 3, 21)] }));
+  await guardaTodo(page);
+  await page.click("#icNo");
+  await importar(page, await stmt(page, "2026-09-29", "2026-10-29", { anterior: 121, pagos: [{ fecha: "2026-10-02", importe: 121 }], compras: [compra("2026-10-05", 50), lineaCuota("2026-10-29")], fraccionadas: [frUno(3, 3, 0)] }));
+  assert.deepEqual(await borrCuota(page), [["Tienda Uno", false, "cuota"]]);
+});
+
+// Escenario: una compra que no estaba anotada
+t.test("una compra que no estaba anotada", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  await importar(page, await stmt(page, "2026-08-29", "2026-09-29", { compras: [lineaCuota("2026-09-29", 21, "Tienda Dos")], fraccionadas: [{ ...frUno(1, 3, 42), partes: ["Tienda Dos"] }] }));
+  assert.deepEqual(await borrCuota(page), [["Tienda Dos", true, null]]);
+});
+
+// Escenario: los intereses siguen entrando
+t.test("los intereses siguen entrando", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  await importar(page, await stmt(page, "2026-08-29", "2026-09-29", { compras: [compra("2026-09-05", 100), lineaCuota("2026-09-29")], fraccionadas: [frUno(1, 3, 42)] }));
+  await guardaTodo(page);
+  await page.click("#icNo");
+  await importar(page, await stmt(page, "2026-09-29", "2026-10-29", { anterior: 121, pagos: [{ fecha: "2026-10-02", importe: 121 }], compras: [compra("2026-10-05", 50), lineaCuota("2026-10-29")], fraccionadas: [frUno(2, 3, 21)], intereses: [{ fecha: "2026-10-29", comercio: "Tienda Uno", importe: 0.5 }] }));
+  const i = await page.evaluate(() => imp.d.filter((x) => /intereses/i.test(x.nota)).map((x) => [x.on, x.marca, x.s]));
+  assert.deepEqual(i, [[true, null, -0.5]]);
+});
+
+// Escenario: un resumen anterior a lo anotado
+t.test("un resumen anterior a lo anotado", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  await importar(page, await stmt(page, "2026-09-29", "2026-10-29", { anterior: 121, pagos: [{ fecha: "2026-10-02", importe: 121 }], compras: [compra("2026-10-05", 50), lineaCuota("2026-10-29")], fraccionadas: [frUno(2, 3, 21)] }));
+  await guardaTodo(page);
+  await page.click("#icNo");
+  await importar(page, await stmt(page, "2026-08-29", "2026-09-29", { compras: [compra("2026-09-05", 100), lineaCuota("2026-09-29")], fraccionadas: [frUno(1, 3, 42)] }));
+  assert.deepEqual(await borrCuota(page), [["Tienda Uno", true, null]]);
+});
+
+// Escenario: tres resúmenes seguidos cuadran
+t.test("tres resúmenes seguidos cuadran", async () => {
+  const { page } = await abrir({ datos: frDatos() });
+  const pasos = [
+    ["2026-08-29", "2026-09-29", { compras: [compra("2026-09-05", 100), lineaCuota("2026-09-29")], fraccionadas: [frUno(1, 3, 42)] }, "163 €"],
+    ["2026-09-29", "2026-10-29", { anterior: 121, pagos: [{ fecha: "2026-10-02", importe: 121 }], compras: [compra("2026-10-05", 50), lineaCuota("2026-10-29")], fraccionadas: [frUno(2, 3, 21)] }, "92 €"],
+    ["2026-10-29", "2026-11-29", { anterior: 71, pagos: [{ fecha: "2026-11-02", importe: 71 }], compras: [compra("2026-11-05", 30), lineaCuota("2026-11-29")], fraccionadas: [frUno(3, 3, 0)] }, "51 €"]];
+  for (const [desde, hasta, extra, deuda] of pasos) {
+    await importar(page, await stmt(page, desde, hasta, extra));
+    await guardaTodo(page);
+    assert.equal(await A.texto(page, "#icDif"), "0 €", `${hasta}: diferencia`);
+    assert.equal(await A.texto(page, "#icCalc"), deuda, `${hasta}: deuda`);
+    await page.click("#icNo");
+  }
+});
