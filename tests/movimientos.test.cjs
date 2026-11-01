@@ -16,7 +16,7 @@ t.test("gasto desde una cuenta propia", async () => {
   await A.aviso(page, "Gasto guardado");
   await A.ir(page, "movs");
   const tarjeta = await A.texto(page, "#movs .mov");
-  assert.match(tarjeta, /15\/10/);
+  assert.match(await A.texto(page, "#movs .dia"), /Jueves 15/);
   assert.match(tarjeta, /verdulería/);
   assert.match(tarjeta, /−12,5 €/);
   await enCuentas(page);
@@ -98,7 +98,7 @@ t.test("movimientos de otro mes no aparecen", async () => {
   await A.ir(page, "movs");
   const movs = await page.locator("#movs .mov").allInnerTexts();
   assert.equal(movs.length, 1);
-  assert.match(movs[0], /03\/10/);
+  assert.match(await A.texto(page, "#movs .dia"), /Sábado 3/);
 });
 
 // Escenario: Inicio sin gastos recientes

@@ -8,23 +8,23 @@
 - [x] Gate 2: la persona aprueba el diseño
 
 ## Datos y migración
-- [ ] Sin datos nuevos: el mes elegido vive en memoria
+- [x] Sin datos nuevos: el mes elegido vive en memoria
 
 ## Pantallas
-- [ ] `mesVista` y `mesV()`; Inicio, Movimientos y Cierre usan el mes elegido; el selector con flechas, desactivado en el mes en curso
-- [ ] Patrimonio al cierre del mes elegido (`totales(hasta)`); barras de la semana de hoy sólo en el mes en curso; seis meses terminando en el elegido
-- [ ] Cierre: conciliar y ajustar un mes ya cerrado (fecha de cierre = último día)
-- [ ] Movimientos agrupados por semana y día, con totales; categorías juntas dentro del día; filas sin fecha
-- [ ] La búsqueda y la lista de una cuenta siguen planas y con fecha
-- [ ] Subir la versión de `CACHE` en `sw.js`
+- [x] `mesVista` y `mesV()`; Inicio, Movimientos y Cierre usan el mes elegido; el selector con flechas, desactivado en el mes en curso
+- [x] Patrimonio al cierre del mes elegido (`totales(hasta)`); barras de la semana de hoy sólo en el mes en curso; seis meses terminando en el elegido
+- [x] Cierre: conciliar y ajustar un mes ya cerrado (fecha de cierre = último día)
+- [x] Movimientos agrupados por semana y día, con totales; categorías juntas dentro del día; filas sin fecha
+- [x] La búsqueda y la lista de una cuenta siguen planas y con fecha
+- [x] Subir la versión de `CACHE` en `sw.js`
 
 ## Tests
-- [ ] Un test por escenario de `meses` (8) y de `movimientos` (los nuevos y los que cambian)
-- [ ] 390 px sin desbordes con los encabezados de semana y día
+- [x] Un test por escenario de `meses` (8) y de `movimientos` (los nuevos y los que cambian)
+- [x] 390 px sin desbordes con los encabezados de semana y día
 
 ## Prueba en el navegador
 - [ ] `python3 kit.py check` en verde
 - [ ] `python3 kit.py capturas` y comparar con el preview aprobado
 
 ## Documentación
-- [ ] `CLAUDE.md`: mes elegido, semanas y días en Movimientos
+- [x] `CLAUDE.md`: mes elegido, semanas y días en Movimientos
