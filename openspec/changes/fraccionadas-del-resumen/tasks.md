@@ -26,8 +26,8 @@
 - [x] Pruebas extra: descripciones partidas en varias líneas, resumen sin la tabla
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado
 
 ## Documentación
 - [x] `CLAUDE.md`: fraccionadas, `fracc`, conciliación con lo pendiente y desglose de la tarjeta
