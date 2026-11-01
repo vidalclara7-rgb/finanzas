@@ -21,9 +21,9 @@
 - [x] Un test por escenario de `cuentas`, `importacion` y `datos`
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado
-- [ ] Con el resumen real (sin subirlo): borrar, volver a importar y comprobar que la diferencia al conciliar es 0
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado
+- [x] Con el resumen real (sin subirlo): borrar, volver a importar y comprobar que la diferencia al conciliar es 0
 
 ## Documentación
 - [x] `CLAUDE.md`: borrar todos los movimientos de una cuenta, respaldo `borrado` y saldo anterior del resumen
