@@ -418,6 +418,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <div class="row"><button type="button" class="btn sec" style="flex:1" id="cAdjuntar" data-ui="adjuntar">Adjuntar archivo</button></div>
     <input type="file" id="adjIn" hidden></div>
   <button class="btn" type="submit">Guardar cuenta</button>
+  <button class="btn danger" type="button" id="cBorrarMovs" data-ui="borrar-todos-movimientos" hidden>Borrar todos sus movimientos</button>
   <button class="btn danger" type="button" id="cBorrar" hidden>Borrar cuenta</button>
 </form>
 
@@ -477,6 +478,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
   <button type="button" class="btn" id="iSeguir">Seguir</button>
   <div id="iCuentaBox" data-ui="cuenta-extracto"><span class="lbl">Cuenta</span><div class="seg" id="segICuenta" style="margin-top:8px"></div></div>
+  <div class="card" id="iInicio" data-ui="empezar-con-saldo" hidden><label class="check"><input type="checkbox" id="iInicioOn" checked><span><b>Empezar esta cuenta con el saldo anterior del resumen</b><br><span class="sub" id="iInicioSub"></span></span></label></div>
   <div class="card" id="iFracc" data-ui="compras-fraccionadas" hidden><span class="lbl">Compras fraccionadas</span><span class="sub">Lo que queda por pagar de lo que pagás en cuotas. Se anota en tu tarjeta desde el mes que viene.</span><div class="borradores" id="iFraccLista"></div></div>
   <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
   <button type="button" class="btn" id="iGuardar" data-ui="guardar-importacion"></button>
@@ -1141,7 +1143,7 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
   seg($("segTipo"),TIPOS.map(x=>[x[0],x[1]]),selTipo,v=>{selTipo=v;tipoUI();});
   seg($("segSigno"),[["mas","Me deben"],["menos","Debo"]],selSigno,v=>selSigno=v);
   $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;$("cTipoBox").hidden=!!c;$("cNueva").hidden=!!c;$("cEdita").hidden=!c;
-  $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
+  $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";resetBorrarMovs();$("cBorrarMovs").hidden=!(c&&movsDeCta(c.id).length);
   $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";pintarDesglose(c);
   $("cAportado").value=aTexto(c&&c.aportado||"");$("cLimite").value=aTexto(c&&c.limite||"");$("cCuota").value=aTexto(c&&c.cuota||"");$("cCuotas").value=c&&c.cuotas>0?(c.tipo==="financiacion"?cuotasFaltan(c)||"":c.cuotas):"";
   $("cTope").value=aTexto(c&&c.tope||"");$("cFondo").checked=!!(c&&c.fondo);
@@ -1168,6 +1170,19 @@ $("sheetC").addEventListener("submit",e=>{e.preventDefault();
   const i=S.cuentas.findIndex(x=>x.id===editId);if(i>=0)S.cuentas[i]=c;else S.cuentas.push(c);
   if(imp&&imp.nuevaPara!=null){const x=borrDe(imp.nuevaPara);if(x){x.que="t|"+c.id;x.cubre=[];fijoDe(x);}imp.nuevaPara=null;cerrar();cambio();mostrar("sheetI");segCuentasImp();pintarBorr();toast("Cuenta guardada");return;}
   cerrar();cambio();toast("Cuenta guardada");});
+// Borrar todos los movimientos de una cuenta: dos toques, con respaldo de lo que había
+const movsDeCta=id=>S.movs.filter(m=>m.cuenta===id||m.destino===id);
+const textoBorrarMovs=id=>{const ms=movsDeCta(id),n=ms.length,k=ms.filter(m=>m.tipo==="transferencia").length;
+  return `Tocá de nuevo: se borran ${n} ${n===1?"movimiento":"movimientos"}`+(k?` (${k} ${k===1?"transferencia":"transferencias"} con otras cuentas)`:"");};
+function resetBorrarMovs(){const b=$("cBorrarMovs");b.dataset.confirm="";b.textContent="Borrar todos sus movimientos";}
+$("cBorrarMovs").onclick=()=>{const b=$("cBorrarMovs"),c=cuentaDe(editId);if(!c)return;
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent=textoBorrarMovs(c.id);return;}
+  const r=respaldo();if(r&&r.motivo==="ilegible"){resetBorrarMovs();toast("Antes de borrar, copiá o descartá el respaldo de datos que no se pudieron leer");return;}
+  const ms=movsDeCta(c.id),n=ms.length;
+  guardarClave(KEY_RESP,{texto:JSON.stringify(S),motivo:"borrado",cuenta:c.nombre,fecha:hoy()});
+  ms.forEach(m=>{desconciliar(m);S.movs=S.movs.filter(x=>x!==m);S.movs.forEach(x=>{if(x.reembolso&&x.reembolso.cobro===m.id)x.reembolso={estado:"aprobado"};});quitarDeDocs(m.id);});
+  Object.values(S.meses).forEach(md=>{if(md.conc)delete md.conc[c.id];});
+  resetBorrarMovs();$("cBorrarMovs").hidden=true;cambio();$("cCalc").textContent=eur(valorCuenta(c));pintarDesglose(c);toast(`${n} ${n===1?"movimiento borrado":"movimientos borrados"}`);};
 $("cBorrar").onclick=()=>{const b=$("cBorrar");
   if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar";return;}
   if(S.movs.some(m=>m.cuenta===editId||m.destino===editId)){toast("No se puede borrar: la cuenta tiene movimientos");b.dataset.confirm="";b.textContent="Borrar cuenta";return;}
@@ -1278,7 +1293,7 @@ function lectorSantanderTarjeta(L){
   const per=despues(L,"Periodo de liquidación").match(/(\d{2})\/(\d{2})\/(\d{4}) A (\d{2})\/(\d{2})\/(\d{4})/);
   const desde=per?`${per[3]}-${per[2]}-${per[1]}`:null,hasta=per?`${per[6]}-${per[5]}-${per[4]}`:null;
   const aPagar=dinero(despues(L,"Importe a Pagar"));
-  let sec="",col=null,cur=null,fr=false,curF=null;const movs=[],fracs=[];
+  let sec="",col=null,cur=null,fr=false,curF=null,saldoAnt=null;const movs=[],fracs=[];
   for(const l of L){const t=txtLinea(l);
     // Tabla de operaciones fraccionadas: fecha, descripción (en varias líneas), importe total, «k de m», amortizado, intereses, comisiones, total de la cuota y pendiente
     if(/^Detalle de importe pendiente/.test(t)){fr=false;curF=null;}
@@ -1299,7 +1314,7 @@ function lectorSantanderTarjeta(L){
         const v=ims.length?dinero(ims[ims.length-1].s):0;cur={fecha,texto:desc,extra:"",importe:-v,_c:true,y:l.y};movs.push(cur);continue;}
       if(!col)continue;
       const desc=l.it.filter(i=>i.x>=col.con-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
-      if(/^SALDO ANTERIOR/i.test(desc)){cur=null;continue;}
+      if(/^SALDO ANTERIOR/i.test(desc)){cur=null;if(ims.length)saldoAnt={importe:dinero(cerca(ims,col.imp).s),fecha};continue;}
       const v=ims.length?dinero(cerca(ims,col.imp).s):0;cur={fecha,texto:desc,extra:"",importe:-v};movs.push(cur);continue;}
     // Un interés cuya fila se parte en dos líneas del PDF: los importes llegan en la siguiente, sin fecha
     if(cur&&cur._c&&!cur.importe&&cur.y-l.y<=4){const im=l.it.filter(i=>dinero(i.s)!=null);if(im.length){cur.importe=-dinero(im[im.length-1].s);cur.y=l.y;continue;}}
@@ -1314,7 +1329,7 @@ function lectorSantanderTarjeta(L){
     for(const c of cands){const cl=c.replace(/\s/g,"").toLowerCase();if(cl&&jl===cl){desc=c;break;}if(cl&&jl.startsWith(cl)){desc=c+" "+junto.slice(cl.length);break;}}
     return {fecha:f.fecha,desc,total:f.total,k:f.k,m:f.m,cuota:f.cuota,pendiente:f.pendiente};});
   const pendiente=r2(fraccionadas.reduce((a,f)=>a+f.pendiente,0));
-  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,fraccionadas,
+  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,fraccionadas,saldoAnterior:saldoAnt,
     saldo:aPagar!=null&&(hasta||ult)?{importe:-r2(aPagar+pendiente),fecha:hasta||ult,aPagar,pendiente}:null,movs:movs.filter(m=>m.importe)};}
 
 // Reconoce el formato por textos fijos del documento
@@ -1520,7 +1535,7 @@ function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
   $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+
       (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
     return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
-  pintarFracc();$("iGuardar").textContent=textoGuardar();}
+  pintarInicio();pintarFracc();$("iGuardar").textContent=textoGuardar();}
 function avisoLectura(msg){const t=document.createElement("div");t.className="toast"+(hojaAbierta()?" arriba":"");t.dataset.ui="aviso-lectura";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
 // «Leyendo la foto…» mientras el OCR trabaja (puede tardar unos segundos)
 function mostrarLeyendo(on){$("leyendoFoto").hidden=!on;}
@@ -1532,6 +1547,13 @@ function preguntarSigno(n){return new Promise(ok=>{signoRes=ok;$("sgSub").textCo
 function resolverSigno(v){const f=signoRes;signoRes=null;if(f)f(v);}
 async function aplicarSigno(r){if(!r.positivos)return true;const s=await preguntarSigno(r.movs.length);if(!s)return false;
   if(s==="gastos")r.movs.forEach(m=>{m.importe=-Math.abs(m.importe);});r.positivos=false;return true;}
+// Empezar la cuenta con el saldo anterior del resumen: sólo una tarjeta sin ningún movimiento
+const inicioOfrece=()=>{const c=imp&&imp.cuenta!=null?cuentaDe(imp.cuenta):null,sa=imp&&imp.r.saldoAnterior;
+  return !!(c&&c.tipo==="tarjeta"&&sa&&sa.fecha&&Number.isFinite(sa.importe)&&!S.movs.some(m=>m.cuenta===c.id||m.destino===c.id));};
+function pintarInicio(){const ver=inicioOfrece();$("iInicio").hidden=!ver;if(!ver)return;const c=cuentaDe(imp.cuenta),sa=imp.r.saldoAnterior;
+  $("iInicioOn").checked=imp.inicioOn!==false;
+  $("iInicioSub").textContent=`${eur(sa.importe)} el ${diaMes(sa.fecha)}. Así lo que importes cuadra con cada resumen.`+(c.saldoInicial?` Hoy «${c.nombre}» empieza con ${eur(c.saldoInicial)} desde el ${diaMes(c.desde)}.`:` «${c.nombre}» no tiene movimientos.`);}
+$("iInicioOn").addEventListener("change",e=>{imp.inicioOn=e.target.checked;});
 // Compras fraccionadas del resumen: se anotan por lo que queda, como compra en cuotas que empieza a contar el mes siguiente
 const claveFr=f=>normTxt(f.desc)+"|"+f.m+"|"+f.total;
 const frTarjeta=()=>{const c=imp&&imp.cuenta!=null?cuentaDe(imp.cuenta):null;return !!c&&c.tipo==="tarjeta";};
@@ -1574,6 +1596,8 @@ $("iBorr").addEventListener("change",e=>{const t=e.target;
 $("iBorr").addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();});
 $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on),frSel=frTarjeta()?imp.fr.filter(f=>f.on):[];if(!sel.length&&!frSel.length){toast("Marcá al menos un movimiento");return;}
   const r=imp.r,cid=imp.cuenta,c=cuentaDe(cid),origen=nid();
+  // La deuda de partida: el saldo anterior del resumen (sólo si se ofreció y quedó marcada)
+  if(inicioOfrece()&&imp.inicioOn!==false){c.saldoInicial=r2(r.saldoAnterior.importe);c.desde=r.saldoAnterior.fecha;}
   // La cuenta recuerda los últimos dígitos del extracto
   if(r.ref){S.cuentas.forEach(o=>{if(o.ref===r.ref)delete o.ref;});c.ref=r.ref;}
   sel.forEach(x=>{const t=x.que[0],v=x.que.slice(2),m={id:nid(),tipo:"gasto",fecha:x.fecha,importe:r2(Math.abs(x.s)),cuenta:cid,nota:x.nota,origen};
@@ -1810,7 +1834,7 @@ function pintarCopia(){const f=ultimaCopia(),d=f?diasDesde(f):null,r=respaldo();
   if(pide)$("avisoCopiaT").textContent=f?`Hace ${d} ${d===1?"día":"días"} que no hacés una copia de seguridad`:"Todavía no hiciste ninguna copia de seguridad";
   $("avisoIlegible").hidden=!(r&&r.motivo==="ilegible");$("cardRespaldo").hidden=!r;
   if(r){const cuando=typeof r.fecha==="string"&&FECHA.test(r.fecha)?`, del ${diaMes(r.fecha)}`:"";
-    $("respaldoSub").textContent=r.motivo==="ilegible"?`Datos que no se pudieron leer${cuando}. El texto original está intacto.`:`Datos de antes de restaurar${cuando}. Quedaron guardados por si te arrepentís.`;}}
+    $("respaldoSub").textContent=r.motivo==="ilegible"?`Datos que no se pudieron leer${cuando}. El texto original está intacto.`:r.motivo==="borrado"?`Datos de antes de borrar los movimientos de ${typeof r.cuenta==="string"?r.cuenta:"una cuenta"}${cuando}. Quedaron guardados por si te arrepentís.`:`Datos de antes de restaurar${cuando}. Quedaron guardados por si te arrepentís.`;}}
 $("avisoCopiaBtn").onclick=$("avisoIlegibleBtn").onclick=()=>ir("ajustes");
 $("copiarBackup").onclick=()=>copiar(JSON.stringify(S),"Copia de seguridad copiada").then(ok=>{if(ok)marcarCopia();});
 // Guardar en un archivo: la hoja de compartir del sistema (en iPhone, «Guardar en Archivos») y, si no hay, una descarga. Cancelar no cuenta

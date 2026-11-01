@@ -1,6 +1,6 @@
 ---
 cambio: rehacer-una-cuenta
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Borrar todos los movimientos de una cuenta y empezarla con el saldo del resumen

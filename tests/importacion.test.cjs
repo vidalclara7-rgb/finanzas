@@ -550,3 +550,55 @@ t.test("el pie de página no es parte del interés", async () => {
   assert.equal(/santander/i.test(ultimo[0]), false);
   assert.equal(ultimo[2], "g|");
 });
+
+// --- empezar la cuenta con el saldo anterior del resumen
+const sinMovs = () => A.v2({ cuentas: [BANCO, { ...TARJETA_Y, saldoInicial: 0, desde: "2026-09-01" }] });
+const resumenSA = (page) => X.santanderTarjeta(page, { ref: "5566", anterior: 742.94, pagos: [{ fecha: "2026-10-02", importe: 742.94 }], compras: [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 100 }], desde: "2026-09-29", hasta: "2026-10-29" });
+
+// Escenario: ofrecer empezar con el saldo anterior
+t.test("ofrecer empezar con el saldo anterior", async () => {
+  const { page } = await abrir({ datos: sinMovs() });
+  await importar(page, await resumenSA(page));
+  assert.equal(await page.isVisible("#iInicio"), true);
+  assert.equal(await page.isChecked("#iInicioOn"), true);
+  assert.match(await A.texto(page, "#iInicio"), /Empezar esta cuenta con el saldo anterior del resumen/);
+  assert.match(await A.texto(page, "#iInicioSub"), /742,94 € el 29\/09/);
+});
+
+// Escenario: guardar empezando con el saldo anterior
+t.test("guardar empezando con el saldo anterior", async () => {
+  const { page } = await abrir({ datos: sinMovs() });
+  await importar(page, await resumenSA(page));
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const c = (await A.guardados(page)).cuentas.find((x) => x.id === 2);
+  assert.deepEqual([c.saldoInicial, c.desde], [742.94, "2026-09-29"]);
+  assert.equal(await A.texto(page, "#icExt"), "100 €");
+  assert.equal(await A.texto(page, "#icDif"), "0 €");
+});
+
+// Escenario: no empezar con el saldo anterior
+t.test("no empezar con el saldo anterior", async () => {
+  const { page } = await abrir({ datos: sinMovs() });
+  await importar(page, await resumenSA(page));
+  await page.uncheck("#iInicioOn");
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const c = (await A.guardados(page)).cuentas.find((x) => x.id === 2);
+  assert.deepEqual([c.saldoInicial, c.desde], [0, "2026-09-01"]);
+});
+
+// Escenario: una cuenta con movimientos no lo ofrece
+t.test("una cuenta con movimientos no lo ofrece", async () => {
+  const datos = A.v2({ cuentas: [BANCO, { ...TARJETA_Y, saldoInicial: 0, desde: "2026-09-01" }], movs: [A.gasto(1, "2026-09-10", 10, 2)] });
+  const { page } = await abrir({ datos });
+  await importar(page, await resumenSA(page));
+  assert.equal(await page.isVisible("#iInicio"), false);
+});
+
+// Escenario: un resumen sin saldo anterior no lo ofrece
+t.test("un resumen sin saldo anterior no lo ofrece", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [{ fecha: "2026-10-05", desc: "Comercio Uno", importe: -10 }] }));
+  assert.equal(await page.isVisible("#iInicio"), false);
+});

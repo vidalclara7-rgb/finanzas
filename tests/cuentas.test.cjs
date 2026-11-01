@@ -208,3 +208,85 @@ t.test("otras cuentas no lo muestran", async () => {
   await abreCuenta(page, 1);
   assert.equal(await page.isVisible("#cDesglose"), false);
 });
+
+// --- borrar todos los movimientos de una cuenta
+const BANCO_M = A.cta(1, "Banco A", 1000, { desde: "2026-10-01" });
+const TRES = [A.gasto(1, "2026-10-03", 20, 2), A.gasto(2, "2026-10-04", 30, 2), A.gasto(3, "2026-10-05", 40, 2)];
+
+// Escenario: borrar todos los movimientos de una cuenta
+t.test("borrar todos los movimientos de una cuenta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs: TRES }) });
+  await abreCuenta(page, 2);
+  await page.click("#cBorrarMovs");
+  assert.equal(await A.texto(page, "#cBorrarMovs"), "Tocá de nuevo: se borran 3 movimientos");
+  await page.click("#cBorrarMovs");
+  await A.aviso(page, "3 movimientos borrados");
+  assert.deepEqual((await A.guardados(page)).movs, []);
+  assert.equal(await A.texto(page, "#cCalc"), "-100 €");
+});
+
+// Escenario: un solo toque no borra
+t.test("un solo toque no borra los movimientos de la cuenta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs: TRES }) });
+  await abreCuenta(page, 2);
+  await page.click("#cBorrarMovs");
+  await page.click("#cCerrar");
+  assert.equal((await A.guardados(page)).movs.length, 3);
+});
+
+// Escenario: las transferencias con otras cuentas
+t.test("las transferencias con otras cuentas", async () => {
+  const movs = [A.gasto(1, "2026-10-03", 20, 2), A.transf(2, "2026-10-08", 100, 1, 2)];
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs }) });
+  await abreCuenta(page, 2);
+  await page.click("#cBorrarMovs");
+  assert.equal(await A.texto(page, "#cBorrarMovs"), "Tocá de nuevo: se borran 2 movimientos (1 transferencia con otras cuentas)");
+  await page.click("#cBorrarMovs");
+  await A.aviso(page, "2 movimientos borrados");
+  assert.deepEqual((await A.guardados(page)).movs.filter((m) => m.cuenta === 1 || m.destino === 1), []);
+});
+
+// Escenario: la conciliación de la cuenta se borra
+t.test("la conciliación de la cuenta se borra", async () => {
+  const meses = { "2026-10": { checks: {}, conc: { 2: { real: 0, fecha: "2026-10-15", ok: true } } } };
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs: TRES, meses }) });
+  await abreCuenta(page, 2);
+  await page.click("#cBorrarMovs");
+  await page.click("#cBorrarMovs");
+  await A.aviso(page, "3 movimientos borrados");
+  await page.click("#cCerrar");
+  await A.ir(page, "mes");
+  assert.equal(await A.texto(page, '[data-conc="2"] .chip'), "Sin conciliar");
+});
+
+// Escenario: una cuenta sin movimientos
+t.test("una cuenta sin movimientos no ofrece borrar", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M] }) });
+  await abreCuenta(page, 1);
+  assert.equal(await page.isVisible("#cBorrarMovs"), false);
+});
+
+// Escenario: los reembolsos vuelven a aprobado
+t.test("los reembolsos vuelven a aprobado", async () => {
+  const R = "Trabajo (reembolsable)";
+  const movs = [{ ...A.gasto(1, "2026-10-03", 20, 2, R), reembolso: { estado: "pagado", cobro: 5 } }, A.ingreso(5, "2026-10-10", 20, 1, "Reembolso")];
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs }) });
+  await abreCuenta(page, 1);
+  await page.click("#cBorrarMovs");
+  await page.click("#cBorrarMovs");
+  await A.aviso(page, "1 movimiento borrado");
+  const d = await A.guardados(page);
+  assert.deepEqual(d.movs.map((m) => [m.id, m.reembolso && m.reembolso.estado]), [[1, "aprobado"]]);
+});
+
+// Escenario: los adjuntos se quedan
+t.test("los adjuntos se quedan al borrar los movimientos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO_M, TARJ_D()], movs: TRES }) });
+  await abreCuenta(page, 2);
+  await page.setInputFiles("#adjIn", { name: "resumen.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 prueba") });
+  await page.waitForFunction(() => document.querySelector("#cAdjLista").textContent.includes("resumen.pdf"));
+  await page.click("#cBorrarMovs");
+  await page.click("#cBorrarMovs");
+  await A.aviso(page, "3 movimientos borrados");
+  assert.match(await A.texto(page, "#cAdjLista"), /resumen\.pdf/);
+});
