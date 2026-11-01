@@ -285,3 +285,122 @@ nada a otro sitio, y sus filas pasan por la misma revisión. Mientras lee, la ap
 - **Dado** una foto de una tabla
 - **Cuando** la persona la importa
 - **Entonces** la app no hace ninguna petición fuera de su propio sitio
+
+## Requisito: leer las compras fraccionadas del resumen
+
+Cuando el resumen de la tarjeta de Santander trae la tabla de operaciones fraccionadas, la revisión muestra un bloque
+«Compras fraccionadas» con las que siguen en curso: su descripción, la cuota («Cuota 3 de 5») y lo que queda por pagar. Cada una
+viene marcada. Al guardar, cada marcada se anota en la tarjeta por lo que queda, como compra en cuotas repartida en las cuotas que
+faltan (una sola, si sólo falta una), que empiezan a contar como gasto en el mes siguiente al del resumen; la deuda de la tarjeta
+sube desde la fecha del resumen. La cuota que ya cobró el resumen sigue
+entrando como gasto del mes. Las ya terminadas no aparecen en el bloque, y una compra que ya se anotó en un resumen anterior no se
+vuelve a crear.
+
+### Escenario: fraccionadas en curso en el resumen
+- **Dado** un resumen de tarjeta con tres fraccionadas: «Tienda Uno» en la cuota 3 de 5 con 42,96 € pendientes, «Tienda Dos» en la 1 de 2 con 45,29 € pendientes y «Tienda Tres» en la 7 de 7
+- **Cuando** la persona importa el resumen
+- **Entonces** la revisión muestra «Compras fraccionadas» con «Tienda Uno», «Cuota 3 de 5 · pendiente 42,96 €» y «Tienda Dos», «Cuota 1 de 2 · pendiente 45,29 €»
+- **Y** «Tienda Tres» no está en el bloque
+
+### Escenario: guardar una fraccionada con varias cuotas
+- **Dado** esa revisión del resumen con periodo hasta el 2026-10-29 y «Tienda Uno» marcada
+- **Cuando** la persona guarda
+- **Entonces** la tarjeta tiene una compra «Tienda Uno» de 42,96 € en 2 cuotas de 21,48 €, desde noviembre de 2026
+- **Y** «Cuotas del mes» de noviembre incluye 21,48 € de «Tienda Uno»
+
+### Escenario: guardar una fraccionada con una sola cuota
+- **Dado** esa revisión con «Tienda Dos» marcada
+- **Cuando** la persona guarda
+- **Entonces** la tarjeta tiene una compra «Tienda Dos» de 45,29 € en 1 cuota de 45,29 €, desde noviembre de 2026
+- **Y** octubre de 2026 no cuenta ese gasto
+
+### Escenario: no marcar una fraccionada
+- **Dado** esa revisión con «Tienda Uno» desmarcada
+- **Cuando** la persona guarda
+- **Entonces** no se anota ninguna compra «Tienda Uno»
+
+### Escenario: la cuota cobrada sigue siendo un gasto
+- **Dado** un resumen con la línea «CUOTA FRACCIONAR COMPRA Tienda Uno» de 20,99 € y esa fraccionada en curso
+- **Cuando** la persona guarda todo
+- **Entonces** hay un gasto de 20,99 € en octubre y la compra en cuotas empieza en noviembre
+
+### Escenario: el resumen siguiente no duplica
+- **Dado** «Tienda Uno» ya anotada desde un resumen anterior
+- **Cuando** la persona importa el resumen del mes siguiente, con «Tienda Uno» en la cuota 4 de 5
+- **Entonces** «Tienda Uno» aparece en el bloque como «Ya está» y desmarcada
+- **Y** al guardar no se crea otra compra
+
+### Escenario: resumen sin fraccionadas
+- **Dado** un resumen de tarjeta sin la tabla de fraccionadas
+- **Cuando** la persona lo importa
+- **Entonces** la revisión no muestra «Compras fraccionadas»
+
+## Requisito: conciliar la tarjeta con lo pendiente
+
+Al conciliar una tarjeta con el resumen, la deuda del resumen es lo que hay que pagar más lo que queda por pagar de las compras
+fraccionadas en curso, y la hoja de conciliar lo detalla.
+
+### Escenario: deuda del resumen con lo pendiente
+- **Dado** un resumen con 767,47 € a pagar y fraccionadas pendientes por 302,88 €
+- **Cuando** la persona guarda y llega a conciliar con el saldo del resumen
+- **Entonces** la hoja dice «Deuda del resumen» 1070,35 € con «a pagar 767,47 € + pendiente en cuotas 302,88 €»
+
+### Escenario: resumen sin fraccionadas al conciliar
+- **Dado** un resumen con 500 € a pagar y sin fraccionadas
+- **Cuando** la persona llega a conciliar
+- **Entonces** la deuda del resumen es 500 €
+
+## Requisito: intereses del resumen de tarjeta
+
+Los intereses de financiación que trae el resumen de la tarjeta de Santander entran como gastos de la tarjeta, uno por cada
+compra fraccionada, con su importe y con el comercio al que corresponden. Se leen aunque su fila esté partida en dos líneas
+del PDF, y el pie de página del resumen no forma parte de ninguna descripción.
+
+### Escenario: cada interés con su importe
+- **Dado** un resumen de tarjeta con tres intereses de financiación de 0,15 €, 1,70 € y 1,95 €
+- **Cuando** la persona lo importa
+- **Entonces** la revisión muestra los tres intereses como gastos con esos importes
+
+### Escenario: interés con la fila partida en dos líneas
+- **Dado** un resumen donde la fecha y el concepto de un interés están en una línea del PDF y sus importes en la siguiente
+- **Cuando** la persona lo importa
+- **Entonces** el interés aparece en la revisión con su importe
+
+### Escenario: el pie de página no es parte del interés
+- **Dado** un resumen donde el pie de página «BANCO SANTANDER, S.A.» va justo después del último interés
+- **Cuando** la persona lo importa
+- **Entonces** la descripción de ese interés no contiene «Santander»
+- **Y** se propone como gasto y no como transferencia a otra cuenta
+
+## Requisito: empezar la cuenta con el saldo anterior del resumen
+
+Cuando el resumen de una tarjeta de Santander trae el saldo anterior y la cuenta de destino es una tarjeta sin ningún
+movimiento, la revisión muestra la casilla «Empezar esta cuenta con el saldo anterior del resumen» con ese importe y su fecha,
+marcada. Si queda marcada al guardar, la deuda inicial de la cuenta pasa a ser ese saldo anterior, desde esa fecha, y lo que se
+importa cuadra con el resumen. Si ya hay movimientos, o el resumen no trae el saldo anterior, no se ofrece.
+
+### Escenario: ofrecer empezar con el saldo anterior
+- **Dado** «Tarjeta Y» sin movimientos y un resumen de tarjeta con saldo anterior de 742,94 € al 29/09
+- **Cuando** la persona lo importa
+- **Entonces** la revisión muestra la casilla marcada «Empezar esta cuenta con el saldo anterior del resumen: 742,94 € el 29/09»
+
+### Escenario: guardar empezando con el saldo anterior
+- **Dado** esa revisión con la casilla marcada y un resumen que paga 742,94 € y trae compras por 100 €
+- **Cuando** la persona guarda
+- **Entonces** la deuda inicial de Tarjeta Y es 742,94 € desde 2026-09-29
+- **Y** al conciliar con el resumen la diferencia es 0 €
+
+### Escenario: no empezar con el saldo anterior
+- **Dado** esa revisión
+- **Cuando** la persona desmarca la casilla y guarda
+- **Entonces** la deuda inicial y la fecha de inicio de la cuenta no cambian
+
+### Escenario: una cuenta con movimientos no lo ofrece
+- **Dado** «Tarjeta Y» con un gasto
+- **Cuando** la persona importa el resumen
+- **Entonces** la revisión no muestra «Empezar esta cuenta con el saldo anterior del resumen»
+
+### Escenario: un resumen sin saldo anterior no lo ofrece
+- **Dado** «Banco A» sin movimientos y un extracto de la cuenta de Santander
+- **Cuando** la persona lo importa
+- **Entonces** la revisión no muestra «Empezar esta cuenta con el saldo anterior del resumen»

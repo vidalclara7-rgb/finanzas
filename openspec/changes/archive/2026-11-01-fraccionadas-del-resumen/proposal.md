@@ -1,7 +1,8 @@
 ---
 cambio: fraccionadas-del-resumen
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-11-01
 ---
 # Leer las compras fraccionadas del resumen y explicar la deuda de la tarjeta
 

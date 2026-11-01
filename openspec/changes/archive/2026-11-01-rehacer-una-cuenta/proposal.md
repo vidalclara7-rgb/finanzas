@@ -1,7 +1,8 @@
 ---
 cambio: rehacer-una-cuenta
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-11-01
 ---
 # Borrar todos los movimientos de una cuenta y empezarla con el saldo del resumen
 

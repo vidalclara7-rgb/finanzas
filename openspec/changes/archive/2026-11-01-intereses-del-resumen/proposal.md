@@ -1,8 +1,9 @@
 ---
 cambio: intereses-del-resumen
-estado: construida
+estado: archivado
 preview: no
 datos: sin-cambios
+archivado: 2026-11-01
 ---
 # Leer bien los intereses del resumen de la tarjeta
 
