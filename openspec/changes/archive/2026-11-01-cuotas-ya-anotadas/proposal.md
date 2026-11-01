@@ -1,8 +1,9 @@
 ---
 cambio: cuotas-ya-anotadas
-estado: diseno-aprobado
+estado: archivado
 preview: no
 datos: sin-cambios
+archivado: 2026-11-01
 ---
 # No contar dos veces las cuotas de compras fraccionadas ya anotadas
 

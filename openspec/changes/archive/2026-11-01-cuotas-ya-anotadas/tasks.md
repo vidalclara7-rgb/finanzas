@@ -9,7 +9,7 @@
 - [x] Un test por escenario de `importacion` (6), con resúmenes inventados encadenados
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
+- [x] `python3 kit.py check` en verde
 - [x] Importar los tres resúmenes reales (sin subirlos) en una tarjeta vacía: diferencia 0 en cada paso
 
 ## Documentación
