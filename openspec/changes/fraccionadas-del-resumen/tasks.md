@@ -1,11 +1,11 @@
 # Tareas: fraccionadas-del-resumen
 
 ## Preview
-- [ ] Clases necesarias en `index.html` (bloque de fraccionadas en la revisión, desglose de la deuda)
-- [ ] Crear el esqueleto del preview
-- [ ] Pantallas: revisión del resumen con «Compras fraccionadas», conciliar con la deuda del resumen y hoja de la tarjeta con «Cómo se calcula la deuda»
-- [ ] Comprobar el preview y sacar capturas a 390 px, claro y oscuro
-- [ ] Gate 2: la persona aprueba el diseño
+- [x] Clases necesarias en `index.html` (bloque de fraccionadas en la revisión, desglose de la deuda)
+- [x] Crear el esqueleto del preview
+- [x] Pantallas: revisión del resumen con «Compras fraccionadas», conciliar con la deuda del resumen y hoja de la tarjeta con «Cómo se calcula la deuda»
+- [x] Comprobar el preview y sacar capturas a 390 px, claro y oscuro
+- [x] Gate 2: la persona aprueba el diseño
 
 ## Datos y migración
 - [ ] `fracc` opcional en los movimientos; `norm()` descarta lo que no sea texto (`fraccNorm`)
