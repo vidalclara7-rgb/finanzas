@@ -1,6 +1,6 @@
 ---
 cambio: cuotas-ya-anotadas
-estado: propuesta
+estado: diseno-aprobado
 preview: no
 datos: sin-cambios
 ---
