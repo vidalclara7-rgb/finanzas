@@ -16,7 +16,7 @@ t.test("gasto desde una cuenta propia", async () => {
   await A.aviso(page, "Gasto guardado");
   await A.ir(page, "movs");
   const tarjeta = await A.texto(page, "#movs .mov");
-  assert.match(tarjeta, /15\/10/);
+  assert.match(await A.texto(page, "#movs .dia"), /Jueves 15/);
   assert.match(tarjeta, /verdulería/);
   assert.match(tarjeta, /−12,5 €/);
   await enCuentas(page);
@@ -98,7 +98,7 @@ t.test("movimientos de otro mes no aparecen", async () => {
   await A.ir(page, "movs");
   const movs = await page.locator("#movs .mov").allInnerTexts();
   assert.equal(movs.length, 1);
-  assert.match(movs[0], /03\/10/);
+  assert.match(await A.texto(page, "#movs .dia"), /Sábado 3/);
 });
 
 // Escenario: Inicio sin gastos recientes
@@ -793,4 +793,74 @@ t.test("borrar desde los resultados", async () => {
   assert.equal(await page.inputValue("#busca"), "panaderia");
   assert.deepEqual(await filas(page), ["2"]);
   assert.equal(await A.texto(page, "#buscaN"), "1 resultado");
+});
+
+// --- semanas y días
+const OCT24 = "2026-10-24T12:00:00";
+const txt = (page, sel) => page.$$eval(sel, (e) => e.map((x) => x.innerText.replace(/\s+/g, " ").trim()));
+
+// Escenario: gastos agrupados por semana con su total
+t.test("gastos agrupados por semana con su total", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 10, 1), A.gasto(2, "2026-10-05", 20, 1), A.gasto(3, "2026-10-09", 30, 1), A.ingreso(4, "2026-10-10", 100, 1)] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  assert.deepEqual(await txt(page, "#movs .sem"), ["Semana del 8 al 14 +100 € · −30 €", "Semana del 1 al 7 −30 €"]);
+});
+
+// Escenario: días con su total dentro de la semana
+t.test("días con su total dentro de la semana", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-05", 10, 1), A.gasto(2, "2026-10-05", 15, 1), A.gasto(3, "2026-10-03", 20, 1)] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  assert.deepEqual(await txt(page, "#movs .dia"), ["Lunes 5 −25 €", "Sábado 3 −20 €"]);
+  assert.equal(await page.locator("#movs .mov .fecha").count(), 0);
+});
+
+// Escenario: categorías juntas dentro del día
+t.test("categorías juntas dentro del día", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-05", 10, 1, "Ocio", "o1"), A.gasto(2, "2026-10-05", 20, 1, "Compras", "c1"), A.gasto(3, "2026-10-05", 5, 1, "Ocio", "o2")] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  assert.deepEqual(await page.$$eval("#movs .mov .desc", (e) => e.map((x) => x.textContent)), ["c1", "o1", "o2"]);
+});
+
+// Escenario: transferencias y ajustes no suman
+t.test("transferencias y ajustes no suman", async () => {
+  const datos = A.v2({ cuentas: [BANCO, TARJETA], movs: [A.gasto(1, "2026-10-05", 10, 1), A.transf(2, "2026-10-05", 300, 1, 2)] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  assert.deepEqual(await txt(page, "#movs .dia"), ["Lunes 5 −10 €"]);
+  assert.deepEqual(await txt(page, "#movs .sem"), ["Semana del 1 al 7 −10 €"]);
+  assert.equal(await page.locator('#movs [data-mov="2"]').count(), 1);
+});
+
+// Escenario: las semanas vacías no aparecen
+t.test("las semanas vacías no aparecen", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 10, 1), A.gasto(2, "2026-10-20", 10, 1)] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  assert.deepEqual(await page.$$eval("#movs .sem span:first-child", (e) => e.map((x) => x.textContent)), ["Semana del 15 al 21", "Semana del 1 al 7"]);
+});
+
+// Escenario: los filtros siguen agrupando
+t.test("los filtros siguen agrupando", async () => {
+  const R = "Trabajo (reembolsable)";
+  const datos = A.v2({ cuentas: [BANCO], movs: [{ ...A.gasto(1, "2026-10-03", 10, 1, R), reembolso: { estado: "pendiente" } }, { ...A.gasto(2, "2026-10-20", 20, 1, R), reembolso: { estado: "pendiente" } }, A.gasto(3, "2026-10-05", 5, 1)] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  await page.click('#segReemb button[data-v="pendiente"]');
+  assert.deepEqual(await page.$$eval("#movs .mov", (e) => e.map((x) => x.dataset.mov)), ["2", "1"]);
+  assert.equal(await page.locator("#movs .sem").count(), 2);
+  assert.equal(await page.locator("#movs .dia").count(), 2);
+});
+
+// Escenario: la búsqueda no agrupa
+t.test("la búsqueda no agrupa", async () => {
+  const datos = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-09-10", 6.8, 1, "Supermercado", "Panadería"), A.gasto(2, "2026-10-03", 4.2, 1, "Supermercado", "Panadería")] });
+  const { page } = await abrir({ datos, hoy: OCT24 });
+  await A.ir(page, "movs");
+  await page.click("#lupaBtn");
+  await page.fill("#busca", "panaderia");
+  assert.equal(await page.locator("#movs .sem, #movs .dia").count(), 0);
+  assert.match(await A.texto(page, '#movs [data-mov="1"] .fecha'), /10\/09\/2026/);
 });

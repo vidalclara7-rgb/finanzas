@@ -199,8 +199,8 @@ t.test("texto legible en las tarjetas", async () => {
     await A.ir(page, "movs");
     const [texto, detras] = await colores(page, '[data-mov="9"] .linea');
     assert.ok(contraste(texto, detras) >= 4.5, `${ap}: contraste ${contraste(texto, detras).toFixed(2)}`);
-    const [fecha, tarjeta] = await colores(page, '[data-mov="9"] .fecha');
-    assert.ok(contraste(fecha, tarjeta) >= 4.5, `${ap}: fecha ${contraste(fecha, tarjeta).toFixed(2)}`);
+    const [importe, tarjeta] = await colores(page, '[data-mov="9"] .num');
+    assert.ok(contraste(importe, tarjeta) >= 4.5, `${ap}: importe ${contraste(importe, tarjeta).toFixed(2)}`);
   }
 });
 
@@ -372,12 +372,12 @@ t.test("contraste con cada categoría nueva", async () => {
       const lum = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
       const par = (a, b) => { const [hi, lo] = a > b ? [a, b] : [b, a]; return (hi + 0.05) / (lo + 0.05); };
       return [...document.querySelectorAll("#movs .mov")].map((m) => {
-        const ico = m.querySelector(".fecha");
+        const ico = m.querySelector(".num");
         return [m.textContent.slice(0, 20), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(m.querySelector(".desc")).color)), par(lum(getComputedStyle(m).backgroundColor), lum(getComputedStyle(ico).color))];
       });
     });
     assert.equal(ratios.length, 5);
-    for (const [n, r, ri] of ratios) { assert.ok(r >= 4.5, `${apariencia} ${n}: ${r.toFixed(2)}`); assert.ok(ri >= 4.5, `${apariencia} fecha ${n}: ${ri.toFixed(2)}`); }
+    for (const [n, r, ri] of ratios) { assert.ok(r >= 4.5, `${apariencia} ${n}: ${r.toFixed(2)}`); assert.ok(ri >= 4.5, `${apariencia} importe ${n}: ${ri.toFixed(2)}`); }
   }
 });
 
