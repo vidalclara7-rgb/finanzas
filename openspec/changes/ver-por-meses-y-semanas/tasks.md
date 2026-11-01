@@ -23,8 +23,8 @@
 - [x] 390 px sin desbordes con los encabezados de semana y día
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado
 
 ## Documentación
 - [x] `CLAUDE.md`: mes elegido, semanas y días en Movimientos
