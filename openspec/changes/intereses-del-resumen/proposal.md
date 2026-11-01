@@ -1,6 +1,6 @@
 ---
 cambio: intereses-del-resumen
-estado: propuesta
+estado: diseno-aprobado
 preview: no
 datos: sin-cambios
 ---

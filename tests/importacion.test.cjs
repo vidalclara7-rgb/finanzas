@@ -512,3 +512,41 @@ t.test("resumen sin fraccionadas al conciliar", async () => {
   assert.equal(await A.texto(page, "#icExt"), "500 €");
   assert.equal(await page.isVisible("#icDetBox"), false);
 });
+
+// --- intereses del resumen de tarjeta
+const SANTANDER = { ...A.cta(3, "Santander", 1000, { desde: "2026-09-01" }) };
+const interesesDatos = () => A.v2({ cuentas: [BANCO, TARJETA_Y, SANTANDER] });
+const INT = [
+  { fecha: "2026-10-29", comercio: "ADESLAS DENTAL", importe: 0.15 },
+  { fecha: "2026-10-29", comercio: "EL CORTE INGLES", importe: 1.7 },
+  { fecha: "2026-10-29", comercio: "ITA SPA5542098383765", importe: 1.95 }];
+const verIntereses = (page) => page.evaluate(() => imp.d.filter((x) => /intereses/i.test(x.nota)).map((x) => [x.nota.replace(/\s+/g, " "), x.s, x.que.slice(0, 2)]));
+
+// Escenario: cada interés con su importe
+t.test("cada interés con su importe", async () => {
+  const { page } = await abrir({ datos: interesesDatos() });
+  await importar(page, await resumen(page, [], [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 10 }], { intereses: INT }));
+  const r = await verIntereses(page);
+  assert.deepEqual(r.map((x) => x[1]), [-0.15, -1.7, -1.95]);
+  assert.deepEqual(r.map((x) => x[2]), ["g|", "g|", "g|"]);
+});
+
+// Escenario: interés con la fila partida en dos líneas
+t.test("interés con la fila partida en dos líneas", async () => {
+  const { page } = await abrir({ datos: interesesDatos() });
+  const partidos = INT.map((i) => ({ ...i, partido: i.importe === 1.7 }));
+  await importar(page, await resumen(page, [], [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 10 }], { intereses: partidos }));
+  const r = await verIntereses(page);
+  assert.equal(r.length, 3);
+  assert.deepEqual(r.find((x) => /corte/i.test(x[0])).slice(1), [-1.7, "g|"]);
+});
+
+// Escenario: el pie de página no es parte del interés
+t.test("el pie de página no es parte del interés", async () => {
+  const { page } = await abrir({ datos: interesesDatos() });
+  await importar(page, await resumen(page, [], [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 10 }], { intereses: INT }));
+  const r = await verIntereses(page);
+  const ultimo = r.find((x) => x[1] === -1.95);
+  assert.equal(/santander/i.test(ultimo[0]), false);
+  assert.equal(ultimo[2], "g|");
+});

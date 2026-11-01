@@ -1296,12 +1296,15 @@ function lectorSantanderTarjeta(L){
     const m=l.it[0].s.match(/^(\d{2})-(\d{2})-(\d{4})$/);
     if(m){const fecha=`${m[3]}-${m[2]}-${m[1]}`,ims=l.it.filter(i=>dinero(i.s)!=null);
       if(sec==="C"){const desc=l.it.filter(i=>i.x>l.it[0].x+20&&dinero(i.s)==null&&!/^--$|^\d+,\d+$/.test(i.s)).map(i=>i.s)[0]||"Intereses";
-        const v=ims.length?dinero(ims[ims.length-1].s):0;cur={fecha,texto:desc,extra:"",importe:-v,_c:true};movs.push(cur);continue;}
+        const v=ims.length?dinero(ims[ims.length-1].s):0;cur={fecha,texto:desc,extra:"",importe:-v,_c:true,y:l.y};movs.push(cur);continue;}
       if(!col)continue;
       const desc=l.it.filter(i=>i.x>=col.con-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
       if(/^SALDO ANTERIOR/i.test(desc)){cur=null;continue;}
       const v=ims.length?dinero(cerca(ims,col.imp).s):0;cur={fecha,texto:desc,extra:"",importe:-v};movs.push(cur);continue;}
-    if(cur&&cur._c&&l.it.length===1){cur.extra=l.it[0].s;continue;}
+    // Un interés cuya fila se parte en dos líneas del PDF: los importes llegan en la siguiente, sin fecha
+    if(cur&&cur._c&&!cur.importe&&cur.y-l.y<=4){const im=l.it.filter(i=>dinero(i.s)!=null);if(im.length){cur.importe=-dinero(im[im.length-1].s);cur.y=l.y;continue;}}
+    // La continuación del concepto va justo debajo; el pie de página del banco no es parte de ningún interés
+    if(cur&&cur._c&&l.it.length===1&&cur.y-l.y<=20&&!/BANCO SANTANDER|Domicilio social/i.test(l.it[0].s)){cur.extra=l.it[0].s;cur.y=l.y;continue;}
     cur=null;}
   movs.forEach(m=>{if(m._c){m.texto=(m.texto+" "+m.extra).trim();m.extra="";delete m._c;}});
   const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
