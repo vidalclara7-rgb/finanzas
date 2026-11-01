@@ -1,7 +1,8 @@
 ---
 cambio: ver-por-meses-y-semanas
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-01
 ---
 # Ver cualquier mes y los movimientos por semana y por día
 
