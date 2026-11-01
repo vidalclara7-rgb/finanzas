@@ -56,8 +56,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
-.mesnav{display:flex;align-items:center;gap:4px;margin-top:4px}
-.mesnav .m{margin:0;min-width:112px;text-align:center}
+.selmes{display:flex;align-items:center;gap:4px;margin-top:4px}
+.selmes .m{margin:0;min-width:112px;text-align:center}
 .mes-flecha{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;line-height:1;padding:0;display:grid;place-items:center}
 .mes-flecha:disabled{opacity:.35}
 .gear{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;padding:0}
@@ -287,35 +287,35 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 -->
 <section data-pantalla="inicio" data-titulo="Inicio" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
     <div><span class="sub">Resultado del mes</span><div class="big" style="font-size:44px">1545,7 €</div></div>
     <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><div class="list"><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat1)"></i>Supermercado</span><span class="num">105,9 €</span></div><div class="item"><span class="con-dot"><i class="dot" style="--c:var(--cat5)"></i>Comida fuera</span><span class="num">63,5 €</span></div></div></div>
     <div class="card color" style="--c:var(--k1);--on-c:var(--k1t)" data-ui="patrimonio-inicio"><span class="lbl">Patrimonio neto</span><span class="big">4587,9 €</span><span class="sub">Al cierre de octubre 2026</span></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">septiembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">septiembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
     <div class="card"><div class="empty">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
   </div>
 </section>
 <section data-pantalla="movs" data-titulo="Movimientos" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
     <div class="row" data-ui="totales-mes"><div style="display:flex;flex-direction:column"><span class="sub">Ingresos</span><span class="big">1700 €</span></div><div style="display:flex;flex-direction:column;align-items:flex-end"><span class="sub">Gastos</span><span class="big">378,9 €</span></div></div>
     <div class="pila" data-ui="lista-movimientos"><div class="sem" data-ui="semana-movimientos"><span>Semana del 22 al 28</span><span class="tot num">+1700 € · −224,6 €</span></div><div class="dia" data-ui="dia-movimientos"><span>Miércoles 28</span><span class="num">−89,6 €</span></div><div class="mov" style="--c:var(--cat3)"><div class="linea"><span class="desc">Zapatillas</span><span class="num">−48 €</span></div></div><div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Compra semanal</span><span class="num">−41,6 €</span></div></div><div class="dia" data-ui="dia-movimientos"><span>Lunes 26</span><span class="num">−135 €</span></div><div class="mov" style="--c:var(--cat5)"><div class="linea"><span class="desc">Cena con amigos</span><span class="num">−60 €</span></div></div><div class="mov" style="--c:var(--cat5)"><div class="linea"><span class="desc">Cafetería</span><span class="num">−3,5 €</span></div></div><div class="mov" style="--c:var(--ingreso)"><div class="linea"><span class="desc">Sueldo</span><span class="num">+1700 €</span></div></div><div class="mov neutro"><div class="linea"><span class="desc">Banco A → Tarjeta Y</span><span class="num">100 €</span></div></div><div class="sem" data-ui="semana-movimientos"><span>Semana del 1 al 7</span><span class="tot num">−154,3 €</span></div><div class="dia" data-ui="dia-movimientos"><span>Sábado 3</span><span class="num">−154,3 €</span></div><div class="mov" style="--c:var(--cat2)"><div class="linea"><span class="desc">Abono mensual</span><span class="num">−25,5 €</span></div><div class="marcas"><span class="chip idle">Fijo</span></div></div><div class="mov" style="--c:var(--cat1)"><div class="linea"><span class="desc">Compra semanal</span><span class="num">−64,3 €</span></div></div><div class="mov" style="--c:var(--cat3)"><div class="linea"><span class="desc">Libro</span><span class="num">−64,5 €</span></div><div class="marcas"><span class="chip idle">1 documento</span></div></div></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">noviembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente" disabled>›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">noviembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente" disabled>›</button></span></div>
     <div class="card"><div class="empty">Sin movimientos este mes.</div></div>
   </div>
 </section>
 <section data-pantalla="mes" data-titulo="Cierre" style="flex-direction:column;gap:14px">
   <div data-estado="normal" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">octubre 2026</span><button class="mes-flecha" aria-label="Mes siguiente">›</button></span></div>
     <div class="card color" style="--c:var(--k2);--on-c:var(--k2t)" data-ui="conciliacion"><div class="row"><span class="lbl">Conciliación de octubre</span><span class="chip idle">1 de 2</span></div><span class="sub">Saldo real de cada cuenta al 31/10.</span>
       <div class="list"><div class="item"><div class="d"><span>Banco A</span><span>calculado 900 €</span></div><div class="v"><span class="num">Conciliar</span></div></div></div></div>
   </div>
   <div data-estado="vacio" style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="mesnav"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">noviembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente" disabled>›</button></span></div>
+    <div class="row" data-ui="selector-mes"><span class="sub">Selector junto al título:</span><span class="selmes"><button class="mes-flecha" aria-label="Mes anterior">‹</button><span class="m">noviembre 2026</span><button class="mes-flecha" aria-label="Mes siguiente" disabled>›</button></span></div>
     <div class="card"><div class="empty">Creá una cuenta para conciliar.</div></div>
   </div>
 </section>
