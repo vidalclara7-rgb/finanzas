@@ -1,0 +1,30 @@
+# Tareas: ver-por-meses-y-semanas
+
+## Preview
+- [x] Clases nuevas en `index.html`: selector de mes junto al título, encabezados de semana y de día
+- [x] Crear el esqueleto del preview
+- [x] Pantallas: Inicio, Movimientos (con semanas y días, y sin movimientos) y Cierre, con el selector de mes
+- [x] Comprobar el preview y sacar capturas a 390 px, claro y oscuro
+- [x] Gate 2: la persona aprueba el diseño
+
+## Datos y migración
+- [ ] Sin datos nuevos: el mes elegido vive en memoria
+
+## Pantallas
+- [ ] `mesVista` y `mesV()`; Inicio, Movimientos y Cierre usan el mes elegido; el selector con flechas, desactivado en el mes en curso
+- [ ] Patrimonio al cierre del mes elegido (`totales(hasta)`); barras de la semana de hoy sólo en el mes en curso; seis meses terminando en el elegido
+- [ ] Cierre: conciliar y ajustar un mes ya cerrado (fecha de cierre = último día)
+- [ ] Movimientos agrupados por semana y día, con totales; categorías juntas dentro del día; filas sin fecha
+- [ ] La búsqueda y la lista de una cuenta siguen planas y con fecha
+- [ ] Subir la versión de `CACHE` en `sw.js`
+
+## Tests
+- [ ] Un test por escenario de `meses` (8) y de `movimientos` (los nuevos y los que cambian)
+- [ ] 390 px sin desbordes con los encabezados de semana y día
+
+## Prueba en el navegador
+- [ ] `python3 kit.py check` en verde
+- [ ] `python3 kit.py capturas` y comparar con el preview aprobado
+
+## Documentación
+- [ ] `CLAUDE.md`: mes elegido, semanas y días en Movimientos
