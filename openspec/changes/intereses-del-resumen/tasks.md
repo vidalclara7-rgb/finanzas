@@ -9,7 +9,7 @@
 - [x] Un test por escenario de `importacion` (3), con un resumen inventado que reproduce la fila partida y el pie de página
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
+- [x] `python3 kit.py check` en verde
 - [x] Importar el resumen real (sin subirlo) y comprobar que suman 7,64 € de intereses
 
 ## Documentación

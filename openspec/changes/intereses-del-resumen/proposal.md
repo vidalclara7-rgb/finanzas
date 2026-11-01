@@ -1,6 +1,6 @@
 ---
 cambio: intereses-del-resumen
-estado: diseno-aprobado
+estado: construida
 preview: no
 datos: sin-cambios
 ---
