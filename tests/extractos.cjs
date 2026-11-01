@@ -72,7 +72,7 @@ function santanderCuenta(page, { ref = "4321", titular = "EJEMPLO PERSONA", inic
 }
 
 // compras: [{ fecha, desc, importe (positivo: compra) }], pagos: [{ fecha, importe }]
-function santanderTarjeta(page, { ref = "5566", titular = "EJEMPLO PERSONA", anterior = 0, desde = "2026-09-01", hasta = "2026-09-30", pagos = [], compras = [] }) {
+function santanderTarjeta(page, { ref = "5566", titular = "EJEMPLO PERSONA", anterior = 0, desde = "2026-09-01", hasta = "2026-09-30", pagos = [], compras = [], fraccionadas = [] }) {
   const aPagar = anterior - pagos.reduce((a, p) => a + p.importe, 0) + compras.reduce((a, c) => a + c.importe, 0);
   const p1 = [[403, 739, "CREDITO SANTANDER"], [403, 731, "Extracto de movimientos"], [61, 692, "Contrato número"], [132, 692, "0049 0000 000 000" + ref],
     [40, 679, "Periodo de liquidación"], [132, 679, `${barra(desde)} A ${barra(hasta)}`], [66, 653, "Importe a Pagar"], [132, 653, dinero(aPagar) + " €"]];
@@ -81,7 +81,20 @@ function santanderTarjeta(page, { ref = "5566", titular = "EJEMPLO PERSONA", ant
   pagos.forEach((p, i) => p2.push([51, 600 - i * 18, guion(p.fecha)], [130, 600 - i * 18, guion(p.fecha)], [207, 600 - i * 18, "PAGO"], [443, 600 - i * 18, "-" + dinero(p.importe) + " €"]));
   p2.push([34, 500, "B - Movimientos"], [34, 482, `Crédito – TITULAR ${titular}`], [34, 464, "Fecha operación"], [111, 464, "Fecha valor"], [190, 464, "Concepto"], [410, 464, "Importe en euros"]);
   compras.forEach((c, i) => p2.push([34, 446 - i * 18, guion(c.fecha)], [111, 446 - i * 18, guion(c.fecha)], [190, 446 - i * 18, c.desc], [454, 446 - i * 18, dinero(c.importe)]));
-  return pdf(page, [p1, p2]);
+  if (!fraccionadas.length) return pdf(page, [p1, p2]);
+  // Tabla de operaciones fraccionadas: fecha, descripción (puede partirse en varias líneas), total, «k de m», cuota, intereses, comisiones, total de la cuota y pendiente
+  const p3 = [[403, 739, "CREDITO SANTANDER"], [34, 691, "Operaciones Fraccionadas (Compras, Efectivo al Instante, Recibos, Bizum, Transferencias...)"],
+    [37, 673, "Fecha"], [77, 673, "Descripción"], [138, 673, "Importe"], [194, 673, "Cuota"], [242, 673, "Importe"], [292, 673, "Intereses"], [338, 673, "Comi-"], [384, 673, "Total"], [435, 673, "Importe"]];
+  let y = 646;
+  for (const f of fraccionadas) {
+    const [a, mo, d] = [f.fecha.slice(0, 4), f.fecha.slice(5, 7), f.fecha.slice(8)];
+    const e = (v) => dinero(v) + " €";
+    p3.push([34, y, `${d}/${mo}/${a}`], [80, y, f.partes[0]], [148, y, e(f.total)], [195, y, `${f.k} de ${f.m}`], [257, y, e(f.cuota)], [307, y, e(f.intereses || 0)], [341, y, e(0)], [393, y, e(f.cuota + (f.intereses || 0))], [450, y, e(f.pendiente)]);
+    f.partes.slice(1).forEach((t, i) => p3.push([80, y - 9 - i * 9, t]));
+    y -= 36 + (f.partes.length - 1) * 9;
+  }
+  p3.push([34, 300, "Detalle de importe pendiente de pago"]);
+  return pdf(page, [p1, p2, p3]);
 }
 
 // Un PDF que no es ninguno de los formatos

@@ -785,3 +785,44 @@ t.test("apariencia inválida", async () => {
   assert.equal(await page.$eval('#segApariencia button[aria-pressed="true"]', (b) => b.dataset.v), "oscura");
   assert.deepEqual(errores, []);
 });
+
+// --- compras fraccionadas del resumen
+// Escenario: movimientos anteriores intactos
+t.test("movimientos anteriores intactos", async () => {
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", "pan")] }) });
+  const d = await A.guardados(page);
+  assert.equal(d.movs[0].fracc, undefined);
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] .num'), "−20 €");
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  assert.equal((await A.guardados(page)).movs[0].fracc, undefined);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: marca inválida
+t.test("marca inválida", async () => {
+  const mal = { ...A.gasto(1, "2026-10-03", 20, 1), fracc: 42 };
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [mal] }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] .num'), "−20 €");
+  assert.equal((await A.guardados(page)).movs[0].fracc, undefined);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: inicio de cuotas inválido
+t.test("inicio de cuotas inválido", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", desde: "2026-10-01" });
+  const compra = { ...A.gasto(1, "2026-10-05", 600, 2), cuotas: { n: 3, cuota: 200, desde: "pronto" } };
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO, tarj], movs: [compra] }) });
+  const cuota = await page.evaluate(() => { const q = cuotaEnMes(S.movs[0], "2026-10"); return q && [q.cuotaN, q.importe]; });
+  assert.deepEqual(cuota, [1, 200]);
+  assert.deepEqual(errores, []);
+});

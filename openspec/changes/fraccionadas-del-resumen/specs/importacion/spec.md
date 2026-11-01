@@ -4,8 +4,9 @@
 
 Cuando el resumen de la tarjeta de Santander trae la tabla de operaciones fraccionadas, la revisión muestra un bloque
 «Compras fraccionadas» con las que siguen en curso: su descripción, la cuota («Cuota 3 de 5») y lo que queda por pagar. Cada una
-viene marcada. Al guardar, cada marcada se anota en la tarjeta por lo que queda: como compra en cuotas, repartido en las cuotas que
-faltan desde el mes siguiente al del resumen, o como un gasto normal si sólo falta una cuota. La cuota que ya cobró el resumen sigue
+viene marcada. Al guardar, cada marcada se anota en la tarjeta por lo que queda, como compra en cuotas repartida en las cuotas que
+faltan (una sola, si sólo falta una), que empiezan a contar como gasto en el mes siguiente al del resumen; la deuda de la tarjeta
+sube desde la fecha del resumen. La cuota que ya cobró el resumen sigue
 entrando como gasto del mes. Las ya terminadas no aparecen en el bloque, y una compra que ya se anotó en un resumen anterior no se
 vuelve a crear.
 
@@ -24,7 +25,8 @@ vuelve a crear.
 ### Escenario: guardar una fraccionada con una sola cuota
 - **Dado** esa revisión con «Tienda Dos» marcada
 - **Cuando** la persona guarda
-- **Entonces** la tarjeta tiene un gasto «Tienda Dos» de 45,29 € con fecha 2026-11-01
+- **Entonces** la tarjeta tiene una compra «Tienda Dos» de 45,29 € en 1 cuota de 45,29 €, desde noviembre de 2026
+- **Y** octubre de 2026 no cuenta ese gasto
 
 ### Escenario: no marcar una fraccionada
 - **Dado** esa revisión con «Tienda Uno» desmarcada

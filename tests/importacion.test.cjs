@@ -389,3 +389,126 @@ t.test("otra categoría recordada", async () => {
   await importar(page, await X.revolut(page, { ref: "7788", titular: "Ana Ejemplo", movs: [internacional("14", 35)] }));
   assert.equal(await que(page, 0), "g|Casa/Splitwise");
 });
+
+// --- compras fraccionadas del resumen de tarjeta
+const TARJETA_Y = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", ref: "5566", desde: "2026-09-01" });
+const fraccDatos = () => A.v2({ cuentas: [BANCO, TARJETA_Y] });
+const FRACC = [
+  { fecha: "2026-10-28", partes: ["Tienda", "Uno"], total: 105, k: 3, m: 5, cuota: 20.99, intereses: 0.96, pendiente: 42.96 },
+  { fecha: "2026-10-29", partes: ["Tienda Dos"], total: 89.9, k: 1, m: 2, cuota: 44.61, intereses: 1.35, pendiente: 45.29 },
+  { fecha: "2026-10-29", partes: ["Tienda Tres"], total: 132.5, k: 7, m: 7, cuota: 19.35, intereses: 0.15, pendiente: 0 }];
+const COMPRAS_F = [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 10 }, { fecha: "2026-10-29", desc: "CUOTA FRACCIONAR COMPRA Tienda Uno", importe: 20.99 }];
+const resumen = (page, fraccionadas = FRACC, compras = COMPRAS_F, extra = {}) => X.santanderTarjeta(page, { ref: "5566", desde: "2026-09-29", hasta: "2026-10-29", compras, fraccionadas, ...extra });
+const cuotasDe = (page, nota) => A.guardados(page).then((d) => d.movs.find((m) => m.fracc && m.nota === nota));
+
+// Escenario: fraccionadas en curso en el resumen
+t.test("fraccionadas en curso en el resumen", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page));
+  assert.equal(await page.isVisible("#iFracc"), true);
+  const filas = await page.$$eval("#iFraccLista .borr", (e) => e.map((x) => x.innerText.replace(/\s+/g, " ").trim()));
+  assert.equal(filas.length, 2);
+  assert.match(filas[0], /Tienda Uno Cuota 3 de 5 · pendiente 42,96 €/);
+  assert.match(filas[1], /Tienda Dos Cuota 1 de 2 · pendiente 45,29 €/);
+  assert.equal((await A.texto(page, "#iFracc")).includes("Tienda Tres"), false);
+});
+
+// Escenario: guardar una fraccionada con varias cuotas
+t.test("guardar una fraccionada con varias cuotas", async () => {
+  const { page } = await abrir({ datos: fraccDatos(), hoy: "2026-11-02T12:00:00" });
+  await importar(page, await resumen(page));
+  await page.uncheck('[data-fron="1"]');
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const m = await cuotasDe(page, "Tienda Uno");
+  assert.deepEqual([m.importe, m.fecha, m.cuenta, m.cuotas], [42.96, "2026-10-29", 2, { n: 2, cuota: 21.48, desde: "2026-11" }]);
+  await page.click("#icNo");
+  await A.ir(page, "inicio");
+  assert.equal(await A.texto(page, "#cuotasMes"), "21,48 €");
+  await page.click("#cuotasCard");
+  assert.match(await A.texto(page, "#sheetCuotas"), /Tienda Uno|Tarjeta Y/);
+});
+
+// Escenario: guardar una fraccionada con una sola cuota
+t.test("guardar una fraccionada con una sola cuota", async () => {
+  const { page } = await abrir({ datos: fraccDatos(), hoy: "2026-11-02T12:00:00" });
+  await importar(page, await resumen(page));
+  await page.uncheck('[data-fron="0"]');
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const m = await cuotasDe(page, "Tienda Dos");
+  assert.deepEqual([m.importe, m.cuotas], [45.29, { n: 1, cuota: 45.29, desde: "2026-11" }]);
+  const quien = await page.evaluate(() => [movsMes("2026-10").some((x) => x.nota === "Tienda Dos"), movsMes("2026-11").some((x) => x.nota === "Tienda Dos")]);
+  assert.deepEqual(quien, [false, true]);
+});
+
+// Escenario: no marcar una fraccionada
+t.test("no marcar una fraccionada", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page));
+  await page.uncheck('[data-fron="0"]');
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const d = await A.guardados(page);
+  assert.equal(d.movs.some((m) => m.fracc && m.nota === "Tienda Uno"), false);
+  assert.equal(d.movs.filter((m) => m.fracc).length, 1);
+});
+
+// Escenario: la cuota cobrada sigue siendo un gasto
+t.test("la cuota cobrada sigue siendo un gasto", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page));
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  const d = await A.guardados(page);
+  const cuota = d.movs.find((m) => m.importe === 20.99 && !m.fracc);
+  assert.deepEqual([cuota.tipo, cuota.fecha], ["gasto", "2026-10-29"]);
+  assert.equal(d.movs.find((m) => m.fracc && m.nota === "Tienda Uno").cuotas.desde, "2026-11");
+});
+
+// Escenario: el resumen siguiente no duplica
+t.test("el resumen siguiente no duplica", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page));
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  await page.click("#icNo");
+  const sig = [{ ...FRACC[0], fecha: "2026-11-28", k: 4, pendiente: 21.48 }];
+  await importar(page, await resumen(page, sig, [{ fecha: "2026-11-05", desc: "PAGO MOVIL COMERCIO DOS", importe: 12 }], { desde: "2026-10-30", hasta: "2026-11-29" }));
+  const fila = await page.$eval('#iFraccLista [data-fr="0"]', (e) => ({ marcada: e.querySelector("input").checked, ya: !!e.querySelector('[data-ui="marca-ya-esta"]') }));
+  assert.deepEqual(fila, { marcada: false, ya: true });
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimiento importado");
+  assert.equal((await A.guardados(page)).movs.filter((m) => m.fracc).length, 2);
+});
+
+// Escenario: resumen sin fraccionadas
+t.test("resumen sin fraccionadas", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page, [], [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 10 }]));
+  assert.equal(await page.isVisible("#iFracc"), false);
+});
+
+// Escenario: deuda del resumen con lo pendiente
+t.test("deuda del resumen con lo pendiente", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  const fr = [{ ...FRACC[0], pendiente: 102.88 }, { ...FRACC[1], pendiente: 200 }];
+  await importar(page, await resumen(page, fr, [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 767.47 }]));
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimientos importados");
+  assert.equal(await A.texto(page, "#icExtLbl"), "Deuda del resumen");
+  assert.equal(await A.texto(page, "#icExt"), "1070,35 €");
+  assert.equal(await A.texto(page, "#icDet"), "a pagar 767,47 € + pendiente en cuotas 302,88 €");
+  assert.equal(await A.texto(page, "#icDif"), "0 €");
+});
+
+// Escenario: resumen sin fraccionadas al conciliar
+t.test("resumen sin fraccionadas al conciliar", async () => {
+  const { page } = await abrir({ datos: fraccDatos() });
+  await importar(page, await resumen(page, [], [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 500 }]));
+  await page.click("#iGuardar");
+  await A.aviso(page, "movimiento importado");
+  assert.equal(await A.texto(page, "#icExtLbl"), "Deuda del resumen");
+  assert.equal(await A.texto(page, "#icExt"), "500 €");
+  assert.equal(await page.isVisible("#icDetBox"), false);
+});

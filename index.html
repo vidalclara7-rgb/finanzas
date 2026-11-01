@@ -405,6 +405,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <label class="f" for="cSaldo" data-ui="saldo-partida"><span id="cSaldoLbl">Saldo con el que parte (€)</span><input type="text" inputmode="decimal" autocomplete="off" id="cSaldo" placeholder="0"></label>
   </div>
   <div id="cEdita" style="display:flex;flex-direction:column;gap:6px"><div class="row"><span class="sub">Saldo calculado hoy</span><span class="num lbl" id="cCalc"></span></div><span class="sub">El saldo se corrige conciliando, en Cierre.</span></div>
+  <div class="card" id="cDesglose" data-ui="desglose-deuda" hidden><span class="lbl">Cómo se calcula la deuda</span><div class="list" id="cDesgloseLista"></div><span class="sub" id="cDesgloseSub"></span></div>
   <div class="card" id="cCuotasMes" data-ui="cuotas-del-mes" hidden><span class="sub" id="cCuotasTxt"></span></div>
   <button type="button" class="btn sec" id="cVerMovs" data-ui="ver-movimientos">Ver movimientos</button>
   <label class="f" for="cAportado" data-t="inversion">Total aportado (€, opcional, para ver la ganancia)<input type="text" inputmode="decimal" autocomplete="off" id="cAportado"></label>
@@ -476,6 +477,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
   <button type="button" class="btn" id="iSeguir">Seguir</button>
   <div id="iCuentaBox" data-ui="cuenta-extracto"><span class="lbl">Cuenta</span><div class="seg" id="segICuenta" style="margin-top:8px"></div></div>
+  <div class="card" id="iFracc" data-ui="compras-fraccionadas" hidden><span class="lbl">Compras fraccionadas</span><span class="sub">Lo que queda por pagar de lo que pagás en cuotas. Se anota en tu tarjeta desde el mes que viene.</span><div class="borradores" id="iFraccLista"></div></div>
   <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
   <button type="button" class="btn" id="iGuardar" data-ui="guardar-importacion"></button>
 </div>
@@ -484,7 +486,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="row"><h2>Extracto importado</h2><button type="button" class="btn sec" id="icCerrar" style="padding:8px 12px">Cerrar</button></div>
   <span class="sub" id="icSub"></span>
   <div class="card color osc" id="icCard" data-ui="conciliar-extracto" style="--c:var(--k2);--on-c:var(--k2t)"><span class="lbl">Conciliar con el extracto</span>
-    <div class="list"><div class="item"><span id="icExtLbl"></span><span class="num" id="icExt"></span></div><div class="item"><span>Saldo calculado</span><span class="num" id="icCalc"></span></div><div class="item"><span>Diferencia</span><span class="num" id="icDif"></span></div></div>
+    <div class="list"><div class="item"><span id="icExtLbl"></span><span class="num" id="icExt"></span></div><div class="item" id="icDetBox" hidden><span class="sub" id="icDet"></span></div><div class="item"><span>Saldo calculado</span><span class="num" id="icCalc"></span></div><div class="item"><span>Diferencia</span><span class="num" id="icDif"></span></div></div>
     <button type="button" class="btn" id="icConciliar">Conciliar con el extracto</button></div>
   <button type="button" class="btn sec" id="icNo">Ahora no</button>
 </div>
@@ -600,7 +602,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -619,7 +621,7 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return cuotasMesNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s)))))));}
+  return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))))));}
 // Las categorías de la persona: {gasto:[{nombre, color 1..19, fija?}], ingreso:[{nombre}]}. Si faltan, son las de siempre; se ignora lo inválido
 // (sin nombre, repetido, con «|») y se conserva toda categoría que use un movimiento. «Otros» va al final
 function categoriasDatosNorm(s){
@@ -657,6 +659,8 @@ function categoriasNorm(s){const n=c=>RENOMBRADAS[c]||c;
   return s;}
 // Categoría que la persona eligió para cada comercio al importar: {"g|<comercio>": categoría}
 function reglasNorm(s){if(!s.reglas||typeof s.reglas!=="object"||Array.isArray(s.reglas))s.reglas={};return s;}
+// La marca de compra fraccionada (`fracc`) es un texto: lo demás se ignora
+function fraccNorm(s){s.movs.forEach(m=>{if(m.fracc!==undefined&&(typeof m.fracc!=="string"||!m.fracc))delete m.fracc;});return s;}
 function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
 const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
 // Claves aparte de los datos: la fecha de la última copia y el respaldo (lo que había antes de restaurar, o lo que no se pudo leer)
@@ -709,8 +713,9 @@ function totales(hasta){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuent
 function guardarNeto(){mesData(mesId()).neto=totales().neto;}
 // Compra en cuotas (sólo gastos de tarjeta): la deuda cuenta el total, pero en cada mes de sus cuotas cuenta sólo la cuota.
 // cuotaEnMes() devuelve una copia del gasto con el importe de ese mes (cuotaN = nº de cuota, total = lo que se debe), o null si no le toca
-const cuotasOk=m=>{const q=m.cuotas,c=S.cuentas.find(x=>x.id===m.cuenta);return !!(q&&m.tipo==="gasto"&&c&&c.tipo==="tarjeta"&&Number.isInteger(q.n)&&q.n>=2&&q.cuota>0&&q.cuota<=m.importe);};
-const cuotaEnMes=(m,id)=>{if(!cuotasOk(m))return null;const [y,mo]=m.fecha.slice(0,7).split("-").map(Number),[y2,mo2]=id.split("-").map(Number),k=(y2-y)*12+(mo2-mo)+1;
+const desdeOk=q=>q&&/^\d{4}-(0[1-9]|1[0-2])$/.test(q.desde)?q.desde:null;
+const cuotasOk=m=>{const q=m.cuotas,c=S.cuentas.find(x=>x.id===m.cuenta);return !!(q&&m.tipo==="gasto"&&c&&c.tipo==="tarjeta"&&Number.isInteger(q.n)&&q.n>=(desdeOk(q)?1:2)&&q.cuota>0&&q.cuota<=m.importe);};
+const cuotaEnMes=(m,id)=>{if(!cuotasOk(m))return null;const [y,mo]=(desdeOk(m.cuotas)||m.fecha.slice(0,7)).split("-").map(Number),[y2,mo2]=id.split("-").map(Number),k=(y2-y)*12+(mo2-mo)+1;
   if(k<1||k>m.cuotas.n)return null;const dia=Math.min(+m.fecha.slice(8),new Date(y2,mo2,0).getDate());
   return {...m,importe:m.cuotas.cuota,total:m.importe,cuotaN:k,fecha:`${id}-${String(dia).padStart(2,"0")}`};};
 const movsMes=id=>S.movs.flatMap(m=>cuotasOk(m)?[cuotaEnMes(m,id)].filter(Boolean):m.fecha.slice(0,7)===id?[m]:[]);
@@ -741,6 +746,17 @@ function cuotasDelMes(mes){
   const compras=S.movs.map(m=>{const q=cuotaEnMes(m,mes);if(!q)return null;const f=m.cuotas.n-q.cuotaN+1;return {nombre:nombreDe(m.cuenta),nota:m.nota||"",cuota:q.importe,k:q.cuotaN,n:m.cuotas.n,faltan:f,hasta:mesDe(mesSig(mes,f-1)),quedan:r2(q.importe*f)};}).filter(Boolean);
   const todas=[...fin,...compras];
   return {fin,compras,total:r2(todas.reduce((a,x)=>a+x.cuota,0)),n:todas.length,quedan:r2(todas.reduce((a,x)=>a+(x.quedan||0),0))};}
+// Lo que queda por pagar de una compra en cuotas desde un mes (con la de ese mes, o todas si todavía no empiezan)
+function cuotasQuedan(m,mes){if(!cuotasOk(m))return 0;const [y,mo]=(desdeOk(m.cuotas)||m.fecha.slice(0,7)).split("-").map(Number),[y2,mo2]=mes.split("-").map(Number),k=(y2-y)*12+(mo2-mo)+1;
+  return k>m.cuotas.n?0:r2(m.cuotas.cuota*(m.cuotas.n-Math.max(k,1)+1));}
+// Cómo se calcula la deuda de una tarjeta: lo anotado al empezar, compras, pagos y ajustes
+function pintarDesglose(c){const ver=!!c&&c.tipo==="tarjeta";$("cDesglose").hidden=!ver;if(!ver)return;
+  const ms=S.movs.filter(m=>m.fecha>=c.desde),suma=f=>r2(ms.filter(f).reduce((a,m)=>a+efecto(m,c.id),0));
+  const ini=r2(-valorInicial(c)),compras=r2(-suma(m=>m.tipo==="gasto")),pagos=suma(m=>m.tipo==="ingreso"||m.tipo==="transferencia"),ajustes=suma(m=>m.tipo==="ajuste"),hoyDeuda=r2(-valorCuenta(c));
+  const sg=(v,n)=>(v<0?"− ":"+ ")+eur(Math.abs(v)),fila=(t,v)=>`<div class="item"><span>${t}</span><span class="num">${v}</span></div>`;
+  $("cDesgloseLista").innerHTML=fila("Deuda anotada al empezar",eur(ini))+fila("Compras",sg(compras))+fila("Pagos",sg(-pagos))+fila("Ajustes de conciliación",sg(-ajustes))+`<div class="item"><b>Deuda de hoy</b><b class="num">${eur(hoyDeuda)}</b></div>`;
+  const enCuotas=r2(S.movs.filter(m=>m.cuenta===c.id).reduce((a,m)=>a+cuotasQuedan(m,mesId()),0));
+  $("cDesgloseSub").textContent=enCuotas>0||hoyDeuda>0?`Por pagar en cuotas: ${eur(enCuotas)} · Lo demás: ${eur(Math.max(0,r2(hoyDeuda-enCuotas)))}`:"";}
 function mesMas(n){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n-1);return MESES[d.getMonth()]+" "+d.getFullYear();}
 function detalleCuenta(c){const v=valorCuenta(c);
   if(c.tipo==="inversion"&&S.activos.some(a=>a.cuenta===c.id)){const i=invCuenta(c);return i.pagado>0?`${rendTxt(i.rend,i.pagado)} en activos`:"Activos sin compras todavía";}
@@ -1086,10 +1102,11 @@ $("sheet").addEventListener("submit",e=>{e.preventDefault();
   if(m.tipo==="transferencia")m.destino=mov.destino;else m.cat=mov.cat;
   const ct=S.cuentas.find(c=>c.id===mov.cuenta);let cuotas=null;
   if(m.tipo==="gasto"&&ct&&ct.tipo==="tarjeta"&&mov.cuotas){const n=parseInt($("mCuotasN").value,10),q=num("mCuotaV");
-    if(!(n>=2)){toast("Poné 2 cuotas o más");return;}
+    const viejoC=S.movs.find(x=>x.id===movId),ini=viejoC&&desdeOk(viejoC.cuotas);
+    if(!(n>=(ini?1:2))){toast("Poné 2 cuotas o más");return;}
     if(!(q>0)){toast("Poné el valor de cada cuota");return;}
     if(q>v){toast("La cuota no puede ser mayor que el total");return;}
-    cuotas={n,cuota:q};}
+    cuotas={n,cuota:q};if(ini)cuotas.desde=ini;}
   if(cuotas)m.cuotas=cuotas;
   let mo=mov.moneda;if(mo==="Otra"){mo=$("mOtra").value.trim().toUpperCase();if(!/^[A-Z]{3}$/.test(mo)){toast("Poné un código de 3 letras, por ejemplo CHF");return;}}
   if(mo!=="EUR")m.moneda=mo;
@@ -1125,7 +1142,7 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
   seg($("segSigno"),[["mas","Me deben"],["menos","Debo"]],selSigno,v=>selSigno=v);
   $("cTitulo").textContent=c?"Editar cuenta":"Nueva cuenta";$("cBorrar").hidden=!c;$("cTipoBox").hidden=!!c;$("cNueva").hidden=!!c;$("cEdita").hidden=!c;
   $("cBorrar").dataset.confirm="";$("cBorrar").textContent="Borrar cuenta";
-  $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";
+  $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";pintarDesglose(c);
   $("cAportado").value=aTexto(c&&c.aportado||"");$("cLimite").value=aTexto(c&&c.limite||"");$("cCuota").value=aTexto(c&&c.cuota||"");$("cCuotas").value=c&&c.cuotas>0?(c.tipo==="financiacion"?cuotasFaltan(c)||"":c.cuotas):"";
   $("cTope").value=aTexto(c&&c.tope||"");$("cFondo").checked=!!(c&&c.fondo);
   {const q=c&&c.tipo==="tarjeta"?S.movs.map(m=>m.cuenta===c.id?cuotaEnMes(m,mesId()):null).filter(Boolean):[];
@@ -1261,11 +1278,18 @@ function lectorSantanderTarjeta(L){
   const per=despues(L,"Periodo de liquidación").match(/(\d{2})\/(\d{2})\/(\d{4}) A (\d{2})\/(\d{2})\/(\d{4})/);
   const desde=per?`${per[3]}-${per[2]}-${per[1]}`:null,hasta=per?`${per[6]}-${per[5]}-${per[4]}`:null;
   const aPagar=dinero(despues(L,"Importe a Pagar"));
-  let sec="",col=null,cur=null;const movs=[];
+  let sec="",col=null,cur=null,fr=false,curF=null;const movs=[],fracs=[];
   for(const l of L){const t=txtLinea(l);
+    // Tabla de operaciones fraccionadas: fecha, descripción (en varias líneas), importe total, «k de m», amortizado, intereses, comisiones, total de la cuota y pendiente
+    if(/^Detalle de importe pendiente/.test(t)){fr=false;curF=null;}
+    if(fr){const m0=l.it[0].s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if(m0){const eu=l.it.filter(i=>/€$/.test(i.s)&&dinero(i.s)!=null),kk=l.it.find(i=>/^\d+ de \d+$/.test(i.s)),d0=l.it.find(i=>i.x>=60&&i.x<130&&!/€$/.test(i.s)&&!/^\d+ de \d+$/.test(i.s));
+        curF=null;if(kk&&eu.length>=6){const [k,m]=kk.s.split(" de ").map(Number);curF={fecha:`${m0[3]}-${m0[2]}-${m0[1]}`,partes:[d0?d0.s:""],total:dinero(eu[0].s),k,m,cuota:dinero(eu[1].s),pendiente:dinero(eu[5].s)};fracs.push(curF);}}
+      else if(curF&&l.it.length===1&&l.it[0].x>=60&&l.it[0].x<130)curF.partes.push(l.it[0].s);
+      continue;}
     // Una sección puede seguir en la página siguiente sin repetir la cabecera de columnas
     const s=t.match(/^([A-C]) - /);if(s){if(s[1]!==sec)col=null;sec=s[1];cur=null;continue;}
-    if(/^Operaciones Fraccionadas/.test(t)){sec="";continue;}
+    if(/^Operaciones Fraccionadas/.test(t)){sec="";fr=true;continue;}
     if(!sec)continue;
     const iC=l.it.find(i=>i.s==="Concepto");
     if(iC&&sec!=="C"){col={con:iC.x,imp:(l.it.find(i=>/^Importe/.test(i.s))||{x:9e3}).x};continue;}
@@ -1281,8 +1305,14 @@ function lectorSantanderTarjeta(L){
     cur=null;}
   movs.forEach(m=>{if(m._c){m.texto=(m.texto+" "+m.extra).trim();m.extra="";delete m._c;}});
   const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
-  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,
-    saldo:aPagar!=null&&ult?{importe:-aPagar,fecha:ult}:null,movs:movs.filter(m=>m.importe)};}
+  // La descripción de cada fraccionada: la de su línea «CUOTA FRACCIONAR COMPRA …» (se compara sin espacios, porque la tabla parte las palabras)
+  const cands=movs.filter(m=>/^CUOTA FRACCIONAR COMPRA /i.test(m.texto)).map(m=>m.texto.replace(/^CUOTA FRACCIONAR COMPRA /i,""));
+  const fraccionadas=fracs.filter(f=>f.k<f.m&&f.pendiente>0).map(f=>{const junto=f.partes.join("").replace(/\s/g,""),jl=junto.toLowerCase();let desc=f.partes.join(" ").replace(/\s+/g," ").trim();
+    for(const c of cands){const cl=c.replace(/\s/g,"").toLowerCase();if(cl&&jl===cl){desc=c;break;}if(cl&&jl.startsWith(cl)){desc=c+" "+junto.slice(cl.length);break;}}
+    return {fecha:f.fecha,desc,total:f.total,k:f.k,m:f.m,cuota:f.cuota,pendiente:f.pendiente};});
+  const pendiente=r2(fraccionadas.reduce((a,f)=>a+f.pendiente,0));
+  return {fmt:"santander-tarjeta",banco:"Santander",tipo:"tarjeta",nombreFmt:"Extracto de tarjeta de crédito de Santander",ref,titular,desde,hasta,fraccionadas,
+    saldo:aPagar!=null&&(hasta||ult)?{importe:-r2(aPagar+pendiente),fecha:hasta||ult,aPagar,pendiente}:null,movs:movs.filter(m=>m.importe)};}
 
 // Reconoce el formato por textos fijos del documento
 const LECTORES=[[t=>t.includes("Extracto en EUR")&&t.includes("Revolut Bank"),lectorRevolut],
@@ -1487,7 +1517,7 @@ function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
   $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+
       (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
     return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
-  $("iGuardar").textContent=`Guardar ${n} ${n===1?"movimiento":"movimientos"}`;}
+  pintarFracc();$("iGuardar").textContent=textoGuardar();}
 function avisoLectura(msg){const t=document.createElement("div");t.className="toast"+(hojaAbierta()?" arriba":"");t.dataset.ui="aviso-lectura";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
 // «Leyendo la foto…» mientras el OCR trabaja (puede tardar unos segundos)
 function mostrarLeyendo(on){$("leyendoFoto").hidden=!on;}
@@ -1499,9 +1529,19 @@ function preguntarSigno(n){return new Promise(ok=>{signoRes=ok;$("sgSub").textCo
 function resolverSigno(v){const f=signoRes;signoRes=null;if(f)f(v);}
 async function aplicarSigno(r){if(!r.positivos)return true;const s=await preguntarSigno(r.movs.length);if(!s)return false;
   if(s==="gastos")r.movs.forEach(m=>{m.importe=-Math.abs(m.importe);});r.positivos=false;return true;}
+// Compras fraccionadas del resumen: se anotan por lo que queda, como compra en cuotas que empieza a contar el mes siguiente
+const claveFr=f=>normTxt(f.desc)+"|"+f.m+"|"+f.total;
+const frTarjeta=()=>{const c=imp&&imp.cuenta!=null?cuentaDe(imp.cuenta):null;return !!c&&c.tipo==="tarjeta";};
+const frMesDesde=()=>mesSig((imp.r.hasta||imp.r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"")).slice(0,7),1);
+function pintarFracc(){const ver=frTarjeta()&&imp.fr.length;$("iFracc").hidden=!ver;if(!ver)return;const mes=MESES[+frMesDesde().slice(5)-1].toLowerCase();
+  $("iFraccLista").innerHTML=imp.fr.map(f=>{const n=f.m-f.k,q=r2(f.pendiente/n);
+    return `<div class="borr${f.on?"":" off"}" data-fr="${f.i}"><input type="checkbox" data-fron="${f.i}"${f.on?" checked":""} aria-label="Anotar lo que queda"><span class="d"><b>${esc(f.desc)}</b><span class="sub">Cuota ${f.k} de ${f.m} · pendiente ${eur(f.pendiente)}</span></span><span class="num">${eur(f.pendiente)}</span><span class="marcas">${f.ya?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:`<span class="sub">${n===1?`Anota 1 cuota de ${eur(q)} en ${mes}`:`Anota ${n} cuotas de ${eur(q)} desde ${mes}`}</span>`}</span></div>`;}).join("");}
+$("iFraccLista").addEventListener("change",e=>{const x=imp.fr[+e.target.dataset.fron];if(!x)return;x.on=e.target.checked;pintarBorr();});
+function textoGuardar(){const n=imp.d.filter(x=>x.on).length+(frTarjeta()?imp.fr.filter(f=>f.on).length:0);return `Guardar ${n} ${n===1?"movimiento":"movimientos"}`;}
 function abrirRevision(r,f,pref,adjId){
   const c=r.ref&&S.cuentas.find(x=>x.ref===r.ref);
   imp={r,file:f,adjId:adjId==null?null:adjId,cuenta:c?c.id:(pref||null),elegida:null};
+  imp.fr=(r.fraccionadas||[]).map((x,i)=>{const ya=S.movs.some(m=>m.fracc===claveFr(x));return {...x,i,on:!ya,ya};});
   $("iSub").textContent=`${r.banco} · ${r.tipo}${r.ref?" terminada en "+r.ref:""}${r.desde&&r.hasta?` · del ${diaMes(r.desde)} al ${diaMes(r.hasta)}`:""}`;
   if(imp.cuenta)revisar();else elegirCuenta();
   mostrar("sheetI");}
@@ -1521,7 +1561,7 @@ function revisar(){$("iElegir").hidden=$("iSeguir").hidden=true;$("iCuentaBox").
 const segCuentasImp=()=>seg($("segICuenta"),S.cuentas.map(c=>[c.id,c.nombre]),imp.cuenta,v=>{imp.cuenta=+v;borradores();pintarBorr();});
 $("iSeguir").onclick=()=>{if(!imp.elegida){toast("Elegí la cuenta");return;}imp.cuenta=imp.elegida;revisar();};
 $("iBorr").addEventListener("change",e=>{const t=e.target;
-  if(t.dataset.on!=null){const x=borrDe(t.dataset.on);x.on=t.checked;t.closest(".borr").classList.toggle("off",!x.on);const n=imp.d.filter(y=>y.on).length;$("iGuardar").textContent=`Guardar ${n} ${n===1?"movimiento":"movimientos"}`;}
+  if(t.dataset.on!=null){const x=borrDe(t.dataset.on);x.on=t.checked;t.closest(".borr").classList.toggle("off",!x.on);$("iGuardar").textContent=textoGuardar();}
   else if(t.dataset.que!=null){const x=borrDe(t.dataset.que);
     // «Nueva cuenta…»: se oculta la revisión (sin cerrarla), se crea la cuenta y se vuelve a ella
     if(t.value==="n|cuenta"){imp.nuevaPara=x.i;abrirCuenta(null);return;}
@@ -1529,7 +1569,7 @@ $("iBorr").addEventListener("change",e=>{const t=e.target;
     x.que=t.value;x.cubre=[];fijoDe(x);pintarBorr();}
   else if(t.dataset.icubre!=null){const x=borrDe(t.dataset.icubre),id=+t.value;x.cubre=t.checked?[...x.cubre,id]:x.cubre.filter(y=>y!==id);}});
 $("iBorr").addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();});
-$("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on);if(!sel.length){toast("Marcá al menos un movimiento");return;}
+$("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on),frSel=frTarjeta()?imp.fr.filter(f=>f.on):[];if(!sel.length&&!frSel.length){toast("Marcá al menos un movimiento");return;}
   const r=imp.r,cid=imp.cuenta,c=cuentaDe(cid),origen=nid();
   // La cuenta recuerda los últimos dígitos del extracto
   if(r.ref){S.cuentas.forEach(o=>{if(o.ref===r.ref)delete o.ref;});c.ref=r.ref;}
@@ -1543,7 +1583,9 @@ $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on);if(!sel.length){
       if(m.tipo==="gasto"&&v!==REEMB){const k=claveFijo(v,x.nota),fija=catFija(v);if(x.fijo){if(!fija){m.fijo=true;if(k)S.fijos[k]=true;}}else if(fija)m.fijo=false;else if(x.fijoRegla&&k)S.fijos[k]=false;}}
     S.movs.push(m);desconciliar(m);
     if(m.tipo==="ingreso"&&v==="Reembolso")S.movs.forEach(g=>{if(g.reembolso&&x.cubre.includes(g.id))g.reembolso={estado:"pagado",cobro:m.id};});});
-  const n=sel.length,ult=r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  const n=sel.length+frSel.length,ult=r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
+  // Cada fraccionada marcada: lo que queda, en cuotas que cuentan desde el mes siguiente; la deuda sube desde la fecha del resumen
+  frSel.forEach(f=>{const q=f.m-f.k;S.movs.push({id:nid(),tipo:"gasto",fecha:r.hasta||ult,importe:f.pendiente,cuenta:cid,cat:propuestaCat(-f.pendiente,f.desc,f.desc),nota:f.desc,origen,fracc:claveFr(f),cuotas:{n:q,cuota:r2(f.pendiente/q),desde:frMesDesde()}});});
   try{if(imp.adjId!=null){const a=(await adjTodos()).find(y=>y.id===imp.adjId);if(a)await adjGuardar({...a,cuenta:cid,mes:ult.slice(0,7)});}
     else await adjGuardar({id:nid(),cuenta:cid,mes:ult.slice(0,7),nombre:imp.file.name||"extracto",tipo:tipoArchivo(imp.file),mime:imp.file.type||"application/octet-stream",datos:await imp.file.arrayBuffer()});}catch(e){}
   cambio();toast(`${n} ${n===1?"movimiento importado":"movimientos importados"}`);
@@ -1551,7 +1593,7 @@ $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on);if(!sel.length){
   const sub=`${n} ${n===1?"movimiento importado":"movimientos importados"} en ${c.nombre}. El extracto quedó en sus adjuntos.`;
   $("icCard").hidden=!r.saldo;
   if(r.saldo){const calc=valorCuenta(c,r.saldo.fecha);imp.conc={cid,mes:r.saldo.fecha.slice(0,7),fecha:r.saldo.fecha,real:r.saldo.importe,dif:r2(r.saldo.importe-calc)};
-    $("icExtLbl").textContent=`${esDeuda(c)?"Deuda":"Saldo"} del extracto al ${diaMes(r.saldo.fecha)}`;$("icExt").textContent=eur(r.saldo.importe);$("icCalc").textContent=eur(calc);$("icDif").textContent=eur(imp.conc.dif);
+    $("icExtLbl").textContent=r.fmt==="santander-tarjeta"?"Deuda del resumen":`${esDeuda(c)?"Deuda":"Saldo"} del extracto al ${diaMes(r.saldo.fecha)}`;$("icDetBox").hidden=!(r.saldo.pendiente>0);$("icDet").textContent=r.saldo.pendiente>0?`a pagar ${eur(r.saldo.aPagar)} + pendiente en cuotas ${eur(r.saldo.pendiente)}`:"";$("icExt").textContent=eur(esDeuda(c)?-r.saldo.importe:r.saldo.importe);$("icCalc").textContent=eur(esDeuda(c)?-calc:calc);$("icDif").textContent=eur(imp.conc.dif);
     $("icSub").textContent=sub;$("icNo").textContent="Ahora no";}
   else{$("icSub").textContent=sub+" Este extracto no trae el saldo: conciliá a mano en Cierre.";$("icNo").textContent="Listo";}
   mostrar("sheetIC");};

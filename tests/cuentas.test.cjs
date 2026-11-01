@@ -172,3 +172,39 @@ t.test("sin compras en cuotas", async () => {
   await page.click('[data-cta="2"]');
   assert.equal(await page.isVisible("#cCuotasMes"), false);
 });
+
+// --- cómo se calcula la deuda de la tarjeta
+const TARJ_D = (extra = {}) => A.cta(2, "Tarjeta Y", 100, { tipo: "tarjeta", desde: "2026-10-01", ...extra });
+async function abreCuenta(page, id) { await A.ir(page, "cuentas"); await page.click(`[data-cta="${id}"]`); await page.waitForSelector("#sheetC:not([hidden])"); }
+const filasD = (page) => page.$$eval("#cDesgloseLista .item", (e) => e.map((x) => x.innerText.replace(/\s+/g, " ").trim()));
+
+// Escenario: desglose de la deuda
+t.test("desglose de la deuda", async () => {
+  const movs = [A.gasto(1, "2026-10-03", 200, 2), A.gasto(2, "2026-10-04", 100, 2), A.transf(3, "2026-10-08", 150, 1, 2), { id: 4, tipo: "ajuste", fecha: "2026-10-09", importe: 10, cuenta: 2, nota: "" }];
+  const { page } = await abrir({ datos: A.v2({ cuentas: [A.cta(1, "Banco A", 1000, { desde: "2026-10-01" }), TARJ_D()], movs }) });
+  await abreCuenta(page, 2);
+  assert.deepEqual(await filasD(page), ["Deuda anotada al empezar 100 €", "Compras + 300 €", "Pagos − 150 €", "Ajustes de conciliación − 10 €", "Deuda de hoy 240 €"]);
+});
+
+// Escenario: lo que queda en cuotas
+t.test("lo que queda en cuotas", async () => {
+  const compra = { ...A.gasto(1, "2026-10-05", 600, 2), cuotas: { n: 3, cuota: 200 } };
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ_D({ saldoInicial: 0 })], movs: [compra] }) });
+  await abreCuenta(page, 2);
+  assert.match(await A.texto(page, "#cDesgloseSub"), /Por pagar en cuotas: 600 €/);
+  assert.match(await A.texto(page, "#cDesgloseSub"), /Lo demás: 0 €/);
+});
+
+// Escenario: tarjeta sin movimientos
+t.test("tarjeta sin movimientos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ_D({ saldoInicial: 0 })] }) });
+  await abreCuenta(page, 2);
+  assert.deepEqual(await filasD(page), ["Deuda anotada al empezar 0 €", "Compras + 0 €", "Pagos + 0 €", "Ajustes de conciliación + 0 €", "Deuda de hoy 0 €"]);
+});
+
+// Escenario: otras cuentas no lo muestran
+t.test("otras cuentas no lo muestran", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [A.cta(1, "Banco A", 1000)] }) });
+  await abreCuenta(page, 1);
+  assert.equal(await page.isVisible("#cDesglose"), false);
+});
