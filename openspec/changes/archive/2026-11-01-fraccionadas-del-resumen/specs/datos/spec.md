@@ -19,3 +19,8 @@ ven y se suman igual que antes. Una marca que no sea válida se ignora.
 - **Dado** un movimiento guardado con una marca de fraccionada que no es un texto
 - **Cuando** la persona abre la app
 - **Entonces** el movimiento se ve normal y la app no da error
+
+### Escenario: inicio de cuotas inválido
+- **Dado** una compra en cuotas guardada con un mes de inicio de cuotas que no es válido
+- **Cuando** la persona abre la app
+- **Entonces** las cuotas cuentan desde el mes de la compra y la app no da error

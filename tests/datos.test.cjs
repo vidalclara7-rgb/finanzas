@@ -785,3 +785,99 @@ t.test("apariencia inválida", async () => {
   assert.equal(await page.$eval('#segApariencia button[aria-pressed="true"]', (b) => b.dataset.v), "oscura");
   assert.deepEqual(errores, []);
 });
+
+// --- compras fraccionadas del resumen
+// Escenario: movimientos anteriores intactos
+t.test("movimientos anteriores intactos", async () => {
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", "pan")] }) });
+  const d = await A.guardados(page);
+  assert.equal(d.movs[0].fracc, undefined);
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] .num'), "−20 €");
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: copia de seguridad vieja
+t.test("copia de seguridad vieja", async () => {
+  const copia = A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1)] });
+  const { page, errores } = await abrir();
+  await restaurar(page, JSON.stringify(copia));
+  await A.aviso(page, "Copia restaurada");
+  assert.equal((await A.guardados(page)).movs[0].fracc, undefined);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: marca inválida
+t.test("marca inválida", async () => {
+  const mal = { ...A.gasto(1, "2026-10-03", 20, 1), fracc: 42 };
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [mal] }) });
+  await A.ir(page, "movs");
+  assert.equal(await A.texto(page, '[data-mov="1"] .num'), "−20 €");
+  assert.equal((await A.guardados(page)).movs[0].fracc, undefined);
+  assert.deepEqual(errores, []);
+});
+
+// Escenario: inicio de cuotas inválido
+t.test("inicio de cuotas inválido", async () => {
+  const tarj = A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", desde: "2026-10-01" });
+  const compra = { ...A.gasto(1, "2026-10-05", 600, 2), cuotas: { n: 3, cuota: 200, desde: "pronto" } };
+  const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO, tarj], movs: [compra] }) });
+  const cuota = await page.evaluate(() => { const q = cuotaEnMes(S.movs[0], "2026-10"); return q && [q.cuotaN, q.importe]; });
+  assert.deepEqual(cuota, [1, 200]);
+  assert.deepEqual(errores, []);
+});
+
+// --- respaldo antes de borrar los movimientos de una cuenta
+const TARJ_R = A.cta(2, "Tarjeta Y", 100, { tipo: "tarjeta", desde: "2026-10-01" });
+const TRES_R = [A.gasto(1, "2026-10-03", 20, 2), A.gasto(2, "2026-10-04", 30, 2), A.gasto(3, "2026-10-05", 40, 2)];
+async function borrarTodos(page) {
+  await A.ir(page, "cuentas");
+  await page.click('[data-cta="2"]');
+  await page.waitForSelector("#sheetC:not([hidden])");
+  await page.click("#cBorrarMovs");
+  await page.click("#cBorrarMovs");
+}
+
+// Escenario: lo anterior queda guardado al borrar
+t.test("lo anterior queda guardado al borrar", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ_R], movs: TRES_R }), hoy: "2026-11-02T12:00:00" });
+  await borrarTodos(page);
+  await A.aviso(page, "3 movimientos borrados");
+  await page.click("#cCerrar");
+  await A.ir(page, "ajustes");
+  assert.equal(await page.isVisible("#cardRespaldo"), true);
+  assert.equal(await A.texto(page, "#respaldoSub"), "Datos de antes de borrar los movimientos de Tarjeta Y, del 02/11. Quedaron guardados por si te arrepentís.");
+});
+
+// Escenario: volver atrás
+t.test("volver atrás tras borrar", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ_R], movs: TRES_R }), hoy: "2026-11-02T12:00:00" });
+  await borrarTodos(page);
+  await A.aviso(page, "3 movimientos borrados");
+  await page.click("#cCerrar");
+  await A.ir(page, "ajustes");
+  await page.click("#respaldoRestaurar");
+  await page.click("#respaldoRestaurar");
+  await A.aviso(page, "Copia restaurada");
+  assert.equal((await A.guardados(page)).movs.length, 3);
+});
+
+// Escenario: no se pisa un respaldo de datos ilegibles
+t.test("no se pisa un respaldo de datos ilegibles", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ_R], movs: TRES_R }) });
+  await page.evaluate(() => localStorage.setItem("finanzas-respaldo", JSON.stringify({ texto: "{rota", motivo: "ilegible", fecha: "2026-11-01" })));
+  await page.reload();
+  await borrarTodos(page);
+  await A.aviso(page, "Antes de borrar, copiá o descartá el respaldo de datos que no se pudieron leer");
+  assert.equal((await A.guardados(page)).movs.length, 3);
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("finanzas-respaldo")).texto), "{rota");
+});
+
+// Escenario: respaldos anteriores a este cambio
+t.test("respaldos anteriores a este cambio", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.evaluate(() => localStorage.setItem("finanzas-respaldo", JSON.stringify({ texto: "{}", motivo: "restaurar", fecha: "2026-10-15" })));
+  await page.reload();
+  await A.ir(page, "ajustes");
+  assert.match(await A.texto(page, "#respaldoSub"), /^Datos de antes de restaurar, del 15\/10/);
+});

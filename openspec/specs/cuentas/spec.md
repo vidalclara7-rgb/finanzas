@@ -163,3 +163,72 @@ editarlo y, al guardar o cerrar, se vuelve a la lista del mismo mes.
 - **Dado** que hoy es 2026-10-15 y la lista de «Tarjeta Y» en octubre
 - **Cuando** la persona mira la flecha del mes siguiente
 - **Entonces** está desactivada
+
+## Requisito: cómo se calcula la deuda de la tarjeta
+
+La hoja de una tarjeta de crédito explica su deuda: lo que se anotó al empezar, las compras (las compras en cuotas por su total),
+los pagos que recibió, los ajustes de conciliación y la deuda de hoy. Debajo dice cuánto de esa deuda queda por pagar en cuotas.
+
+### Escenario: desglose de la deuda
+- **Dado** «Tarjeta Y» con 100 € de deuda al empezar, compras por 300 €, un pago de 150 € desde «Banco A» y un ajuste de conciliación de −10 €
+- **Cuando** la persona abre la hoja de Tarjeta Y
+- **Entonces** «Cómo se calcula la deuda» muestra 100 €, compras 300 €, pagos −150 €, ajustes −10 € y deuda de hoy 240 €
+
+### Escenario: lo que queda en cuotas
+- **Dado** «Tarjeta Y» con una compra de 600 € en 3 cuotas de 200 €, con la primera cuota este mes
+- **Cuando** la persona abre la hoja de Tarjeta Y
+- **Entonces** el desglose dice «Por pagar en cuotas: 600 €» y «Lo demás: 0 €»
+
+### Escenario: tarjeta sin movimientos
+- **Dado** «Tarjeta Y» sin movimientos y sin deuda al empezar
+- **Cuando** la persona abre su hoja
+- **Entonces** el desglose muestra todo en 0 € y la deuda de hoy es 0 €
+
+### Escenario: otras cuentas no lo muestran
+- **Dado** «Banco A», una cuenta de bancos
+- **Cuando** la persona abre su hoja
+- **Entonces** no ve «Cómo se calcula la deuda»
+
+## Requisito: borrar todos los movimientos de una cuenta
+
+La hoja de una cuenta con movimientos tiene el botón «Borrar todos sus movimientos». Pide dos toques: el primero dice cuántos
+se borran («Tocá de nuevo: se borran 3 movimientos») y el segundo los borra. Se borran los gastos, ingresos, ajustes y
+transferencias donde la cuenta es origen o destino, y las marcas de conciliación de esa cuenta. La cuenta, su deuda inicial,
+sus adjuntos y lo aprendido no cambian. Antes de borrar, la app guarda una copia de lo que había.
+
+### Escenario: borrar todos los movimientos de una cuenta
+- **Dado** «Tarjeta Y» con tres movimientos
+- **Cuando** la persona abre su hoja, toca «Borrar todos sus movimientos» y después «Tocá de nuevo: se borran 3 movimientos»
+- **Entonces** la app avisa «3 movimientos borrados» y Tarjeta Y no tiene movimientos
+- **Y** su saldo es el de su deuda inicial
+
+### Escenario: un solo toque no borra
+- **Dado** «Tarjeta Y» con tres movimientos
+- **Cuando** la persona toca «Borrar todos sus movimientos» una vez y cierra la hoja
+- **Entonces** los tres movimientos siguen ahí
+
+### Escenario: las transferencias con otras cuentas
+- **Dado** «Tarjeta Y» con un gasto y un pago de 100 € desde «Banco A»
+- **Cuando** la persona toca «Borrar todos sus movimientos»
+- **Entonces** el botón dice «Tocá de nuevo: se borran 2 movimientos (1 transferencia con otras cuentas)»
+- **Y** al confirmar, Banco A también deja de tener ese pago
+
+### Escenario: la conciliación de la cuenta se borra
+- **Dado** «Tarjeta Y» conciliada en octubre 2026 con movimientos
+- **Cuando** la persona borra todos sus movimientos
+- **Entonces** Tarjeta Y aparece «Sin conciliar» en Cierre
+
+### Escenario: una cuenta sin movimientos
+- **Dado** «Banco A» sin movimientos
+- **Cuando** la persona abre su hoja
+- **Entonces** no ve «Borrar todos sus movimientos»
+
+### Escenario: los reembolsos vuelven a aprobado
+- **Dado** un gasto reembolsable en «Tarjeta Y», pagado por un ingreso de «Reembolso» en «Banco A»
+- **Cuando** la persona borra todos los movimientos de Banco A
+- **Entonces** el gasto reembolsable de Tarjeta Y vuelve a «Aprobado»
+
+### Escenario: los adjuntos se quedan
+- **Dado** «Tarjeta Y» con un resumen adjunto y movimientos
+- **Cuando** la persona borra todos sus movimientos
+- **Entonces** el resumen sigue en los adjuntos de Tarjeta Y

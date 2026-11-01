@@ -17,15 +17,19 @@ suma el resumen: «Importe a pagar» (incluye la cuota del mes de cada fracciona
 - **Qué se anota:** por cada fraccionada con k < m, **una compra por lo pendiente** (no por el total original): así la deuda de la
   tarjeta sube exactamente lo que queda por pagar y lo cobrado ya está en el gasto del mes (la línea «CUOTA FRACCIONAR COMPRA …» del
   resumen sigue entrando como gasto normal).
-  - Con m − k ≥ 2 cuotas que faltan: gasto de la tarjeta de importe = pendiente, con `cuotas:{n: m−k, cuota: pendiente/(m−k)}` (la
-    cuota se redondea al céntimo y la última lleva la diferencia sólo en la deuda; el gasto del mes cuenta la cuota). Fecha: el día
-    1 del mes siguiente al del fin del periodo del resumen.
-  - Con una sola cuota que falta: gasto normal de la tarjeta por el pendiente, el día 1 del mes siguiente.
-  - Nota: la descripción de la compra, unida («MM BARCELON A FO» → «MM BARCELONA FO»: se juntan los trozos y se compactan las
-    letras sueltas); categoría propuesta con las mismas reglas de siempre (`reglas`, `PALABRAS`, si no «Otros»).
+  - Gasto de la tarjeta de importe = pendiente, con `cuotas:{n: m−k, cuota: pendiente/(m−k), desde:"AAAA-MM"}` (la cuota se redondea
+    al céntimo). **Fecha: el último día del periodo del resumen**, para que la deuda ya cuente al conciliar ese mes; y `desde` =
+    **el mes siguiente**, que es cuando empiezan a contar las cuotas como gasto (`cuotaEnMes()`: la primera cuota es la del mes
+    `desde`, y nada antes). Así la cuota de octubre no se cuenta dos veces.
+  - Cuando sólo falta una cuota también es una «compra en cuotas» de una sola cuota (`n:1`, con `desde`): sin `desde`, una compra en
+    cuotas sigue exigiendo dos o más. (Descartado: un gasto normal fechado el 1 del mes siguiente, porque la deuda no contaría al
+    conciliar el mes del resumen.)
+  - Nota: la descripción de la compra, unida («MM BARCELON A FO» → «MM BARCELONA FO»: se compara, sin espacios, con la descripción de
+    la línea «CUOTA FRACCIONAR COMPRA …» del mismo resumen y se usa esa); categoría propuesta con las mismas reglas de siempre
+    (`reglas`, `PALABRAS`, si no «Otros»).
 - **Marca interna `fracc`** en el movimiento (texto): clave de la compra = descripción normalizada + total de cuotas + importe total
   (`normTxt(desc)|m|total`). Sirve para reconocerla en el resumen siguiente: si ya existe un gasto con esa `fracc`, la compra sale
-  «Ya está» y no se crea otra. Es un campo opcional más; `norm()` descarta lo que no sea texto.
+  «Ya está» y no se crea otra. Es un campo opcional más; `norm()` descarta lo que no sea texto; un `cuotas.desde` que no sea `AAAA-MM` se ignora (cuenta desde el mes de la compra).
 - **Terminadas** (k = m): no aparecen en el bloque; su cuota del mes entra como gasto, como hoy.
 - **Bloque «Compras fraccionadas» en la revisión:** una fila por compra en curso, marcada, con descripción, «Cuota 3 de 5 · pendiente
   42,96 €» y un resumen «Anota 2 cuotas de 21,48 € desde diciembre». Sin fraccionadas, no hay bloque.
@@ -35,7 +39,7 @@ suma el resumen: «Importe a pagar» (incluye la cuota del mes de cada fracciona
 - **Hoja de la tarjeta, «Cómo se calcula la deuda»:** líneas «Deuda anotada al empezar», «Compras» (gastos de la tarjeta, las
   compras en cuotas por su total), «Pagos» (transferencias y cobros que entran a la tarjeta), «Ajustes de conciliación» y «Deuda
   hoy»; y debajo, «De esa deuda, por pagar en cuotas: X» (lo que queda de las compras en cuotas, `cuotaEnMes`) y «Lo demás: Y».
-- **Datos (`amplia`):** `movs[i].fracc` opcional. Los movimientos y copias anteriores valen igual.
+- **Datos (`amplia`):** `movs[i].fracc` y `movs[i].cuotas.desde` opcionales. Los movimientos y copias anteriores valen igual.
 
 ## Cómo se implementa en index.html
 
