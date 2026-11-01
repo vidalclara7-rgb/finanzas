@@ -1,6 +1,6 @@
 ---
 cambio: fraccionadas-del-resumen
-estado: propuesta
+estado: aprobada
 datos: amplia
 ---
 # Leer las compras fraccionadas del resumen y explicar la deuda de la tarjeta

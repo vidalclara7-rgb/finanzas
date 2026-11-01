@@ -1,6 +1,6 @@
 ---
 cambio: ver-por-meses-y-semanas
-estado: propuesta
+estado: aprobada
 datos: sin-cambios
 ---
 # Ver cualquier mes y los movimientos por semana y por día
