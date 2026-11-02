@@ -1,7 +1,8 @@
 ---
 cambio: revolut-ingles-y-pagos-de-tarjeta
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-02
 ---
 # Leer Revolut en inglés y no duplicar los pagos de la tarjeta
 
