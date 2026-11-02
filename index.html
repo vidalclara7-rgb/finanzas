@@ -481,6 +481,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <div class="card" id="iInicio" data-ui="empezar-con-saldo" hidden><label class="check"><input type="checkbox" id="iInicioOn" checked><span><b>Empezar esta cuenta con el saldo anterior del resumen</b><br><span class="sub" id="iInicioSub"></span></span></label></div>
   <div class="card" id="iFracc" data-ui="compras-fraccionadas" hidden><span class="lbl">Compras fraccionadas</span><span class="sub">Lo que queda por pagar de lo que pagás en cuotas. Se anota en tu tarjeta desde el mes que viene.</span><div class="borradores" id="iFraccLista"></div></div>
   <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
+  <span class="sub" id="iAvisoReemplazo" data-ui="aviso-reemplazo" hidden>Las liquidaciones marcadas «Reemplaza el pago anotado» ya estaban en tu tarjeta como ingreso «Pago»: queda una sola transferencia.</span>
   <button type="button" class="btn" id="iGuardar" data-ui="guardar-importacion"></button>
 </div>
 <!-- Después de importar: conciliar con el saldo del extracto -->
@@ -1239,25 +1240,43 @@ async function lineasPdf(pdfjs,datos){const doc=await pdfjs.getDocument({data:da
 
 // Revolut, extracto de cuenta en euros: sólo «Transacciones de la cuenta» (no el depósito)
 function lectorRevolut(L){
-  const fR=s=>{const m=String(s).match(/^(\d{1,2}) ([a-zA-Zé]+)\.? (\d{4})$/);return m?fechaTxt(m[1],m[2],m[3]):null;};
+  // El mismo extracto se descarga en español o en inglés: los rótulos y el formato de fechas e importes cambian, la tabla no
+  const en=L.some(l=>/^EUR Statement$/.test(txtLinea(l)));
+  const MEN={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  const fEn=s=>{const m=String(s).match(/^([A-Za-z]{3,9})\.? (\d{1,2}), (\d{4})$/),n=m&&MEN[m[1].toLowerCase().slice(0,3)];return n?`${m[3]}-${pad2(n)}-${pad2(m[2])}`:null;};
+  const dEn=s=>{const m=String(s).replace(/\s/g,"").match(/^(-?)[€$£]?([\d,]+\.\d{2})$/);return m?(m[1]?-1:1)*parseFloat(m[2].replace(/,/g,"")):null;};
+  const fR=en?fEn:s=>{const m=String(s).match(/^(\d{1,2}) ([a-zA-Zé]+)\.? (\d{4})$/);return m?fechaTxt(m[1],m[2],m[3]):null;};
+  const din=en?dEn:dinero;
+  const R=en?{tabla:/^Account transactions from/,otra:/^[A-Z]{3} Statement$/,desc:"Description",sal:"Money out",ent:"Money in",saldo:"Balance"}
+            :{tabla:/^Transacciones de la cuenta/,otra:/^Transacciones de /,desc:"Descripción",sal:"Dinero saliente",ent:"Dinero entrante",saldo:"Saldo"};
   const ref=ultimos4(despues(L,"IBAN").split(" ")[0]||(L.map(txtLinea).join(" ").match(/IBAN\s*([A-Z]{2}[\d ]{10,})/)||[])[1]);
   const iB=L.findIndex(l=>/Revolut Bank/.test(txtLinea(l)));const tit=L.slice(iB+1).find(l=>l.p===1&&l.it[0].x<100&&/^[A-Za-zÀ-ÿ' -]+$/.test(txtLinea(l)));
-  // Saldo final de la cuenta corriente, en la tabla del resumen
-  let saldo=null;const hR=L.find(l=>l.it.some(i=>i.s==="Saldo final"));
-  if(hR){const fila=L.find(l=>l.p===hR.p&&l.y<hR.y&&/^Cuenta\b/.test(l.it[0].s));if(fila){const x=hR.it.find(i=>i.s==="Saldo final").x;const v=cerca(fila.it.filter(i=>dinero(i.s)!=null),x);if(v)saldo=dinero(v.s);}}
-  let estado=0,col=null,cur=null,desde=null,hasta=null;const movs=[];
+  // Saldo final de la cuenta corriente, en la tabla del resumen (en inglés: la última cifra de la fila de la cuenta en euros)
+  let saldo=null,apertura=null;
+  if(en){let mon="EUR";for(const l of L){const t=txtLinea(l),mm=/^([A-Z]{3}) Statement$/.exec(t);if(mm){mon=mm[1];continue;}
+    if(mon==="EUR"&&saldo==null&&/^Account \(/.test(t)){const v=l.it.map(i=>dEn(i.s)).filter(x=>x!=null);if(v.length>=2){apertura=v[0];saldo=v[v.length-1];}}}}
+  else{const hR=L.find(l=>l.it.some(i=>i.s==="Saldo final"));
+    if(hR){const fila=L.find(l=>l.p===hR.p&&l.y<hR.y&&/^Cuenta\b/.test(l.it[0].s));if(fila){const x=hR.it.find(i=>i.s==="Saldo final").x;const v=cerca(fila.it.filter(i=>dinero(i.s)!=null),x);if(v)saldo=dinero(v.s);}}}
+  let estado=0,col=null,cur=null,desde=null,hasta=null,prev=apertura,mon="EUR";const movs=[];
   for(const l of L){const t=txtLinea(l);
-    if(/^Transacciones de la cuenta/.test(t)){estado=1;const m=t.match(/desde el (\d+) de (\w+) de (\d{4}) al (\d+) de (\w+) de (\d{4})/);if(m){desde=fechaTxt(m[1],m[2],m[3]);hasta=fechaTxt(m[4],m[5],m[6]);}continue;}
-    if(estado===1&&/^Transacciones de /.test(t)){estado=2;continue;}
+    if(en){const mm=/^([A-Z]{3}) Statement$/.exec(t);if(mm){mon=mm[1];if(mon!=="EUR"&&estado===1)estado=2;continue;}if(mon!=="EUR")continue;}
+    if(R.tabla.test(t)){estado=1;
+      const m=en?t.match(/from (\w+) (\d+), (\d{4}) to (\w+) (\d+), (\d{4})/):t.match(/desde el (\d+) de (\w+) de (\d{4}) al (\d+) de (\w+) de (\d{4})/);
+      if(m){if(en){desde=fEn(`${m[1]} ${m[2]}, ${m[3]}`);hasta=fEn(`${m[4]} ${m[5]}, ${m[6]}`);}else{desde=fechaTxt(m[1],m[2],m[3]);hasta=fechaTxt(m[4],m[5],m[6]);}}continue;}
+    if(estado===1&&!en&&R.otra.test(t)){estado=2;continue;}
     if(estado!==1)continue;
-    const iD=l.it.find(i=>i.s==="Descripción");
-    if(iD&&l.it.some(i=>i.s==="Dinero saliente")){col={desc:iD.x,sal:l.it.find(i=>i.s==="Dinero saliente").x,ent:l.it.find(i=>i.s==="Dinero entrante").x,saldo:(l.it.find(i=>i.s==="Saldo")||{x:9e3}).x};cur=null;continue;}
+    const iD=l.it.find(i=>i.s===R.desc);
+    if(iD&&l.it.some(i=>i.s===R.sal)){col={desc:iD.x,sal:l.it.find(i=>i.s===R.sal).x,ent:l.it.find(i=>i.s===R.ent).x,saldo:(l.it.find(i=>i.s===R.saldo)||{x:9e3}).x};cur=null;continue;}
     if(!col)continue;
     const f=fR(l.it[0].s);
-    if(f){const desc=l.it.filter(i=>i.x>=col.desc-6&&i.x<col.sal-6&&dinero(i.s)==null).map(i=>i.s).join(" ");
-      let imp=0;l.it.filter(i=>dinero(i.s)!=null&&i.x>=col.sal-30).forEach(i=>{const c=[["sal",col.sal],["ent",col.ent],["saldo",col.saldo]].reduce((b,k)=>Math.abs(i.x-k[1])<Math.abs(i.x-b[1])?k:b);if(c[0]==="sal")imp-=dinero(i.s);if(c[0]==="ent")imp+=dinero(i.s);});
+    if(f){const its=l.it.filter(i=>i.x>=col.desc-6&&i.x<col.sal-6&&din(i.s)==null);
+      let desc=its.map(i=>i.s).join(" "),imp=0,sd=null,ncol=0;
+      l.it.filter(i=>din(i.s)!=null&&i.x>=col.sal-30).forEach(i=>{const c=[["sal",col.sal],["ent",col.ent],["saldo",col.saldo]].reduce((b,k)=>Math.abs(i.x-k[1])<Math.abs(i.x-b[1])?k:b);if(c[0]==="sal"){imp-=din(i.s);ncol++;}if(c[0]==="ent"){imp+=din(i.s);ncol++;}if(c[0]==="saldo")sd=din(i.s);});
+      // En inglés, una descripción larga se pega a su importe («Transfer to Ana €29.00»): el importe se separa y el signo sale de cuánto cambió el saldo
+      if(en&&!ncol){const mm=/\s(-?[€$£][\d,]+\.\d{2})$/.exec(desc);if(mm){const v=Math.abs(dEn(mm[1]));desc=desc.slice(0,mm.index);imp=sd!=null&&prev!=null?(sd-prev<0?-v:v):-v;}}
+      if(sd!=null)prev=sd;
       cur={fecha:f,texto:desc,extra:"",importe:Math.round(imp*100)/100};movs.push(cur);continue;}
-    if(cur&&l.it.length===1&&Math.abs(l.it[0].x-col.desc)<8)cur.extra=(cur.extra+" "+l.it[0].s).trim();else cur=null;}
+    if(cur&&Math.abs(l.it[0].x-col.desc)<8&&(en||l.it.length===1))cur.extra=(cur.extra+" "+l.it[0].s).trim();else if(!(en&&cur&&l.it.length===1&&l.it[0].x>=col.sal-30))cur=null;}
   const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
   return {fmt:"revolut",banco:"Revolut",tipo:"cuenta",nombreFmt:"Extracto de Revolut en euros",ref,titular:tit?txtLinea(tit):"",desde,hasta,
     saldo:saldo!=null&&ult?{importe:saldo,fecha:ult}:null,movs:movs.filter(m=>m.importe)};}
@@ -1334,7 +1353,7 @@ function lectorSantanderTarjeta(L){
     saldo:aPagar!=null&&(hasta||ult)?{importe:-r2(aPagar+pendiente),fecha:hasta||ult,aPagar,pendiente}:null,movs:movs.filter(m=>m.importe)};}
 
 // Reconoce el formato por textos fijos del documento
-const LECTORES=[[t=>t.includes("Extracto en EUR")&&t.includes("Revolut Bank"),lectorRevolut],
+const LECTORES=[[t=>(t.includes("Extracto en EUR")||/^EUR Statement$/m.test(t))&&t.includes("Revolut Bank"),lectorRevolut],
   [t=>t.includes("Movimientos de cuenta")&&t.includes("CUENTA SANTANDER"),lectorSantanderCuenta],
   [t=>t.includes("Extracto de movimientos")&&t.includes("CREDITO SANTANDER"),lectorSantanderTarjeta]];
 function leerExtracto(L){const t=L.map(txtLinea).join("\n");const x=LECTORES.find(([es])=>es(t));return x?x[1](L):null;}
@@ -1516,6 +1535,11 @@ function borradores(){const r=imp.r,cid=imp.cuenta;
     const x={i,fecha:m.fecha,s:m.importe,nota,que:dest!=null?"t|"+dest:o?"t|"+o.id:(m.importe<0?"g|":"i|")+propuestaCat(m.importe,nota,m.texto+" "+m.extra),on:true,marca:null,cubre:[]};
     if(yaEsta(m,cid)){x.on=false;x.marca="ya";}
     return x;});
+  // El pago a una tarjeta propia que ya estaba anotado en ella como ingreso «Pago» (del resumen de la tarjeta) lo reemplaza: queda una sola transferencia
+  const usados=new Set();
+  d.forEach(x=>{if(!x.on||x.s>=0||!x.que.startsWith("t|"))return;const tid=+x.que.slice(2),tc=cuentaDe(tid);if(!tc||(tc.tipo!=="tarjeta"&&tc.tipo!=="financiacion"))return;
+    const g=S.movs.find(y=>y.tipo==="ingreso"&&y.cuenta===tid&&/^pago\b/.test(normTxt(y.nota))&&!usados.has(y.id)&&Math.abs(y.importe-Math.abs(x.s))<0.005&&Math.abs(dias(y.fecha,x.fecha))<=3);
+    if(g){usados.add(g.id);x.reemplaza=g.id;x.reemplazaCta=tid;}});
   // Una compra y su anulación por el mismo importe y comercio el mismo día no cuentan
   d.filter(a=>a.s>0&&/^anulaci/.test(normTxt(r.movs[a.i].texto))).forEach(a=>{
     const c=d.find(y=>y.s<0&&y.marca!=="anulada"&&y.fecha===a.fecha&&Math.abs(y.s+a.s)<0.005&&claveCom(y.nota)===claveCom(a.nota));
@@ -1529,6 +1553,8 @@ function borradores(){const r=imp.r,cid=imp.cuenta;
 // Un gasto que coincide con una regla de fijo llega marcado
 function fijoDe(x){x.fijoRegla=x.que.startsWith("g|")&&x.que!=="g|"+REEMB&&(catFija(x.que.slice(2))||S.fijos[claveFijo(x.que.slice(2),x.nota)]===true);x.fijo=x.fijoRegla;}
 const borrDe=k=>imp.d.find(x=>x.i===+k);
+// ¿Esta línea reemplaza un ingreso «Pago» de la tarjeta? (sigue yendo a esa tarjeta y el ingreso sigue ahí)
+const reemplazaOk=x=>x.reemplaza!=null&&x.que==="t|"+x.reemplazaCta&&S.movs.some(y=>y.id===x.reemplaza);
 function opcionesQue(x){const otras=S.cuentas.filter(c=>c.id!==imp.cuenta);
   const ops=[...(x.s<0?catsGasto().map(c=>["g|"+c,"Gasto · "+c]):catsIngreso().map(c=>["i|"+c,"Ingreso · "+c])),
     ...otras.map(c=>["t|"+c.id,(x.s<0?"Transferencia a ":"Transferencia desde ")+c.nombre]),["n|cuenta","Nueva cuenta…"],["n|categoria","Nueva categoría…"]];
@@ -1537,9 +1563,10 @@ function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.
   return `<span class="card color cubre" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
 function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
   $("iRevisa").textContent=`Revisá ${d.length} ${d.length===1?"movimiento":"movimientos"}`;
-  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+(x.marca==="cuota"?`<span class="chip idle" data-ui="marca-cuota-anotada">Cuota ya anotada</span>`:"")+
+  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+(x.marca==="cuota"?`<span class="chip idle" data-ui="marca-cuota-anotada">Cuota ya anotada</span>`:"")+(reemplazaOk(x)?`<span class="chip idle" data-ui="marca-reemplaza-pago">Reemplaza el pago anotado</span>`:"")+
       (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
     return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
+  $("iAvisoReemplazo").hidden=!d.some(reemplazaOk);
   pintarInicio();pintarFracc();$("iGuardar").textContent=textoGuardar();}
 function avisoLectura(msg){const t=document.createElement("div");t.className="toast"+(hojaAbierta()?" arriba":"");t.dataset.ui="aviso-lectura";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
 // «Leyendo la foto…» mientras el OCR trabaja (puede tardar unos segundos)
@@ -1613,6 +1640,8 @@ $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on),frSel=frTarjeta(
     else{m.tipo=t==="g"?"gasto":"ingreso";m.cat=v;S.reglas[t+"|"+kc]=v;delete S.reglas["t|"+kc];
       if(m.tipo==="gasto"&&v===REEMB)m.reembolso={estado:"pendiente"};
       if(m.tipo==="gasto"&&v!==REEMB){const k=claveFijo(v,x.nota),fija=catFija(v);if(x.fijo){if(!fija){m.fijo=true;if(k)S.fijos[k]=true;}}else if(fija)m.fijo=false;else if(x.fijoRegla&&k)S.fijos[k]=false;}}
+    // El ingreso «Pago» que este pago reemplaza sale de la tarjeta
+    if(reemplazaOk(x)){const g=S.movs.find(y=>y.id===x.reemplaza);desconciliar(g);S.movs=S.movs.filter(y=>y.id!==x.reemplaza);}
     S.movs.push(m);desconciliar(m);
     if(m.tipo==="ingreso"&&v==="Reembolso")S.movs.forEach(g=>{if(g.reembolso&&x.cubre.includes(g.id))g.reembolso={estado:"pagado",cobro:m.id};});});
   const n=sel.length+frSel.length,ult=r.movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
