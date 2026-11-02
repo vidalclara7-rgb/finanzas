@@ -1,8 +1,9 @@
 ---
 cambio: bonificaciones-e-internacionales
-estado: diseno-aprobado
+estado: archivado
 preview: no
 datos: sin-cambios
+archivado: 2026-11-02
 ---
 # Bonificaciones como ingreso y transferencias internacionales en inglés como gasto
 
