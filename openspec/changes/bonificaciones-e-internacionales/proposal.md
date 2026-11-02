@@ -1,6 +1,6 @@
 ---
 cambio: bonificaciones-e-internacionales
-estado: propuesta
+estado: aprobada
 preview: no
 datos: sin-cambios
 ---
