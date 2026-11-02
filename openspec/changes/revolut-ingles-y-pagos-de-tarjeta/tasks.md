@@ -1,8 +1,8 @@
 # Tareas: revolut-ingles-y-pagos-de-tarjeta
 
 ## Preview
-- [ ] Esqueleto del preview y pantalla de la revisión del extracto con la marca «Reemplaza el pago anotado» (normal y vacío)
-- [ ] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
+- [x] Esqueleto del preview y pantalla de la revisión del extracto con la marca «Reemplaza el pago anotado» (normal y vacío)
+- [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
 
 ## Datos y migración
 - [ ] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia

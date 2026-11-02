@@ -1,6 +1,6 @@
 ---
 cambio: revolut-ingles-y-pagos-de-tarjeta
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Leer Revolut en inglés y no duplicar los pagos de la tarjeta
