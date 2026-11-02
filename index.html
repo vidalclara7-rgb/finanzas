@@ -1502,7 +1502,7 @@ const PALABRAS=[["Delivery",["glovo","just eat","uber eats","deliveroo"]],
   ["Viajes",["hotel","booking","airbnb","ryanair","vueling","iberia"]],
   ["Casa/Splitwise",["alquiler","endesa","iberdrola","naturgy","vodafone","movistar","orange","digi","splitwise"]]];
 function propuestaCat(s,com,txt){const k=claveCom(com),w=" "+claveCom(txt)+" ";
-  if(s<0){const r=S.reglas["g|"+k];if(r&&catsGasto().includes(r))return r;if(w.includes(" transferencia internacional "))return catDe("Regalos")?"Regalos":"Otros";const p=PALABRAS.find(([,ws])=>ws.some(x=>w.includes(" "+x+" ")));return p&&catDe(p[0])?p[0]:"Otros";}
+  if(s<0){const r=S.reglas["g|"+k];if(r&&catsGasto().includes(r))return r;if(/ (transferencia internacional|international transfer) /.test(w))return catDe("Regalos")?"Regalos":"Otros";const p=PALABRAS.find(([,ws])=>ws.some(x=>w.includes(" "+x+" ")));return p&&catDe(p[0])?p[0]:"Otros";}
   const r=S.reglas["i|"+k],ing=catsIngreso(),si=n=>ing.includes(n)?n:"Otros";if(r&&ing.includes(r))return r;
   if(w.includes(" gastos "))return si("Reembolso");if(w.includes(" nomina "))return si("Sueldo");
   if(/ (interes|intereses|bonificacion|rendimiento|rendimientos) /.test(w))return si("Intereses y rendimientos");return "Otros";}
@@ -1510,7 +1510,9 @@ function propuestaCat(s,com,txt){const k=claveCom(com),w=" "+claveCom(txt)+" ";
 function otraCuenta(m,cid,r){const otras=S.cuentas.filter(c=>c.id!==cid);if(!otras.length)return null;
   const txt=m.texto+" "+m.extra,w=" "+claveCom(txt)+" ";
   // Una transferencia internacional sale a una cuenta fuera de la app: es un gasto
-  if(w.includes(" transferencia internacional "))return null;
+  if(/ (transferencia internacional|international transfer) /.test(w))return null;
+  // Una bonificación es dinero que entra, aunque el texto lleve el contrato de una tarjeta propia: es un ingreso
+  if(w.includes(" bonificacion "))return null;
   const runs=txt.replace(/(\d)\s+(?=\d)/g,"$1").match(/\d{4,}/g)||[];
   let c=otras.find(o=>o.ref&&runs.some(d=>d.endsWith(o.ref)));if(c)return c;
   // El cargo de la tarjeta de crédito en el banco: a la tarjeta (si hay una sola)
