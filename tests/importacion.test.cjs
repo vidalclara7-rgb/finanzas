@@ -676,3 +676,185 @@ t.test("tres resúmenes seguidos cuadran", async () => {
     await page.click("#icNo");
   }
 });
+
+// --- Revolut en inglés
+const REV_EN = [{ fecha: "2026-10-01", desc: "Tienda Ejemplo", importe: -10 }, { fecha: "2026-10-05", desc: "Money added via BIZUM", importe: 40 }];
+const filasImp = (page) => page.evaluate(() => imp.d.map((x) => [x.fecha, x.s, x.nota, x.marca]));
+async function elegirRevolut(page) {
+  await A.elegir(page, "segIElegir", "Revolut");
+  await page.click("#iSeguir");
+}
+
+// Escenario: extracto en inglés
+t.test("extracto en inglés", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolutEn(page, { ref: "7788", movs: REV_EN }));
+  assert.ok(await page.isVisible("#iElegir"));
+  assert.match(await A.texto(page, "#iElegirSub"), /Extracto de Revolut en euros · cuenta terminada en 7788/);
+  await elegirRevolut(page);
+  assert.deepEqual((await filasImp(page)).map((f) => f.slice(0, 2)), [["2026-10-01", -10], ["2026-10-05", 40]]);
+  await page.click("#iGuardar");
+  await A.aviso(page, "2 movimientos importados");
+  const g = await A.guardados(page);
+  assert.equal(g.cuentas.find((c) => c.id === 2).ref, "7788");
+  assert.deepEqual(g.movs.map((m) => [m.tipo, m.fecha, m.importe]).sort(), [["gasto", "2026-10-01", 10], ["ingreso", "2026-10-05", 40]]);
+});
+
+t.test("descripción larga pegada al importe", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const movs = [{ fecha: "2026-10-01", desc: "Tienda Ejemplo", importe: -10 }, { fecha: "2026-10-05", desc: "Transfer to Persona Con Un Nombre Muy Largo", importe: -29, pegado: true, extra: "Reference: Alquiler" }, { fecha: "2026-10-06", desc: "Refund from Persona Con Un Nombre Largo", importe: 12, pegado: true }];
+  await importar(page, await X.revolutEn(page, { ref: "7788", movs }));
+  await elegirRevolut(page);
+  assert.deepEqual((await filasImp(page)).map((f) => f.slice(0, 3)), [["2026-10-01", -10, "Tienda Ejemplo"], ["2026-10-05", -29, "Transfer to Persona Con Un Nombre Muy Largo"], ["2026-10-06", 12, "Refund from Persona Con Un Nombre Largo"]]);
+});
+
+// Escenario: saldo final del extracto en inglés
+t.test("saldo final del extracto en inglés", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolutEn(page, { ref: "7788", movs: REV_EN }));
+  await elegirRevolut(page);
+  await page.click("#iGuardar");
+  await A.aviso(page, "2 movimientos importados");
+  await page.waitForSelector("#sheetIC:not([hidden])");
+  assert.match(await A.texto(page, "#icExt"), /^30 €/);
+  assert.match(await A.texto(page, "#icDif"), /^0 €/);
+});
+
+// Escenario: el extracto en español sigue igual
+t.test("el extracto en español sigue igual", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolut(page, { ref: "7788", movs: REV_EN }));
+  await elegirRevolut(page);
+  assert.deepEqual((await filasImp(page)).map((f) => f.slice(0, 2)), [["2026-10-01", -10], ["2026-10-05", 40]]);
+});
+
+// Escenario: otra moneda en el mismo archivo
+t.test("otra moneda en el mismo archivo", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolutEn(page, { ref: "7788", movs: REV_EN, usd: true }));
+  await elegirRevolut(page);
+  assert.equal((await filasImp(page)).length, 2);
+});
+
+// Escenario: el mismo extracto con otro rango de fechas
+t.test("el mismo extracto con otro rango de fechas", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolutEn(page, { ref: "7788", hasta: "2026-10-31", movs: REV_EN }));
+  await elegirRevolut(page);
+  await page.click("#iGuardar");
+  await A.aviso(page, "2 movimientos importados");
+  await page.click("#icNo");
+  await importar(page, await X.revolutEn(page, { ref: "7788", hasta: "2026-11-02", movs: REV_EN }));
+  assert.deepEqual((await filasImp(page)).map((f) => f[3]), ["ya", "ya"]);
+});
+
+// Escenario: extracto en inglés sin movimientos
+t.test("extracto en inglés sin movimientos", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.revolutEn(page, { ref: "7788", movs: [] }));
+  await A.aviso(page, "No encontré movimientos en este archivo.");
+  assert.equal(await page.isVisible("#sheetI"), false);
+});
+
+// --- el pago de la tarjeta no se cuenta dos veces
+const TARJETA_P = { ...A.cta(3, "Tarjeta A", 1000, { tipo: "tarjeta" }), ref: "5566" };
+const pagoT = (id, fecha, importe) => A.ingreso(id, fecha, importe, 3, "Otros", "Pago");
+const liquid = (fecha, importe) => ({ fecha, desc: "Liquidacion De Las Tarjetas De Credito Del Contrato 0049", importe: -importe });
+const conTarjeta = (movs, tarjeta = TARJETA_P) => A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, REVOLUT, tarjeta], movs });
+const bancoP = (page, movs) => X.santanderCuenta(page, { ref: "4321", desde: "2026-09-01", hasta: "2026-11-02", movs });
+const deudaTarjeta = (page) => page.evaluate(() => valorCuenta(cuentaDe(3)));
+const chipsReemplazo = (page) => page.locator('[data-ui="marca-reemplaza-pago"]').count();
+
+// Escenario: el pago ya estaba en la tarjeta
+t.test("el pago ya estaba en la tarjeta", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-02", 700)]) });
+  const antes = await deudaTarjeta(page);
+  await importar(page, await bancoP(page, [liquid("2026-10-02", 700)]));
+  assert.equal(await chipsReemplazo(page), 1);
+  assert.equal(await page.isVisible("#iAvisoReemplazo"), true);
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  const g = await A.guardados(page);
+  assert.equal(g.movs.some((m) => m.tipo === "ingreso" && m.cuenta === 3), false);
+  assert.deepEqual(g.movs.filter((m) => m.tipo === "transferencia").map((m) => [m.cuenta, m.destino, m.importe]), [[1, 3, 700]]);
+  assert.equal(await deudaTarjeta(page), antes);
+});
+
+// Escenario: el pago de este mes todavía no estaba
+t.test("el pago de este mes todavía no estaba", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-02", 700)]) });
+  await importar(page, await bancoP(page, [liquid("2026-11-02", 767)]));
+  assert.equal(await chipsReemplazo(page), 0);
+  assert.equal(await page.isVisible("#iAvisoReemplazo"), false);
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  const g = await A.guardados(page);
+  assert.equal(g.movs.filter((m) => m.tipo === "ingreso" && m.cuenta === 3).length, 1);
+  assert.deepEqual(g.movs.filter((m) => m.tipo === "transferencia").map((m) => [m.destino, m.importe]), [[3, 767]]);
+});
+
+// Escenario: fecha a tres días
+t.test("fecha a tres días", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-01", 700)]) });
+  await importar(page, await bancoP(page, [liquid("2026-10-04", 700)]));
+  assert.equal(await chipsReemplazo(page), 1);
+});
+
+// Escenario: fecha a más de tres días
+t.test("fecha a más de tres días", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-01", 700)]) });
+  await importar(page, await bancoP(page, [liquid("2026-10-05", 700)]));
+  assert.equal(await chipsReemplazo(page), 0);
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  assert.equal((await A.guardados(page)).movs.filter((m) => m.tipo === "ingreso" && m.cuenta === 3).length, 1);
+});
+
+// Escenario: dos pagos iguales
+t.test("dos pagos iguales", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-02", 100), pagoT(2, "2026-10-02", 100)]) });
+  await importar(page, await bancoP(page, [liquid("2026-10-02", 100)]));
+  assert.equal(await chipsReemplazo(page), 1);
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  const g = await A.guardados(page);
+  assert.equal(g.movs.filter((m) => m.tipo === "ingreso" && m.cuenta === 3).length, 1);
+  assert.equal(g.movs.filter((m) => m.tipo === "transferencia").length, 1);
+});
+
+// Escenario: la línea desmarcada no cambia nada
+t.test("la línea desmarcada no cambia nada", async () => {
+  const { page } = await abrir({ datos: conTarjeta([pagoT(1, "2026-10-02", 700)]) });
+  await importar(page, await bancoP(page, [liquid("2026-10-02", 700), { fecha: "2026-10-03", desc: "Pago Movil En Tienda Ejemplo", importe: -9 }]));
+  const i = await page.evaluate(() => imp.d.find((x) => x.reemplaza != null).i);
+  await page.uncheck(`[data-on="${i}"]`);
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  const g = await A.guardados(page);
+  assert.equal(g.movs.filter((m) => m.tipo === "ingreso" && m.cuenta === 3).length, 1);
+  assert.equal(g.movs.filter((m) => m.tipo === "transferencia").length, 0);
+});
+
+// Escenario: primero el banco y después la tarjeta
+t.test("primero el banco y después la tarjeta", async () => {
+  const { page } = await abrir({ datos: conTarjeta([A.transf(1, "2026-10-02", 700, 1, 3)], { ...TARJETA_P, saldoInicial: 700 }) });
+  const resumen = await X.santanderTarjeta(page, { ref: "5566", anterior: 700, pagos: [{ fecha: "2026-10-02", importe: 700 }], compras: [{ fecha: "2026-10-05", desc: "PAGO MOVIL COMERCIO UNO", importe: 100 }], desde: "2026-09-29", hasta: "2026-10-29" });
+  await importar(page, resumen);
+  const filas = await page.evaluate(() => imp.d.map((x) => [x.s, x.marca]));
+  assert.deepEqual(filas.find((f) => f[0] === 700), [700, "ya"]);
+});
+
+// Escenario: tres resúmenes y el extracto del banco
+t.test("tres resúmenes y el extracto del banco", async () => {
+  const pagos = [pagoT(1, "2026-09-01", 700), pagoT(2, "2026-10-01", 6), pagoT(3, "2026-10-02", 736)];
+  const { page } = await abrir({ datos: conTarjeta(pagos, { ...TARJETA_P, saldoInicial: 2000 }) });
+  const antes = await deudaTarjeta(page);
+  await importar(page, await bancoP(page, [liquid("2026-09-01", 700), liquid("2026-10-01", 6), liquid("2026-10-02", 736), liquid("2026-11-02", 767)]));
+  assert.equal(await chipsReemplazo(page), 3);
+  await page.click("#iGuardar");
+  await A.aviso(page, "4 movimientos importados");
+  const g = await A.guardados(page);
+  assert.equal(g.movs.filter((m) => m.tipo === "ingreso" && m.cuenta === 3).length, 0);
+  assert.equal(g.movs.filter((m) => m.tipo === "transferencia").length, 4);
+  assert.equal(Math.round((await deudaTarjeta(page)) * 100) / 100, Math.round((antes + 767) * 100) / 100);
+});

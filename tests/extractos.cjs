@@ -38,6 +38,37 @@ function enPaginas(primera, cabecera, filas, alto, desde, hasta = 130) {
   return pags;
 }
 
+// Revolut en inglés («EUR Statement»): fechas «Oct 5, 2026» e importes «€10.00».
+// movs: [{ fecha, desc, importe, extra?, pegado? }]; con pegado el importe va dentro de la descripción, como en las descripciones largas
+const MES_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MES_EN_L = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const enCorta = (f) => { const [a, m, d] = partes(f); return `${MES_EN[m - 1]} ${d}, ${a}`; };
+const enLarga = (f) => { const [a, m, d] = partes(f); return `${MES_EN_L[m - 1]} ${d}, ${a}`; };
+const euros = (v, s = "€") => (v < 0 ? "-" : "") + s + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function revolutEn(page, { ref = "7788", titular = "Persona Ejemplo", inicial = 0, desde = "2026-10-01", hasta = "2026-10-24", movs = [], usd = false }) {
+  const salidas = movs.filter((m) => m.importe < 0).reduce((a, m) => a - m.importe, 0), entradas = movs.filter((m) => m.importe > 0).reduce((a, m) => a + m.importe, 0);
+  const fin = movs.reduce((a, m) => a + m.importe, inicial);
+  const cabecera = (moneda, sec) => [[418, 757, `${moneda} Statement`], [443, 744, `Generated on the ${enCorta(hasta)}`], [416, 731, "Revolut Bank UAB Sucursal En España"],
+    [40, 689, titular], [40, 666, "Calle Falsa 1"], [353, 665, "IBAN"], [376, 665, cuentaFalsa(ref)],
+    [40, 587, "Balance summary"], [526, 561, "Closing"], [43, 555, "Product"], [253, 555, "Opening balance"], [335, 555, "Money out"], [417, 555, "Money in"], [527, 548, "balance"],
+    [43, 529, "Account (Current Account)"], ...sec];
+  const resumen = [[253, 529, euros(inicial)], [335, 529, euros(salidas)], [417, 529, euros(entradas)], [530, 529, euros(fin)],
+    [43, 510, "Total"], [253, 510, euros(inicial)], [335, 510, euros(salidas)], [417, 510, euros(entradas)], [530, 510, euros(fin)],
+    [40, 446, `Account transactions from ${enLarga(desde)} to ${enLarga(hasta)}`]];
+  const cab = (y) => [[43, y + 6, "Transaction"], [104, y, "Value date"], [166, y, "Description"], [335, y, "Money out"], [417, y, "Money in"], [526, y, "Balance"], [43, y - 6, "date"]];
+  let saldo = inicial;
+  const filas = movs.map((m) => (y) => { saldo += m.importe;
+    const base = [[43, y, enCorta(m.fecha)], [104, y, enCorta(m.fecha)], [530, y, euros(saldo)]];
+    if (m.pegado) base.push([166, y, `${m.desc} ${euros(Math.abs(m.importe))}`]);
+    else base.push([166, y, m.desc], [m.importe < 0 ? 335 : 417, y, euros(Math.abs(m.importe))]);
+    return [...base, ...(m.extra ? [[166, y - 8, m.extra]] : [])]; });
+  const primera = cabecera("EUR", resumen);
+  // la cabecera de resumen ya lleva la fila de la cuenta: se saca de `cabecera` para no repetirla en las siguientes páginas
+  const pags = enPaginas(primera, cab, filas, 30, 372);
+  if (usd) pags.push([...cabecera("USD", [[253, 529, "$0.00"], [335, 529, "$0.00"], [417, 529, "$0.00"], [535, 529, "$0.00"]])]);
+  return pdf(page, pags);
+}
+
 // movs: [{ fecha, desc, importe (+ entra, − sale), extra? }]
 function revolut(page, { ref = "7788", titular = "Persona Ejemplo", inicial = 0, desde = "2026-10-01", hasta = "2026-10-24", movs = [] }) {
   const fin = movs.reduce((a, m) => a + m.importe, inicial);
@@ -115,4 +146,4 @@ function santanderTarjeta(page, { ref = "5566", titular = "EJEMPLO PERSONA", ant
 // Un PDF que no es ninguno de los formatos
 const otroPdf = (page) => pdf(page, [[[40, 760, "Factura de la luz"], [40, 740, "Importe 45,00 €"]]]);
 
-module.exports = { pdf, revolut, santanderCuenta, santanderTarjeta, otroPdf };
+module.exports = { pdf, revolut, revolutEn, santanderCuenta, santanderTarjeta, otroPdf };
