@@ -858,3 +858,37 @@ t.test("tres resúmenes y el extracto del banco", async () => {
   assert.equal(g.movs.filter((m) => m.tipo === "transferencia").length, 4);
   assert.equal(Math.round((await deudaTarjeta(page)) * 100) / 100, Math.round((antes + 767) * 100) / 100);
 });
+
+// --- bonificaciones e internacionales en inglés
+// Escenario: transferencia internacional en inglés
+t.test("transferencia internacional en inglés", async () => {
+  const { page } = await abrir({ datos: cuentas({ cuentas: [{ ...BANCO, ref: "4321" }, { ...REVOLUT, ref: "7788" }] }) });
+  await importar(page, await X.revolutEn(page, { ref: "7788", titular: "Ana Ejemplo", movs: [{ fecha: "2026-10-07", desc: "International Transfer to Ana Ejemplo", importe: -20, extra: "Reference: Sent from Revolut" }] }));
+  assert.equal(await que(page, 0), "g|Regalos");
+  assert.equal(await page.$eval('[data-que="0"] option:checked', (o) => o.textContent), "Gasto · Regalos");
+});
+
+const TARJ_7146 = { ...A.cta(3, "Tarjeta A", 0, { tipo: "tarjeta" }), ref: "7146" };
+const bonif = (importe = 5.86) => ({ fecha: "2026-10-22", desc: "Liquidacion Por Bonificacion De Campaña Del Contrato 0049", extra: "0755 50 21947146", importe });
+
+// Escenario: bonificación con el contrato de la tarjeta
+t.test("bonificación con el contrato de la tarjeta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, TARJ_7146] }) });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", movs: [bonif()] }));
+  assert.match(await que(page, 0), /^i\|/);
+  assert.match(await page.$eval('[data-que="0"] option:checked', (o) => o.textContent), /^Ingreso · /);
+});
+
+// Escenario: la liquidación de la tarjeta sigue siendo transferencia
+t.test("la liquidación de la tarjeta sigue siendo transferencia", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, TARJ_7146] }) });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", movs: [{ fecha: "2026-10-02", desc: "Liquidacion De Las Tarjetas De Credito Del Contrato 0049", extra: "0755 502 1947146", importe: -700 }] }));
+  assert.equal(await que(page, 0), "t|3");
+});
+
+// Escenario: bonificación sin tarjeta
+t.test("bonificación sin tarjeta", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, REVOLUT] }) });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", movs: [bonif(4.2)] }));
+  assert.match(await que(page, 0), /^i\|/);
+});
