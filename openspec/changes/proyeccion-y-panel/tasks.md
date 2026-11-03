@@ -1,8 +1,8 @@
 # Tareas: proyeccion-y-panel
 
 ## Preview
-- [ ] Esqueleto del preview: encabezado con «≡», panel de análisis y hoja Forecast (normal y vacío)
-- [ ] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
+- [x] Esqueleto del preview: encabezado con «≡», panel de análisis y hoja Forecast (normal y vacío)
+- [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
 
 ## Datos y migración
 - [ ] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia

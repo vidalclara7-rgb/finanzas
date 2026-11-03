@@ -1,6 +1,6 @@
 ---
 cambio: proyeccion-y-panel
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Proyección a 12 meses y panel de análisis
