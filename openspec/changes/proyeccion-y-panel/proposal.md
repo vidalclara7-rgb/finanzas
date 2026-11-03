@@ -1,6 +1,6 @@
 ---
 cambio: proyeccion-y-panel
-estado: propuesta
+estado: aprobada
 datos: sin-cambios
 ---
 # Proyección a 12 meses y panel de análisis
