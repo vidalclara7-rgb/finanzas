@@ -1,7 +1,8 @@
 ---
 cambio: proyeccion-y-panel
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-03
 ---
 # Proyección a 12 meses y panel de análisis
 
