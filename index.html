@@ -60,6 +60,7 @@ html.en-pausa .fondo i{animation-play-state:paused}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+header .tit{flex:1;min-width:0}
 header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .selmes{display:flex;align-items:center;gap:4px;margin-top:4px}
@@ -247,7 +248,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </head>
 <body>
 <div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-<header><div><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="selmes" data-ui="selector-mes"><button type="button" class="mes-flecha" id="mesAnterior" aria-label="Mes anterior">‹</button><span class="m" id="mesLabel"></span><button type="button" class="mes-flecha" id="mesSiguiente" aria-label="Mes siguiente">›</button></span></div><div class="acc"><button class="gear" id="lupaBtn" data-ui="lupa-movimientos" aria-label="Buscar movimientos" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div></header>
+<header data-pantalla="encabezado"><button type="button" class="gear" id="menuBtn" data-ui="boton-menu" aria-label="Abrir el panel de análisis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="tit"><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="selmes" data-ui="selector-mes"><button type="button" class="mes-flecha" id="mesAnterior" aria-label="Mes anterior">‹</button><span class="m" id="mesLabel"></span><button type="button" class="mes-flecha" id="mesSiguiente" aria-label="Mes siguiente">›</button></span></div><div class="acc"><button class="gear" id="lupaBtn" data-ui="lupa-movimientos" aria-label="Buscar movimientos" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div></header>
 
 <main>
   <!-- INICIO -->
@@ -533,6 +534,27 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </form>
 
 <!-- Cuotas del mes: financiaciones y compras en cuotas -->
+<!-- Panel de análisis -->
+<div class="sheet-bg" id="panelBg" data-ui="fondo-panel" hidden></div>
+<aside class="panel" id="panel" data-pantalla="panel" data-ui="panel-analisis" aria-label="Análisis" hidden>
+  <div class="row"><h2>Análisis</h2><button type="button" class="btn sec" id="panelCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="list">
+    <button type="button" class="item tap" id="panelFore" data-ui="panel-forecast"><div class="d"><span>Forecast</span><span>Tus próximos 12 meses</span></div></button>
+    <button type="button" class="item tap" id="panelInv" data-ui="panel-inversiones"><div class="d"><span>Inversiones</span><span>Rendimiento de tus cuentas de inversión</span></div></button>
+    <button type="button" class="item tap" id="panelRadar" data-ui="panel-radar" disabled><div class="d"><span>Radar de noticias</span><span>Próximamente</span></div></button>
+  </div>
+</aside>
+<!-- Forecast: los próximos 12 meses con lo comprometido y el ingreso constante -->
+<div id="sheetFore" class="sheet" data-pantalla="hoja-forecast" data-ui="hoja-forecast" hidden>
+  <div class="row"><h2>Forecast</h2><button type="button" class="btn sec" id="foreCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <span class="sub" id="foreSinIng" data-ui="forecast-aviso" hidden>Todavía no hay ingresos para promediar. Escribí uno para ver la proyección.</span>
+  <span class="sub" id="foreSinComp" data-ui="forecast-sin-compromisos" hidden>No hay cuotas ni gastos fijos para proyectar.</span>
+  <div class="card color" id="foreResumen" data-ui="forecast-resumen" style="--c:var(--k2);--on-c:var(--k2t)"><span class="lbl">Próximos 12 meses</span><div class="list" id="foreResumenLista"></div></div>
+  <label class="f" for="foreIng">Ingreso por mes (€)<input type="text" inputmode="decimal" autocomplete="off" id="foreIng" data-ui="forecast-ingreso"></label>
+  <span class="sub" id="foreIngSub"></span>
+  <div class="card color" id="foreBarrasCard" data-ui="forecast-barras" style="--c:var(--k1);--on-c:var(--k1t)"><div class="row"><span class="lbl">Comprometido contra ingreso</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingreso</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Comprometido</span></span></div><div class="meses" id="foreBarras"></div></div>
+  <div class="list" id="foreLista" data-ui="forecast-lista"></div>
+</div>
 <div id="sheetCuotas" class="sheet" data-pantalla="hoja-cuotas" data-ui="hoja-cuotas" hidden>
   <div class="row"><h2>Cuotas del mes</h2><button type="button" class="btn sec" id="cuotasCerrar" style="padding:8px 12px">Cerrar</button></div>
   <div style="display:flex;flex-direction:column;gap:4px"><span class="monto" id="cuTotal"></span><span class="sub" id="cuSub"></span></div>
@@ -1042,7 +1064,7 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetMovsCta","sheetCats","sheetCatEd"];
+const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetMovsCta","sheetCats","sheetCatEd"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 // Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
 let volverCta=null,ce=null;
@@ -1747,6 +1769,34 @@ $("aqNo").onclick=()=>{aq=null;mostrar("sheetC");};
 $("aqRevisar").onclick=async()=>{if(!aq)return;const q=aq;aq=null;if(!(await aplicarSigno(q.r))){mostrar("sheetC");return;}abrirRevision(q.r,q.f,q.cid,q.id);};
 $("sgGastos").onclick=()=>resolverSigno("gastos");$("sgIngresos").onclick=()=>resolverSigno("ingresos");$("sgCerrar").onclick=()=>cerrar();
 
+// --- Panel de análisis y Forecast
+function abrirPanel(){$("panelBg").hidden=$("panel").hidden=false;}
+function cerrarPanel(){$("panelBg").hidden=$("panel").hidden=true;}
+$("menuBtn").onclick=abrirPanel;$("panelBg").onclick=$("panelCerrar").onclick=cerrarPanel;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("panel").hidden)cerrarPanel();});
+$("panelFore").onclick=()=>{cerrarPanel();abrirFore();};
+$("panelInv").onclick=()=>{cerrarPanel();if(!S.cuentas.some(c=>c.tipo==="inversion")){toast("No tenés cuentas de inversión. Agregá una en Cuentas.");return;}abrirInv();};
+// Ingreso constante: el promedio de hasta tres meses cerrados en que entró algo (sin reembolsos; un mes sin ingresos no cuenta)
+function ingresoPromedio(){let tot=0,n=0;for(let i=1;i<=3;i++){const v=r2(movsMes(mesSig(mesId(),-i)).filter(m=>m.tipo==="ingreso"&&m.cat!=="Reembolso").reduce((a,m)=>a+m.importe,0));if(v>0){tot+=v;n++;}}return n?r2(tot/n):0;}
+// Gastos fijos del último mes cerrado (las compras en cuotas ya entran por sus cuotas)
+const fijosBase=()=>r2(movsMes(mesSig(mesId(),-1)).filter(m=>esFijo(m)&&!m.cuotas&&!m.cuotaN).reduce((a,m)=>a+m.importe,0));
+// Los 12 meses que vienen: ingreso constante menos gastos fijos y cuotas
+function proyeccion(ing){const fij=fijosBase();
+  return Array.from({length:12},(_,i)=>{const k=mesSig(mesId(),i+1),cu=cuotasDelMes(k).total,comp=r2(fij+cu);return {mes:k,fijos:fij,cuotas:cu,comp,libre:r2(ing-comp)};});}
+let foreIngV=null;
+function pintarFore(){const prom=ingresoPromedio(),ing=foreIngV!=null?foreIngV:prom,fs=proyeccion(ing);
+  const f1=fs[0],f12=fs[11],sinComp=fs.every(f=>f.comp===0);
+  $("foreSinIng").hidden=ing>0;$("foreSinComp").hidden=!sinComp;
+  const fila=(t,v)=>`<div class="item"><span>${t}</span><span class="num">${eur(v)}</span></div>`;
+  $("foreResumenLista").innerHTML=fila("Entra por mes",ing)+fila("Comprometido el mes que viene",f1.comp)+fila("Libre el mes que viene",f1.libre)+fila("Libre dentro de 12 meses",f12.libre);
+  $("foreIngSub").textContent=foreIngV!=null?"Estás probando otro monto: no se guarda.":(prom>0?"Promedio de los últimos meses cerrados, sin reembolsos. Podés probar otro monto: no se guarda.":"Escribí cuánto entra por mes. No se guarda.");
+  const mx=Math.max(ing,...fs.map(f=>f.comp),1);
+  $("foreBarras").innerHTML=fs.map(f=>`<div class="col${f.libre<0?" neg":""}" data-mes="${f.mes}" data-ing="${ing}" data-comp="${f.comp}"><div class="par"><i class="ing" style="height:${Math.max(ing/mx*100,2).toFixed(0)}%"></i><i class="gas" style="height:${Math.max(f.comp/mx*100,2).toFixed(0)}%"></i></div><small>${MESES[+f.mes.slice(5)-1].slice(0,3).toLowerCase()}</small></div>`).join("");
+  $("foreLista").innerHTML=fs.map(f=>`<div class="item" data-mes="${f.mes}"><div class="d"><span>${mesDe(f.mes)}</span><span>Fijos ${eur(f.fijos)} · cuotas ${eur(f.cuotas)}</span></div><div class="v"><span class="num">${eur(f.libre)}</span><span class="chip ${f.libre<0?"badc":"ok"}">${f.libre<0?"En rojo":"Libre"}</span></div></div>`).join("");}
+function abrirFore(){foreIngV=null;const p=ingresoPromedio();$("foreIng").value=String(p).replace(".",",");pintarFore();mostrar("sheetFore");}
+$("foreIng").addEventListener("input",()=>{const t=$("foreIng").value.trim();if(!t){foreIngV=null;pintarFore();return;}const v=numX("foreIng");if(v!=null&&v>=0){foreIngV=r2(v);pintarFore();}});
+$("foreIng").addEventListener("change",()=>{const t=$("foreIng").value.trim(),v=t?numX("foreIng"):0;if(t&&(v==null||v<0)){toast("Poné un importe válido");$("foreIng").value=String(foreIngV!=null?foreIngV:ingresoPromedio()).replace(".",",");}});
+$("foreCerrar").onclick=cerrar;
 // Hojas de inversiones: resumen por cuenta, activo y operación
 function abrirInv(){const cs=S.cuentas.filter(c=>c.tipo==="inversion");
   $("invCuerpo").innerHTML=cs.map(c=>{const i=invCuenta(c),ef=r2(i.valor-i.enActivos);
