@@ -1,6 +1,6 @@
 ---
 cambio: sistema-de-diseno
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Nuevo sistema de diseño: vidrio, fondo fluido y paleta lima y violeta

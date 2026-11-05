@@ -6,13 +6,13 @@
 - [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
 
 ## Datos y migración
-- [ ] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia
+- [x] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia
 
 ## Estilos
-- [ ] Variables de la paleta (claro y oscuro) y quitar las dos paletas, `--mancha*` y `--velo`
-- [ ] Tarjetas de vidrio, punto de color por tipo de cuenta y 19 colores de categoría de la paleta de la persona
-- [ ] Tarjeta destacada (borde cónico y foco), botón principal con pulso y botón secundario de vidrio
-- [ ] Letra: Archivo en títulos y cifras grandes, monoespaciada en datos pequeños; logo «mf.»
+- [x] Variables de la paleta (claro y oscuro) y quitar las dos paletas, `--mancha*` y `--velo`
+- [x] Tarjetas de vidrio, punto de color por tipo de cuenta y 19 colores de categoría de la paleta de la persona
+- [x] Tarjeta destacada (borde cónico y foco), botón principal con pulso y botón secundario de vidrio
+- [x] Letra: Archivo en títulos y cifras grandes, monoespaciada en datos pequeños; logo «mf.»
 
 ## Lógica
 - [ ] `tendenciaMes()` y `data-tendencia` en `<html>`; color positivo, negativo o neutro
