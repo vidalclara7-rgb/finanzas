@@ -28,7 +28,7 @@
 
 ## Prueba en el navegador
 - [x] `python3 kit.py capturas` y revisión en claro y oscuro contra el preview
-- [ ] Probar la migración con una copia real en local (sin subirla)
+- [x] Probar la migración con datos de ejemplo (plan completo, sin plan, sin cuenta de fondo, copia vieja y primera versión); no hay copia real de la persona para probarla en local
 
 ## Documentación
 - [x] `CLAUDE.md`: modelo de datos (`objetivos`), `norm()`, panel, Inicio, Cierre y Ajustes

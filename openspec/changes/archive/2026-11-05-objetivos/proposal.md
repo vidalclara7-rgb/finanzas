@@ -1,7 +1,8 @@
 ---
 cambio: objetivos
-estado: diseno-aprobado
+estado: archivado
 datos: migra
+archivado: 2026-11-05
 ---
 # Objetivos de ahorro con recordatorio de transferencia
 
