@@ -28,7 +28,7 @@
   --cat1t:#FFFFFF; --cat2t:#13131A; --cat3t:#000000; --cat4t:#FFFFFF; --cat5t:#13131A; --cat6t:#FFFFFF; --cat7t:#13131A; --cat8t:#FFFFFF; --cat9t:#13131A; --cat10t:#13131A; --cat11t:#FFFFFF; --cat12t:#13131A; --cat13t:#FFFFFF; --cat14t:#000000; --cat15t:#13131A; --cat16t:#13131A; --cat17t:#FFFFFF; --cat18t:#13131A; --cat19t:#FFFFFF;
   /* Marcas de color por tipo de cuenta: bancos violeta, inversiones cielo, tarjetas coral, financiaciones lavanda, deudas compartidas lima */
   --k1:#6A35E8; --k1t:#13131A; --k2:#1C7ED6; --k2t:#13131A; --k3:#D92F4B; --k3t:#13131A; --k4:#9A78E6; --k4t:#13131A; --k5:#569600; --k5t:#13131A;
-  --bg:#F3F3F8; --surface:rgba(255,255,255,.78); --glass-tint:rgba(255,255,255,.5); --ink:#13131A; --muted:#64646A; --line:rgba(19,19,26,.09); --ink-base:#13131A; --muted-base:#64646A;
+  --bg:#F3F3F8; --surface:rgba(255,255,255,.56); --glass-tint:rgba(255,255,255,.36); --ink:#13131A; --muted:#64646A; --line:rgba(19,19,26,.09); --ink-base:#13131A; --muted-base:#64646A;
   --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(19,19,26,.07); --on-color:#13131A;
   --nav:rgba(255,255,255,.72); --nav-ink:#64646A; --nav-on:#13131A; --neutro:var(--surface);
   --acento:#8CCB00;
@@ -45,7 +45,7 @@
   --cat1t:#FFFFFF; --cat2t:#13131A; --cat3t:#13131A; --cat4t:#13131A; --cat5t:#13131A; --cat6t:#FFFFFF; --cat7t:#13131A; --cat8t:#000000; --cat9t:#13131A; --cat10t:#13131A; --cat11t:#FFFFFF; --cat12t:#13131A; --cat13t:#13131A; --cat14t:#13131A; --cat15t:#13131A; --cat16t:#13131A; --cat17t:#FFFFFF; --cat18t:#13131A; --cat19t:#FFFFFF;
   /* Marcas de color por tipo de cuenta: bancos violeta, inversiones cielo, tarjetas coral, financiaciones lavanda, deudas compartidas lima */
   --k1:#8450FC; --k1t:#13131A; --k2:#1AAEFC; --k2t:#13131A; --k3:#F2546A; --k3t:#13131A; --k4:#C4A5F7; --k4t:#13131A; --k5:#B2FF00; --k5t:#13131A;
-  --bg:#0B0B10; --surface:rgba(40,40,47,.6); --glass-tint:rgba(40,40,47,.42); --ink:#F4F4F6; --muted:#ACACAE; --line:rgba(255,255,255,.08); --ink-base:#F4F4F6; --muted-base:#ACACAE;
+  --bg:#0B0B10; --surface:rgba(40,40,47,.42); --glass-tint:rgba(40,40,47,.3); --ink:#F4F4F6; --muted:#ACACAE; --line:rgba(255,255,255,.08); --ink-base:#F4F4F6; --muted-base:#ACACAE;
   --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(255,255,255,.1); --on-color:#F4F4F6;
   --nav:rgba(40,40,47,.7); --nav-ink:#ACACAE; --nav-on:#F4F4F6;
   --acento:#B2FF00;
@@ -73,13 +73,13 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear svg{width:22px;height:22px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
-.card{position:relative;overflow:hidden;background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.1);backdrop-filter:blur(20px) saturate(1.1);border:1px solid var(--line);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.card{position:relative;overflow:hidden;background:var(--surface);-webkit-backdrop-filter:blur(24px) saturate(1.2);backdrop-filter:blur(24px) saturate(1.2);border:1px solid var(--line);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
 .mov{background:var(--c,var(--surface));color:var(--ct,#FFFFFF);--ink:var(--ct,#FFFFFF);--muted:color-mix(in srgb,var(--ct,#FFFFFF) 80%,transparent);--line:color-mix(in srgb,var(--ct,#FFFFFF) 24%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink-base) 12%,transparent)}
 .mov .ico{background:color-mix(in srgb,var(--ct,#FFFFFF) 24%,transparent);color:var(--ct,#FFFFFF)}
 .ico.osc{color:var(--on-osc)}
-/* Tarjeta de vidrio con marca de color: el color (tipo de cuenta o de la tarjeta) sale de --c y se ve como un filo a la izquierda */
-.card.color::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--c)}
+/* Tarjeta de vidrio con marca de color: el color (tipo de cuenta o de la tarjeta) sale de --c y se ve como un punto junto al título */
+.card.color .lbl::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:8px;vertical-align:1px}
 /* Tarjeta destacada: vidrio más translúcido, borde de color que gira despacio y un foco de luz que sigue el dedo */
 @property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
 .card.destacada{background:var(--glass-tint);border:0;isolation:isolate}

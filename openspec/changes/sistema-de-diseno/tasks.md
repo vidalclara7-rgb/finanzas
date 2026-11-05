@@ -10,7 +10,7 @@
 
 ## Estilos
 - [ ] Variables de la paleta (claro y oscuro) y quitar las dos paletas, `--mancha*` y `--velo`
-- [ ] Tarjetas de vidrio, marca de color por tipo de cuenta y 19 colores de categoría derivados
+- [ ] Tarjetas de vidrio, punto de color por tipo de cuenta y 19 colores de categoría de la paleta de la persona
 - [ ] Tarjeta destacada (borde cónico y foco), botón principal con pulso y botón secundario de vidrio
 - [ ] Letra: Archivo en títulos y cifras grandes, monoespaciada en datos pequeños; logo «mf.»
 

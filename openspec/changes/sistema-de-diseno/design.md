@@ -18,8 +18,8 @@
 | Variable | Clara | Oscura |
 |---|---|---|
 | `--bg` | #F3F3F8 | #0B0B10 |
-| `--surface` (vidrio) | #FFFFFF al 78 % | #28282F al 60 % |
-| `--glass-tint` (destacada) | #FFFFFF al 50 % | #28282F al 42 % |
+| `--surface` (vidrio) | #FFFFFF al 56 % | #28282F al 42 % |
+| `--glass-tint` (destacada) | #FFFFFF al 36 % | #28282F al 30 % |
 | `--line` | #13131A al 9 % | #FFFFFF al 8 % |
 | `--ink` | #13131A | #F4F4F6 |
 | `--ink-secondary` | #13131A al 64 % | #FFFFFF al 66 % |
@@ -34,7 +34,7 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
 
 ## Cómo se traduce cada pieza a la web
 
-- **Tarjeta estándar** (`.card`): fondo `--surface`, `backdrop-filter: blur(20px)` con prefijo `-webkit-`, borde de 1 px `--line`, radio 24 px. Sin degradado.
+- **Tarjeta estándar** (`.card`): fondo `--surface`, `backdrop-filter: blur(24px)` con prefijo `-webkit-`, borde de 1 px `--line`, radio 24 px. Sin degradado.
 - **Tarjeta destacada** (`.card.destacada`): `--glass-tint`, borde de 1,5 px con `conic-gradient` (lima, violeta, lima al 10 %, lima) que gira con una propiedad `@property --ang` animada 12 s por vuelta,
   y un foco `radial-gradient` del brillo de la tendencia que sigue el dedo (`pointerdown`/`pointermove`) y se apaga al soltar. Con «Reducir movimiento», el borde queda quieto. Sin vibración (no existe en iPhone web).
 - **Fondo fluido** (`.fondo`): tres lóbulos (círculos) que se mueven con las mismas fórmulas del sistema (seno y coseno de cada lóbulo), un filtro SVG `feGaussianBlur` + `feColorMatrix` (umbral) que los funde en una masa, relleno
@@ -44,9 +44,9 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
 - **Tendencia** de Inicio: resultado del mes que se ve (ingresos menos gastos): mayor que 0, positiva; menor que 0, negativa; igual a 0 o sin datos, neutra. La usan el fondo, la tarjeta destacada y el texto de variación.
 - **Tipografía**: `--font-display` = Archivo (títulos de pantalla y de hojas, `.big`, `.monto`); `--font` (sistema) para el texto; `--font-num` (monoespaciada) para importes de listas, porcentajes y datos pequeños.
 - **Tarjeta destacada**: el patrimonio neto de Cuentas y el resultado del mes de Inicio (a confirmar en el Gate 2).
-- **Colores por tipo de cuenta** (`--k1` a `--k5`): pasan de ser el fondo de la tarjeta a ser una marca de color (filo de la tarjeta) sobre vidrio. **Colores de categoría** (`--cat1` a `--cat19` y su texto `--cat1t` a `--cat19t`): por apariencia;
+- **Colores por tipo de cuenta** (`--k1` a `--k5`): pasan de ser el fondo de la tarjeta a ser un punto de color junto al título (el filo a la izquierda se descartó en el Gate 2). **Colores de categoría** (`--cat1` a `--cat19` y su texto `--cat1t` a `--cat19t`): por apariencia;
   la tarjeta de un gasto sigue siendo del color de su categoría y el ingreso usa `--ingreso` con su texto `--on-ingreso`.
-- Se quitan `--mancha1` a `--mancha5`, `--velo`, las dos paletas y `.card.color` (sustituido por vidrio con marca de color). `settings.paleta` de datos viejos sigue ignorándose.
+- Se quitan `--mancha1` a `--mancha5`, `--velo`, las dos paletas y `.card.color` (sustituido por vidrio con un punto de color). `settings.paleta` de datos viejos sigue ignorándose.
 - `theme-color` toma el `--bg` nuevo (la barra del sistema acompaña a la apariencia).
 
 ## Cómo se implementa
@@ -57,3 +57,8 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
   foco de la destacada. Todo lo que escribe la persona sigue pintándose con `esc()`.
 - Tests: se reescriben los de apariencia (fondo y colores) y los de contraste de las tarjetas de color; se ajustan los de categorías que miran `--cat*`.
 - La renovación pasa por el preview con una pantalla de muestras (colores de categoría y de tipo de cuenta) y todas las pantallas en claro y en oscuro.
+
+## Cambios del Gate 2 (2026-11-05)
+
+- Vidrio más translúcido que el del sistema (56 % y 42 % en vez de 78 % y 60 %; destacada 36 % y 30 %) y desenfoque de 24 px, a pedido de la persona; el contraste del texto se comprueba contra el peor caso del fondo.
+- El filo de color a la izquierda de las tarjetas por tipo de cuenta se cambió por un punto de color junto al título.

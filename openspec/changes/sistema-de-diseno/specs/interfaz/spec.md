@@ -44,7 +44,7 @@ Lo sustituyen las tarjetas de vidrio.
 
 ## Requisito: tarjetas de vidrio
 
-Las tarjetas son de vidrio: translúcidas, con el fondo desenfocado detrás, un borde fino y las esquinas redondeadas, sin degradado. Las cuentas y los grupos que antes llevaban un color sólido por tipo (bancos, inversiones, tarjetas, financiaciones y deudas compartidas) llevan ahora una marca de ese color sobre el vidrio. El título de cada tarjeta usa el color de etiqueta de la apariencia. El texto se lee con contraste de al menos 4,5 a 1.
+Las tarjetas son de vidrio: translúcidas, con el fondo desenfocado detrás, un borde fino y las esquinas redondeadas, sin degradado. Las cuentas y los grupos que antes llevaban un color sólido por tipo (bancos, inversiones, tarjetas, financiaciones y deudas compartidas) llevan ahora un punto de ese color junto al título de la tarjeta. El título de cada tarjeta usa el color de etiqueta de la apariencia. El texto se lee con contraste de al menos 4,5 a 1.
 
 ### Escenario: el vidrio deja ver el fondo
 - **Dado** una tarjeta de Inicio
@@ -56,10 +56,10 @@ Las tarjetas son de vidrio: translúcidas, con el fondo desenfocado detrás, un 
 - **Cuando** la persona abre Inicio
 - **Entonces** el fondo de las tarjetas no tiene degradado
 
-### Escenario: marca de color por tipo de cuenta
+### Escenario: punto de color por tipo de cuenta
 - **Dado** una cuenta de bancos y una tarjeta de crédito
 - **Cuando** la persona abre Cuentas
-- **Entonces** cada una lleva la marca de color de su tipo, y los dos colores son distintos
+- **Entonces** cada una lleva un punto del color de su tipo junto al título, y los dos colores son distintos
 
 ### Escenario: el texto se lee sobre el vidrio
 - **Dado** tarjetas de Inicio, Cuentas y Cierre
@@ -166,7 +166,7 @@ Cada gasto es una tarjeta del color de su categoría, el mismo en la torta, en l
 
 ## Requisito: muestras de color
 
-Los 19 colores de categoría salen de la paleta de gráficos del sistema, en la versión de cada apariencia, y son todos distintos entre sí. Los cinco tipos de cuenta usan los colores principales de esa paleta como marca sobre el vidrio: violeta para bancos, cielo para inversiones, coral para tarjetas, lavanda para financiaciones y lima para deudas compartidas.
+Los 19 colores de categoría salen de la paleta de gráficos del sistema, en la versión de cada apariencia, y son todos distintos entre sí. Los cinco tipos de cuenta usan los colores principales de esa paleta como punto de color junto al título de la tarjeta: violeta para bancos, cielo para inversiones, coral para tarjetas, lavanda para financiaciones y lima para deudas compartidas.
 
 ### Escenario: 19 colores distintos
 - **Dado** la app abierta
