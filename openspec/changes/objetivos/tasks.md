@@ -1,8 +1,8 @@
 # Tareas: objetivos
 
 ## Preview
-- [ ] Esqueleto del preview: panel con «Objetivos», hoja «Objetivos», hoja de edición con plan, tarjeta «Toca transferir» en Inicio, tarjeta «Objetivos» en Cierre y Ajustes sin el plan (normal y vacío)
-- [ ] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
+- [x] Esqueleto del preview: panel con «Objetivos», hoja «Objetivos», hoja de edición con plan, tarjeta «Toca transferir» en Inicio, tarjeta «Objetivos» en Cierre y Ajustes sin el plan (normal y vacío)
+- [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
 
 ## Datos y migración
 - [ ] `objetivosNorm()` en `norm()`: crea el objetivo del fondo desde `settings`, valida los guardados, idempotente

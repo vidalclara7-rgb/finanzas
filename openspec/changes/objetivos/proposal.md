@@ -1,6 +1,6 @@
 ---
 cambio: objetivos
-estado: aprobada
+estado: diseno-aprobado
 datos: migra
 ---
 # Objetivos de ahorro con recordatorio de transferencia
