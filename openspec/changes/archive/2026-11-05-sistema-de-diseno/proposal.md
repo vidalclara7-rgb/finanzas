@@ -1,7 +1,8 @@
 ---
 cambio: sistema-de-diseno
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-05
 ---
 # Nuevo sistema de diseño: vidrio, fondo fluido y paleta lima y violeta
 

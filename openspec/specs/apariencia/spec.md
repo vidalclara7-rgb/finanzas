@@ -28,51 +28,27 @@ recuerda al volver a abrir.
 - **Cuando** la persona vuelve a abrir la app
 - **Entonces** la app se ve clara
 
-## Requisito: fondo de manchas
-
-Detrás de todas las pantallas hay un fondo dinámico: cinco manchas de color de la paleta de la apariencia, muy
-difuminadas, sobre el color de fondo (casi negro en la oscura, blanco en la clara), con un velo suave para que el texto
-se lea. Ya no hay estrellas. Las tarjetas de color son sólidas y quedan encima; su texto se lee con contraste de al
-menos 4,5 a 1.
-
-### Escenario: el fondo está en todas las pantallas
-- **Dado** la app con datos de ejemplo
-- **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre y Ajustes
-- **Entonces** en todas se ve el fondo de manchas detrás de las tarjetas
-
-### Escenario: manchas de la paleta, sin estrellas
-- **Dado** el fondo de manchas visible
-- **Cuando** la persona lo mira en la apariencia Clara y en la Oscura
-- **Entonces** las manchas son de los colores de Brûlée (naranja, tomate, púrpura, granate y crema) en la clara y de los de Jardín (verde, rosa, amarillo, malva y verde azulado) en la oscura
-- **Y** no hay estrellas en ninguna
-
-### Escenario: el texto se lee sobre el fondo
-- **Dado** el resultado del mes y los totales de Inicio en las dos apariencias
-- **Cuando** la persona abre Inicio y Movimientos
-- **Entonces** los importes y el texto suelto tienen contraste de al menos 4,5 a 1 con lo que tienen detrás, aun con dos manchas superpuestas
-
 ## Requisito: movimiento del fondo
 
-Las manchas se mueven despacio. No se mueven si el teléfono tiene activado «Reducir movimiento», y se detienen cuando
-la app no está visible.
+La forma se mueve despacio. No se mueve si el teléfono tiene activado «Reducir movimiento» y se detiene cuando la app no está visible.
 
 ### Escenario: se mueve despacio
 - **Dado** el teléfono sin «Reducir movimiento»
 - **Cuando** la persona abre la app
-- **Entonces** las manchas están en movimiento lento
+- **Entonces** la forma está en movimiento lento
 
 ### Escenario: reducir movimiento
 - **Dado** el teléfono con «Reducir movimiento» activado
 - **Cuando** la persona abre la app
-- **Entonces** las manchas se ven quietas
+- **Entonces** la forma se ve quieta
 
 ### Escenario: la app no está visible
-- **Dado** las manchas en movimiento
+- **Dado** la forma en movimiento
 - **Cuando** la app pasa a segundo plano
 - **Entonces** el movimiento se pausa
 
 ### Escenario: sin cargar nada de otros sitios
-- **Dado** el fondo de manchas visible
+- **Dado** el fondo visible
 - **Cuando** la persona abre la app
 - **Entonces** el fondo no hace ninguna petición a otro sitio
 
@@ -85,24 +61,51 @@ En la app instalada, el color de la barra superior del sistema acompaña a la ap
 - **Cuando** la persona cambia a Clara
 - **Entonces** el color de la barra del sistema pasa de oscuro a claro
 
-## Requisito: colores de las dos paletas
+## Requisito: fondo fluido
 
-La apariencia oscura usa la paleta Jardín sobre un fondo casi negro: verde azulado oscuro, verde, rosa, amarillo,
-malva y blanco hueso para las tarjetas y el texto. La clara usa la paleta Brûlée sobre un fondo blanco: crema, naranja,
-púrpura, granate, chocolate y tomate para las tarjetas, el texto y los acentos. El fondo de cada una es el de
-«fondo de manchas».
+Detrás de todas las pantallas hay una sola forma fluida: tres lóbulos que se mueven y se funden en una masa, de color plata con un tinte violeta y el brillo de la tendencia del mes, sobre el color de fondo de la apariencia (#F3F3F8 en la clara, #0B0B10 en la oscura). Las tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1. No hay manchas separadas ni estrellas.
+
+### Escenario: el fondo está en todas las pantallas
+- **Dado** la app con datos de ejemplo
+- **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre y Ajustes
+- **Entonces** en todas se ve la forma fluida detrás de las tarjetas
+
+### Escenario: una sola forma de tres lóbulos
+- **Dado** el fondo visible
+- **Cuando** la persona lo mira en la apariencia Clara y en la Oscura
+- **Entonces** hay una sola forma hecha de tres lóbulos
+- **Y** no quedan las cinco manchas de antes
+
+### Escenario: color de fondo de cada apariencia
+- **Dado** la app abierta
+- **Cuando** la persona cambia entre Clara y Oscura
+- **Entonces** el fondo de la pantalla es #F3F3F8 en la clara y #0B0B10 en la oscura
+
+### Escenario: el texto se lee sobre el fondo
+- **Dado** el resultado del mes y los totales de Inicio en las dos apariencias
+- **Cuando** la persona abre Inicio y Movimientos
+- **Entonces** los importes y el texto suelto tienen contraste de al menos 4,5 a 1 con lo que tienen detrás, aun con la forma justo debajo
+
+## Requisito: colores del sistema
+
+La app tiene una sola paleta, con versión clara y oscura. Oscura: fondo #0B0B10, texto #F4F4F6, acento lima #B2FF00, etiquetas en lavanda #C4A5F7. Clara: fondo #F3F3F8, texto #13131A, acento lima #B2FF00 con texto #13131A, etiquetas en violeta #5B2BD1. El resto (violeta, lavanda, cielo, positivo y negativo) sigue el sistema de diseño de la persona.
 
 ### Escenario: los colores de la oscura
 - **Dado** la apariencia Oscura
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es casi negro (#070B0C) y las manchas del fondo son de la paleta Jardín
+- **Entonces** el fondo de la pantalla es #0B0B10 y el texto principal es #F4F4F6
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es blanco (#FFFFFF) y las manchas del fondo son de la paleta Brûlée
+- **Entonces** el fondo de la pantalla es #F3F3F8 y el texto principal es #13131A
 
-### Escenario: el texto se lee sobre el fondo
-- **Dado** el resultado del mes y los totales de Inicio en las dos apariencias
-- **Cuando** la persona abre Inicio
-- **Entonces** los importes tienen contraste de al menos 4,5 a 1 con lo que tienen detrás
+### Escenario: positivo y negativo
+- **Dado** un gasto y un ingreso este mes
+- **Cuando** la persona abre Movimientos en las dos apariencias
+- **Entonces** lo positivo usa el verde lima del sistema (#367300 en la clara, #B2FF00 en la oscura) y lo negativo el rojo (#C72543 en la clara, #F2546A en la oscura)
+
+### Escenario: una paleta vieja guardada
+- **Dado** datos guardados que elegían otra paleta cuando se podía elegir
+- **Cuando** la persona abre la app
+- **Entonces** la app se ve con la paleta del sistema, sin error

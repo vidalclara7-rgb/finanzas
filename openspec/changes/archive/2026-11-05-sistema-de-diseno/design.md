@@ -71,3 +71,5 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
 
 En el navegador de pruebas (sin GPU, sólo una referencia; no es un iPhone): con el filtro de fusión a tamaño completo, la app bajaba a 17–19 fps; sin el fondo, 62 fps. La forma se dibuja ahora a un cuarto del tamaño y se agranda (`transform: scale(4)` con `will-change`), con los desenfoques divididos por cuatro: 62,8 fps, igual que sin fondo. No hizo falta el plan B (degradados radiales).
 En un iPhone real no lo he medido: si va lento, el plan B sigue siendo cambiar la forma por tres degradados radiales animados y avisarlo.
+
+- La pantalla «Muestras de color» sólo existió en el preview para aprobar los colores; al construir se quitó de él porque la app no tiene esa pantalla (la paridad exige que cada pantalla del preview esté en la app). Los colores quedan comprobados por los tests de «19 colores distintos», «5 colores por tipo de cuenta» y «colores de la paleta de gráficos».
