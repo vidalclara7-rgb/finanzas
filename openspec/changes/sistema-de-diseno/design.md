@@ -6,9 +6,12 @@
   tipografía». Esto reemplaza los requisitos de «tarjetas de color sólido, sin degradados» y «fondo de manchas».
 - **Archivo dentro del repo.** Se guarda en `vendor/archivo/` (variable, latín, licencia libre OFL con su texto) y se carga de ahí; va a `FILES` para que funcione sin conexión. Si el entorno no puede
   descargarla, la persona pasa el archivo. Se descarta la fuente del sistema en heavy.
-- **Colores derivados.** El sistema no trae los 19 colores de categoría ni las 5 ranuras de tarjeta por tipo: se derivan de su paleta (violeta, lavanda, cielo, lima, rojo) con contraste de 4,5 a 1 y se
+- **Colores de la persona.** Los 19 colores de categoría son los de la paleta de gráficos (`ChartPalette`) de su sistema, con versión clara y oscura; las marcas de tipo de cuenta usan los principales (violeta, cielo, coral, lavanda, lima). Se descartan los que yo había derivado.
   aprueban en el preview (una pantalla de muestras). Se descarta esperar una lista de la persona.
 - **Una sola paleta**, con versión clara y oscura. Se descarta mantener Jardín y Brûlée como temas: más código y más pruebas.
+
+- **Asignación fija por categoría** (decidido el 2026-11-05): el color de una categoría es el de su posición (1 a 19, el índice que ya guarda la persona al elegirlo). Se descarta el ranking por tamaño que sugiere el sistema: haría que «Alquiler» cambiara de color de un mes a otro.
+- **Texto sobre cada color:** blanco, `#13131A` o negro, el que dé más contraste (siempre ≥ 4,5 a 1). Tres colores están en el borde y llevan negro: cielo (claro), índigo (oscuro) y esmeralda (claro). Los colores oscuros que casi no se ven sobre el fondo oscuro (verde profundo, azul marino, ciruela, grafito) llevan un filo fino, como sugiere el sistema.
 
 ## Tokens (del sistema, tal cual)
 
@@ -41,8 +44,8 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
 - **Tendencia** de Inicio: resultado del mes que se ve (ingresos menos gastos): mayor que 0, positiva; menor que 0, negativa; igual a 0 o sin datos, neutra. La usan el fondo, la tarjeta destacada y el texto de variación.
 - **Tipografía**: `--font-display` = Archivo (títulos de pantalla y de hojas, `.big`, `.monto`); `--font` (sistema) para el texto; `--font-num` (monoespaciada) para importes de listas, porcentajes y datos pequeños.
 - **Tarjeta destacada**: el patrimonio neto de Cuentas y el resultado del mes de Inicio (a confirmar en el Gate 2).
-- **Colores por tipo de cuenta** (`--k1` a `--k5`): pasan de ser el fondo de la tarjeta a ser una marca de color (punto y filo de la tarjeta) sobre vidrio. **Colores de categoría** (`--cat1` a `--cat19`): los mismos en las dos apariencias, con texto blanco ≥ 4,5 a 1;
-  la tarjeta de un gasto sigue siendo del color de su categoría (a confirmar en el Gate 2).
+- **Colores por tipo de cuenta** (`--k1` a `--k5`): pasan de ser el fondo de la tarjeta a ser una marca de color (filo de la tarjeta) sobre vidrio. **Colores de categoría** (`--cat1` a `--cat19` y su texto `--cat1t` a `--cat19t`): por apariencia;
+  la tarjeta de un gasto sigue siendo del color de su categoría y el ingreso usa `--ingreso` con su texto `--on-ingreso`.
 - Se quitan `--mancha1` a `--mancha5`, `--velo`, las dos paletas y `.card.color` (sustituido por vidrio con marca de color). `settings.paleta` de datos viejos sigue ignorándose.
 - `theme-color` toma el `--bg` nuevo (la barra del sistema acompaña a la apariencia).
 

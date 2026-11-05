@@ -140,21 +140,45 @@ El brillo de la forma del fondo, el foco de la tarjeta destacada y el texto de v
 - **Cuando** la persona pasa de uno a otro con el selector de mes
 - **Entonces** la tendencia cambia con el mes que se ve
 
+## Requisito: color por categoría
+
+Cada gasto es una tarjeta del color de su categoría, el mismo en la torta, en la lista y en el icono. Los 19 colores son los de la paleta de gráficos del sistema de diseño, con su versión clara y oscura: cada categoría conserva su color de un mes a otro. El texto de la tarjeta es blanco u oscuro, el que mejor se lee sobre ese color, con contraste de al menos 4,5 a 1.
+
+### Escenario: mismo color por categoría
+- **Dado** un gasto en Supermercado este mes
+- **Cuando** la persona mira la torta de Inicio y la tarjeta del gasto en Movimientos
+- **Entonces** la porción de Supermercado y la tarjeta del gasto tienen el mismo color
+
+### Escenario: texto legible en las tarjetas
+- **Dado** un gasto en cada categoría
+- **Cuando** la persona recorre Movimientos en las apariencias Oscura y Clara
+- **Entonces** el texto de cada tarjeta tiene contraste de al menos 4,5 a 1 con su color
+
+### Escenario: reembolsos distinguibles
+- **Dado** un gasto en Trabajo (reembolsable) este mes
+- **Cuando** la persona abre Movimientos
+- **Entonces** su tarjeta tiene el color propio de esa categoría y distinto del de Compras
+
+### Escenario: el color no cambia de un mes a otro
+- **Dado** un gasto en Alquiler en octubre y otro en septiembre, y Alquiler con más gasto en un mes que en el otro
+- **Cuando** la persona mira Movimientos en cada mes
+- **Entonces** las tarjetas de Alquiler tienen el mismo color en los dos meses
+
 ## Requisito: muestras de color
 
-Los 19 colores de categoría y los cinco colores por tipo de cuenta salen de la paleta del sistema: son los mismos en las dos apariencias, todos distintos entre sí, y el texto blanco sobre cada color de categoría tiene contraste de al menos 4,5 a 1.
+Los 19 colores de categoría salen de la paleta de gráficos del sistema, en la versión de cada apariencia, y son todos distintos entre sí. Los cinco tipos de cuenta usan los colores principales de esa paleta como marca sobre el vidrio: violeta para bancos, cielo para inversiones, coral para tarjetas, lavanda para financiaciones y lima para deudas compartidas.
 
 ### Escenario: 19 colores distintos
 - **Dado** la app abierta
-- **Cuando** se comparan los colores de las 19 categorías
-- **Entonces** son 19 colores distintos
-
-### Escenario: texto legible sobre cada color de categoría
-- **Dado** un gasto en cada categoría
-- **Cuando** la persona recorre Movimientos en las apariencias Clara y Oscura
-- **Entonces** el texto blanco de cada tarjeta tiene contraste de al menos 4,5 a 1
+- **Cuando** se comparan los colores de las 19 categorías en la apariencia Clara y en la Oscura
+- **Entonces** en cada una son 19 colores distintos
 
 ### Escenario: 5 colores por tipo de cuenta
 - **Dado** la app abierta
 - **Cuando** se comparan los colores de los cinco tipos de cuenta
-- **Entonces** son cinco colores distintos, los mismos en las dos apariencias
+- **Entonces** son cinco colores distintos en cada apariencia
+
+### Escenario: colores de la paleta de gráficos
+- **Dado** la apariencia Oscura
+- **Cuando** se miran los colores de las categorías Supermercado, Comida fuera y Delivery
+- **Entonces** son el violeta #8450FC, la lima #B2FF00 y el azul cielo #1AAEFC del sistema
