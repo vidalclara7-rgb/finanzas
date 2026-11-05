@@ -68,3 +68,25 @@ de él o con Escape.
 - **Dado** un ancho de 390 px
 - **Cuando** la persona abre Inicio y Movimientos
 - **Entonces** el botón «≡», el logo o el título, el selector de mes y los botones de la derecha caben sin desbordar el ancho
+
+## Requisito: los campos de fecha caben en el ancho
+
+Los campos de fecha y de mes de las hojas ocupan el ancho de la hoja, sin salirse por ningún lado, en ancho de
+iPhone.
+
+### Escenario: fecha de un movimiento
+- **Dado** la hoja «Nuevo movimiento» abierta a 390 px
+- **Cuando** la persona mira el campo «Fecha»
+- **Entonces** su borde derecho no supera el borde derecho de la hoja
+- **Y** no hay desplazamiento horizontal
+
+### Escenario: fecha de una operación de inversión
+- **Dado** la hoja «Nueva operación» abierta a 390 px
+- **Cuando** la persona mira el campo «Fecha»
+- **Entonces** su borde derecho no supera el borde derecho de la hoja
+
+### Escenario: mes en un objetivo
+- **Dado** la hoja «Nuevo objetivo» abierta a 390 px
+- **Cuando** la persona mira «Mes del primer aporte» y «Fecha límite»
+- **Entonces** los dos campos caben en la hoja
+- **Y** no hay desplazamiento horizontal

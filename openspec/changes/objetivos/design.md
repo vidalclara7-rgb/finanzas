@@ -48,3 +48,9 @@
   a la hora del evento, texto escapado) y se entrega por la hoja de compartir o la descarga, como la copia de seguridad.
 - Todo lo que escribe la persona (nombre) se pinta con `esc()`.
 - Sube la versión de `CACHE`. Se reescribe `tests/fondo.test.cjs` como tests de objetivos y se ajusta lo de Ajustes en `tests/interfaz.test.cjs`.
+
+## Ajustes hechos al construir (2026-11-05)
+
+- El escenario «mes en Ajustes» del requisito «los campos de fecha caben en el ancho» ya no existe (Ajustes no tiene el plan del fondo): pasa a
+  «mes en un objetivo», con el mes del primer aporte y la fecha límite del formulario. Se reescribe el requisito entero en el delta de `interfaz`.
+- Los ids del formulario de objetivo llevan el prefijo `ob` (`obNombre`, `obMonto`…) porque `oBorrar`, `oGuardar`… ya son de la hoja de operaciones.
