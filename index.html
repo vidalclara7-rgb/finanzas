@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mis finanzas</title>
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F3F3F8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,56 +12,52 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-/* Dos paletas atadas a la apariencia: la clara es Brûlée (crema, naranja, tomate, púrpura y granate) y la oscura, Jardín (verde azulado, verde, rosa, amarillo y malva) */
+/* Una sola paleta, la del sistema de diseño, con versión clara y oscura */
 :root{
-  --rojo:#D9461F; --naranja:#E08A2E; --cherry:#7A1F33; --frambuesa:#9B2B55; --rosa-claro:#EBD6D0; --rosa:#D98BA5; --fucsia:#C2540A; --oliva:#6B7A2B; --salvia:#7B97BD;
-  --hero-ink:#FFFFFF; --hero-muted:#E0BFC4;
-  --ingreso:#4E6B2A; --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B91C1C; --bad-soft:#FBE1E1;
-  /* Colores fijos por categoría, en el orden de CATS (torta, lista, icono y borde de la tarjeta). Todos llevan texto blanco */
-  --cat1:#5F6B1E; --cat2:#8A1C3A; --cat3:#4F78A8; --cat4:#C2540A; --cat5:#B83A72; --cat6:#7A1F33;
-  --cat7:#66741A; --cat8:#3F6791; --cat9:#A8431A; --cat10:#9B2B55; --cat11:#4E6B2A; --cat12:#6B4A52; --cat13:#2F6F6A; --cat14:#7A5C1E;
-  --cat15:#5B3A6B; --cat16:#8C6B00; --cat17:#6E2B3A; --cat18:#A3315A; --cat19:#5A6E66;
+  --negative:#C72543; --positive:#367300; --violet:#6A35E8; --lavender:#A98AF0; --sky:#0A8FD6; --ring-lime:#8CCB00; --label:#5B2BD1;
+  --flow-silver:#9A9AAE; --flow-tint:#8F7BEA; --glow-pos:#569600; --glow-neg:#C72543; --glow-neu:#6A35E8; --glow:var(--glow-neu);
+  --rojo:#C72543; --naranja:#B45309; --frambuesa:#6A35E8;
+  --ingreso:#367300; --on-ingreso:#FFFFFF;
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C72543; --bad-soft:#FBE1E6;
+  /* Colores fijos por categoría (torta, lista, icono y tarjeta del gasto): salen de la paleta del sistema y llevan texto blanco con contraste de al menos 4,5 a 1 */
+  --cat1:#6A35E8; --cat2:#097BB9; --cat3:#C72543; --cat4:#577E00; --cat5:#D21EA2; --cat6:#21836F; --cat7:#A56318; --cat8:#8760C3; --cat9:#BC4E81; --cat10:#C21FDB; --cat11:#138641; --cat12:#7E7330; --cat13:#D2421E; --cat14:#377E90; --cat15:#246FE0; --cat16:#B55B45; --cat17:#DB1F77; --cat18:#A54BD2; --cat19:#5555E7;
+  /* Colores por tipo de cuenta (marca de color sobre el vidrio): los mismos en las dos apariencias */
+  --k1:#7442EE; --k1t:#13131A; --k2:#1299E6; --k2t:#13131A; --k3:#E03A56; --k3t:#13131A; --k4:#B79CF3; --k4t:#13131A; --k5:#9ADB00; --k5t:#13131A;
+  --font-display:"Archivo",-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
-  --mancha1:#FFA102; --mancha2:#DD5533; --mancha3:#432E6F; --mancha4:#BC2D29; --mancha5:#F5E9CE; --mancha-op:.26; --velo:rgba(255,255,255,.5);
-  --bg:#FFFFFF; --surface:#F5E9CE; --ink:#450E15; --muted:#7D5A57; --line:#E6D6B4; --ink-base:#450E15; --muted-base:#7D5A57;
-  --accent:#450E15; --accent-ink:#FFFFFF; --accent-soft:#EBDDB9; --on-color:#450E15;
-  --hero:#450E15; --nav:#F5E9CE; --nav-ink:#8A7470; --nav-on:#450E15; --neutro:#F5E9CE;
-  /* Colores de las tarjetas de color sólido (k1 a k5) y del texto que se lee sobre cada uno (k1t a k5t) */
-  --k1:#FFA102; --k1t:#450E15; --k2:#432E6F; --k2t:#F5E9CE; --k3:#BC2D29; --k3t:#F5E9CE; --k4:#450E15; --k4t:#F5E9CE; --k5:#FFFBF0; --k5t:#450E15;
-  --acento:#DD5533;
+  --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
+  --fondo-cuerpo:.65; --fondo-halo:.14;
+  --bg:#F3F3F8; --surface:rgba(255,255,255,.78); --glass-tint:rgba(255,255,255,.5); --ink:#13131A; --muted:#64646A; --line:rgba(19,19,26,.09); --ink-base:#13131A; --muted-base:#64646A;
+  --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(19,19,26,.07); --on-color:#13131A;
+  --nav:rgba(255,255,255,.72); --nav-ink:#64646A; --nav-on:#13131A; --neutro:var(--surface);
+  --acento:#8CCB00;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --rojo:#FF7A59; --naranja:#FFB066; --cherry:#E0558F; --frambuesa:#D64C86; --rosa-claro:#3A1B27; --rosa:#F0A6C0; --fucsia:#E07A3A; --oliva:#B5C23A; --salvia:#8FB0DA;
-  --hero-ink:#EDEBE2; --hero-muted:#B5C7C4; --ingreso:#2E7D4B;
-  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A80; --bad-soft:#3F1F2A;
-  --mancha1:#136C51; --mancha2:#E9B8DE; --mancha3:#EEDC5B; --mancha4:#B97DA8; --mancha5:#113C42; --mancha-op:.34; --velo:rgba(7,11,12,.35);
-  --bg:#070B0C; --surface:#113C42; --ink:#EDEBE2; --muted:#B5C7C4; --line:#2A5A5F; --ink-base:#EDEBE2; --muted-base:#B5C7C4;
-  --accent:#EDEBE2; --accent-ink:#113C42; --accent-soft:#1E5057; --on-color:#EDEBE2;
-  --hero:#113C42; --nav:#113C42; --nav-ink:#8FA9A8; --nav-on:#EDEBE2; --neutro:#113C42;
-  --k1:#136C51; --k1t:#EDEBE2; --k2:#EEDC5B; --k2t:#0B2A2E; --k3:#E9B8DE; --k3t:#0B2A2E; --k4:#B97DA8; --k4t:#061A1D; --k5:#EDEBE2; --k5t:#113C42;
-  --acento:#EEDC5B;
+  --negative:#F2546A; --positive:#B2FF00; --violet:#8450FC; --lavender:#C4A5F7; --sky:#1AAEFC; --ring-lime:#B2FF00; --label:#C4A5F7;
+  --flow-silver:#9696A8; --flow-tint:#8F7FC4; --glow-pos:#B2FF00; --glow-neg:#F2546A; --glow-neu:#8450FC;
+  --rojo:#F2546A; --naranja:#FFB066; --frambuesa:#8450FC;
+  --ingreso:#B2FF00; --on-ingreso:#13131A;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#F2546A; --bad-soft:#3F1F2A;
+  --bg:#0B0B10; --surface:rgba(40,40,47,.6); --glass-tint:rgba(40,40,47,.42); --ink:#F4F4F6; --muted:#ACACAE; --line:rgba(255,255,255,.08); --ink-base:#F4F4F6; --muted-base:#ACACAE;
+  --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(255,255,255,.1); --on-color:#F4F4F6;
+  --nav:rgba(40,40,47,.7); --nav-ink:#ACACAE; --nav-on:#F4F4F6;
+  --acento:#B2FF00;
   color-scheme:dark}
+html[data-tendencia="positiva"]{--glow:var(--glow-pos)} html[data-tendencia="negativa"]{--glow:var(--glow-neg)}
+@font-face{font-family:"Archivo";font-style:normal;font-weight:100 900;font-display:swap;src:url("vendor/archivo/archivo-latin-wght-normal.woff2") format("woff2")}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
-/* Fondo dinámico: cinco manchas de la paleta, muy difuminadas, que flotan despacio detrás de todo; el velo ayuda a que el texto se lea */
+/* Fondo fluido: una forma de tres lóbulos que se funden (filtro de fusión), con el brillo de la tendencia del mes; la mueve el script */
 .fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
-.fondo::after{content:"";position:absolute;inset:0;background:var(--velo)}
-.fondo i{position:absolute;display:block;width:90vmax;height:90vmax;border-radius:50%;opacity:var(--mancha-op);will-change:transform;animation:flota 36s ease-in-out infinite alternate}
-.fondo i:nth-child(1){background:radial-gradient(circle,var(--mancha1) 0,transparent 66%);left:-45vmax;top:-40vmax}
-.fondo i:nth-child(2){background:radial-gradient(circle,var(--mancha2) 0,transparent 66%);right:-50vmax;top:-10vmax;animation-duration:44s;animation-delay:-8s;--dx:-14vmax;--dy:10vmax}
-.fondo i:nth-child(3){background:radial-gradient(circle,var(--mancha3) 0,transparent 66%);left:-30vmax;bottom:-55vmax;animation-duration:52s;animation-delay:-20s;--dx:16vmax;--dy:-12vmax}
-.fondo i:nth-child(4){background:radial-gradient(circle,var(--mancha4) 0,transparent 66%);right:-40vmax;bottom:-45vmax;animation-duration:40s;animation-delay:-14s;--dx:-10vmax;--dy:-14vmax}
-.fondo i:nth-child(5){background:radial-gradient(circle,var(--mancha5) 0,transparent 66%);left:15vmax;top:25vmax;width:70vmax;height:70vmax;animation-duration:48s;animation-delay:-30s;--dx:12vmax;--dy:14vmax}
-@keyframes flota{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(var(--dx,14vmax),var(--dy,10vmax),0) scale(1.12)}}
-@media (prefers-reduced-motion: reduce){.fondo i{animation:none}}
-html.en-pausa .fondo i{animation-play-state:paused}
+.fondo svg{position:absolute;inset:0;width:100%;height:100%}
+.fondo .halo{filter:blur(46px);opacity:var(--fondo-halo);transform:scale(1.15)}
+.fondo .cuerpo{filter:blur(16px);opacity:var(--fondo-cuerpo)}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
-.num,.monto,.big{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums} .monto,.big{font-variant-numeric:tabular-nums}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
 header .tit{flex:1;min-width:0}
-header h1{margin:0;font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+header h1{margin:0;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
 header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .selmes{display:flex;align-items:center;gap:4px;margin-top:4px}
 .selmes .m{margin:0;min-width:112px;text-align:center}
@@ -71,17 +67,23 @@ header .m{color:var(--muted);font-size:14px;display:block;margin-top:4px}
 .gear svg{width:22px;height:22px}
 .gear[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 130px) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
-.card{position:relative;overflow:hidden;background:var(--surface);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
-.card.hero{background:var(--hero);color:var(--hero-ink);--ink:var(--hero-ink);--muted:var(--hero-muted);--line:rgba(255,255,255,.16)}
+.card{position:relative;overflow:hidden;background:var(--surface);-webkit-backdrop-filter:blur(20px) saturate(1.1);backdrop-filter:blur(20px) saturate(1.1);border:1px solid var(--line);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
 /* Tarjetas neutras: el color sale de --c y sólo marca un borde a la izquierda (categoría o tipo de cuenta) */
 .mov{background:var(--c,var(--surface));color:#FFFFFF;--ink:#FFFFFF;--muted:rgba(255,255,255,.8);--line:rgba(255,255,255,.24)}
 .mov .ico{background:rgba(255,255,255,.24);color:#FFFFFF}
 .ico.osc{color:var(--on-osc)}
-/* Tarjeta de color sólido: el color sale de --c y el texto de --on-c; lo de dentro (barras, botones, líneas) toma el color del texto */
-.card.color{border:0;background:var(--c);color:var(--on-c);--ink:var(--on-c);--muted:color-mix(in srgb,var(--on-c) 94%,transparent);--line:color-mix(in srgb,var(--on-c) 24%,transparent);--accent:var(--on-c);--accent-ink:var(--c);--accent-soft:color-mix(in srgb,var(--on-c) 18%,transparent);--bad:var(--on-c);--warn:var(--on-c);--bad-soft:color-mix(in srgb,var(--on-c) 18%,transparent);--warn-soft:color-mix(in srgb,var(--on-c) 18%,transparent);}
-.card.color .lbl{display:inline-block;width:fit-content;border:1px solid color-mix(in srgb,var(--on-c) 55%,transparent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;letter-spacing:.01em}
+/* Tarjeta de vidrio con marca de color: el color (tipo de cuenta o de la tarjeta) sale de --c y se ve como un filo a la izquierda */
+.card.color::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--c)}
+/* Tarjeta destacada: vidrio más translúcido, borde de color que gira despacio y un foco de luz que sigue el dedo */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card.destacada{background:var(--glass-tint);border:0;isolation:isolate}
+.card.destacada::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:conic-gradient(from var(--ang),var(--ring-lime),var(--violet),color-mix(in srgb,var(--ring-lime) 10%,transparent),var(--ring-lime));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask-composite:exclude;animation:gira 12s linear infinite}
+.card.destacada .foco{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s ease-out;background:radial-gradient(190px circle at var(--fx,50%) var(--fy,50%),color-mix(in srgb,var(--glow) 28%,transparent),transparent)}
+.card.destacada.tocada .foco{opacity:1}
+@keyframes gira{to{--ang:360deg}}
+.card.color .lbl{color:var(--label);font-size:14px;font-weight:700;letter-spacing:.01em}
 /* Logo «mf.»: las letras en el color del texto y el punto en el acento de la apariencia */
-.logo{font-family:var(--font);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
+.logo{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-.05em;line-height:1;color:var(--ink);display:inline-block}
 .logo i{font-style:normal;color:var(--acento)}
 .logo.chico{font-size:22px}
 /* Elegir el color de una categoría: una fila de círculos, uno marcado */
@@ -92,9 +94,9 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .mov.neutro{background:var(--surface);color:var(--ink-base);--ink:var(--ink-base);--muted:var(--muted-base)}
 .mov.neutro .ico{background:var(--bg);color:var(--ink-base)}
 .lbl{font-size:15px;color:var(--ink);font-weight:600}
-.big{font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.big{font-family:var(--font-display);font-size:32px;font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.02em;line-height:1.1}
 /* Importe grande con los decimales en gris */
-.monto{font-size:52px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.monto{font-family:var(--font-display);font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
 .monto .dec{color:var(--muted)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
@@ -103,7 +105,7 @@ main{padding:6px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-ins
 .sub{font-size:14px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.ok{background:var(--ingreso);color:#FFFFFF} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
+.ok{background:var(--ingreso);color:var(--on-ingreso)} .warnc{background:var(--warn-soft);color:var(--warn)} .badc{background:var(--bad-soft);color:var(--bad)} .idle{background:var(--accent-soft);color:var(--muted)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted));flex:none}
 .con-dot{display:flex;align-items:center;gap:8px;min-width:0}
 /* Fijos y variables: barra partida (fijos en tinta, variables en frambuesa: es el color de Trabajo (reembolsable), que no entra en este gráfico) y ranking por grupo */
@@ -213,13 +215,16 @@ input[type=date],input[type=month]{display:block;min-width:0;max-width:100%;-web
 input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:1.2em}
 textarea{font-family:var(--mono);font-size:12px;min-height:120px}
 .btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--accent-ink);font-size:16px}
-.btn.sec{background:var(--accent-soft);color:var(--ink)}
-.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn.sec{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);animation:none}
+.btn.danger{background:var(--bad-soft);color:var(--bad);animation:none}
 .btn:active{opacity:.8}
+@keyframes pulso{from{box-shadow:0 0 10px color-mix(in srgb,var(--accent) 20%,transparent)}to{box-shadow:0 0 22px color-mix(in srgb,var(--accent) 55%,transparent)}}
+.btn,.fab{animation:pulso 2.4s ease-in-out infinite alternate}
+@media (prefers-reduced-motion: reduce){.btn,.fab,.card.destacada::after{animation:none}}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px}
 .seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:30px;display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center;padding:6px 6px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 0 0 1px var(--line)}
 nav button{font:inherit;font-size:11px;background:none;border:0;color:var(--nav-ink);padding:7px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button svg{width:23px;height:23px}
 nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
@@ -231,7 +236,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 .panel h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
 .panel .item[disabled]{opacity:.5}
 .sheet>*{flex-shrink:0} /* en hojas largas se desplaza la hoja, no se aplastan sus tarjetas */
-.sheet h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+.sheet h2{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:-.01em}
 .amount{font-size:36px !important;font-weight:600;text-align:center;border-radius:20px !important}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:30;background:var(--accent);color:var(--accent-ink);padding:11px 18px;border-radius:999px;font-size:15px;white-space:nowrap}
 /* Los avisos nunca son más anchos que la pantalla, y con una hoja abierta van arriba para no tapar sus botones */
@@ -247,7 +252,13 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 </script>
 </head>
 <body>
-<div class="fondo" data-ui="fondo-manchas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="fondo" data-ui="fondo-fluido" aria-hidden="true">
+  <svg class="halo" viewBox="0 0 100 216" preserveAspectRatio="xMidYMid slice"><defs>
+    <linearGradient id="fluidoGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="216"><stop offset="0" style="stop-color:var(--flow-silver)"/><stop offset=".5" style="stop-color:var(--flow-tint)"/><stop offset="1" style="stop-color:var(--glow);stop-opacity:.55"/></linearGradient>
+    <filter id="fluidoFunde" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceGraphic" stdDeviation="6"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 24 -10"/></filter>
+    <g id="fluidoMasa" filter="url(#fluidoFunde)" fill="url(#fluidoGrad)"><circle id="lobulo1" cx="55.0" cy="151.2" r="21.7"/><circle id="lobulo2" cx="61.0" cy="60.5" r="28.8"/><circle id="lobulo3" cx="46.3" cy="158.5" r="6.5"/></g></defs><use href="#fluidoMasa"/></svg>
+  <svg class="cuerpo" viewBox="0 0 100 216" preserveAspectRatio="xMidYMid slice"><use href="#fluidoMasa"/></svg>
+</div>
 <header data-pantalla="encabezado"><button type="button" class="gear" id="menuBtn" data-ui="boton-menu" aria-label="Abrir el panel de análisis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="tit"><span class="logo chico" id="logoHdr" data-ui="logo-encabezado" aria-label="mf">mf<i>.</i></span><h1 id="title">Este mes</h1><span class="selmes" data-ui="selector-mes"><button type="button" class="mes-flecha" id="mesAnterior" aria-label="Mes anterior">‹</button><span class="m" id="mesLabel"></span><button type="button" class="mes-flecha" id="mesSiguiente" aria-label="Mes siguiente">›</button></span></div><div class="acc"><button class="gear" id="lupaBtn" data-ui="lupa-movimientos" aria-label="Buscar movimientos" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="gear" data-v="ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div></header>
 
 <main>
@@ -263,7 +274,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
     <button type="button" class="card color" id="objCard" data-ui="tarjeta-transferir" style="--c:var(--k3);--on-c:var(--k3t);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Toca transferir</span><span class="sub">Ver objetivos ›</span></div><div class="list" id="objCardLista"></div></button>
     <div class="card toca" id="fvCard" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
     <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--k5);--on-c:var(--k5t)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
-    <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px">
+    <div class="card destacada" data-ui="resultado-mes"><span class="foco"></span>
       <span class="sub" id="formaTxt" data-ui="porcentaje-ingresos"></span>
       <span class="sub">Resultado del mes</span>
       <span class="monto" id="resultado"></span>
@@ -310,7 +321,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <span class="lbl">Tu foto financiera</span>
       <span>Cargá lo que tenés y lo que debés: bancos, inversiones, tarjetas, financiaciones y deudas compartidas. Ponele a cada cuenta el nombre que quieras.</span>
     </div>
-    <div id="netoBox" data-ui="patrimonio" style="display:flex;flex-direction:column;gap:6px" hidden>
+    <div id="netoBox" class="card destacada" data-ui="patrimonio" hidden><span class="foco"></span>
       <span class="sub">Patrimonio neto</span>
       <span class="monto" id="neto">–</span>
       <div class="row sub"><span>Tenés <span class="num" id="activos"></span></span><span>Debés <span class="num" id="deudas"></span></span></div>
@@ -1040,7 +1051,7 @@ const mqOscuro=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null
 const aparienciaDe=()=>{const a=S.settings.apariencia;return a==="clara"||a==="auto"?a:"oscura";};
 const aparienciaVista=()=>{const a=aparienciaDe();return a==="auto"?(mqOscuro&&!mqOscuro.matches?"clara":"oscura"):a;};
 function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElement;d.dataset.apariencia=v;
-  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#070B0C":"#FFFFFF");
+  const t=document.querySelector('meta[name="theme-color"]');if(t)t.content=getComputedStyle(d).getPropertyValue("--bg").trim()||(v==="oscura"?"#0B0B10":"#F3F3F8");
   seg($("segApariencia"),APARIENCIAS,aparienciaDe(),x=>{S.settings.apariencia=x;persist();render();});}
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
 function render(){

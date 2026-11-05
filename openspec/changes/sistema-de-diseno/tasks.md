@@ -1,9 +1,9 @@
 # Tareas: sistema-de-diseno
 
 ## Preview
-- [ ] Fuente Archivo en `vendor/archivo/` con su licencia y `@font-face`; variables y clases del sistema en `index.html` (sólo estilos)
-- [ ] Esqueleto del preview y pantallas: Inicio, Movimientos, Cuentas, Cierre, Ajustes, panel y hojas, más una pantalla de muestras de color (normal y vacío)
-- [ ] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
+- [x] Fuente Archivo en `vendor/archivo/` con su licencia y `@font-face`; variables y clases del sistema en `index.html` (sólo estilos)
+- [x] Esqueleto del preview y pantallas: Inicio, Movimientos, Cuentas, Cierre, Ajustes, panel y hojas, más una pantalla de muestras de color (normal y vacío)
+- [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
 
 ## Datos y migración
 - [ ] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia
