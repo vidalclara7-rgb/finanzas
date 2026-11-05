@@ -62,3 +62,12 @@ Brillos de tendencia: positiva #569600 (clara) / #B2FF00 (oscura); negativa #C72
 
 - Vidrio más translúcido que el del sistema (56 % y 42 % en vez de 78 % y 60 %; destacada 36 % y 30 %) y desenfoque de 24 px, a pedido de la persona; el contraste del texto se comprueba contra el peor caso del fondo.
 - El filo de color a la izquierda de las tarjetas por tipo de cuenta se cambió por un punto de color junto al título.
+- La tendencia neutra no pinta el texto del resultado en violeta: el violeta de etiqueta (#5B2BD1 / #C4A5F7) sobre la forma del fondo no llega a 4,5 a 1 en el peor caso, así que el resultado neutro va en el color del texto. El violeta queda en la forma del fondo y en el foco.
+- **Desvíos respecto del sistema de la persona, para el contraste del texto suelto sobre la forma del fondo** (se comprueba en un test con el peor caso de cada color de la forma): la intensidad del fondo baja de 0,65 a 0,35 (`--fondo-cuerpo` .4, `--fondo-halo` .09), y el texto secundario pasa de un 64 % / 66 % de transparencia a grises sólidos (#4A4A52 en la clara, #C0C0C4 en la oscura).
+- El texto del resultado del mes usa verdes y rojos algo más oscuros (clara) o más claros (oscura) que `--positive` y `--negative` (`--tend-pos-t` #2F6600 / #B2FF00 y `--tend-neg-t` #B01F3B / #FF8A99): los del sistema no llegan a 4,5 a 1 sobre el vidrio translúcido con la forma debajo. `--positive` y `--negative` quedan tal cual para el resto.
+- Los importes negativos de las listas (`--bad`) pasan a #B01F3B (clara) y #FF8A99 (oscura) por la misma razón de contraste.
+
+## Costo del fondo (medido el 2026-11-05)
+
+En el navegador de pruebas (sin GPU, sólo una referencia; no es un iPhone): con el filtro de fusión a tamaño completo, la app bajaba a 17–19 fps; sin el fondo, 62 fps. La forma se dibuja ahora a un cuarto del tamaño y se agranda (`transform: scale(4)` con `will-change`), con los desenfoques divididos por cuatro: 62,8 fps, igual que sin fondo. No hizo falta el plan B (degradados radiales).
+En un iPhone real no lo he medido: si va lento, el plan B sigue siendo cambiar la forma por tres degradados radiales animados y avisarlo.

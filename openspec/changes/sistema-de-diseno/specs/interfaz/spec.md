@@ -118,7 +118,7 @@ El botón principal de cada hoja y pantalla es una píldora lima (#B2FF00) con t
 
 ## Requisito: tendencia del mes
 
-El brillo de la forma del fondo, el foco de la tarjeta destacada y el texto de variación siguen la tendencia del mes que se ve: positiva si el resultado (ingresos menos gastos) es mayor que 0, negativa si es menor que 0, neutra si es 0 o no hay datos. Positiva usa el verde lima, negativa el rojo y neutra el violeta del sistema.
+El brillo de la forma del fondo, el foco de la tarjeta destacada y el texto de variación siguen la tendencia del mes que se ve: positiva si el resultado (ingresos menos gastos) es mayor que 0, negativa si es menor que 0, neutra si es 0 o no hay datos. En la forma del fondo y en el foco, la positiva usa el verde lima, la negativa el rojo y la neutra el violeta del sistema; el resultado del mes se escribe en verde si es positivo, en rojo si es negativo y en el color del texto si es neutro.
 
 ### Escenario: tendencia positiva
 - **Dado** ingresos de 1500 € y gastos de 100 € este mes

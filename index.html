@@ -14,51 +14,55 @@
 <style>
 /* Una sola paleta, la del sistema de diseño, con versión clara y oscura */
 :root{
+  --tend-pos-t:#2F6600; --tend-neg-t:#B01F3B;
   --negative:#C72543; --positive:#367300; --violet:#6A35E8; --lavender:#A98AF0; --sky:#0A8FD6; --ring-lime:#8CCB00; --label:#5B2BD1;
   --flow-silver:#9A9AAE; --flow-tint:#8F7BEA; --glow-pos:#569600; --glow-neg:#C72543; --glow-neu:#6A35E8; --glow:var(--glow-neu);
   --rojo:#C72543; --naranja:#B45309; --frambuesa:#6A35E8;
   --ingreso:#367300; --on-ingreso:#FFFFFF;
-  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C72543; --bad-soft:#FBE1E6;
+  --warn:#B45309; --warn-soft:#FFE9D2; --bad:#B01F3B; --bad-soft:#FBE1E6;
   --font-display:"Archivo",-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --font-num:ui-monospace,"SF Mono",Menlo,monospace; --mono:ui-monospace,"SF Mono",Menlo,monospace;
   --on-osc:#FFFFFF; --on-osc-muted:rgba(255,255,255,.75);
-  --fondo-cuerpo:.65; --fondo-halo:.14;
+  --fondo-cuerpo:.4; --fondo-halo:.09;
   /* Colores de categoría de la paleta de gráficos del sistema (torta, lista y tarjeta del gasto) y el texto que se lee sobre cada uno, con contraste de al menos 4,5 a 1 */
   --cat1:#6A35E8; --cat2:#569600; --cat3:#1C7ED6; --cat4:#D92F4B; --cat5:#9A78E6; --cat6:#0F4D3F; --cat7:#B87A00; --cat8:#4655E6; --cat9:#0E9A82; --cat10:#D6559A; --cat11:#2B3A8F; --cat12:#7C8A00; --cat13:#B5179E; --cat14:#138A5A; --cat15:#0090AD; --cat16:#D9611F; --cat17:#5A2D9C; --cat18:#85859A; --cat19:#5A5A6B;
   --cat1t:#FFFFFF; --cat2t:#13131A; --cat3t:#000000; --cat4t:#FFFFFF; --cat5t:#13131A; --cat6t:#FFFFFF; --cat7t:#13131A; --cat8t:#FFFFFF; --cat9t:#13131A; --cat10t:#13131A; --cat11t:#FFFFFF; --cat12t:#13131A; --cat13t:#FFFFFF; --cat14t:#000000; --cat15t:#13131A; --cat16t:#13131A; --cat17t:#FFFFFF; --cat18t:#13131A; --cat19t:#FFFFFF;
   /* Marcas de color por tipo de cuenta: bancos violeta, inversiones cielo, tarjetas coral, financiaciones lavanda, deudas compartidas lima */
   --k1:#6A35E8; --k1t:#13131A; --k2:#1C7ED6; --k2t:#13131A; --k3:#D92F4B; --k3t:#13131A; --k4:#9A78E6; --k4t:#13131A; --k5:#569600; --k5t:#13131A;
-  --bg:#F3F3F8; --surface:rgba(255,255,255,.56); --glass-tint:rgba(255,255,255,.36); --ink:#13131A; --muted:#64646A; --line:rgba(19,19,26,.09); --ink-base:#13131A; --muted-base:#64646A;
+  --bg:#F3F3F8; --surface:rgba(255,255,255,.56); --glass-tint:rgba(255,255,255,.36); --ink:#13131A; --muted:#4A4A52; --line:rgba(19,19,26,.09); --ink-base:#13131A; --muted-base:#4A4A52;
   --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(19,19,26,.07); --on-color:#13131A;
-  --nav:rgba(255,255,255,.72); --nav-ink:#64646A; --nav-on:#13131A; --neutro:var(--surface);
+  --nav:rgba(255,255,255,.72); --nav-ink:#4A4A52; --nav-on:#13131A; --neutro:var(--surface);
   --acento:#8CCB00;
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
+  --tend-pos-t:#B2FF00; --tend-neg-t:#FF8A99;
   --negative:#F2546A; --positive:#B2FF00; --violet:#8450FC; --lavender:#C4A5F7; --sky:#1AAEFC; --ring-lime:#B2FF00; --label:#C4A5F7;
   --flow-silver:#9696A8; --flow-tint:#8F7FC4; --glow-pos:#B2FF00; --glow-neg:#F2546A; --glow-neu:#8450FC;
   --rojo:#F2546A; --naranja:#FFB066; --frambuesa:#8450FC;
   --ingreso:#B2FF00; --on-ingreso:#13131A;
-  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#F2546A; --bad-soft:#3F1F2A;
+  --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8A99; --bad-soft:#3F1F2A;
   /* Colores de categoría de la paleta de gráficos del sistema (torta, lista y tarjeta del gasto) y el texto que se lee sobre cada uno, con contraste de al menos 4,5 a 1 */
   --cat1:#8450FC; --cat2:#B2FF00; --cat3:#1AAEFC; --cat4:#F2546A; --cat5:#C4A5F7; --cat6:#0F4D3F; --cat7:#FFC247; --cat8:#5B6CFF; --cat9:#5CE1C6; --cat10:#F7A8D0; --cat11:#2B3A8F; --cat12:#D7FF5C; --cat13:#E64BC4; --cat14:#1F9D6B; --cat15:#8AD4FF; --cat16:#FF8A4C; --cat17:#5A2D9C; --cat18:#B4B4C2; --cat19:#5A5A6B;
   --cat1t:#FFFFFF; --cat2t:#13131A; --cat3t:#13131A; --cat4t:#13131A; --cat5t:#13131A; --cat6t:#FFFFFF; --cat7t:#13131A; --cat8t:#000000; --cat9t:#13131A; --cat10t:#13131A; --cat11t:#FFFFFF; --cat12t:#13131A; --cat13t:#13131A; --cat14t:#13131A; --cat15t:#13131A; --cat16t:#13131A; --cat17t:#FFFFFF; --cat18t:#13131A; --cat19t:#FFFFFF;
   /* Marcas de color por tipo de cuenta: bancos violeta, inversiones cielo, tarjetas coral, financiaciones lavanda, deudas compartidas lima */
   --k1:#8450FC; --k1t:#13131A; --k2:#1AAEFC; --k2t:#13131A; --k3:#F2546A; --k3t:#13131A; --k4:#C4A5F7; --k4t:#13131A; --k5:#B2FF00; --k5t:#13131A;
-  --bg:#0B0B10; --surface:rgba(40,40,47,.42); --glass-tint:rgba(40,40,47,.3); --ink:#F4F4F6; --muted:#ACACAE; --line:rgba(255,255,255,.08); --ink-base:#F4F4F6; --muted-base:#ACACAE;
+  --bg:#0B0B10; --surface:rgba(40,40,47,.42); --glass-tint:rgba(40,40,47,.3); --ink:#F4F4F6; --muted:#C0C0C4; --line:rgba(255,255,255,.08); --ink-base:#F4F4F6; --muted-base:#C0C0C4;
   --accent:#B2FF00; --accent-ink:#13131A; --accent-soft:rgba(255,255,255,.1); --on-color:#F4F4F6;
-  --nav:rgba(40,40,47,.7); --nav-ink:#ACACAE; --nav-on:#F4F4F6;
+  --nav:rgba(40,40,47,.7); --nav-ink:#C0C0C4; --nav-on:#F4F4F6;
   --acento:#B2FF00;
   color-scheme:dark}
 html[data-tendencia="positiva"]{--glow:var(--glow-pos)} html[data-tendencia="negativa"]{--glow:var(--glow-neg)}
+#resultado{color:var(--ink)} html[data-tendencia="positiva"] #resultado{color:var(--tend-pos-t)} html[data-tendencia="negativa"] #resultado{color:var(--tend-neg-t)}
 @font-face{font-family:"Archivo";font-style:normal;font-weight:100 900;font-display:swap;src:url("vendor/archivo/archivo-latin-wght-normal.woff2") format("woff2")}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 /* Fondo fluido: una forma de tres lóbulos que se funden (filtro de fusión), con el brillo de la tendencia del mes; la mueve el script */
 .fondo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
-.fondo svg{position:absolute;inset:0;width:100%;height:100%}
-.fondo .halo{filter:blur(46px);opacity:var(--fondo-halo);transform:scale(1.15)}
-.fondo .cuerpo{filter:blur(16px);opacity:var(--fondo-cuerpo)}
+/* La forma se dibuja a un cuarto del tamaño y se agranda: es una masa desenfocada, y así el filtro de fusión no pesa (a tamaño completo el navegador de pruebas bajaba a 18 fps) */
+.fondo svg{position:absolute;left:0;top:0;width:25%;height:25%;transform:scale(4);transform-origin:0 0;will-change:transform}
+.fondo .halo{filter:blur(11.5px);opacity:var(--fondo-halo);transform:translate(-30%,-30%) scale(4.6)}
+.fondo .cuerpo{filter:blur(4px);opacity:var(--fondo-cuerpo)}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 .num{font-family:var(--font-num);font-variant-numeric:tabular-nums} .monto,.big{font-variant-numeric:tabular-nums}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -1068,7 +1072,7 @@ function render(){
   const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
   // Arriba de Inicio, sólo la plata propia: sin gastos reembolsables ni ingresos de Reembolso
   const propios=ms.filter(m=>!(m.tipo==="gasto"&&m.cat===REEMB)&&!(m.tipo==="ingreso"&&m.cat==="Reembolso")),ingP=sumaTipo(propios,"ingreso"),gasP=sumaTipo(propios,"gasto");
-  porcentajeIng(ingP,gasP);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ingP-gasP));$("ingMes").textContent="Ingresos "+eur(ingP);$("gasMes").textContent="Gastos "+eur(gasP);
+  porcentajeIng(ingP,gasP);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ingP-gasP));const rm=r2(ingP-gasP);document.documentElement.dataset.tendencia=rm>0?"positiva":rm<0?"negativa":"neutra";$("ingMes").textContent="Ingresos "+eur(ingP);$("gasMes").textContent="Gastos "+eur(gasP);
   const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
   const pc=porCobrar(),nP=pc.filter(m=>m.reembolso.estado==="pendiente").length,nA=pc.length-nP;$("porCobrar").hidden=!pc.length;
   $("cobrarVal").textContent=eur(pc.reduce((a,m)=>a+m.importe,0));
@@ -1161,6 +1165,23 @@ function cambiarMes(n){const m=mesSig(mesV(),n);if(n>0&&m>mesId())return;mesVist
 $("mesAnterior").onclick=()=>cambiarMes(-1);$("mesSiguiente").onclick=()=>cambiarMes(1);
 // El fondo se detiene cuando la app no está visible
 document.addEventListener("visibilitychange",()=>document.documentElement.classList.toggle("en-pausa",document.hidden));
+// Fondo fluido: tres lóbulos con las fórmulas del sistema, que el script mueve a 30 fps como máximo; quieto con «Reducir movimiento» y en pausa con la app oculta
+const LOBULOS=[[.55,.45,.20,.25,.30,.26,.40,0,.42],[.42,.50,.22,.24,.24,.33,.47,2.1,.34],[.62,.55,.18,.27,.36,.28,.34,4.2,.30]];
+const mqQuieto=window.matchMedia?matchMedia("(prefers-reduced-motion: reduce)"):null;
+function pintarFondo(t){LOBULOS.forEach(([cx,cy,ax,ay,fx,fy,fr,ph,r],i)=>{const c=$("lobulo"+(i+1));if(!c)return;const p=.5+.5*Math.sin(t*fr+ph);
+  c.setAttribute("cx",((cx+ax*Math.sin(t*fx+ph))*100).toFixed(2));c.setAttribute("cy",((cy+ay*Math.cos(t*fy+ph*1.3))*216).toFixed(2));c.setAttribute("r",(r*100*(.2+.8*Math.pow(p,1.1))*.9).toFixed(2));});}
+let fondoRaf=0,fondoUlt=0;
+function bucleFondo(ts){fondoRaf=0;if(document.hidden||(mqQuieto&&mqQuieto.matches))return;
+  if(ts-fondoUlt>=33){fondoUlt=ts;pintarFondo(ts/1000*0.9);}
+  fondoRaf=requestAnimationFrame(bucleFondo);}
+function arrancarFondo(){if(mqQuieto&&mqQuieto.matches){pintarFondo(0);return;}if(!fondoRaf&&!document.hidden)fondoRaf=requestAnimationFrame(bucleFondo);}
+document.addEventListener("visibilitychange",arrancarFondo);if(mqQuieto&&mqQuieto.addEventListener)mqQuieto.addEventListener("change",arrancarFondo);arrancarFondo();
+// Tarjeta destacada: un foco de luz sigue el dedo mientras toca y se apaga al soltar
+function moverFoco(c,e){const r=c.getBoundingClientRect();c.style.setProperty("--fx",(e.clientX-r.left)+"px");c.style.setProperty("--fy",(e.clientY-r.top)+"px");}
+document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest(".card.destacada");if(!c)return;moverFoco(c,e);c.classList.add("tocada");});
+document.addEventListener("pointermove",e=>{const c=document.querySelector(".card.destacada.tocada");if(c)moverFoco(c,e);});
+const apagarFoco=()=>document.querySelectorAll(".card.destacada.tocada").forEach(c=>c.classList.remove("tocada"));
+["pointerup","pointercancel"].forEach(ev=>document.addEventListener(ev,apagarFoco));
 document.querySelectorAll("nav [data-v], header [data-v]").forEach(b=>b.addEventListener("click",()=>ir(b.dataset.v)));
 
 // Hoja de movimiento
