@@ -260,6 +260,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
       <button class="btn" id="crearPrimera">Crear cuenta</button>
     </div>
+    <button type="button" class="card color" id="objCard" data-ui="tarjeta-transferir" style="--c:var(--k3);--on-c:var(--k3t);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Toca transferir</span><span class="sub">Ver objetivos ›</span></div><div class="list" id="objCardLista"></div></button>
     <div class="card toca" id="fvCard" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
     <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--k5);--on-c:var(--k5t)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
     <div data-ui="resultado-mes" style="display:flex;flex-direction:column;gap:6px">
@@ -300,7 +301,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <section id="v-mes" data-pantalla="mes" hidden style="flex-direction:column;gap:14px">
     <div class="card color osc" data-ui="conciliacion" style="--c:var(--k2);--on-c:var(--k2t)"><div class="row"><span class="lbl" id="concTitulo">Conciliación</span><span class="chip idle" id="concChip"></span></div><span class="sub" id="concSub"></span><div class="list" id="concList"></div></div>
     <div class="card color" data-ui="checklist" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">Día de cobro</span><div id="checks"></div><button class="btn sec" id="addTarea">Agregar tarea</button></div>
-    <div class="card" data-ui="plan-fondo"><span class="lbl">Plan del fondo</span><div class="list" id="plan"></div></div>
+    <div class="card" data-ui="tarjeta-objetivos-cierre"><span class="lbl">Objetivos</span><div class="list" id="objCierre"></div></div>
   </section>
 
   <!-- CUENTAS -->
@@ -323,14 +324,6 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <section id="v-ajustes" data-pantalla="ajustes" hidden style="flex-direction:column;gap:14px">
     <div class="card" data-ui="apariencia"><span class="lbl">Apariencia</span><div class="seg" id="segApariencia" style="margin-top:8px"></div><span class="sub">Automática sigue al modo claro u oscuro del teléfono.</span></div>
     <button type="button" class="card" id="catsCard" data-ui="tarjeta-categorias" style="text-align:left;font:inherit"><div class="row"><span class="lbl">Categorías</span><span class="sub">Editar ›</span></div><span class="sub" id="catsSub"></span></button>
-    <div class="card" data-ui="plan-ajustes">
-      <span class="lbl">Plan del fondo de emergencia</span>
-      <label class="f" for="aporte">Aporte mensual al fondo (€)<input type="text" inputmode="decimal" autocomplete="off" id="aporte"></label>
-      <label class="f" for="objFondo">Objetivo del fondo (€)<input type="text" inputmode="decimal" autocomplete="off" id="objFondo"></label>
-      <label class="f" for="inicio">Mes del primer aporte<input type="month" id="inicio"></label>
-      <label class="f" for="saltos">Meses sin aporte (opcional, separados por coma)<input type="text" id="saltos" placeholder="Ej: 2027-02"></label>
-      <button class="btn" id="guardarAjustes">Guardar</button>
-    </div>
     <div class="card">
       <span class="lbl">Resumen para Claude</span>
       <span class="sub">Copiá el resumen del mes y pegalo en el chat para revisarlo juntas.</span>
@@ -539,6 +532,7 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <aside class="panel" id="panel" data-pantalla="panel" data-ui="panel-analisis" aria-label="Análisis" hidden>
   <div class="row"><h2>Análisis</h2><button type="button" class="btn sec" id="panelCerrar" style="padding:8px 12px">Cerrar</button></div>
   <div class="list">
+    <button type="button" class="item tap" id="panelObj" data-ui="panel-objetivos"><div class="d"><span>Objetivos</span><span>Lo que ahorrás y cuándo transferir</span></div></button>
     <button type="button" class="item tap" id="panelFore" data-ui="panel-forecast"><div class="d"><span>Forecast</span><span>Tus próximos 12 meses</span></div></button>
     <button type="button" class="item tap" id="panelInv" data-ui="panel-inversiones"><div class="d"><span>Inversiones</span><span>Rendimiento de tus cuentas de inversión</span></div></button>
     <button type="button" class="item tap" id="panelRadar" data-ui="panel-radar" disabled><div class="d"><span>Radar de noticias</span><span>Próximamente</span></div></button>
@@ -554,6 +548,29 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
   <span class="sub" id="foreIngSub"></span>
   <div class="card color" id="foreBarrasCard" data-ui="forecast-barras" style="--c:var(--k1);--on-c:var(--k1t)"><div class="row"><span class="lbl">Comprometido contra ingreso</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingreso</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Comprometido</span></span></div><div class="meses" id="foreBarras"></div></div>
   <div class="list" id="foreLista" data-ui="forecast-lista"></div>
+</div>
+<!-- Objetivos de ahorro: la lista y la edición de uno -->
+<div id="sheetObj" class="sheet" data-pantalla="hoja-objetivos" data-ui="hoja-objetivos" hidden>
+  <div class="row"><h2>Objetivos</h2><button type="button" class="btn sec" id="objCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <span class="sub" id="objVacio" data-ui="objetivos-vacio" hidden>Todavía no tenés objetivos. Creá uno para seguir lo que ahorrás.</span>
+  <div id="objLista" data-ui="lista-objetivos" style="display:flex;flex-direction:column;gap:14px"></div>
+  <button type="button" class="btn" id="objNuevo" data-ui="boton-nuevo-objetivo">Nuevo objetivo</button>
+</div>
+<div id="sheetObjEd" class="sheet" data-pantalla="hoja-objetivo-edicion" data-ui="hoja-objetivo-edicion" hidden>
+  <div class="row"><h2 id="obTitulo">Nuevo objetivo</h2><button type="button" class="btn sec" id="obCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <label class="f" for="obNombre">Nombre<input type="text" id="obNombre" autocomplete="off"></label>
+  <label class="f" for="obMonto">Monto (€)<input type="text" inputmode="decimal" autocomplete="off" id="obMonto"></label>
+  <span class="sub" id="obSinCuentas" hidden>Creá una cuenta de bancos o de inversión en Cuentas para elegirla como destino.</span>
+  <label class="f" for="obCuenta">Cuenta destino<select id="obCuenta"></select></label>
+  <label class="f" for="obAporte">Aporte mensual (€)<input type="text" inputmode="decimal" autocomplete="off" id="obAporte"></label>
+  <label class="f" for="obInicio">Mes del primer aporte<input type="month" id="obInicio"></label>
+  <label class="f" for="obDia">Día del mes en que toca transferir (1 a 28)<input type="text" inputmode="numeric" autocomplete="off" id="obDia"></label>
+  <label class="f" for="obSaltos">Meses sin aporte (opcional, separados por coma)<input type="text" id="obSaltos" autocomplete="off" placeholder="Ej: 2027-02"></label>
+  <label class="f" for="obLimite">Fecha límite (opcional)<input type="month" id="obLimite"></label>
+  <div class="card" id="obPlanCard" data-ui="plan-objetivo" hidden><span class="lbl">Plan mes a mes</span><div class="list" id="obPlan"></div></div>
+  <button type="button" class="btn sec" id="obCal" data-ui="boton-calendario" hidden>Agregar al calendario</button>
+  <button type="button" class="btn" id="obGuardar" data-ui="guardar-objetivo">Guardar</button>
+  <button type="button" class="btn danger" id="obBorrar" data-ui="boton-borrar-objetivo" hidden>Borrar objetivo</button>
 </div>
 <div id="sheetCuotas" class="sheet" data-pantalla="hoja-cuotas" data-ui="hoja-cuotas" hidden>
   <div class="row"><h2>Cuotas del mes</h2><button type="button" class="btn sec" id="cuotasCerrar" style="padding:8px 12px">Cerrar</button></div>
@@ -631,7 +648,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s)))))))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -650,7 +667,7 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(invNorm(s))))))));}
+  return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s)))))))));}
 // Las categorías de la persona: {gasto:[{nombre, color 1..19, fija?}], ingreso:[{nombre}]}. Si faltan, son las de siempre; se ignora lo inválido
 // (sin nombre, repetido, con «|») y se conserva toda categoría que use un movimiento. «Otros» va al final
 function categoriasDatosNorm(s){
@@ -675,6 +692,23 @@ function invNorm(s){
   s.activos=Array.isArray(s.activos)?s.activos.filter(a=>a&&typeof a==="object"&&typeof a.nombre==="string"&&a.nombre.trim()&&s.cuentas.some(c=>c.id===a.cuenta&&c.tipo==="inversion")):[];
   s.ops=Array.isArray(s.ops)?s.ops.filter(o=>o&&typeof o==="object"&&s.activos.some(a=>a.id===o.activo)&&(o.tipo==="compra"||o.tipo==="venta")&&o.cantidad>0&&o.precio>0&&typeof o.fecha==="string"):[];
   s.ops.forEach(o=>{if(!(o.comision>0))delete o.comision;});
+  return s;}
+// Los objetivos de ahorro: {id, nombre, monto, cuenta (destino), aporte, inicio:"AAAA-MM", dia 1..28, saltos?, limite?}.
+// Sin lista, el plan del fondo de Ajustes (aporte, objetivo, inicio, saltos) pasa a ser el objetivo «Fondo de emergencia»; los datos viejos de `settings` no se borran
+const MES_OK=x=>typeof x==="string"&&/^\d{4}-(0[1-9]|1[0-2])$/.test(x);
+const saltosOk=t=>String(t||"").split(",").map(x=>x.trim()).filter(MES_OK).join(", ");
+function objetivosNorm(s){
+  const destinoOk=id=>s.cuentas.some(c=>c.id===id&&(c.tipo==="liquidez"||c.tipo==="inversion"));
+  if(Array.isArray(s.objetivos)){const ids=new Set();
+    s.objetivos=s.objetivos.filter(o=>o&&typeof o==="object"&&typeof o.nombre==="string"&&o.nombre.trim()&&o.monto>0&&o.aporte>0&&MES_OK(o.inicio)).map(o=>{
+      const id=Number.isFinite(o.id)&&!ids.has(o.id)?o.id:nid();ids.add(id);
+      const n={id,nombre:o.nombre.trim(),monto:r2(o.monto),cuenta:destinoOk(o.cuenta)?o.cuenta:null,aporte:r2(o.aporte),inicio:o.inicio,dia:Number.isInteger(o.dia)&&o.dia>=1&&o.dia<=28?o.dia:1};
+      const sl=saltosOk(o.saltos);if(sl)n.saltos=sl;if(MES_OK(o.limite))n.limite=o.limite;return n;});
+    return s;}
+  const st=s.settings;s.objetivos=[];
+  if(st.aporte>0&&st.objetivoFondo>0&&MES_OK(st.inicio)){const fc=s.cuentas.find(c=>c.fondo&&destinoOk(c.id));
+    const n={id:nid(),nombre:"Fondo de emergencia",monto:r2(st.objetivoFondo),cuenta:fc?fc.id:null,aporte:r2(st.aporte),inicio:st.inicio,dia:1};
+    const sl=saltosOk(st.saltos);if(sl)n.saltos=sl;s.objetivos.push(n);}
   return s;}
 // Los gastos reembolsables sin estado (guardados antes de los estados) quedan pendientes
 function reembolsos(s){s.movs.forEach(m=>{if(m.tipo==="gasto"&&m.cat===REEMB&&!m.reembolso)m.reembolso={estado:"pendiente"};});return s;}
@@ -758,12 +792,34 @@ function estadoConc(c,m){const e=(mesData(m).conc||{})[c.id];if(!e)return {txt:"
 // Un cambio en un movimiento devuelve a «sin conciliar» las cuentas que toca, en el mes de su fecha
 function desconciliar(m){if(!m)return;const md=S.meses[m.fecha.slice(0,7)];if(!md||!md.conc)return;[m.cuenta,m.destino].forEach(id=>{if(id!=null)delete md.conc[id];});}
 
-function planMap(){const st=S.settings;const out={};if(!st.aporte||!st.objetivoFondo||!st.inicio)return out;
-  const saltos=(st.saltos||"").split(",").map(x=>x.trim()).filter(Boolean);let [y,m]=st.inicio.split("-").map(Number);let acc=0;
-  for(let i=0;i<60&&acc<st.objetivoFondo;i++){const id=y+"-"+String(m).padStart(2,"0");if(!saltos.includes(id))acc+=st.aporte;out[id]=Math.min(acc,st.objetivoFondo);m++;if(m>12){m=1;y++;}}
-  return out;}
-// Saldo del fondo al cierre de un mes: la cuenta marcada como fondo, o lo anotado antes de que existiera
-function fondoEn(k){const fc=S.cuentas.find(c=>c.fondo);if(fc&&k>=fc.desde.slice(0,7))return valorCuenta(fc,fechaCierre(k));const md=S.meses[k];return md&&md.fondo!=null?md.fondo:null;}
+// Objetivos: el plan acumula el aporte mensual desde el mes de inicio hasta llegar al monto, sin pasarlo (en los meses sin aporte el acumulado se repite)
+function planDe(o){const out={},saltos=(o.saltos||"").split(",").map(x=>x.trim()).filter(Boolean);let [y,m]=o.inicio.split("-").map(Number),acc=0;
+  for(let i=0;i<60&&acc<o.monto;i++){const id=y+"-"+pad(m);if(!saltos.includes(id))acc+=o.aporte;out[id]=Math.min(acc,o.monto);m++;if(m>12){m=1;y++;}}return out;}
+// Lo que el plan pide haber ahorrado al cierre de un mes (null antes del inicio; el monto después de terminar el plan)
+function metaEn(o,k){if(k<o.inicio)return null;const p=planDe(o);return p[k]!=null?p[k]:o.monto;}
+// Saldo de la cuenta destino al cierre de un mes (para el objetivo del fondo, lo anotado a mano antes de que la cuenta existiera)
+function saldoObjetivoEn(o,k){const c=cuentaDe(o.cuenta);if(!c)return null;if(k>=c.desde.slice(0,7))return valorCuenta(c,fechaCierre(k));if(c.fondo){const md=S.meses[k];return md&&md.fondo!=null?md.fondo:null;}return null;}
+function estadoObjetivo(o,k){const meta=metaEn(o,k);if(meta==null||k>mesId())return {txt:"Pendiente",cls:"idle"};
+  const real=saldoObjetivoEn(o,k);if(real==null)return {txt:"Sin dato",cls:"idle"};
+  return real>=meta-0.005?{txt:"En plan",cls:"ok"}:{txt:"Atrasado "+eur(meta-real),cls:"warnc"};}
+const ahorradoObj=o=>{const c=cuentaDe(o.cuenta);return c?Math.max(0,valorCuenta(c)):0;};
+// El mes en que el plan llega al monto, y si eso cumple la fecha límite
+function llegaTxt(o){if(!o.limite)return "";const ks=Object.keys(planDe(o)),fin=ks[ks.length-1],d=difMeses(o.limite,fin);return d<=0?"Llegás a tiempo":`Llegás ${d} ${d===1?"mes":"meses"} tarde`;}
+// Lo que falta transferir hoy a cada cuenta destino para estar en el plan de este mes (desde el día elegido)
+function pendientesTransferir(){const k=mesId(),d=+hoy().slice(8,10);
+  return S.objetivos.map(o=>{const c=cuentaDe(o.cuenta),meta=metaEn(o,k);if(!c||meta==null||d<(o.dia||1))return null;const falta=r2(meta-valorCuenta(c));return falta>0.004?{o,c,falta}:null;}).filter(Boolean);}
+// Archivo de calendario con un recordatorio mensual (null si el objetivo ya llegó a su monto o no quedan aportes)
+function icsObjetivo(o){const c=cuentaDe(o.cuenta);if(c&&valorCuenta(c)>=o.monto-0.005)return null;
+  const ks=Object.keys(planDe(o)),fin=ks[ks.length-1],k=mesId(),d=o.dia||1;let ini=+hoy().slice(8,10)<=d?k:mesSig(k,1);if(ini<o.inicio)ini=o.inicio;if(!fin||ini>fin)return "";
+  const fecha=(m,h)=>m.replace("-","")+pad(d)+"T"+h,saltos=(o.saltos||"").split(",").map(x=>x.trim()).filter(x=>x&&x>=ini&&x<=fin);
+  const esc=t=>String(t).replace(/\\/g,"\\\\").replace(/;/g,"\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");
+  const titulo=`Transferir ${eur(o.aporte)}${c?" a "+c.nombre:""} (${o.nombre})`;
+  const plegar=l=>{let r="";while(l.length>73){r+=l.slice(0,73)+"\r\n ";l=l.slice(73);}return r+l;};
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Mis finanzas//ES","CALSCALE:GREGORIAN","BEGIN:VEVENT",`UID:objetivo-${o.id}@mis-finanzas`,`DTSTAMP:${hoy().replace(/-/g,"")}T000000Z`,
+    `DTSTART:${fecha(ini,"090000")}`,`DTEND:${fecha(ini,"091500")}`,`RRULE:FREQ=MONTHLY;BYMONTHDAY=${d};COUNT=${difMeses(ini,fin)+1}`,
+    ...(saltos.length?["EXDATE:"+saltos.map(m=>fecha(m,"090000")).join(",")]:[]),
+    `SUMMARY:${esc(titulo)}`,`DESCRIPTION:${esc("Objetivo "+o.nombre+": toca transferir el aporte del mes.")}`,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY",`DESCRIPTION:${esc(titulo)}`,"END:VALARM","END:VEVENT","END:VCALENDAR"];
+  return L.map(plegar).join("\r\n")+"\r\n";}
 
 // Meses entre dos «AAAA-MM» (b menos a)
 const difMeses=(a,b)=>{const [y1,m1]=a.split("-").map(Number),[y2,m2]=b.split("-").map(Number);return (y2-y1)*12+m2-m1;};
@@ -989,7 +1045,7 @@ function aplicarApariencia(){const v=aparienciaVista(),d=document.documentElemen
 if(mqOscuro&&mqOscuro.addEventListener)mqOscuro.addEventListener("change",()=>{if(aparienciaDe()==="auto")aplicarApariencia();});
 function render(){
   aplicarApariencia();avisoAdj();pintarCopia();
-  const id=mesV(), ms=movsMes(id), st=S.settings, PLAN=planMap();
+  const id=mesV(), ms=movsMes(id);
   $("setupCard").hidden=S.cuentas.length>0;
   pintarMesNav();
   const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
@@ -1007,6 +1063,8 @@ function render(){
     anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
   const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
   if(cd.n){$("cuotasMes").textContent=eur(cd.total);$("cuotasSubI").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");}
+  const pt=pendientesTransferir();$("objCard").hidden=!pt.length;
+  $("objCardLista").innerHTML=pt.map(({o,c,falta})=>`<div class="item"><span>Transferí ${eur(falta)} a ${esc(c.nombre)} para ${esc(o.nombre)}</span></div>`).join("");
   if(!$("sheetMovsCta").hidden)pintarMovsCta();
   $("catsSub").textContent=`${S.categorias.gasto.length} de gasto · ${S.categorias.ingreso.length} de ingreso`;
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
@@ -1035,12 +1093,8 @@ function render(){
   $("concSub").textContent=S.cuentas.length?`${nOk} de ${S.cuentas.length} cuentas conciliadas. Tocá una para cargar el saldo real.`:"Creá tus cuentas para conciliarlas a fin de mes.";
   $("concList").innerHTML=est.map(([c,e])=>{const v=valorCuenta(c,fechaCierre(id));return `<button type="button" class="item tap" data-conc="${c.id}"><div class="d"><span>${esc(c.nombre)}</span><span>al ${diaMes(fechaCierre(id))}</span></div><div class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></button>`;}).join("");
   $("checks").innerHTML=S.tareas.length?S.tareas.map(t=>`<div class="check"><input type="checkbox" id="ck-${esc(t.id)}" data-ck="${esc(t.id)}" ${md.checks[t.id]?"checked":""}><label for="ck-${esc(t.id)}" style="flex:1">${esc(t.texto)}</label><button type="button" class="btn sec" data-tarea="${esc(t.id)}" aria-label="Editar tarea" style="padding:4px 10px;font-size:14px">Editar</button></div>`).join(""):`<div class="empty">Agregá las tareas de tu cierre de mes.</div>`;
-  const fc=S.cuentas.find(c=>c.fondo);
-  $("plan").innerHTML=Object.keys(PLAN).length===0?`<div class="empty">Cargá el aporte, el objetivo y el mes de inicio en Ajustes.</div>`:!fc?`<div class="empty">Marcá una cuenta como fondo de emergencia para seguir el plan.</div>`:Object.entries(PLAN).map(([k,v])=>{
-    const real=k>id?null:fondoEn(k);const cls=real==null?"idle":real>=v?"ok":"warnc";const txt=real==null?(k<=id?"Sin dato":"Pendiente"):real>=v?"En plan":"Atrasado "+eur(v-real);
-    return `<div class="item" data-plan="${k}"><span>${mesDe(k)}</span><div class="row"><span class="num sub">${eur(v)}</span><span class="chip ${cls}">${txt}</span></div></div>`;}).join("");
+  $("objCierre").innerHTML=S.objetivos.length?S.objetivos.map(o=>{const e=estadoObjetivo(o,id);return `<button type="button" class="item tap" data-obj="${o.id}"><span>${esc(o.nombre)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></button>`;}).join(""):`<div class="empty">Todavía no tenés objetivos. Creá uno desde el panel.</div>`;
   renderCuentas();
-  $("objFondo").value=aTexto(st.objetivoFondo);$("aporte").value=aTexto(st.aporte);$("inicio").value=st.inicio||"";$("saltos").value=st.saltos||"";
 }
 
 function renderCuentas(){
@@ -1064,7 +1118,7 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetMovsCta","sheetCats","sheetCatEd"];
+const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetObj","sheetObjEd","sheetMovsCta","sheetCats","sheetCatEd"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 // Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
 let volverCta=null,ce=null;
@@ -1797,6 +1851,48 @@ function abrirFore(){foreIngV=null;const p=ingresoPromedio();$("foreIng").value=
 $("foreIng").addEventListener("input",()=>{const t=$("foreIng").value.trim();if(!t){foreIngV=null;pintarFore();return;}const v=numX("foreIng");if(v!=null&&v>=0){foreIngV=r2(v);pintarFore();}});
 $("foreIng").addEventListener("change",()=>{const t=$("foreIng").value.trim(),v=t?numX("foreIng"):0;if(t&&(v==null||v<0)){toast("Poné un importe válido");$("foreIng").value=String(foreIngV!=null?foreIngV:ingresoPromedio()).replace(".",",");}});
 $("foreCerrar").onclick=cerrar;
+// --- Objetivos de ahorro
+$("panelObj").onclick=()=>{cerrarPanel();abrirObj();};
+function pintarObj(){$("objVacio").hidden=S.objetivos.length>0;
+  $("objLista").innerHTML=S.objetivos.map(o=>{const c=cuentaDe(o.cuenta),a=ahorradoObj(o),pc=Math.min(100,Math.round(a/o.monto*100));
+    const e=!c?{txt:"Elegí una cuenta destino",cls:"idle"}:a>=o.monto-0.005?{txt:"Lo lograste",cls:"ok"}:estadoObjetivo(o,mesId());
+    return `<div class="card tap" role="button" tabindex="0" data-obj="${o.id}" data-ui="tarjeta-objetivo"><div class="row"><span class="lbl">${esc(o.nombre)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div><div class="row"><span class="num">${eur(a).replace(" €","")} de ${eur(o.monto)}</span><span class="num sub">${pc} %</span></div><div class="bar"><i style="width:${pc}%"></i></div><span class="sub">${[c?esc(c.nombre):"Sin cuenta destino",esc(llegaTxt(o))].filter(Boolean).join(" · ")}</span></div>`;}).join("");}
+function abrirObj(){pintarObj();mostrar("sheetObj");}
+let objId=null;
+function abrirObjEd(id){const o=id!=null?S.objetivos.find(x=>x.id===id):null;objId=o?o.id:null;
+  $("obTitulo").textContent=o?"Editar objetivo":"Nuevo objetivo";
+  const ops=S.cuentas.filter(c=>c.tipo==="liquidez"||c.tipo==="inversion");
+  $("obSinCuentas").hidden=ops.length>0;
+  $("obCuenta").innerHTML=`<option value="">Elegí una cuenta</option>`+ops.map(c=>`<option value="${c.id}">${esc(c.nombre)}</option>`).join("");
+  $("obNombre").value=o?o.nombre:"";$("obMonto").value=o?aTexto(o.monto):"";$("obCuenta").value=o&&o.cuenta!=null?String(o.cuenta):"";
+  $("obAporte").value=o?aTexto(o.aporte):"";$("obInicio").value=o?o.inicio:"";$("obDia").value=o?String(o.dia||1):"";$("obSaltos").value=o?o.saltos||"":"";$("obLimite").value=o?o.limite||"":"";
+  $("obPlanCard").hidden=!o;$("obCal").hidden=!o;$("obBorrar").hidden=!o;$("obBorrar").dataset.confirm="";$("obBorrar").textContent="Borrar objetivo";
+  if(o)$("obPlan").innerHTML=Object.entries(planDe(o)).map(([k,v])=>{const e=estadoObjetivo(o,k);return `<div class="item" data-plan="${k}"><span>${mesDe(k)}</span><div class="row"><span class="num sub">${eur(v)}</span><span class="chip ${e.cls}">${esc(e.txt)}</span></div></div>`;}).join("");
+  mostrar("sheetObjEd");}
+$("objLista").addEventListener("click",e=>{const x=e.target.closest("[data-obj]");if(x)abrirObjEd(+x.dataset.obj);});
+$("objCierre").addEventListener("click",e=>{const x=e.target.closest("[data-obj]");if(x)abrirObjEd(+x.dataset.obj);});
+$("objCard").onclick=abrirObj;
+$("objCerrar").onclick=cerrar;$("objNuevo").onclick=()=>abrirObjEd(null);$("obCerrar").onclick=abrirObj;
+$("obGuardar").onclick=()=>{const nombre=$("obNombre").value.trim(),monto=numX("obMonto"),aporte=numX("obAporte"),cuenta=$("obCuenta").value,inicio=$("obInicio").value,dt=$("obDia").value.trim(),dia=dt===""?1:Number(dt);
+  if(!nombre){toast("Poné un nombre para el objetivo");return;}
+  if(!(monto>0)||!(aporte>0)){toast("El monto y el aporte tienen que ser mayores que 0");return;}
+  if(!cuenta){toast("Elegí la cuenta destino");return;}
+  if(!MES_OK(inicio)){toast("Elegí el mes del primer aporte");return;}
+  if(!Number.isInteger(dia)||dia<1||dia>28){toast("El día tiene que estar entre 1 y 28");return;}
+  const o={id:objId!=null?objId:nid(),nombre,monto:r2(monto),cuenta:+cuenta,aporte:r2(aporte),inicio,dia},sl=saltosOk($("obSaltos").value),lim=$("obLimite").value;
+  if(sl)o.saltos=sl;if(MES_OK(lim))o.limite=lim;
+  const i=S.objetivos.findIndex(x=>x.id===o.id);if(i>=0)S.objetivos[i]=o;else S.objetivos.push(o);
+  cambio();toast("Objetivo guardado");abrirObj();};
+$("obBorrar").onclick=()=>{const b=$("obBorrar");if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tocá de nuevo para borrar el objetivo";return;}
+  S.objetivos=S.objetivos.filter(x=>x.id!==objId);cambio();toast("Objetivo borrado");abrirObj();};
+// Recordatorio mensual para el calendario: la hoja de compartir del sistema y, si no hay, una descarga
+$("obCal").onclick=async()=>{const o=S.objetivos.find(x=>x.id===objId);if(!o)return;
+  if(!o.cuenta){toast("Elegí una cuenta destino");return;}
+  const t=icsObjetivo(o);if(t===null){toast("Este objetivo ya llegó a su monto.");return;}if(t===""){toast("No quedan aportes en el plan de este objetivo.");return;}
+  const nombre=`objetivo-${normTxt(o.nombre).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"ahorro"}.ics`,f=new File([t],nombre,{type:"text/calendar"});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Recordatorio de "+o.nombre});return;}}
+  catch(e){if(e&&e.name==="AbortError")return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=nombre;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);};
 // Hojas de inversiones: resumen por cuenta, activo y operación
 function abrirInv(){const cs=S.cuentas.filter(c=>c.tipo==="inversion");
   $("invCuerpo").innerHTML=cs.map(c=>{const i=invCuenta(c),ef=r2(i.valor-i.enActivos);
@@ -1897,17 +1993,12 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-tarea]");if(t)abrirTarea(t.dataset.tarea);});
 document.addEventListener("change",e=>{const c=e.target.dataset&&e.target.dataset.ck;if(!c)return;mesData(mesV()).checks[c]=e.target.checked;persist();});
 
-$("guardarAjustes").onclick=()=>{const of=num("objFondo"),ap=num("aporte"),ini=$("inicio").value;
-  if(!(of>0)||!(ap>0)||!ini){toast("Completá el aporte, el objetivo y el mes de inicio");return;}
-  const saltos=$("saltos").value.split(",").map(x=>x.trim()).filter(x=>/^\d{4}-\d{2}$/.test(x)).join(", ");
-  S.settings={apariencia:S.settings.apariencia,aporte:ap,objetivoFondo:of,inicio:ini,saltos};persist();render();toast("Ajustes guardados");};
-$("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),PLAN=planMap(),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
+$("copiarResumen").onclick=()=>{const id=mesId(),ms=movsMes(id),md=mesData(id),t=totales(),ing=sumaTipo(ms,"ingreso"),gas=sumaTipo(ms,"gasto");
   const porCat={};ms.filter(m=>m.tipo==="gasto").forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
-  const fc=S.cuentas.find(c=>c.fondo),f=fc?valorCuenta(fc):null;
   const txt=[`Resumen ${mesDe(id)}`,`Ingresos: ${eur(ing)} · Gastos: ${eur(gas)} · Resultado: ${eur(ing-gas)}`,"Cuentas:",
     ...S.cuentas.map(c=>{const e=estadoConc(c,id),d=detalleCuenta(c);return `- ${c.nombre} (${tipoDe(c.tipo)[1]}): ${eur(valorCuenta(c))} · ${e.ok?"conciliada":e.cls==="warnc"?e.txt.toLowerCase():"sin conciliar"}${d?" · "+d:""}`;}),
     ...S.cuentas.filter(c=>c.tope>0).map(c=>{const u=ms.filter(m=>m.tipo==="gasto"&&m.cuenta===c.id&&m.cat!==REEMB).reduce((a,m)=>a+m.importe,0);return `Disponible ${c.nombre}: ${eur(c.tope-u)} de ${eur(c.tope)}`;}),
-    `Fondo: ${f==null?"sin cuenta de fondo":eur(f)} (plan ${PLAN[id]!=null?eur(PLAN[id]):"–"})`,
+    ...S.objetivos.map(o=>{const m=metaEn(o,id);return `Objetivo ${o.nombre}: ${eur(ahorradoObj(o))} de ${eur(o.monto)} (plan ${m!=null?eur(m):"–"})`;}),
     `Checklist: ${S.tareas.filter(x=>md.checks[x.id]).length}/${S.tareas.length}`,"Por categoría:",...Object.entries(porCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`- ${c}: ${eur(v)}`),
     `Patrimonio neto: ${eur(t.neto)} (tengo ${eur(t.activos)}, debo ${eur(t.deudas)}${t.cuotas>0?`, cuotas ${eur(t.cuotas)}/mes`:""})`];
   copiar(txt.join("\n"),"Resumen copiado");};

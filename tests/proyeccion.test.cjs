@@ -159,6 +159,7 @@ t.test("abrir y cerrar el panel", async () => {
   await page.click("#menuBtn");
   assert.equal(await page.isVisible("#panel"), true);
   const txt = await page.innerText("#panel");
+  assert.match(txt, /Objetivos/);
   assert.match(txt, /Forecast/);
   assert.match(txt, /Inversiones/);
   assert.match(txt, /Radar de noticias/);
@@ -176,6 +177,15 @@ t.test("el botón está en todas las pantallas", async () => {
     await A.ir(page, v);
     assert.equal(await page.isVisible("#menuBtn"), true, v);
   }
+});
+
+// Escenario: ir a Objetivos
+t.test("ir a Objetivos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await page.click("#menuBtn");
+  await page.click("#panelObj");
+  assert.equal(await page.isVisible("#panel"), false);
+  assert.equal(await page.isVisible("#sheetObj"), true);
 });
 
 // Escenario: ir a Forecast

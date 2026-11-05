@@ -151,6 +151,25 @@ t.test("resumen con conciliación", async () => {
   assert.match(txt, /^- Tarjeta Y \(Tarjetas de crédito\): -100 € · sin conciliar/m);
 });
 
+// Escenario: resumen con objetivos
+t.test("resumen con objetivos", async () => {
+  const datos = A.v2({ cuentas: [A.cta(1, "Ahorro A", 150, { desde: "2026-01-01" })], objetivos: [{ id: 50, nombre: "Vacaciones", monto: 1000, cuenta: 1, aporte: 100, inicio: "2026-09", dia: 1 }] });
+  const { page } = await abrir({ datos });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarResumen");
+  await A.aviso(page, "Resumen copiado");
+  assert.match(await A.portapapeles(page), /^Objetivo Vacaciones: 150 € de 1000 € \(plan 200 €\)$/m);
+});
+
+// Escenario: resumen sin objetivos
+t.test("resumen sin objetivos", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
+  await A.ir(page, "ajustes");
+  await page.click("#copiarResumen");
+  await A.aviso(page, "Resumen copiado");
+  assert.doesNotMatch(await A.portapapeles(page), /Objetivo /);
+});
+
 // Escenario: reembolsables anteriores
 t.test("reembolsables anteriores", async () => {
   const R = "Trabajo (reembolsable)";

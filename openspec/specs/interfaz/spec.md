@@ -24,7 +24,8 @@ donde abre «Nueva cuenta». El título del encabezado cambia con la pantalla.
 ### Escenario: ajustes desde el engranaje
 - **Dado** la app abierta en Inicio
 - **Cuando** la persona toca el engranaje
-- **Entonces** el título dice «Ajustes» y se ve el plan del fondo
+- **Entonces** el título dice «Ajustes» y se ve la apariencia
+- **Y** no se ve el plan del fondo, que ahora está en los objetivos
 
 ### Escenario: nombres de las pestañas
 - **Dado** la app abierta
@@ -151,10 +152,11 @@ iPhone.
 - **Cuando** la persona mira el campo «Fecha»
 - **Entonces** su borde derecho no supera el borde derecho de la hoja
 
-### Escenario: mes en Ajustes
-- **Dado** Ajustes abierto a 390 px
-- **Cuando** la persona mira «Mes del primer aporte»
-- **Entonces** el campo cabe en su tarjeta
+### Escenario: mes en un objetivo
+- **Dado** la hoja «Nuevo objetivo» abierta a 390 px
+- **Cuando** la persona mira «Mes del primer aporte» y «Fecha límite»
+- **Entonces** los dos campos caben en la hoja
+- **Y** no hay desplazamiento horizontal
 
 ## Requisito: todo se lee sobre el fondo
 
@@ -235,19 +237,25 @@ categorías son los mismos en las dos apariencias.
 
 ## Requisito: panel de análisis
 
-Un botón «≡» a la izquierda del encabezado, en todas las pantallas, abre un panel lateral con tres entradas: Forecast, Inversiones
-y Radar de noticias. Forecast abre la proyección; Inversiones abre el rendimiento de las cuentas de inversión; Radar de noticias
-está deshabilitada y dice «Próximamente». El panel se cierra al elegir una entrada, al tocar fuera de él o con Escape.
+Un botón «≡» a la izquierda del encabezado, en todas las pantallas, abre un panel lateral con cuatro entradas: Objetivos, Forecast, Inversiones
+y Radar de noticias. Objetivos abre la lista de objetivos de ahorro; Forecast abre la proyección; Inversiones abre el rendimiento de las
+cuentas de inversión; Radar de noticias está deshabilitada y dice «Próximamente». El panel se cierra al elegir una entrada, al tocar fuera
+de él o con Escape.
 
 ### Escenario: abrir y cerrar el panel
 - **Dado** la app abierta en Inicio
 - **Cuando** la persona toca «≡» y después toca fuera del panel
-- **Entonces** ve el panel con «Forecast», «Inversiones» y «Radar de noticias» y después deja de verlo
+- **Entonces** ve el panel con «Objetivos», «Forecast», «Inversiones» y «Radar de noticias» y después deja de verlo
 
 ### Escenario: el botón está en todas las pantallas
 - **Dado** la app abierta
 - **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre y Ajustes
 - **Entonces** ve el botón «≡» en cada una
+
+### Escenario: ir a Objetivos
+- **Dado** el panel abierto
+- **Cuando** la persona toca «Objetivos»
+- **Entonces** el panel se cierra y se abre la hoja «Objetivos»
 
 ### Escenario: ir a Forecast
 - **Dado** el panel abierto

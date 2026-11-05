@@ -52,7 +52,8 @@ t.test("ajustes desde el engranaje", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
   await page.click('header [data-v="ajustes"]');
   assert.equal(await A.texto(page, "#title"), "Ajustes");
-  assert.ok(await page.isVisible("#aporte"));
+  assert.ok(await page.isVisible('[data-ui="apariencia"]'));
+  assert.equal(await page.locator("#aporte").count(), 0);
 });
 
 // Escenario: nombres de las pestañas
@@ -412,12 +413,17 @@ for (const esquema of ["light", "dark"]) {
     assert.ok(h.derecha <= h.hojaDerecha, `fecha ${h.derecha} > hoja ${h.hojaDerecha}`);
   });
 
-  // Escenario: mes en Ajustes
-  t.test(`mes en Ajustes (${esquema})`, async () => {
+  // Escenario: mes en un objetivo
+  t.test(`mes en un objetivo (${esquema})`, async () => {
     const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }), esquema });
-    await A.ir(page, "ajustes");
-    const h = await holgura(page, "#inicio");
-    assert.ok(h.derecha <= h.hojaDerecha, `mes ${h.derecha} > tarjeta ${h.hojaDerecha}`);
-    assert.ok(h.ancho <= h.vista);
+    await page.click("#menuBtn");
+    await page.click("#panelObj");
+    await page.click("#objNuevo");
+    await page.waitForSelector("#sheetObjEd:not([hidden])");
+    for (const id of ["#obInicio", "#obLimite"]) {
+      const h = await holgura(page, id);
+      assert.ok(h.derecha <= h.hojaDerecha, `${id} ${h.derecha} > hoja ${h.hojaDerecha}`);
+      assert.ok(h.ancho <= h.vista);
+    }
   });
 }
