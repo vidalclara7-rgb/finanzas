@@ -1,0 +1,32 @@
+# Tareas: sistema-de-diseno
+
+## Preview
+- [x] Fuente Archivo en `vendor/archivo/` con su licencia y `@font-face`; variables y clases del sistema en `index.html` (sólo estilos)
+- [x] Esqueleto del preview y pantallas: Inicio, Movimientos, Cuentas, Cierre, Ajustes, panel y hojas, más una pantalla de muestras de color (normal y vacío)
+- [x] `python3 kit.py preview` en verde y capturas a 390 px en claro y oscuro
+
+## Datos y migración
+- [x] Sin migración (`datos: sin-cambios`): confirmar que `norm()` no cambia
+
+## Estilos
+- [x] Variables de la paleta (claro y oscuro) y quitar las dos paletas, `--mancha*` y `--velo`
+- [x] Tarjetas de vidrio, punto de color por tipo de cuenta y 19 colores de categoría de la paleta de la persona
+- [x] Tarjeta destacada (borde cónico y foco), botón principal con pulso y botón secundario de vidrio
+- [x] Letra: Archivo en títulos y cifras grandes, monoespaciada en datos pequeños; logo «mf.»
+
+## Lógica
+- [x] `tendenciaMes()` y `data-tendencia` en `<html>`; color positivo, negativo o neutro
+- [x] Fondo fluido: tres lóbulos con filtro de fusión, 30 fps, pausa con la app oculta y con «Reducir movimiento»; medir el costo en el iPhone
+- [x] Foco de la tarjeta destacada con el dedo
+- [x] `theme-color` con el fondo nuevo; `sw.js`: subir `CACHE` y sumar `vendor/archivo/*` a `FILES`
+
+## Tests
+- [x] Reescribir los de apariencia (fondo y colores) y los de contraste de las tarjetas; ajustar los que miran `--cat*`
+- [x] Un test por escenario (37) con `// Escenario: <título>`
+- [x] `python3 kit.py check` en verde
+
+## Prueba en el navegador
+- [x] `python3 kit.py capturas` y revisión en claro y oscuro contra el preview
+
+## Documentación
+- [x] `CLAUDE.md`: «Apariencia y fondo» y «Estilo» al sistema nuevo
