@@ -1,7 +1,8 @@
 ---
 cambio: santander-ingles-y-solapados
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-11
 ---
 # Leer el extracto de Santander en inglés y no repetir movimientos entre extractos solapados
 
