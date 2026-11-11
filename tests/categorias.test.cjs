@@ -144,7 +144,7 @@ t.test("cambiar el color", async () => {
   assert.match(await page.$eval('#torta circle[data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
   assert.match(await page.$eval('#cats [data-cat="Ocio"] .dot', (d) => d.getAttribute("style")), /--cat9/);
   await A.ir(page, "movs");
-  assert.match(await page.$eval('[data-mov="1"]', (m) => m.getAttribute("style")), /--cat9/);
+  assert.match(await page.$eval('[data-mov="1"] .ico', (m) => m.getAttribute("style")), /--cat9/);
 });
 
 // Escenario: borrar con movimientos
