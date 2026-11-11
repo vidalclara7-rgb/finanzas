@@ -71,7 +71,7 @@ Un movimiento que ya está cargado en esa cuenta (misma fecha e importe) llega d
 
 ## Requisito: resumen de la revisión
 
-Arriba de la lista, la revisión del extracto dice el periodo que cubre el archivo y cuántos movimientos son nuevos y cuántos ya estaban. Si el archivo no dice su periodo, muestra sólo los conteos.
+Arriba de la lista, la revisión del extracto dice el periodo que cubre el archivo y cuántos movimientos son nuevos y cuántos ya estaban. Si el archivo no dice su periodo, muestra sólo los conteos. La lista muestra sólo los movimientos nuevos; los que ya estaban quedan plegados bajo «Ver los N que ya estaban» y, al abrirlo, se pueden marcar para guardarlos igual.
 
 ### Escenario: nuevos y repetidos
 - **Dado** un extracto del 23/10 al 05/11 con 3 movimientos nuevos y 5 que ya estaban
@@ -87,3 +87,19 @@ Arriba de la lista, la revisión del extracto dice el periodo que cubre el archi
 - **Dado** un archivo CSV con dos movimientos y sin periodo
 - **Cuando** la persona abre la revisión
 - **Entonces** el resumen dice «2 nuevos · 0 ya estaban», sin fechas
+
+### Escenario: los que ya estaban quedan plegados
+- **Dado** un extracto con 3 movimientos nuevos y 5 que ya estaban
+- **Cuando** la persona abre la revisión
+- **Entonces** la lista muestra los 3 nuevos y el texto «Ver los 5 que ya estaban»
+- **Y** los 5 no se ven hasta tocarlo
+
+### Escenario: abrir los que ya estaban
+- **Dado** la revisión con «Ver los 5 que ya estaban»
+- **Cuando** la persona lo toca y marca uno de ellos
+- **Entonces** ve los 5 con la marca «Ya está» y el botón pasa a «Guardar 4 movimientos»
+
+### Escenario: sin repetidos no hay plegado
+- **Dado** un extracto con 4 movimientos y ninguno guardado
+- **Cuando** la persona abre la revisión
+- **Entonces** no aparece «Ver los que ya estaban»

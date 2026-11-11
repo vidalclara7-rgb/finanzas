@@ -22,3 +22,7 @@
 - `pintarBorr()`: línea `#iResumen` (`data-ui="resumen-importacion"`).
 - Sin datos nuevos. Sube `CACHE`. Tests con un constructor de PDF inventado en `tests/extractos.cjs`.
 - El formato en inglés no trae periodo: `desde` y `hasta` son la fecha del movimiento más viejo y la del más nuevo.
+
+## Cambio del Gate 2 (2026-11-11)
+
+- Los «Ya está» se pliegan: la lista muestra sólo los nuevos y un `<details id="iYa">` («Ver los N que ya estaban») guarda el resto, que se puede marcar igual. Las «Anulada» y «Cuota ya anotada» siguen en la lista principal.
