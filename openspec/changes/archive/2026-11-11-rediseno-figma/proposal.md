@@ -1,7 +1,8 @@
 ---
 cambio: rediseno-figma
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-11
 ---
 # Rediseño con el estilo del Figma «Personal Finance – Account Balance App»
 
