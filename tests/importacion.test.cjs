@@ -267,6 +267,7 @@ t.test("movimiento ya cargado", async () => {
   const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(9, "2026-10-18", 25.3, 1, "Transporte", "gasolina")] }) });
   await importar(page, await X.santanderCuenta(page, { ref: "4321", inicial: 1000, movs: [gasto("2026-10-17", "Comercio Uno", 5), gasto("2026-10-18", "Pago Movil En Gasolinera Ejemplo, Ciudad", 25.3)] }));
   const i = await indice(page, "Gasolinera Ejemplo");
+  await page.click("#iYaTit");
   assert.equal(await marcado(page, i), false);
   assert.equal(await borr(page, i).locator('[data-ui="marca-ya-esta"]').innerText(), "Ya está");
   assert.ok(await marcado(page, 1 - i));
@@ -304,6 +305,7 @@ t.test("la otra mitad ya está", async () => {
   await importar(page, await X.revolut(page, { ref: "7788", movs: [{ fecha: "2026-10-13", desc: "Una recarga de Apple Pay con *1234", importe: 100 }, { fecha: "2026-10-14", desc: "Tienda Ejemplo", importe: -4 }] }));
   await A.elegir(page, "segIElegir", "Revolut");
   await page.click("#iSeguir");
+  await page.click("#iYaTit");
   assert.equal(await marcado(page, 0), false);
   assert.equal(await borr(page, 0).locator('[data-ui="marca-ya-esta"]').innerText(), "Ya está");
   assert.ok(await marcado(page, 1));
@@ -891,4 +893,181 @@ t.test("bonificación sin tarjeta", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, REVOLUT] }) });
   await importar(page, await X.santanderCuenta(page, { ref: "4321", movs: [bonif(4.2)] }));
   assert.match(await que(page, 0), /^i\|/);
+});
+
+// --- Santander en inglés y extractos solapados
+const AR = require("./archivos.cjs");
+const sEn = (page, movs, extra = {}) => X.santanderCuentaEn(page, { ref: "4321", movs, ...extra });
+const mv = (fecha, desc, importe, extra = {}) => ({ fecha, desc, importe, ...extra });
+const filasD = (page) => page.evaluate(() => imp.d.map((x) => [x.fecha, x.s, x.nota, x.marca]));
+const nuevosD = (page) => page.evaluate(() => imp.d.filter((x) => x.marca !== "ya").map((x) => [x.fecha, x.s]));
+const resumenRev = async (page) => (await page.textContent("#iResumen")).trim();
+
+// Escenario: extracto en inglés
+t.test("extracto en inglés", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, [mv("2026-11-02", "Pago Movil En Tienda Ejemplo, Barcelona Es", -35), mv("2026-10-30", "Transferencia De Empresa X, Concepto Nomina", 2000)]));
+  assert.equal(await page.isVisible("#iElegir"), false);
+  assert.deepEqual((await filasD(page)).map((f) => f.slice(0, 2)), [["2026-10-30", 2000], ["2026-11-02", -35]]);
+  assert.equal(await que(page, 1), "i|Sueldo");
+  await page.click("#iGuardar");
+  await A.aviso(page, "2 movimientos importados");
+});
+
+// Escenario: se usa la fecha valor
+t.test("se usa la fecha valor", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, [mv("2026-11-05", "Compra Tienda Ejemplo, Dublin", -400, { valor: "2026-11-03" })]));
+  assert.equal((await filasD(page))[0][0], "2026-11-03");
+});
+
+// Escenario: saldo para conciliar
+t.test("saldo para conciliar", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, [mv("2026-11-02", "Pago Movil En Tienda Ejemplo", -35)], { saldo: 52 }));
+  await page.click("#iGuardar");
+  await A.aviso(page, "1 movimiento importado");
+  await page.waitForSelector("#sheetIC:not([hidden])");
+  assert.match(await A.texto(page, "#icExt"), /^52 €/);
+});
+
+// Escenario: concepto en dos líneas
+t.test("concepto en dos líneas", async () => {
+  const tarjeta = { ...A.cta(3, "Tarjeta A", 0, { tipo: "tarjeta" }), ref: "7146" };
+  const { page } = await abrir({ datos: A.v2({ cuentas: [{ ...BANCO, ref: "4321" }, tarjeta] }) });
+  await importar(page, await sEn(page, [mv("2026-11-02", "Liquidacion De Las Tarjetas De Credito Del Contrato 0049", -700, { extra: "0755 502 1947146" })]));
+  assert.equal(await que(page, 0), "t|3");
+});
+
+// Escenario: el extracto en español sigue igual
+t.test("el extracto en español sigue igual", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", desde: "2026-10-01", hasta: "2026-11-02", movs: [mv("2026-11-02", "Pago Movil En Tienda Ejemplo, Barcelona Es", -35), mv("2026-10-30", "Transferencia De Empresa X, Concepto Nomina", 2000)] }));
+  assert.deepEqual((await filasD(page)).map((f) => f.slice(0, 2)), [["2026-10-30", 2000], ["2026-11-02", -35]]);
+});
+
+// Escenario: extracto en inglés sin movimientos
+t.test("extracto en inglés sin movimientos", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, []));
+  await A.aviso(page, "No encontré movimientos en este archivo.");
+  assert.equal(await page.isVisible("#sheetI"), false);
+});
+
+// Escenario: dos iguales y uno guardado
+t.test("dos iguales y uno guardado", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(1, "2026-11-03", 400, 1, "Otros", "Revolut")] }) });
+  await importar(page, await sEn(page, [mv("2026-11-03", "Compra Tienda Ejemplo", -400), mv("2026-11-03", "Compra Tienda Ejemplo", -400)]));
+  assert.deepEqual((await filasD(page)).map((f) => f[3]).sort(), [null, "ya"]);
+});
+
+// Escenario: dos iguales y dos guardados
+t.test("dos iguales y dos guardados", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(1, "2026-11-03", 400, 1), A.gasto(2, "2026-11-03", 400, 1)] }) });
+  await importar(page, await sEn(page, [mv("2026-11-03", "Compra Tienda Ejemplo", -400), mv("2026-11-03", "Compra Tienda Ejemplo", -400)]));
+  assert.deepEqual((await filasD(page)).map((f) => f[3]), ["ya", "ya"]);
+});
+
+// Escenario: extractos solapados de distinto formato
+t.test("extractos solapados de distinto formato", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const viejos = [mv("2026-10-23", "Pago Movil En Tienda Uno", -10), mv("2026-10-25", "Pago Movil En Tienda Dos", -20), mv("2026-10-31", "Pago Movil En Tienda Tres", -30)];
+  await importar(page, await X.santanderCuenta(page, { ref: "4321", desde: "2026-10-01", hasta: "2026-10-31", movs: viejos }));
+  await page.click("#iGuardar");
+  await A.aviso(page, "3 movimientos importados");
+  await page.click("#icNo");
+  await importar(page, await sEn(page, [...viejos, mv("2026-11-02", "Pago Movil En Tienda Cuatro", -1), mv("2026-11-03", "Pago Movil En Tienda Cinco", -2), mv("2026-11-05", "Pago Movil En Tienda Seis", -3)]));
+  assert.equal((await nuevosD(page)).length, 3);
+  assert.equal((await filasD(page)).filter((f) => f[3] === "ya").length, 3);
+});
+
+// Escenario: importar dos veces el mismo extracto
+t.test("importar dos veces el mismo extracto", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  const extracto = () => sEn(page, [mv("2026-11-02", "Pago Movil En Tienda Uno", -35), mv("2026-11-03", "Pago Movil En Tienda Dos", -9)]);
+  await importar(page, await extracto());
+  await page.click("#iGuardar");
+  await A.aviso(page, "2 movimientos importados");
+  await page.click("#icNo");
+  await importar(page, await extracto());
+  assert.deepEqual((await filasD(page)).map((f) => f[3]), ["ya", "ya"]);
+  await page.click("#iGuardar");
+  await A.aviso(page, "Marcá al menos un movimiento");
+});
+
+// Escenario: guardado con la fecha de operación
+t.test("guardado con la fecha de operación", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(1, "2026-10-05", 8, 1)] }) });
+  await importar(page, await sEn(page, [mv("2026-10-05", "Compra Tienda Ejemplo", -8, { valor: "2026-10-04" })]));
+  assert.equal((await filasD(page))[0][3], "ya");
+});
+
+// Escenario: guardado con otra fecha cercana
+t.test("guardado con otra fecha cercana", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(1, "2026-10-05", 20.7, 1)] }) });
+  await importar(page, await sEn(page, [mv("2026-10-04", "Pago Movil En Tienda Ejemplo", -20.7)]));
+  assert.equal((await filasD(page))[0][3], "ya");
+});
+
+// Escenario: la holgura no tapa un movimiento nuevo
+t.test("la holgura no tapa un movimiento nuevo", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: [A.gasto(1, "2026-10-10", 2.1, 1)] }) });
+  await importar(page, await sEn(page, [mv("2026-10-10", "Pago Movil En Tienda Uno", -2.1), mv("2026-10-11", "Pago Movil En Tienda Dos", -2.1)]));
+  assert.deepEqual((await filasD(page)).map((f) => [f[0], f[3]]), [["2026-10-10", "ya"], ["2026-10-11", null]]);
+});
+
+// --- resumen y plegado de la revisión
+const guardados5 = () => [1, 2, 3, 4, 5].map((i) => A.gasto(i, `2026-10-2${i}`, 10 + i, 1));
+const solapado = (page) => sEn(page, [...[1, 2, 3, 4, 5].map((i) => mv(`2026-10-2${i}`, `Pago Movil En Tienda ${i}`, -(10 + i))), mv("2026-11-01", "Pago Movil En Tienda A", -1), mv("2026-11-03", "Pago Movil En Tienda B", -2), mv("2026-11-05", "Pago Movil En Tienda C", -3)]);
+
+// Escenario: nuevos y repetidos
+t.test("nuevos y repetidos", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: guardados5() }) });
+  await importar(page, await solapado(page));
+  assert.equal(await resumenRev(page), "Del 21/10 al 05/11 · 3 nuevos · 5 ya estaban");
+});
+
+// Escenario: todo nuevo
+t.test("todo nuevo", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, [1, 2, 3, 4].map((i) => mv(`2026-11-0${i}`, `Pago Movil En Tienda ${i}`, -i))));
+  assert.match(await resumenRev(page), /4 nuevos · 0 ya estaban$/);
+});
+
+// Escenario: periodo de un archivo de tabla
+t.test("periodo de un archivo de tabla", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await A.ir(page, "movs");
+  await page.setInputFiles("#pdfIn", AR.CSV("Fecha;Concepto;Importe\n05/10/2026;Tienda Uno;-5,00\n06/10/2026;Tienda Dos;-7,00\n"));
+  await page.waitForSelector("#sheetI:not([hidden])");
+  if (await page.isVisible("#iElegir")) { await A.elegir(page, "segIElegir", "Banco A"); await page.click("#iSeguir"); }
+  await page.waitForFunction(() => imp && imp.d);
+  assert.equal(await resumenRev(page), "Del 05/10 al 06/10 · 2 nuevos · 0 ya estaban");
+});
+
+// Escenario: los que ya estaban quedan plegados
+t.test("los que ya estaban quedan plegados", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: guardados5() }) });
+  await importar(page, await solapado(page));
+  assert.equal(await page.locator("#iBorr .borr").count(), 3);
+  assert.equal(await A.texto(page, "#iYaTit"), "Ver los 5 que ya estaban");
+  assert.equal(await page.isVisible("#iYaBorr"), false);
+});
+
+// Escenario: abrir los que ya estaban
+t.test("abrir los que ya estaban", async () => {
+  const { page } = await abrir({ datos: cuentas({ movs: guardados5() }) });
+  await importar(page, await solapado(page));
+  await page.click("#iYaTit");
+  assert.equal(await page.locator("#iYaBorr .borr").count(), 5);
+  assert.equal(await page.locator('#iYaBorr [data-ui="marca-ya-esta"]').count(), 5);
+  await page.locator("#iYaBorr [data-on]").first().check();
+  assert.equal(await A.texto(page, "#iGuardar"), "Guardar 4 movimientos");
+});
+
+// Escenario: sin repetidos no hay plegado
+t.test("sin repetidos no hay plegado", async () => {
+  const { page } = await abrir({ datos: cuentas() });
+  await importar(page, await sEn(page, [1, 2, 3, 4].map((i) => mv(`2026-11-0${i}`, `Pago Movil En Tienda ${i}`, -i))));
+  assert.equal(await page.isVisible("#iYa"), false);
 });

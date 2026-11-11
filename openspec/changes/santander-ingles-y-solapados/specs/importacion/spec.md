@@ -37,7 +37,7 @@ El extracto de movimientos de la cuenta de Santander descargado en inglés se le
 
 ## Requisito: no contar dos veces
 
-Un movimiento que ya está cargado en esa cuenta (misma fecha e importe) llega desmarcado como «Ya está». Cada movimiento guardado cubre uno solo del extracto: si el extracto trae más movimientos iguales que los guardados, los que sobran entran como nuevos. Vale igual entre extractos de formatos distintos de la misma cuenta. Una compra y su anulación por el mismo importe y comercio el mismo día llegan desmarcadas las dos, como «Anulada».
+Un movimiento que ya está cargado en esa cuenta (misma fecha e importe) llega desmarcado como «Ya está». Cada movimiento guardado cubre uno solo del extracto: si el extracto trae más movimientos iguales que los guardados, los que sobran entran como nuevos. Vale igual entre extractos de formatos distintos de la misma cuenta: cuando el extracto trae fecha de operación y fecha valor, coincide con lo guardado en cualquiera de las dos y, si no, con un movimiento igual guardado a tres días o menos (cada formato fecha distinto el mismo movimiento). Una compra y su anulación por el mismo importe y comercio el mismo día llegan desmarcadas las dos, como «Anulada».
 
 ### Escenario: movimiento ya cargado
 - **Dado** un gasto de 25,30 € del 2026-10-18 ya cargado en Banco A
@@ -69,9 +69,24 @@ Un movimiento que ya está cargado en esa cuenta (misma fecha e importe) llega d
 - **Cuando** la persona lo importa otra vez
 - **Entonces** todos sus movimientos llegan como «Ya está» y la app avisa «Marcá al menos un movimiento» si intenta guardar
 
+### Escenario: guardado con la fecha de operación
+- **Dado** un gasto de 8,00 € guardado en Banco A con fecha 2026-10-05
+- **Cuando** la persona importa un extracto de Santander con ese gasto, con fecha de operación 5 de octubre y fecha valor 4 de octubre
+- **Entonces** ese movimiento llega como «Ya está»
+
+### Escenario: guardado con otra fecha cercana
+- **Dado** un gasto de 20,70 € guardado en Banco A con fecha 2026-10-05
+- **Cuando** la persona importa un extracto de Santander con ese gasto con fecha de operación y fecha valor 4 de octubre
+- **Entonces** ese movimiento llega como «Ya está»
+
+### Escenario: la holgura no tapa un movimiento nuevo
+- **Dado** un gasto de 2,10 € guardado en Banco A con fecha 2026-10-10
+- **Cuando** la persona importa un extracto de Santander con ese gasto del 10 de octubre y otro de 2,10 € del 11 de octubre
+- **Entonces** el del 10 llega como «Ya está» y el del 11 entra como nuevo
+
 ## Requisito: resumen de la revisión
 
-Arriba de la lista, la revisión del extracto dice el periodo que cubre el archivo y cuántos movimientos son nuevos y cuántos ya estaban. Si el archivo no dice su periodo, muestra sólo los conteos. La lista muestra sólo los movimientos nuevos; los que ya estaban quedan plegados bajo «Ver los N que ya estaban» y, al abrirlo, se pueden marcar para guardarlos igual.
+Arriba de la lista, la revisión del extracto dice el periodo que cubre el archivo y cuántos movimientos son nuevos y cuántos ya estaban. El periodo es el de las fechas del primer y del último movimiento del archivo; si no hay fechas, muestra sólo los conteos. La lista muestra sólo los movimientos nuevos; los que ya estaban quedan plegados bajo «Ver los N que ya estaban» y, al abrirlo, se pueden marcar para guardarlos igual.
 
 ### Escenario: nuevos y repetidos
 - **Dado** un extracto del 23/10 al 05/11 con 3 movimientos nuevos y 5 que ya estaban
@@ -83,10 +98,10 @@ Arriba de la lista, la revisión del extracto dice el periodo que cubre el archi
 - **Cuando** la persona abre la revisión
 - **Entonces** el resumen dice «4 nuevos · 0 ya estaban»
 
-### Escenario: archivo sin periodo
-- **Dado** un archivo CSV con dos movimientos y sin periodo
+### Escenario: periodo de un archivo de tabla
+- **Dado** un archivo CSV con dos movimientos del 5 y del 6 de octubre
 - **Cuando** la persona abre la revisión
-- **Entonces** el resumen dice «2 nuevos · 0 ya estaban», sin fechas
+- **Entonces** el resumen dice «Del 05/10 al 06/10 · 2 nuevos · 0 ya estaban»
 
 ### Escenario: los que ya estaban quedan plegados
 - **Dado** un extracto con 3 movimientos nuevos y 5 que ya estaban

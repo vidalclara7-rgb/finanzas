@@ -494,12 +494,14 @@ nav button[aria-current=page]{color:var(--nav-on);font-weight:600}
 <div id="sheetI" class="sheet" data-pantalla="hoja-importar" data-ui="hoja-importar" hidden>
   <div class="row"><h2>Importar extracto</h2><button type="button" class="btn sec" id="iCerrar" style="padding:8px 12px">Cerrar</button></div>
   <span class="sub" id="iSub"></span>
+  <span class="sub" id="iResumen" data-ui="resumen-importacion" style="font-weight:700" hidden></span>
   <div class="card color" id="iElegir" data-ui="elegir-cuenta" style="--c:var(--k5);--on-c:var(--k5t)"><span class="lbl">¿De qué cuenta es?</span><span class="sub" id="iElegirSub"></span><div class="seg" id="segIElegir"></div></div>
   <button type="button" class="btn" id="iSeguir">Seguir</button>
   <div id="iCuentaBox" data-ui="cuenta-extracto"><span class="lbl">Cuenta</span><div class="seg" id="segICuenta" style="margin-top:8px"></div></div>
   <div class="card" id="iInicio" data-ui="empezar-con-saldo" hidden><label class="check"><input type="checkbox" id="iInicioOn" checked><span><b>Empezar esta cuenta con el saldo anterior del resumen</b><br><span class="sub" id="iInicioSub"></span></span></label></div>
   <div class="card" id="iFracc" data-ui="compras-fraccionadas" hidden><span class="lbl">Compras fraccionadas</span><span class="sub">Lo que queda por pagar de lo que pagás en cuotas. Se anota en tu tarjeta desde el mes que viene.</span><div class="borradores" id="iFraccLista"></div></div>
   <div class="card" id="iLista" data-ui="borradores"><span class="lbl" id="iRevisa"></span><div class="borradores" id="iBorr"></div></div>
+  <details class="card" id="iYa" data-ui="ya-estaban" hidden><summary class="lbl" id="iYaTit"></summary><div class="borradores" id="iYaBorr"></div></details>
   <span class="sub" id="iAvisoReemplazo" data-ui="aviso-reemplazo" hidden>Las liquidaciones marcadas «Reemplaza el pago anotado» ya estaban en tu tarjeta como ingreso «Pago»: queda una sola transferencia.</span>
   <button type="button" class="btn" id="iGuardar" data-ui="guardar-importacion"></button>
 </div>
@@ -1413,7 +1415,7 @@ function lectorSantanderCuenta(L){
       const ims=l.it.filter(i=>dinero(i.s)!=null),imp=ims.length?cerca(ims,col.imp):null,sal=ims.length>1?cerca(ims,col.saldo):null;
       cur={fecha:`${m[3]}-${m[2]}-${m[1]}`,texto:desc,extra:"",importe:imp?dinero(imp.s):0,_saldo:sal&&sal!==imp?dinero(sal.s):null};movs.push(cur);continue;}
     // La fecha valor es la del gasto real (la de operación es cuando se asienta, días después)
-    if(cur&&/^Fecha valor/.test(l.it[0].s)){const v=l.it[0].s.match(/(\d{2})\/(\d{2})\/(\d{4})/);if(v)cur.fecha=`${v[3]}-${v[2]}-${v[1]}`;cur.extra=(cur.extra+" "+l.it.slice(1).map(i=>i.s).join(" ")).trim();continue;}
+    if(cur&&/^Fecha valor/.test(l.it[0].s)){const v=l.it[0].s.match(/(\d{2})\/(\d{2})\/(\d{4})/);if(v){cur.fechaOp=cur.fecha;cur.fecha=`${v[3]}-${v[2]}-${v[1]}`;}cur.extra=(cur.extra+" "+l.it.slice(1).map(i=>i.s).join(" ")).trim();continue;}
     cur=null;}
   // Saldo de la cabecera («Saldo: 84,70 EUR (a fecha …)»); si no está, el de la última línea
   const ult=movs.reduce((a,m)=>m.fecha>a?m.fecha:a,"");
@@ -1471,8 +1473,33 @@ function lectorSantanderTarjeta(L){
     saldo:aPagar!=null&&(hasta||ult)?{importe:-r2(aPagar+pendiente),fecha:hasta||ult,aPagar,pendiente}:null,movs:movs.filter(m=>m.importe)};}
 
 // Reconoce el formato por textos fijos del documento
+// Santander, movimientos de cuenta descargados en inglés desde la app («Your account activity»): fechas «05 nov 2026», el «−» suelto antes del importe y la fecha valor en la línea siguiente
+function lectorSantanderCuentaEn(L){
+  const MES={jan:1,ene:1,feb:2,mar:3,apr:4,abr:4,may:5,jun:6,jul:7,aug:8,ago:8,sep:9,sept:9,oct:10,nov:11,dec:12,dic:12};
+  const fT=t=>{const m=String(t).match(/(\d{1,2}) ([A-Za-z]{3,4})\.? (\d{4})/),n=m&&MES[m[2].toLowerCase()];return n?`${m[3]}-${pad2(n)}-${pad2(m[1])}`:null;};
+  const MENOS=/^[−–-]$/,ref=ultimos4(despues(L,"Account")),titular=despues(L,"Holder");
+  let col=null,cur=null;const movs=[];
+  for(const l of L){const t=txtLinea(l);
+    if(/^Document on:/.test(t)||/^Holder\b/.test(t)||/^Account\b/.test(t)||/^Available balance/.test(t)||/^\(on /.test(t)||/^Your account activity/.test(t)){cur=null;continue;}
+    const iT=l.it.find(i=>i.s==="Transaction");
+    if(iT&&l.it.some(i=>i.s==="Amount")){col={op:iT.x,imp:l.it.find(i=>i.s==="Amount").x,saldo:(l.it.find(i=>i.s==="Balance")||{x:9e3}).x};cur=null;continue;}
+    if(!col)continue;
+    const f=/^\d{1,2} [A-Za-z]{3,4}\.? \d{4}$/.test(l.it[0].s)?fT(l.it[0].s):null;
+    if(f){const medio=(col.imp+col.saldo)/2-20,desc=l.it.filter(i=>i.x>=col.op-6&&i.x<col.imp-6).map(i=>i.s).join(" ");
+      const nums=l.it.filter(i=>i.x>=col.imp-6&&dinero(i.s)!=null),imp=nums.find(i=>i.x<medio),neg=l.it.some(i=>i.x>=col.imp-6&&i.x<medio&&MENOS.test(i.s));
+      cur={fecha:f,texto:desc,extra:"",importe:imp?(neg?-1:1)*Math.abs(dinero(imp.s)):0};movs.push(cur);continue;}
+    if(cur&&/^Value date/.test(l.it[0].s)){const v=fT(l.it[0].s);if(v){cur.fechaOp=cur.fecha;cur.fecha=v;}cur.extra=(cur.extra+" "+l.it.slice(1).map(i=>i.s).join(" ")).trim();continue;}
+    if(cur&&Math.abs(l.it[0].x-col.op)<8){cur.extra=(cur.extra+" "+t).trim();continue;}
+    cur=null;}
+  const buenos=movs.filter(m=>m.importe),fs=buenos.map(m=>m.fecha).sort();
+  // Saldo disponible de la cabecera, a la fecha que dice («on 11 nov 2026»)
+  const sL=L.find(l=>l.it[0]&&l.it[0].s==="Available balance"),sv=sL?sL.it.slice(1).map(i=>dinero(i.s)).find(x=>x!=null):null,sn=sL&&sL.it.some(i=>MENOS.test(i.s));
+  const fL=L.find(l=>/^\(on /.test(txtLinea(l))),sf=fL?fT(txtLinea(fL)):null;
+  return {fmt:"santander-cuenta",banco:"Santander",tipo:"cuenta",nombreFmt:"Movimientos de cuenta de Santander",ref,titular,desde:fs[0]||null,hasta:fs[fs.length-1]||null,
+    saldo:sv!=null&&fs.length?{importe:sn?-sv:sv,fecha:sf||fs[fs.length-1]}:null,movs:buenos};}
 const LECTORES=[[t=>(t.includes("Extracto en EUR")||/^EUR Statement$/m.test(t))&&t.includes("Revolut Bank"),lectorRevolut],
-  [t=>t.includes("Movimientos de cuenta")&&t.includes("CUENTA SANTANDER"),lectorSantanderCuenta],
+  [t=>/movimientos de cuenta/i.test(t)&&t.includes("CUENTA SANTANDER"),lectorSantanderCuenta],
+  [t=>t.includes("Your account activity")&&t.includes("Transaction date")&&/Value date/.test(t),lectorSantanderCuentaEn],
   [t=>t.includes("Extracto de movimientos")&&t.includes("CREDITO SANTANDER"),lectorSantanderTarjeta]];
 function leerExtracto(L){const t=L.map(txtLinea).join("\n");const x=LECTORES.find(([es])=>es(t));return x?x[1](L):null;}
 // Leer cualquier archivo: el tipo, las filas (PDF, Excel, CSV, texto o foto) y un lector genérico de tablas
@@ -1643,18 +1670,23 @@ function otraCuenta(m,cid,r){const otras=S.cuentas.filter(c=>c.id!==cid);if(!otr
   if(par){const o=cuentaDe(m.importe<0?par.destino:par.cuenta);if(o&&o.id!==cid)return o;}
   return otras.find(o=>o.tipo==="liquidez")||otras[0];}
 // Ya está: el mismo movimiento en esta cuenta (fecha e importe) o la otra mitad de una transferencia (±3 días)
-function yaEsta(m,cid){const v=Math.abs(m.importe);
-  return S.movs.some(x=>Math.abs(x.importe-v)<0.005&&(
-    (x.cuenta===cid&&x.fecha===m.fecha&&(m.importe<0?x.tipo==="gasto":x.tipo==="ingreso"))||
-    (x.tipo==="transferencia"&&Math.abs(dias(x.fecha,m.fecha))<=3&&(m.importe<0?x.cuenta===cid:x.destino===cid))));}
+function yaEsta(m,cid,usados,holgura){const v=Math.abs(m.importe);
+  const x=S.movs.find(x=>!(usados&&usados.has(x.id))&&Math.abs(x.importe-v)<0.005&&(
+    (x.cuenta===cid&&(holgura?Math.abs(dias(x.fecha,m.fecha))<=holgura:x.fecha===m.fecha||x.fecha===m.fechaOp)&&(m.importe<0?x.tipo==="gasto":x.tipo==="ingreso"))||
+    (x.tipo==="transferencia"&&Math.abs(dias(x.fecha,m.fecha))<=3&&(m.importe<0?x.cuenta===cid:x.destino===cid))));
+  // Cada movimiento guardado cubre uno solo del extracto: dos iguales el mismo día no se tapan entre sí
+  if(x&&usados)usados.add(x.id);return !!x;}
 let imp=null, impPref=null;
-function borradores(){const r=imp.r,cid=imp.cuenta;
+function borradores(){const r=imp.r,cid=imp.cuenta,cubiertos=new Set();
   const d=r.movs.map((m,i)=>{const nota=comercio(m.texto),o=otraCuenta(m,cid,r);
     // Lo que la persona ya guardó como transferencia a una cuenta va antes que lo que se deduce del texto (si la cuenta ya no existe o es la propia, se ignora)
     const rec=S.reglas["t|"+claveCom(nota)],dest=Number.isInteger(rec)&&rec!==cid&&cuentaDe(rec)?rec:null;
     const x={i,fecha:m.fecha,s:m.importe,nota,que:dest!=null?"t|"+dest:o?"t|"+o.id:(m.importe<0?"g|":"i|")+propuestaCat(m.importe,nota,m.texto+" "+m.extra),on:true,marca:null,cubre:[]};
-    if(yaEsta(m,cid)){x.on=false;x.marca="ya";}
     return x;});
+  // Ya está: primero los que coinciden en la fecha (valor o de operación); después, en los extractos de banco que traen las dos fechas, los que quedaron a tres días o menos
+  // (cada banco y cada formato fecha distinto el mismo movimiento, y un extracto anterior pudo guardarse con otra)
+  d.forEach(x=>{if(yaEsta(r.movs[x.i],cid,cubiertos)){x.on=false;x.marca="ya";}});
+  d.forEach(x=>{const m=r.movs[x.i];if(!x.marca&&m.fechaOp&&yaEsta(m,cid,cubiertos,3)){x.on=false;x.marca="ya";}});
   // El pago a una tarjeta propia que ya estaba anotado en ella como ingreso «Pago» (del resumen de la tarjeta) lo reemplaza: queda una sola transferencia
   const usados=new Set();
   d.forEach(x=>{if(!x.on||x.s>=0||!x.que.startsWith("t|"))return;const tid=+x.que.slice(2),tc=cuentaDe(tid);if(!tc||(tc.tipo!=="tarjeta"&&tc.tipo!=="financiacion"))return;
@@ -1681,11 +1713,15 @@ function opcionesQue(x){const otras=S.cuentas.filter(c=>c.id!==imp.cuenta);
   return ops.map(([v,l])=>`<option value="${esc(v)}"${v===x.que?" selected":""}>${esc(l)}</option>`).join("");}
 function cubreHTML(x){const ops=porCobrar().sort((a,b)=>b.fecha.localeCompare(a.fecha));
   return `<span class="card color cubre" style="--c:var(--k5);--on-c:var(--k5t)" data-ui="gastos-que-cubre"><span class="lbl">¿Qué gastos cubre?</span>${ops.length?ops.map(m=>`<label class="check"><input type="checkbox" data-icubre="${x.i}" value="${m.id}"${x.cubre.includes(m.id)?" checked":""}><span style="flex:1">${m.nota?esc(m.nota):esc(m.cat)} · ${diaMes(m.fecha)}</span><span class="num">${eur(m.importe)}</span></label>`).join(""):`<span class="empty">No tenés reembolsos por cobrar.</span>`}</span>`;}
-function pintarBorr(){const d=imp.d,n=d.filter(x=>x.on).length;
-  $("iRevisa").textContent=`Revisá ${d.length} ${d.length===1?"movimiento":"movimientos"}`;
-  $("iBorr").innerHTML=d.map(x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+(x.marca==="cuota"?`<span class="chip idle" data-ui="marca-cuota-anotada">Cuota ya anotada</span>`:"")+(reemplazaOk(x)?`<span class="chip idle" data-ui="marca-reemplaza-pago">Reemplaza el pago anotado</span>`:"")+
+function pintarBorr(){const d=imp.d,r=imp.r,ya=d.filter(x=>x.marca==="ya"),nuevos=d.filter(x=>x.marca!=="ya");
+  const fila=x=>{const marcas=(x.marca==="ya"?`<span class="chip idle" data-ui="marca-ya-esta">Ya está</span>`:"")+(x.marca==="anulada"?`<span class="chip idle" data-ui="marca-anulada">Anulada</span>`:"")+(x.marca==="cuota"?`<span class="chip idle" data-ui="marca-cuota-anotada">Cuota ya anotada</span>`:"")+(reemplazaOk(x)?`<span class="chip idle" data-ui="marca-reemplaza-pago">Reemplaza el pago anotado</span>`:"")+
       (x.fijoRegla?`<button type="button" class="chip idle" data-ui="marca-fijo" data-fijo="${x.i}" aria-pressed="${x.fijo}">${x.fijo?"Fijo":"Variable"}</button>`:"");
-    return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;}).join("");
+    return `<div class="borr${x.on?"":" off"}" data-borr="${x.i}"><input type="checkbox" data-on="${x.i}"${x.on?" checked":""} aria-label="Guardar este movimiento"><span class="d"><b>${esc(x.nota)}</b><span class="sub">${diaMes(x.fecha)}</span></span><span class="num">${x.s<0?"−":"+"}${eur(Math.abs(x.s))}</span><select data-que="${x.i}" data-ui="elegir-destino" aria-label="Qué es">${opcionesQue(x)}</select>${marcas?`<span class="marcas">${marcas}</span>`:""}${x.que==="i|Reembolso"?cubreHTML(x):""}</div>`;};
+  // Arriba, cuántos son nuevos y cuántos ya estaban; la lista muestra los nuevos y los repetidos quedan plegados
+  $("iResumen").hidden=false;$("iResumen").textContent=(r.desde&&r.hasta?`Del ${diaMes(r.desde)} al ${diaMes(r.hasta)} · `:"")+`${nuevos.length} ${nuevos.length===1?"nuevo":"nuevos"} · ${ya.length} ya ${ya.length===1?"estaba":"estaban"}`;
+  $("iRevisa").textContent=nuevos.length?`Revisá ${nuevos.length} ${nuevos.length===1?"movimiento":"movimientos"}`:"No hay movimientos nuevos";
+  $("iBorr").innerHTML=nuevos.map(fila).join("");
+  $("iYa").hidden=!ya.length;if(!ya.length)$("iYa").open=false;$("iYaTit").textContent=`Ver ${ya.length===1?"el":"los "+ya.length} que ya ${ya.length===1?"estaba":"estaban"}`;$("iYaBorr").innerHTML=ya.map(fila).join("");
   $("iAvisoReemplazo").hidden=!d.some(reemplazaOk);
   pintarInicio();pintarFracc();$("iGuardar").textContent=textoGuardar();}
 function avisoLectura(msg){const t=document.createElement("div");t.className="toast"+(hojaAbierta()?" arriba":"");t.dataset.ui="aviso-lectura";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
@@ -1737,15 +1773,15 @@ function revisar(){$("iElegir").hidden=$("iSeguir").hidden=true;$("iCuentaBox").
   segCuentasImp();borradores();pintarBorr();}
 const segCuentasImp=()=>seg($("segICuenta"),S.cuentas.map(c=>[c.id,c.nombre]),imp.cuenta,v=>{imp.cuenta=+v;borradores();pintarBorr();});
 $("iSeguir").onclick=()=>{if(!imp.elegida){toast("Elegí la cuenta");return;}imp.cuenta=imp.elegida;revisar();};
-$("iBorr").addEventListener("change",e=>{const t=e.target;
+["iBorr","iYaBorr"].forEach(z=>$(z).addEventListener("change",e=>{const t=e.target;
   if(t.dataset.on!=null){const x=borrDe(t.dataset.on);x.on=t.checked;t.closest(".borr").classList.toggle("off",!x.on);$("iGuardar").textContent=textoGuardar();}
   else if(t.dataset.que!=null){const x=borrDe(t.dataset.que);
     // «Nueva cuenta…»: se oculta la revisión (sin cerrarla), se crea la cuenta y se vuelve a ella
     if(t.value==="n|cuenta"){imp.nuevaPara=x.i;abrirCuenta(null);return;}
     if(t.value==="n|categoria"){imp.nuevaCatPara=x.i;abrirEdCat({tipo:x.s<0?"gasto":"ingreso",retorno:"imp"});return;}
     x.que=t.value;x.cubre=[];fijoDe(x);pintarBorr();}
-  else if(t.dataset.icubre!=null){const x=borrDe(t.dataset.icubre),id=+t.value;x.cubre=t.checked?[...x.cubre,id]:x.cubre.filter(y=>y!==id);}});
-$("iBorr").addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();});
+  else if(t.dataset.icubre!=null){const x=borrDe(t.dataset.icubre),id=+t.value;x.cubre=t.checked?[...x.cubre,id]:x.cubre.filter(y=>y!==id);}}));
+["iBorr","iYaBorr"].forEach(z=>$(z).addEventListener("click",e=>{const b=e.target.closest("[data-fijo]");if(!b)return;const x=borrDe(b.dataset.fijo);x.fijo=!x.fijo;pintarBorr();}));
 $("iGuardar").onclick=async()=>{const sel=imp.d.filter(x=>x.on),frSel=frTarjeta()?imp.fr.filter(f=>f.on):[];if(!sel.length&&!frSel.length){toast("Marcá al menos un movimiento");return;}
   const r=imp.r,cid=imp.cuenta,c=cuentaDe(cid),origen=nid();
   // La deuda de partida: el saldo anterior del resumen (sólo si se ofreció y quedó marcada)

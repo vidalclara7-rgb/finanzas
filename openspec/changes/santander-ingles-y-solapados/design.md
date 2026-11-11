@@ -26,3 +26,9 @@
 ## Cambio del Gate 2 (2026-11-11)
 
 - Los «Ya está» se pliegan: la lista muestra sólo los nuevos y un `<details id="iYa">` («Ver los N que ya estaban») guarda el resto, que se puede marcar igual. Las «Anulada» y «Cuota ya anotada» siguen en la lista principal.
+
+## Hallazgo al construir (2026-11-11)
+
+- El extracto real anterior de la persona («Últimos movimientos de cuenta», en español) **no** lo leía el lector de Santander (buscaba «Movimientos de cuenta» con mayúscula) sino el genérico, que guarda la fecha de operación y saca mal los últimos dígitos de la cuenta. Con sólo la fecha valor, 27 de 40 movimientos del extracto de noviembre entraban repetidos.
+- Arreglo: (1) el lector de Santander reconoce también «Últimos movimientos de cuenta» (misma tabla); (2) los dos lectores de Santander guardan además la fecha de operación (`fechaOp`, sólo en el borrador, no se guarda) y «Ya está» coincide con cualquiera de las dos. Así lo ya importado con fecha de operación sigue reconociéndose.
+- Segundo hallazgo: la «fecha de operación» no es la misma en los dos formatos (el de español da la de asiento; el de inglés, la del pago). Para lo ya guardado con la fecha de asiento se añade una segunda pasada: en extractos de banco con dos fechas (`fechaOp`), lo que no coincidió exacto se da por «Ya está» si hay un movimiento igual guardado a ±3 días, siempre contando (los exactos se asignan primero). Riesgo aceptado: un gasto nuevo del mismo importe a ≤3 días de uno guardado que no venga en el extracto saldría «Ya está»; queda en el plegado, donde se puede marcar.
