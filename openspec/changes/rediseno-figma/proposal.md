@@ -1,6 +1,6 @@
 ---
 cambio: rediseno-figma
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Rediseño con el estilo del Figma «Personal Finance – Account Balance App»
