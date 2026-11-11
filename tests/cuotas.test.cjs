@@ -145,7 +145,7 @@ t.test("marcar un gasto importado como compra en cuotas", async () => {
   const { page } = await abrir({ datos });
   await verMovs(page, 2);
   await page.click("#mcAnt");
-  await page.click('#mcLista [data-mov="1"] .linea');
+  await page.click('#mcLista [data-mov="1"] .desc');
   await A.hojaLista(page);
   await page.check("#mCuotasOn");
   await page.fill("#mCuotasN", "3");
@@ -190,7 +190,7 @@ t.test("no se avanza más allá del mes actual", async () => {
 t.test("borrar un movimiento desde la lista de la cuenta", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ], movs: GASTOS }) });
   await verMovs(page, 2);
-  await page.click('#mcLista [data-mov="2"] .linea');
+  await page.click('#mcLista [data-mov="2"] .desc');
   await page.click("#mBorrar");
   await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");

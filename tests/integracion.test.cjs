@@ -40,7 +40,7 @@ t.test("el texto de la persona en inversiones y documentos no se interpreta como
   await page.click('[data-mov="7"] [data-sel]');
   await page.setInputFiles("#docIn", { name: '<i id="doc-x">.pdf', mimeType: "application/pdf", buffer: PDF.buffer });
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   await A.hojaLista(page);
   assert.equal(await page.locator("#doc-x, #inyectado").count(), 0);
   assert.match(await A.texto(page, "#mDocsLista"), /<i id="doc-x">\.pdf/);
@@ -60,7 +60,7 @@ t.test("compra en cuotas en otra moneda", async () => {
 t.test("editar una compra en cuotas desde un mes posterior", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ], movs: [EN_CUOTAS] }), hoy: NOV });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.hojaLista(page);
   assert.equal(await page.inputValue("#mFecha"), "2026-10-15");
   assert.equal(await page.inputValue("#mImporte"), "700");
@@ -79,7 +79,7 @@ t.test("editar una compra en cuotas desde un mes posterior", async () => {
 t.test("quitar las cuotas devuelve el gasto entero a su mes", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ], movs: [EN_CUOTAS] }), hoy: NOV });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.hojaLista(page);
   await page.uncheck("#mCuotasOn");
   await page.click("#mGuardar");
@@ -93,7 +93,7 @@ t.test("quitar las cuotas devuelve el gasto entero a su mes", async () => {
 t.test("cambiar una compra en cuotas a una cuenta de bancos descarta las cuotas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ], movs: [EN_CUOTAS] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.hojaLista(page);
   await A.elegir(page, "segCuentaM", "Banco A");
   await page.click("#mGuardar");
@@ -139,10 +139,10 @@ t.test("tocar la tarjeta en modo seleccionar marca el gasto y no abre la hoja", 
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 10, 1), A.ingreso(2, "2026-10-02", 50, 1)] }) });
   await A.ir(page, "movs");
   await page.click("#selBtn");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   assert.equal(await A.texto(page, "#selN"), "1 seleccionado");
   assert.equal(await page.isVisible("#sheet"), false);
-  await page.click('[data-mov="2"] .linea');
+  await page.click('[data-mov="2"] .desc');
   assert.equal(await A.texto(page, "#selN"), "1 seleccionado");
   assert.equal(await page.isVisible("#sheet"), false);
 });

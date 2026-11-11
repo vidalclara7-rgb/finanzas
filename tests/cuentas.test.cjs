@@ -17,7 +17,7 @@ t.test("cuenta de banco", async () => {
   const { page } = await enCuentas();
   await A.nuevaCuenta(page, { tipo: "liquidez", nombre: "Banco A", saldo: 1200 });
   await A.aviso(page, "Cuenta guardada");
-  const grupo = await A.texto(page, "#grupos .card");
+  const grupo = await A.texto(page, "#grupos .grupo-cta");
   assert.match(grupo, /Bancos y efectivo/);
   assert.match(grupo, /Banco A/);
   assert.match(grupo, /1200 €/);

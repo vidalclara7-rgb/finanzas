@@ -218,7 +218,7 @@ t.test("excepción en un gasto", async () => {
   datos.categorias = { gasto: GASTO_BASE.map((n, i) => ({ nombre: n, color: i + 1, ...(n === "Servicios mensuales" ? { fija: true } : {}) })), ingreso: INGRESO_BASE.map((n) => ({ nombre: n })) };
   const { page } = await abrir({ datos });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.enfocado(page, "mImporte");
   assert.equal(await page.isChecked("#mFijo"), true);
   await page.uncheck("#mFijo");

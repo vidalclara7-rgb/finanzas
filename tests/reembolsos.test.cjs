@@ -23,7 +23,7 @@ t.test("nuevo gasto reembolsable", async () => {
 t.test("aprobar un reembolso", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [reemb(5, "2026-10-12", 12.4, "pendiente", "parking")] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="5"] .linea');
+  await page.click('[data-mov="5"] .desc');
   await page.click('#segReembM button[data-v="aprobado"]');
   await page.click("#mGuardar");
   await A.aviso(page, "Gasto guardado");
@@ -34,7 +34,7 @@ t.test("aprobar un reembolso", async () => {
 t.test("deja de ser reembolsable", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [reemb(5, "2026-10-12", 12.4, "pendiente", "parking")] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="5"] .linea');
+  await page.click('[data-mov="5"] .desc');
   await A.elegir(page, "segCat", "Comida fuera");
   await page.click("#mGuardar");
   await A.aviso(page, "Gasto guardado");
@@ -93,7 +93,7 @@ t.test("el importe no coincide", async () => {
 t.test("borrar el ingreso que pagó", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [reemb(1, "2026-10-12", 12.4, "pagado", "parking", { cobro: 9 }), A.ingreso(9, "2026-10-14", 12.4, 1, "Reembolso")] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="9"] .linea');
+  await page.click('[data-mov="9"] .desc');
   await page.click("#mBorrar");
   await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");

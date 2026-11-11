@@ -54,15 +54,32 @@ t.test("barras sin gastos", async () => {
 // Escenario: dos meses con datos
 t.test("dos meses con datos", async () => {
   const { page } = await abrir(con([A.ingreso(1, "2026-09-01", 1500, 1), A.gasto(2, "2026-09-10", 900, 1), A.ingreso(3, "2026-10-01", 1700, 1), A.gasto(4, "2026-10-03", 82.3, 1)], [A.cta(1, "Banco A", 1000, { desde: "2026-09-01" })]));
-  const cols = await page.locator("#meses .col").evaluateAll((cs) => cs.map((c) => [c.dataset.mes, +c.dataset.ing, +c.dataset.gas]));
+  const cols = await page.locator("#meses .hit").evaluateAll((cs) => cs.map((c) => [c.dataset.mes, +c.dataset.ing, +c.dataset.gas]));
   assert.deepEqual(cols, [["2026-05", 0, 0], ["2026-06", 0, 0], ["2026-07", 0, 0], ["2026-08", 0, 0], ["2026-09", 1500, 900], ["2026-10", 1700, 82.3]]);
+  assert.equal(await page.locator("#meses path.ci").count(), 1);
+  assert.equal(await page.locator("#meses path.cg").count(), 1);
+  assert.equal(await page.locator("#meses .pto.i").count(), 6);
+  assert.equal(await page.locator("#meses .pto.g").count(), 6);
+  assert.equal(await page.$eval("#meses path.ci", (p) => getComputedStyle(p).stroke), "rgb(65, 255, 139)");
+  assert.equal(await page.$eval("#meses path.cg", (p) => getComputedStyle(p).stroke), "rgb(255, 89, 132)");
+  assert.deepEqual(await page.$$eval("#mesesEjes span", (e) => e.map((x) => x.textContent)), ["may", "jun", "jul", "ago", "sep", "oct"]);
+});
+
+// Escenario: globo con el mes tocado
+t.test("globo con el mes tocado", async () => {
+  const { page } = await abrir(con([A.ingreso(1, "2026-09-01", 1500, 1), A.gasto(2, "2026-09-10", 900, 1), A.ingreso(3, "2026-10-01", 1700, 1), A.gasto(4, "2026-10-03", 82.3, 1)], [A.cta(1, "Banco A", 1000, { desde: "2026-09-01" })]));
+  await page.locator('#meses .hit[data-mes="2026-10"]').click();
+  assert.equal((await A.texto(page, "#meses .globo")).replace(/\s+/g, " "), "Ingresos 1700 € · Gastos 82,3 €");
+  await page.locator('#meses .hit[data-mes="2026-09"]').click();
+  assert.equal((await A.texto(page, "#meses .globo")).replace(/\s+/g, " "), "Ingresos 1500 € · Gastos 900 €");
 });
 
 // Escenario: mes que cerró en negativo
 t.test("mes que cerró en negativo", async () => {
   const { page } = await abrir(con([A.ingreso(1, "2026-09-01", 800, 1), A.gasto(2, "2026-09-10", 950, 1)], [A.cta(1, "Banco A", 1000, { desde: "2026-09-01" })]));
-  assert.match(await page.getAttribute('#meses [data-mes="2026-09"]', "class"), /\bneg\b/);
-  assert.doesNotMatch(await page.getAttribute('#meses [data-mes="2026-10"]', "class"), /\bneg\b/);
+  assert.match(await page.getAttribute('#mesesEjes [data-mes="2026-09"]', "class"), /\bneg\b/);
+  assert.doesNotMatch((await page.getAttribute('#mesesEjes [data-mes="2026-10"]', "class")) || "", /\bneg\b/);
+  assert.equal(await page.$eval('#mesesEjes [data-mes="2026-09"]', (e) => getComputedStyle(e).fontWeight), "700");
 });
 
 // Escenario: sin ingresos ni gastos
