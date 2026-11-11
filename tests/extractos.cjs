@@ -69,6 +69,19 @@ function revolutEn(page, { ref = "7788", titular = "Persona Ejemplo", inicial = 
   return pdf(page, pags);
 }
 
+// Santander en inglés (app del teléfono): movs [{ fecha (operación), valor?, desc, importe, extra? }]; el saldo disponible es el del último movimiento (el primero de la lista, que va de lo nuevo a lo viejo)
+function santanderCuentaEn(page, { ref = "4321", titular = "EJEMPLO PERSONA", saldo = 0, hoy = "2026-11-11", movs = [] }) {
+  const primera = [[186, 805, "Holder"], [227, 805, titular], [186, 792, "Account"], [232, 792, cuentaFalsa(ref)], [310, 781, `(on ${corta(hoy)})`], [186, 780, "Available balance"], [278, 780, dinero(saldo)], [304, 780, "€"],
+    [37, 744, "Your account activity"]];
+  const cab = (y) => [[40, y, "Transaction date"], [144, y, "Transaction"], [434, y, "Amount"], [518, y, "Balance"]];
+  let sal = saldo;
+  const orden = [...movs].sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const filas = orden.map((m) => (y) => { const s = sal; sal -= m.importe;
+    return [[40, y, corta(m.fecha)], [144, y, m.desc], ...(m.importe < 0 ? [[432, y, "−"]] : []), [445, y, dinero(m.importe)], [482, y, "€"], [512, y, dinero(s)], [549, y, "€"],
+      [40, y - 12, `Value date: ${corta(m.valor || m.fecha)}`], ...(m.extra ? [[143, y - 12, m.extra]] : [])]; });
+  return pdf(page, enPaginas(primera, cab, filas, 30, 704, 100));
+}
+
 // movs: [{ fecha, desc, importe (+ entra, − sale), extra? }]
 function revolut(page, { ref = "7788", titular = "Persona Ejemplo", inicial = 0, desde = "2026-10-01", hasta = "2026-10-24", movs = [] }) {
   const fin = movs.reduce((a, m) => a + m.importe, inicial);
@@ -146,4 +159,4 @@ function santanderTarjeta(page, { ref = "5566", titular = "EJEMPLO PERSONA", ant
 // Un PDF que no es ninguno de los formatos
 const otroPdf = (page) => pdf(page, [[[40, 760, "Factura de la luz"], [40, 740, "Importe 45,00 €"]]]);
 
-module.exports = { pdf, revolut, revolutEn, santanderCuenta, santanderTarjeta, otroPdf };
+module.exports = { pdf, revolut, revolutEn, santanderCuentaEn, santanderCuenta, santanderTarjeta, otroPdf };
