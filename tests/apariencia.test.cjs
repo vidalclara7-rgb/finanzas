@@ -5,13 +5,16 @@ const A = require("./ayuda.cjs");
 
 const abrir = A.preparar(t);
 const BANCO = A.cta(1, "Banco A", 1000);
-const datos = (extra = {}) => A.v2({ cuentas: [BANCO, A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", tope: 500 })], movs: [A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 64.3, 2), A.gasto(3, "2026-10-05", 18, 1, "Comida fuera")], ...extra });
+const datos = (extra = {}) => A.v2({ cuentas: [BANCO, A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", tope: 500 })], movs: [A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 64.3, 2), A.gasto(3, "2026-10-05", 18, 1, "Comida fuera", "Cena")], ...extra });
 const conApariencia = (a, paleta) => datos({ settings: { ...(a ? { apariencia: a } : {}), ...(paleta ? { paleta } : {}) } });
 const attr = (page) => page.evaluate(() => document.documentElement.dataset.apariencia);
 const fondoCuerpo = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
 const lum = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x = Number(x) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+const rgb = (hex) => { const h = hex.replace("#", ""); return `rgb(${[0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(", ")})`; };
 const marcada = (page) => page.$eval('#segApariencia button[aria-pressed="true"]', (b) => b.dataset.v);
 const elegirAp = async (page, v) => { await A.ir(page, "ajustes"); await page.click(`#segApariencia button[data-v="${v}"]`); };
+const estilo = (page, sel, prop) => page.$eval(sel, (e, p) => getComputedStyle(e)[p], prop);
 
 // Escenario: oscura por defecto
 t.test("oscura por defecto", async () => {
@@ -54,106 +57,34 @@ t.test("la apariencia se recuerda", async () => {
   assert.equal(await marcada(page), "clara");
 });
 
-// Escenario: el fondo está en todas las pantallas
-t.test("el fondo está en todas las pantallas", async () => {
-  const { page } = await abrir({ datos: A.datosEjemplo() });
+// Escenario: fondo de cada apariencia
+t.test("fondo de cada apariencia", async () => {
+  const { page } = await abrir({ datos: conApariencia("oscura") });
+  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
+  assert.equal(await page.locator(".fondo").count(), 0, "no queda el fondo fluido");
+  await elegirAp(page, "clara");
+  assert.equal(await fondoCuerpo(page), rgb("#F1F0F2"));
+});
+
+// Escenario: tarjetas de cada apariencia
+t.test("tarjetas de cada apariencia", async () => {
+  const { page } = await abrir({ datos: conApariencia("clara") });
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#FFFFFF"));
+  await elegirAp(page, "oscura");
+  await A.ir(page, "inicio");
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#1F3252"));
+});
+
+// Escenario: nada se mueve solo
+t.test("nada se mueve solo", async () => {
+  const { page } = await abrir({ datos: conApariencia("clara") });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.waitForTimeout(2000);
+  assert.equal(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === "running" && !(a instanceof CSSTransition)).length), 0);
   for (const v of A.VISTAS) {
     await A.ir(page, v);
-    const f = await page.evaluate(() => { const e = document.querySelector(".fondo"), r = e.getBoundingClientRect(), s = getComputedStyle(e); return { pos: s.position, z: s.zIndex, ancho: r.width, alto: r.height, lobulos: e.querySelectorAll("#fluidoMasa circle").length, visible: s.display !== "none" && s.visibility !== "hidden" }; });
-    assert.deepEqual([f.pos, f.z, f.lobulos, f.visible], ["fixed", "-1", 3, true], v);
-    assert.ok(f.ancho >= 390 && f.alto >= 844, `${v}: ${f.ancho}x${f.alto}`);
+    assert.equal(await page.evaluate(() => [...document.querySelectorAll("*")].filter((e) => getComputedStyle(e).animationName !== "none" || getComputedStyle(e, "::after").animationName !== "none").length), 0, v);
   }
-});
-
-// Escenario: una sola forma de tres lóbulos
-t.test("una sola forma de tres lóbulos", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  for (const ap of ["oscura", "clara"]) {
-    await page.evaluate((a) => { document.documentElement.dataset.apariencia = a; }, ap);
-    const f = await page.evaluate(() => { const e = document.querySelector(".fondo"); return { lobulos: e.querySelectorAll("#fluidoMasa circle").length, filtros: e.querySelectorAll("filter").length, manchas: e.querySelectorAll("i").length, estrellas: e.querySelectorAll("b").length, vars: [1, 2, 3, 4, 5].map((i) => getComputedStyle(document.documentElement).getPropertyValue("--mancha" + i).trim()).filter(Boolean).length }; });
-    assert.deepEqual(f, { lobulos: 3, filtros: 1, manchas: 0, estrellas: 0, vars: 0 }, ap);
-  }
-});
-
-// Escenario: color de fondo de cada apariencia
-t.test("color de fondo de cada apariencia", async () => {
-  const { page } = await abrir({ datos: conApariencia("oscura") });
-  assert.equal(await fondoCuerpo(page), "rgb(11, 11, 16)");
-  await elegirAp(page, "clara");
-  assert.equal(await fondoCuerpo(page), "rgb(243, 243, 248)");
-});
-
-// Escenario: el texto se lee sobre el fondo
-t.test("el texto se lee sobre el fondo", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  for (const ap of ["oscura", "clara"]) {
-    await page.evaluate((a) => { document.documentElement.dataset.apariencia = a; }, ap);
-    // peor caso: cada color de la forma en su intensidad máxima bajo el texto, con y sin el vidrio de una tarjeta encima
-    const r = await page.evaluate(() => {
-      const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
-      const hex = (h) => { const x = h.replace("#", ""); return [0, 2, 4].map((i) => parseInt(x.slice(i, i + 2), 16) / 255); };
-      const mix = (a, b, t) => a.map((x, i) => x * (1 - t) + b[i] * t);
-      const L = (c) => { const [r, g, b] = c.map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
-      const par = (a, b) => { const [x, y] = [L(a), L(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-      const bg = hex(v("--bg")), ink = hex(v("--ink")), muted = hex(v("--muted")), cuerpo = parseFloat(v("--fondo-cuerpo")), halo = parseFloat(v("--fondo-halo"));
-      const sm = v("--surface").match(/[\d.]+/g).map(Number), surf = sm.slice(0, 3).map((x) => x / 255), sa = sm[3];
-      const formas = [["--flow-silver", 1], ["--flow-tint", 1], ["--glow-pos", 0.55], ["--glow-neg", 0.55], ["--glow-neu", 0.55]];
-      let peor = { suelto: 99, sueltoMudo: 99, vidrio: 99, vidrioMudo: 99 };
-      for (const [n, al] of formas) {
-        const a = 1 - (1 - cuerpo * al) * (1 - halo * al), base = mix(bg, hex(v(n)), a), vid = mix(base, surf, sa);
-        peor.suelto = Math.min(peor.suelto, par(ink, base)); peor.sueltoMudo = Math.min(peor.sueltoMudo, par(muted, base));
-        peor.vidrio = Math.min(peor.vidrio, par(ink, vid)); peor.vidrioMudo = Math.min(peor.vidrioMudo, par(muted, vid));
-      }
-      return peor;
-    });
-    for (const [k, c] of Object.entries(r)) assert.ok(c >= 4.5, `${ap} ${k}: ${c.toFixed(2)}`);
-  }
-});
-
-// Escenario: se mueve despacio
-t.test("se mueve despacio", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  const pos = () => page.evaluate(() => ["lobulo1", "lobulo2", "lobulo3"].map((i) => { const c = document.getElementById(i); return [+c.getAttribute("cx"), +c.getAttribute("cy"), +c.getAttribute("r")]; }));
-  await page.waitForTimeout(300);
-  const a = await pos();
-  await page.waitForTimeout(500);
-  const b = await pos();
-  const mueve = a.flat().some((v, i) => Math.abs(v - b.flat()[i]) > 0.01);
-  assert.ok(mueve, "los lóbulos cambian de lugar");
-  // despacio: en medio segundo ningún lóbulo se desplaza más de una décima parte del ancho
-  assert.ok(a.every(([x, y], i) => Math.hypot(x - b[i][0], y - b[i][1]) < 10), `${JSON.stringify(a)} -> ${JSON.stringify(b)}`);
-});
-
-// Escenario: reducir movimiento
-t.test("reducir movimiento", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  const pos = () => page.evaluate(() => ["lobulo1", "lobulo2", "lobulo3"].map((i) => { const c = document.getElementById(i); return [c.getAttribute("cx"), c.getAttribute("cy"), c.getAttribute("r")].join(","); }).join("|"));
-  await page.waitForTimeout(300);
-  const a = await pos();
-  await page.waitForTimeout(600);
-  assert.equal(await pos(), a, "los lóbulos están quietos");
-});
-
-// Escenario: la app no está visible
-t.test("la app no está visible", async () => {
-  const { page } = await abrir({ datos: conApariencia() });
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  const pos = () => page.evaluate(() => document.getElementById("lobulo1").getAttribute("cx") + "," + document.getElementById("lobulo2").getAttribute("r"));
-  const oculta = (v) => page.evaluate((h) => { Object.defineProperty(document, "hidden", { value: h, configurable: true }); document.dispatchEvent(new Event("visibilitychange")); }, v);
-  await page.waitForTimeout(300);
-  const a = await pos();
-  await page.waitForTimeout(300);
-  assert.notEqual(await pos(), a, "se mueve con la app visible");
-  await oculta(true);
-  await page.waitForTimeout(150);
-  const b = await pos();
-  await page.waitForTimeout(500);
-  assert.equal(await pos(), b, "pausado con la app oculta");
-  await oculta(false);
-  await page.waitForTimeout(500);
-  assert.notEqual(await pos(), b, "vuelve a moverse");
 });
 
 // Escenario: sin cargar nada de otros sitios
@@ -171,38 +102,62 @@ t.test("sin cargar nada de otros sitios", async () => {
 t.test("barra oscura y clara", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
   const barra = () => page.$eval('meta[name="theme-color"]', (m) => m.content.toLowerCase());
-  assert.equal(await barra(), "#0b0b10");
+  assert.equal(await barra(), "#151c2a");
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "black-translucent");
   await elegirAp(page, "clara");
-  assert.equal(await barra(), "#f3f3f8");
+  assert.equal(await barra(), "#f1f0f2");
   await page.reload();
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "default");
 });
 
-const variable = (page, nombre) => page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim().toUpperCase(), nombre);
 const colorDe = (page, sel) => page.$eval(sel, (e) => getComputedStyle(e).color);
-
-// Escenario: los colores de la oscura
-t.test("los colores de la oscura", async () => {
-  const { page } = await abrir({ datos: conApariencia("oscura") });
-  assert.equal(await fondoCuerpo(page), "rgb(11, 11, 16)");
-  assert.equal(await colorDe(page, "body"), "rgb(244, 244, 246)");
-  assert.deepEqual([await variable(page, "--accent"), await variable(page, "--label")], ["#B2FF00", "#C4A5F7"]);
-});
 
 // Escenario: los colores de la clara
 t.test("los colores de la clara", async () => {
   const { page } = await abrir({ datos: conApariencia("clara") });
-  assert.equal(await fondoCuerpo(page), "rgb(243, 243, 248)");
-  assert.equal(await colorDe(page, "body"), "rgb(19, 19, 26)");
-  assert.deepEqual([await variable(page, "--accent"), await variable(page, "--accent-ink"), await variable(page, "--label")], ["#B2FF00", "#13131A", "#5B2BD1"]);
+  assert.equal(await fondoCuerpo(page), rgb("#F1F0F2"));
+  assert.equal(await colorDe(page, "body"), rgb("#151C2A"));
 });
 
-// Escenario: positivo y negativo
-t.test("positivo y negativo", async () => {
-  for (const [ap, pos, neg] of [["oscura", "#B2FF00", "#F2546A"], ["clara", "#367300", "#C72543"]]) {
+// Escenario: los colores de la oscura
+t.test("los colores de la oscura", async () => {
+  const { page } = await abrir({ datos: conApariencia("oscura") });
+  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
+  assert.equal(await colorDe(page, "body"), rgb("#F1F0F2"));
+  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--muted").trim().toUpperCase()), "#A1B6DB");
+});
+
+// Escenario: verde para lo que entra y rosa para lo que sale
+t.test("verde para lo que entra y rosa para lo que sale", async () => {
+  for (const [ap, verde, rosa] of [["clara", "#0F7A3B", "#C81E4A"], ["oscura", "#41FF8B", "#FF8AA6"]]) {
     const { page } = await abrir({ datos: conApariencia(ap) });
-    assert.deepEqual([await variable(page, "--positive"), await variable(page, "--negative")], [pos, neg], ap);
+    await A.ir(page, "movs");
+    const c = await page.evaluate(() => { const f = (sel) => { const n = document.querySelector(sel); return [getComputedStyle(n).color, getComputedStyle(n.closest(".mov")).backgroundColor]; }; return { ing: f("#movs .mov[data-tipo=ingreso] .num"), gas: f("#movs .mov[data-tipo=gasto] .num") }; });
+    assert.equal(c.ing[0], rgb(verde), ap);
+    assert.equal(c.gas[0], rgb(rosa), ap);
+    assert.ok(contraste(c.ing[0], c.ing[1]) >= 4.5 && contraste(c.gas[0], c.gas[1]) >= 4.5, ap);
+  }
+});
+
+// Escenario: texto secundario legible
+t.test("texto secundario legible", async () => {
+  for (const ap of ["clara", "oscura"]) {
+    const { page } = await abrir({ datos: conApariencia(ap) });
+    for (const v of ["inicio", "movs", "cuentas"]) {
+      await A.ir(page, v);
+      const malos = await page.evaluate(() => {
+        const lumC = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x = Number(x) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+        const fondoDe = (e) => { for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\(.*, 0\)$|transparent/.test(c)) return c; } return getComputedStyle(document.body).backgroundColor; };
+        const out = [];
+        for (const e of document.querySelectorAll(".sub, .det, .mini .t, .ejes span, .pat small, .cta .d, .mov .det span")) {
+          if (!e.offsetParent || e.closest(".destacada") || e.closest("[hidden]")) continue;
+          const a = lumC(getComputedStyle(e).color), b = lumC(fondoDe(e)), c = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+          if (c < 4.5) out.push([e.className, e.textContent.slice(0, 20), c.toFixed(2)]);
+        }
+        return out;
+      });
+      assert.deepEqual(malos, [], `${ap} ${v}`);
+    }
   }
 });
 
@@ -212,6 +167,6 @@ t.test("una paleta vieja guardada", async () => {
   const { page } = await abrir({ datos: conApariencia(undefined, "pastel") });
   page.on("pageerror", (e) => errores.push(String(e)));
   await page.reload();
-  assert.equal(await fondoCuerpo(page), "rgb(11, 11, 16)");
+  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
   assert.deepEqual(errores, []);
 });

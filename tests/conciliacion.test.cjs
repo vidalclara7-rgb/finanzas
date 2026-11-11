@@ -68,7 +68,7 @@ t.test("saldo real vacío", async () => {
 t.test("editar un gasto de un mes conciliado", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(5, "2026-10-05", 20, 1)], meses: conc([1]) }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="5"] .linea');
+  await page.click('[data-mov="5"] .desc');
   await page.fill("#mImporte", "25");
   await page.click("#mGuardar");
   await A.aviso(page, "Gasto guardado");

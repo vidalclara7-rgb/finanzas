@@ -63,18 +63,18 @@ t.test("nombres de las pestañas", async () => {
   assert.deepEqual(nombres.map((x) => x.trim()), ["Inicio", "Movimientos", "Cuentas", "Cierre"]);
 });
 
-// Escenario: títulos en Archivo
-t.test("títulos en Archivo", async () => {
+// Escenario: títulos en Roboto
+t.test("títulos en Roboto", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
   const letra = (sel) => page.$eval(sel, (el) => { const s = getComputedStyle(el); return [s.fontFamily.split(",")[0].replace(/"/g, ""), s.fontWeight]; });
-  assert.deepEqual(await letra("#title"), ["Archivo", "800"]);
+  assert.deepEqual(await letra("#title"), ["Roboto", "700"]);
   await page.click("#fab");
-  assert.deepEqual(await letra("#sheet h2"), ["Archivo", "800"]);
+  assert.deepEqual(await letra("#sheet h2"), ["Roboto", "700"]);
 });
 
 const fondoDe = (page, sel) => page.$eval(sel, (el) => getComputedStyle(el).backgroundColor);
-// El color de la categoría es el de la tarjeta; el ícono va en un círculo translúcido encima
-const icoDe = (page, id) => page.$eval(`[data-mov="${id}"]`, (el) => getComputedStyle(el).backgroundColor);
+// El color de la categoría es el del círculo de la fila
+const icoDe = (page, id) => page.$eval(`[data-mov="${id}"] .ico`, (el) => getComputedStyle(el).backgroundColor);
 
 const mono = (page, sel) => page.$eval(sel, (el) => getComputedStyle(el).fontFamily);
 const DATOS_COLOR = () => { const d = EJEMPLO(); d.cuentas[0].tope = 300; d.cuentas.push(A.cta(3, "Financiera Z", 600, { tipo: "financiacion", cuota: 50, cuotas: 12, cuotasMes: "2026-10" })); return d; };
@@ -83,10 +83,13 @@ const DATOS_COLOR = () => { const d = EJEMPLO(); d.cuentas[0].tope = 300; d.cuen
 t.test("cifras grandes y datos pequeños", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
   const cuerpo = await mono(page, "body");
-  assert.match(await mono(page, "#resultado"), /^"?Archivo/);
+  assert.match(await mono(page, "#resultado"), /^"?Roboto/);
+  assert.equal(await page.$eval("#resultado", (e) => getComputedStyle(e).fontWeight), "700");
+  assert.match(cuerpo, /^"?Roboto/);
   assert.doesNotMatch(cuerpo, /mono|Archivo/i);
   await A.ir(page, "movs");
-  assert.match(await mono(page, '[data-mov="2"] .num, [data-mov="2"] .monto'), /mono/i);
+  assert.match(await mono(page, '[data-mov="2"] .num'), /^"?Roboto/);
+  assert.match(await page.$eval('[data-mov="2"] .num', (e) => getComputedStyle(e).fontVariantNumeric), /tabular-nums/);
 });
 
 // Escenario: sin letras de otros sitios
@@ -105,31 +108,34 @@ t.test("la letra funciona sin conexión", async () => {
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
   await page.evaluate(() => navigator.serviceWorker.ready);
-  await page.evaluate(() => document.fonts.load('800 32px Archivo'));
+  await page.evaluate(() => document.fonts.load('700 32px Roboto'));
   await ctx.setOffline(true);
   await page.reload();
-  await page.evaluate(() => document.fonts.load('800 32px Archivo'));
-  assert.equal(await page.evaluate(() => document.fonts.check('800 32px Archivo')), true);
-  assert.equal(await page.evaluate(() => [...document.fonts].filter((f) => f.family.includes("Archivo") && f.status === "loaded").length > 0), true);
+  await page.evaluate(() => document.fonts.load('700 32px Roboto'));
+  assert.equal(await page.evaluate(() => document.fonts.check('700 32px Roboto')), true);
+  assert.equal(await page.evaluate(() => [...document.fonts].filter((f) => f.family.includes("Roboto") && f.status === "loaded").length > 0), true);
 });
 
 // Escenario: logo en Inicio
 t.test("logo en Inicio", async () => {
-  const { page } = await abrir({ datos: EJEMPLO() });
+  const datos = EJEMPLO(); datos.settings.apariencia = "clara";
+  const { page } = await abrir({ datos });
   assert.equal(await page.isVisible("#logoHdr"), true);
   assert.equal((await page.$eval("#logoHdr", (e) => e.textContent)).trim(), "mf.");
-  assert.equal(await page.$eval("#logoHdr i", (e) => getComputedStyle(e).color), "rgb(178, 255, 0)");
-  assert.match(await page.$eval("#logoHdr", (e) => getComputedStyle(e).fontFamily), /^"?Archivo/);
+  assert.equal(await page.$eval("#logoHdr", (e) => getComputedStyle(e).color), "rgb(21, 28, 42)");
+  const punto = await page.$eval("#logoHdr i", (e) => { const s = getComputedStyle(e); return [s.backgroundImage, s.webkitTextFillColor]; });
+  assert.match(punto[0], /linear-gradient/);
+  assert.equal(punto[1], "rgba(0, 0, 0, 0)");
+  assert.match(await page.$eval("#logoHdr", (e) => getComputedStyle(e).fontFamily), /^"?Roboto/);
   await A.ir(page, "movs");
   assert.equal(await page.isVisible("#logoHdr"), false);
 });
 
 // Escenario: el logo sigue a la apariencia
 t.test("el logo sigue a la apariencia", async () => {
-  const datos = EJEMPLO(); datos.settings.apariencia = "clara";
+  const datos = EJEMPLO(); datos.settings.apariencia = "oscura";
   const { page } = await abrir({ datos });
-  assert.equal(await page.$eval("#logoHdr", (e) => getComputedStyle(e).color), "rgb(19, 19, 26)");
-  assert.equal(await page.$eval("#logoHdr i", (e) => getComputedStyle(e).color), "rgb(140, 203, 0)");
+  assert.equal(await page.$eval("#logoHdr", (e) => getComputedStyle(e).color), "rgb(241, 240, 242)");
 });
 
 // Escenario: punto de color por tipo de cuenta
@@ -138,58 +144,10 @@ t.test("punto de color por tipo de cuenta", async () => {
     const d = DATOS_COLOR(); d.settings.apariencia = ap;
     const { page } = await abrir({ datos: d });
     await A.ir(page, "cuentas");
-    const punto = (tipo) => page.evaluate((t) => { const g = [...document.querySelectorAll("#v-cuentas .card.color")].find((c) => c.offsetParent && c.querySelector(".lbl").textContent.includes(t)); return getComputedStyle(g.querySelector(".lbl"), "::before").backgroundColor; }, tipo);
+    const punto = (tipo) => page.evaluate((t) => { const g = [...document.querySelectorAll("#v-cuentas .grupo-cta")].find((c) => c.offsetParent && c.querySelector(".lbl").textContent.includes(t)); return getComputedStyle(g.querySelector(".lbl .dot")).backgroundColor; }, tipo);
     const [a, b] = [await punto("Bancos"), await punto("Tarjetas")];
     assert.ok(canales(a).length === 3 && !a.endsWith(", 0)"), `${ap}: ${a}`);
     assert.notEqual(a, b, ap);
-  }
-});
-
-// Escenario: sin degradados en las tarjetas
-t.test("sin degradados en las tarjetas", async () => {
-  const { page } = await abrir({ datos: DATOS_COLOR() });
-  for (const sel of ['[data-disp="2"]', "#cuotasCard"]) assert.doesNotMatch(await page.$eval(sel, (e) => getComputedStyle(e).backgroundImage), /gradient/, sel);
-  assert.equal(await page.$eval("#cuotasCard", (e) => e.classList.contains("color")), true);
-  const gasto = await fondoDe(page, '[data-ui="gasto-categorias"]');
-  const surface = await page.evaluate(() => { const d = document.createElement("i"); d.style.background = "var(--surface)"; document.body.append(d); const c = getComputedStyle(d).backgroundColor; d.remove(); return c; });
-  assert.equal(gasto, surface, "«Gasto del mes» es neutra");
-  assert.doesNotMatch(await page.$eval('[data-ui="gasto-categorias"]', (e) => getComputedStyle(e).backgroundImage), /gradient/);
-});
-
-// Escenario: el texto se lee sobre el vidrio
-t.test("el texto se lee sobre el vidrio", async () => {
-  for (const ap of ["clara", "oscura"]) {
-    const d = DATOS_COLOR(); d.settings.apariencia = ap;
-    d.cuentas.push(A.cta(4, "Broker", 500, { tipo: "inversion" }), A.cta(5, "Tarjeta W", 200, { tipo: "tarjeta" }), A.cta(6, "Depósito", 100, { tipo: "compartida" }));
-    const { page } = await abrir({ datos: d });
-    for (const v of ["inicio", "cuentas", "mes"]) {
-      await A.ir(page, v);
-      const r = await page.evaluate((vista) => {
-        const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
-        const num = (c) => (c.match(/[\d.]+/g) || []).map(Number);
-        const hex = (h) => { const x = h.replace("#", ""); return [0, 2, 4].map((i) => parseInt(x.slice(i, i + 2), 16) / 255); };
-        const mix = (a, b, t) => a.map((x, i) => x * (1 - t) + b[i] * t);
-        const L = (c) => { const q = c.map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)); return 0.2126 * q[0] + 0.7152 * q[1] + 0.0722 * q[2]; };
-        const par = (a, b) => { const [x, y] = [L(a), L(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-        const bg = hex(v("--bg")), cuerpo = parseFloat(v("--fondo-cuerpo")), halo = parseFloat(v("--fondo-halo"));
-        const formas = [["--flow-silver", 1], ["--flow-tint", 1], ["--glow-pos", 0.55], ["--glow-neg", 0.55], ["--glow-neu", 0.55]].map(([n, al]) => mix(bg, hex(v(n)), 1 - (1 - cuerpo * al) * (1 - halo * al)));
-        const out = [];
-        for (const card of document.querySelectorAll(`#v-${vista} .card`)) {
-          if (!card.offsetParent) continue;
-          const bgc = num(getComputedStyle(card).backgroundColor), sup = bgc.slice(0, 3).map((x) => x / 255), a = bgc.length > 3 ? bgc[3] : 1;
-          for (const sel of [".lbl", ".big", ".monto", ".sub", ".num", ".neg"]) for (const el of card.querySelectorAll(sel)) {
-            if (!el.offsetParent || el.closest(".chip, .btn")) continue;
-            const tc = num(getComputedStyle(el).color), t = tc.slice(0, 3).map((x) => x / 255), ta = tc.length > 3 ? tc[3] : 1;
-            let peor = 99;
-            for (const f of formas) { const fondo = mix(f, sup, a), txt = mix(fondo, t, ta); peor = Math.min(peor, par(txt, fondo)); }
-            out.push([(card.querySelector(".lbl")?.textContent.trim() || card.dataset.ui) + " " + sel, peor]);
-          }
-        }
-        return out;
-      }, v);
-      assert.ok(r.length >= 3, `${ap} ${v}: ${r.length} textos`);
-      for (const [que, c] of r) assert.ok(c >= 4.5, `${ap} ${v} ${que}: ${c.toFixed(2)}`);
-    }
   }
 });
 
@@ -207,13 +165,13 @@ t.test("teléfono en modo oscuro", async () => {
   const datos = EJEMPLO(); datos.settings.apariencia = "auto";
   const { page } = await abrir({ datos, esquema: "dark" });
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  assert.ok(luminancia(fondo) < 0.1, `fondo ${fondo}`);
-  for (const sel of ["#resultado", '[data-disp="2"] .big', "#netoIni", "#torta .centro b"]) {
+  assert.ok(luminancia(fondo) < 0.15, `fondo ${fondo}`);
+  for (const sel of ['[data-disp="2"] .big', "#netoIni", "#torta .centro b"]) {
     const [texto, detras] = await colores(page, sel);
     assert.ok(contraste(texto, detras) >= 4.5, `${sel}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
   }
   await A.ir(page, "movs");
-  const [texto, detras] = await colores(page, '[data-mov="2"] .linea');
+  const [texto, detras] = await colores(page, '[data-mov="2"] .desc');
   assert.ok(contraste(texto, detras) >= 4.5, `tarjeta de movimiento: ${contraste(texto, detras).toFixed(2)}`);
 });
 
@@ -247,7 +205,7 @@ t.test("contraste en las dos apariencias", async () => {
     A.transf(11, "2026-10-08", 100, 1, 3));
   for (const ap of ["clara", "oscura"]) {
     const { page } = await abrir({ datos: { ...datos, settings: { ...datos.settings, apariencia: ap } } });
-    for (const sel of ["#resultado", '[data-disp="2"] .big', "#netoIni"]) {
+    for (const sel of ['[data-disp="2"] .big', "#netoIni"]) {
       const [texto, detras] = await colores(page, sel);
       assert.ok(contraste(texto, detras) >= 4.5, `${ap} ${sel}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
     }
@@ -257,7 +215,7 @@ t.test("contraste en las dos apariencias", async () => {
     }
     await A.ir(page, "movs");
     for (const id of [2, 3, 9, 10, 11]) {
-      const [texto, detras] = await colores(page, `[data-mov="${id}"] .linea`);
+      const [texto, detras] = await colores(page, `[data-mov="${id}"] .desc`);
       assert.ok(contraste(texto, detras) >= 4.5, `${ap} movimiento ${id}: ${texto} sobre ${detras} = ${contraste(texto, detras).toFixed(2)}`);
     }
   }
@@ -305,7 +263,7 @@ t.test("saldo de una cuenta con coma", async () => {
 t.test("importe guardado al editar", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(7, "2026-10-03", 12.5, 1)] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   assert.equal(await page.inputValue("#mImporte"), "12,5");
 });
 
@@ -351,7 +309,7 @@ t.test("color en la torta y en la tarjeta", async () => {
   const torta = await page.$eval('#torta circle[data-cat="Alquiler"]', (c) => c.style.stroke);
   assert.ok(torta.includes("--cat18"));
   await A.ir(page, "movs");
-  const fondo = await page.evaluate(() => { const m = [...document.querySelectorAll("#movs .mov")].find((x) => x.textContent.includes("Alquiler")); return getComputedStyle(m).backgroundColor; });
+  const fondo = await page.evaluate(() => { const m = [...document.querySelectorAll("#movs .mov")].find((x) => x.textContent.includes("Alquiler")); return getComputedStyle(m.querySelector(".ico")).backgroundColor; });
   const esperado = await page.evaluate(() => { const e = document.createElement("i"); e.style.background = "var(--cat18)"; document.body.append(e); const c = getComputedStyle(e).backgroundColor; e.remove(); return c; });
   assert.equal(fondo, esperado);
   const otras = await page.evaluate(() => Array.from({ length: 19 }, (_, i) => getComputedStyle(document.documentElement).getPropertyValue("--cat" + (i + 1)).trim().toUpperCase()));

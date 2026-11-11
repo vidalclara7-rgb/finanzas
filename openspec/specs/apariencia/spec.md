@@ -28,30 +28,6 @@ recuerda al volver a abrir.
 - **Cuando** la persona vuelve a abrir la app
 - **Entonces** la app se ve clara
 
-## Requisito: movimiento del fondo
-
-La forma se mueve despacio. No se mueve si el teléfono tiene activado «Reducir movimiento» y se detiene cuando la app no está visible.
-
-### Escenario: se mueve despacio
-- **Dado** el teléfono sin «Reducir movimiento»
-- **Cuando** la persona abre la app
-- **Entonces** la forma está en movimiento lento
-
-### Escenario: reducir movimiento
-- **Dado** el teléfono con «Reducir movimiento» activado
-- **Cuando** la persona abre la app
-- **Entonces** la forma se ve quieta
-
-### Escenario: la app no está visible
-- **Dado** la forma en movimiento
-- **Cuando** la app pasa a segundo plano
-- **Entonces** el movimiento se pausa
-
-### Escenario: sin cargar nada de otros sitios
-- **Dado** el fondo visible
-- **Cuando** la persona abre la app
-- **Entonces** el fondo no hace ninguna petición a otro sitio
-
 ## Requisito: la barra del sistema acompaña
 
 En la app instalada, el color de la barra superior del sistema acompaña a la apariencia que se está viendo.
@@ -61,51 +37,56 @@ En la app instalada, el color de la barra superior del sistema acompaña a la ap
 - **Cuando** la persona cambia a Clara
 - **Entonces** el color de la barra del sistema pasa de oscuro a claro
 
-## Requisito: fondo fluido
-
-Detrás de todas las pantallas hay una sola forma fluida: tres lóbulos que se mueven y se funden en una masa, de color plata con un tinte violeta y el brillo de la tendencia del mes, sobre el color de fondo de la apariencia (#F3F3F8 en la clara, #0B0B10 en la oscura). Las tarjetas quedan encima y su texto se lee con contraste de al menos 4,5 a 1. No hay manchas separadas ni estrellas.
-
-### Escenario: el fondo está en todas las pantallas
-- **Dado** la app con datos de ejemplo
-- **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre y Ajustes
-- **Entonces** en todas se ve la forma fluida detrás de las tarjetas
-
-### Escenario: una sola forma de tres lóbulos
-- **Dado** el fondo visible
-- **Cuando** la persona lo mira en la apariencia Clara y en la Oscura
-- **Entonces** hay una sola forma hecha de tres lóbulos
-- **Y** no quedan las cinco manchas de antes
-
-### Escenario: color de fondo de cada apariencia
-- **Dado** la app abierta
-- **Cuando** la persona cambia entre Clara y Oscura
-- **Entonces** el fondo de la pantalla es #F3F3F8 en la clara y #0B0B10 en la oscura
-
-### Escenario: el texto se lee sobre el fondo
-- **Dado** el resultado del mes y los totales de Inicio en las dos apariencias
-- **Cuando** la persona abre Inicio y Movimientos
-- **Entonces** los importes y el texto suelto tienen contraste de al menos 4,5 a 1 con lo que tienen detrás, aun con la forma justo debajo
-
 ## Requisito: colores del sistema
 
-La app tiene una sola paleta, con versión clara y oscura. Oscura: fondo #0B0B10, texto #F4F4F6, acento lima #B2FF00, etiquetas en lavanda #C4A5F7. Clara: fondo #F3F3F8, texto #13131A, acento lima #B2FF00 con texto #13131A, etiquetas en violeta #5B2BD1. El resto (violeta, lavanda, cielo, positivo y negativo) sigue el sistema de diseño de la persona.
-
-### Escenario: los colores de la oscura
-- **Dado** la apariencia Oscura
-- **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es #0B0B10 y el texto principal es #F4F4F6
+La app tiene una sola paleta, la del diseño de Figma, con versión clara y oscura. Clara: fondo #F1F0F2, tarjeta #FFFFFF, texto #151C2A. Oscura, derivada de los azules oscuros del diseño: fondo #151C2A, tarjeta #1F3252, texto #F1F0F2, texto secundario #A1B6DB. El degradado principal va del azul cielo (#91CDFB) al violeta (#9A89F3) y al rosa violáceo (#CF8BE8). Lo que entra es verde y lo que sale es rosa: en rellenos, puntos y curvas, el verde #41FF8B y el rosa #FF5984; en los importes escritos, una versión más oscura en la clara (que llegue a 4,5 a 1 sobre la tarjeta) y los mismos colores en la oscura.
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara
 - **Cuando** la persona abre Inicio
-- **Entonces** el fondo de la pantalla es #F3F3F8 y el texto principal es #13131A
+- **Entonces** el fondo de la pantalla es #F1F0F2 y el texto principal es #151C2A
 
-### Escenario: positivo y negativo
+### Escenario: los colores de la oscura
+- **Dado** la apariencia Oscura
+- **Cuando** la persona abre Inicio
+- **Entonces** el fondo de la pantalla es #151C2A y el texto principal es #F1F0F2
+
+### Escenario: verde para lo que entra y rosa para lo que sale
 - **Dado** un gasto y un ingreso este mes
 - **Cuando** la persona abre Movimientos en las dos apariencias
-- **Entonces** lo positivo usa el verde lima del sistema (#367300 en la clara, #B2FF00 en la oscura) y lo negativo el rojo (#C72543 en la clara, #F2546A en la oscura)
+- **Entonces** el importe del ingreso es verde y el del gasto, rosa
+- **Y** cada importe tiene contraste de al menos 4,5 a 1 con su tarjeta
+
+### Escenario: texto secundario legible
+- **Dado** Inicio, Movimientos y Cuentas con datos
+- **Cuando** la persona los mira en las dos apariencias
+- **Entonces** el texto secundario (fechas, detalles, etiquetas) tiene contraste de al menos 4,5 a 1 con su tarjeta
 
 ### Escenario: una paleta vieja guardada
 - **Dado** datos guardados que elegían otra paleta cuando se podía elegir
 - **Cuando** la persona abre la app
 - **Entonces** la app se ve con la paleta del sistema, sin error
+
+## Requisito: fondo liso y tarjetas blancas
+
+Detrás de todas las pantallas hay un fondo liso, sin formas ni animación: gris claro #F1F0F2 en la apariencia Clara y azul oscuro #151C2A en la Oscura. Las tarjetas quedan encima: blancas (#FFFFFF) en la clara y azul #1F3252 en la oscura. Nada en el fondo ni en las tarjetas se mueve por sí solo, así que «Reducir movimiento» no cambia nada.
+
+### Escenario: fondo de cada apariencia
+- **Dado** la app abierta
+- **Cuando** la persona cambia entre Clara y Oscura
+- **Entonces** el fondo de la pantalla es #F1F0F2 en la clara y #151C2A en la oscura
+
+### Escenario: tarjetas de cada apariencia
+- **Dado** una tarjeta de Inicio
+- **Cuando** la persona la mira en la clara y en la oscura
+- **Entonces** su fondo es #FFFFFF en la clara y #1F3252 en la oscura
+
+### Escenario: nada se mueve solo
+- **Dado** el teléfono sin «Reducir movimiento»
+- **Cuando** la persona abre Inicio y espera dos segundos
+- **Entonces** el fondo, las tarjetas y los botones no tienen ninguna animación en marcha
+
+### Escenario: sin cargar nada de otros sitios
+- **Dado** la app abierta
+- **Cuando** la persona recorre todas las pantallas
+- **Entonces** la app no hace ninguna petición a otro sitio

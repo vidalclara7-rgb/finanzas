@@ -105,7 +105,7 @@ t.test("movimientos de otro mes no aparecen", async () => {
 t.test("Inicio sin gastos recientes", async () => {
   const movs = [1, 2, 3, 4, 5, 6].map((d) => A.gasto(d, `2026-10-0${d}`, d, 1));
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
-  assert.equal(await page.locator('[data-ui="ultimos-gastos"], #ultimos, .mini').count(), 0);
+  assert.equal(await page.locator('[data-ui="ultimos-gastos"], #ultimos, #v-inicio .mov').count(), 0);
   await A.ir(page, "movs");
   const ids = await page.locator("#movs .mov").evaluateAll((els) => els.map((e) => e.dataset.mov));
   assert.deepEqual(ids, ["6", "5", "4", "3", "2", "1"]);
@@ -124,13 +124,16 @@ t.test("totales sin transferencias", async () => {
   await A.ir(page, "movs");
   assert.equal(await A.texto(page, "#totIng"), "1500 €");
   assert.equal(await A.texto(page, "#totGas"), "80 €");
+  const t = await A.texto(page, '[data-ui="totales-mes"]');
+  assert.match(t, /Gastado/);
+  assert.match(t, /Ingresado/);
 });
 
 // Escenario: corregir un importe
 t.test("corregir un importe", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(7, "2026-10-05", 20, 1)] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   assert.equal(await page.inputValue("#mImporte"), "20");
   await page.fill("#mImporte", "25");
   await page.click("#mGuardar");
@@ -145,7 +148,7 @@ t.test("borrar con dos toques", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(7, "2026-10-05", 20, 1)] }) });
   await A.ir(page, "movs");
   assert.equal(await page.locator('[data-mov="7"] [data-del]').count(), 0, "la fila no tiene cruz");
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   await page.click("#mBorrar");
   assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo para borrar");
   await page.click("#mBorrar");
@@ -158,11 +161,11 @@ t.test("borrar con dos toques", async () => {
 t.test("un solo toque no borra", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(7, "2026-10-05", 20, 1)] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   await page.click("#mBorrar");
   await page.click("#cerrar");
   assert.equal(await page.locator("#movs .mov").count(), 1);
-  await page.click('[data-mov="7"] .linea');
+  await page.click('[data-mov="7"] .desc');
   assert.equal(await A.texto(page, "#mBorrar"), "Borrar movimiento");
 });
 
@@ -194,7 +197,7 @@ t.test("borrar el último gasto de un documento", async () => {
   await page.click('[data-mov="1"]');
   await page.setInputFiles("#docIn", { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 prueba") });
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.click("#mBorrar");
   assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo: se borra también su documento");
 });
@@ -272,7 +275,7 @@ t.test("el siguiente viene marcado", async () => {
 t.test("desmarcar un fijo", async () => {
   const { page } = await abrir(conFijos([fijo(1, "2026-09-01", 600, CASA, "alquiler"), fijo(2, "2026-10-01", 600, CASA, "alquiler")], { [`${CASA}|alquiler`]: true }));
   await A.ir(page, "movs");
-  await page.click('[data-mov="2"] .linea');
+  await page.click('[data-mov="2"] .desc');
   assert.ok(await page.isChecked("#mFijo"));
   await page.uncheck("#mFijo");
   await page.click("#mGuardar");
@@ -420,7 +423,7 @@ t.test("elegir USD", async () => {
   await A.aviso(page, "Gasto guardado");
   assert.equal((await A.guardados(page)).movs[0].moneda, "USD");
   await A.ir(page, "movs");
-  await page.click("#movs .mov .linea");
+  await page.click("#movs .mov .desc");
   await A.hojaLista(page);
   assert.equal(await page.$eval('#segMoneda button[aria-pressed="true"]', (b) => b.textContent), "USD");
 });
@@ -579,7 +582,7 @@ t.test("la opción sólo existe en tarjetas", async () => {
 t.test("borrar una compra en cuotas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [TARJ0], movs: [COMPRA] }) });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.click("#mBorrar");
   await page.click("#mBorrar");
   assert.equal((await A.guardados(page)).movs.length, 0);
@@ -641,18 +644,19 @@ t.test("sin gastos con documento", async () => {
 const altos = (page) => page.$$eval("#movs .mov", (e) => e.map((x) => { const r = x.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, alto: r.height }; }));
 const buscar = async (page, q) => { if (!(await page.isVisible("#busca"))) await page.click("#lupaBtn"); await page.fill("#busca", q); };
 
-// Escenario: cada movimiento en una línea
-t.test("cada movimiento en una línea", async () => {
+// Escenario: cada movimiento en una fila con círculo
+t.test("cada movimiento en una fila con círculo", async () => {
   const movs = Array.from({ length: 10 }, (_, i) => A.gasto(i + 1, "2026-10-" + String(i + 1).padStart(2, "0"), 10 + i, 1, "Supermercado", i === 3 ? "Compra semanal" : ""));
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
   await A.ir(page, "movs");
   const h = await altos(page);
   assert.equal(h.length, 10);
-  h.forEach((x, i) => { assert.ok(x.alto <= 56, `alto ${x.alto}`); if (i) assert.ok(x.top >= h[i - 1].bottom - 0.5, "no se solapa"); });
-  const con = await A.texto(page, '[data-mov="4"]');
-  assert.match(con, /Compra semanal/);
-  assert.equal(con.includes("Supermercado"), false);
-  assert.equal(await page.locator(".mov .ico, .mov .cat").count(), 0);
+  h.forEach((x, i) => { assert.ok(x.alto <= 72, `alto ${x.alto}`); if (i) assert.ok(x.top >= h[i - 1].bottom - 0.5, "no se solapa"); });
+  assert.equal(await page.locator("#movs .mov .ico").count(), 10);
+  const circulo = await page.$eval('[data-mov="4"] .ico', (e) => { const r = e.getBoundingClientRect(), m = e.closest(".mov").getBoundingClientRect(); return [Math.round(r.width) === Math.round(r.height), r.left < m.left + 24, getComputedStyle(e).borderTopLeftRadius]; });
+  assert.deepEqual(circulo.slice(0, 2), [true, true]);
+  assert.equal(await A.texto(page, '[data-mov="4"] .desc'), "Compra semanal");
+  assert.equal(await A.texto(page, '[data-mov="4"] .det'), "Supermercado");
 });
 
 // Escenario: sin nota se ve la categoría
@@ -662,8 +666,8 @@ t.test("sin nota se ve la categoría", async () => {
   assert.equal(await A.texto(page, "#movs .mov .desc"), "Transporte");
 });
 
-// Escenario: marcas en una segunda fila
-t.test("marcas en una segunda fila", async () => {
+// Escenario: marcas bajo el concepto
+t.test("marcas bajo el concepto", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.gasto(1, "2026-10-03", 20, 1, "Supermercado", "con marca"), A.gasto(2, "2026-10-04", 30, 1, "Supermercado", "sin marca")] }) });
   await A.ir(page, "movs");
   await page.click("#selBtn");
@@ -671,12 +675,22 @@ t.test("marcas en una segunda fila", async () => {
   await page.setInputFiles("#docIn", { name: "factura.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 prueba") });
   await A.aviso(page, "Documento adjuntado a 1 gasto");
   await page.waitForSelector('[data-mov="1"] .marcas [data-ui="chip-documento"]');
-  const [a, b] = await Promise.all([page.$eval('[data-mov="1"]', (e) => e.getBoundingClientRect().height), page.$eval('[data-mov="2"]', (e) => e.getBoundingClientRect().height)]);
-  assert.ok(a > b, `${a} contra ${b}`);
-  assert.ok(b <= 56);
   assert.equal(await page.locator('[data-mov="2"] .marcas').count(), 0);
-  const [yLinea, yMarcas] = await Promise.all([page.$eval('[data-mov="1"] .linea', (e) => e.getBoundingClientRect().bottom), page.$eval('[data-mov="1"] .marcas', (e) => e.getBoundingClientRect().top)]);
-  assert.ok(yMarcas >= yLinea - 0.5, "las marcas van debajo de la línea");
+  const [yDesc, yMarcas] = await Promise.all([page.$eval('[data-mov="1"] .desc', (e) => e.getBoundingClientRect().bottom), page.$eval('[data-mov="1"] .marcas', (e) => e.getBoundingClientRect().top)]);
+  assert.ok(yMarcas >= yDesc - 0.5, "las marcas van debajo del concepto");
+});
+
+// Escenario: importes verdes y rosas
+t.test("importes verdes y rosas", async () => {
+  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 80, 1)] }) });
+  await A.ir(page, "movs");
+  assert.match(await A.texto(page, '[data-mov="1"] .num'), /^\+1500 €$/);
+  assert.match(await A.texto(page, '[data-mov="2"] .num'), /^−80 €$/);
+  const [verde, rosa] = await Promise.all([page.$eval('[data-mov="1"] .num', (e) => getComputedStyle(e).color), page.$eval('[data-mov="2"] .num', (e) => getComputedStyle(e).color)]);
+  assert.notEqual(verde, rosa);
+  const canales = (c) => c.match(/[\d.]+/g).map(Number);
+  assert.ok(canales(verde)[1] > canales(verde)[0] && canales(verde)[1] > canales(verde)[2], `verde ${verde}`);
+  assert.ok(canales(rosa)[0] > canales(rosa)[1], `rosa ${rosa}`);
 });
 
 // Escenario: una descripción larga no desborda
@@ -748,7 +762,7 @@ t.test("abrir un resultado y volver", async () => {
   const { page } = await abrir({ datos: BUSQ() });
   await A.ir(page, "movs");
   await buscar(page, "panaderia");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.waitForSelector("#sheet:not([hidden])");
   await page.click("#cerrar");
   await page.waitForSelector("#sheet", { state: "hidden" });
@@ -786,7 +800,7 @@ t.test("borrar desde los resultados", async () => {
   const { page } = await abrir({ datos: BUSQ() });
   await A.ir(page, "movs");
   await buscar(page, "panaderia");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.click("#mBorrar");
   await page.click("#mBorrar");
   await A.aviso(page, "Movimiento borrado");

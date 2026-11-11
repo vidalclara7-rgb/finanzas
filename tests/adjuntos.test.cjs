@@ -171,7 +171,7 @@ t.test("un documento para dos gastos", async () => {
   assert.equal(await clip(page, 1), 1);
   assert.equal(await clip(page, 2), 1);
   assert.equal(await clip(page, 3), 0);
-  await page.click('[data-mov="2"] .linea');
+  await page.click('[data-mov="2"] .desc');
   await A.hojaLista(page);
   assert.match(await A.texto(page, "#mDocsLista"), /factura\.pdf/);
   assert.deepEqual((await docs(page)).map((d) => [d.nombre, d.cuenta, d.movs.sort()]), [["factura.pdf", null, [1, 2]]]);
@@ -192,7 +192,7 @@ t.test("documento de cualquier tipo", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1], F.XLSX(F.xlsx([["Concepto", "Importe"], ["Material", "10,00"]]), "presupuesto.xlsx"));
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.hojaLista(page);
   assert.match(await A.texto(page, "#mDocsLista"), /presupuesto\.xlsx/);
   assert.deepEqual((await docs(page)).map((d) => d.nombre), ["presupuesto.xlsx"]);
@@ -211,7 +211,7 @@ t.test("quitar un documento de un gasto", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1, 2]);
   await A.aviso(page, "Documento adjuntado a 2 gastos");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.hojaLista(page);
   await page.click("#mDocsLista [data-doc-x]");
   await page.click("#mDocsLista [data-doc-del]");
@@ -228,7 +228,7 @@ t.test("borrar el último gasto de un documento", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1]);
   await A.aviso(page, "Documento adjuntado a 1 gasto");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.click("#mBorrar");
   assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo: se borra también su documento");
   await page.click("#mBorrar");
@@ -243,7 +243,7 @@ t.test("borrar un gasto con documento compartido", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: G }) });
   await adjuntarGastos(page, [1, 2]);
   await A.aviso(page, "Documento adjuntado a 2 gastos");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await page.click("#mBorrar");
   assert.equal(await A.texto(page, "#mBorrar"), "Tocá de nuevo para borrar");
   await page.click("#mBorrar");

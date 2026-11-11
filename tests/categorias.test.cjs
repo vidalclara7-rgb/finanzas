@@ -144,7 +144,7 @@ t.test("cambiar el color", async () => {
   assert.match(await page.$eval('#torta circle[data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
   assert.match(await page.$eval('#cats [data-cat="Ocio"] .dot', (d) => d.getAttribute("style")), /--cat9/);
   await A.ir(page, "movs");
-  assert.match(await page.$eval('[data-mov="1"]', (m) => m.getAttribute("style")), /--cat9/);
+  assert.match(await page.$eval('[data-mov="1"] .ico', (m) => m.getAttribute("style")), /--cat9/);
 });
 
 // Escenario: borrar con movimientos
@@ -218,7 +218,7 @@ t.test("excepción en un gasto", async () => {
   datos.categorias = { gasto: GASTO_BASE.map((n, i) => ({ nombre: n, color: i + 1, ...(n === "Servicios mensuales" ? { fija: true } : {}) })), ingreso: INGRESO_BASE.map((n) => ({ nombre: n })) };
   const { page } = await abrir({ datos });
   await A.ir(page, "movs");
-  await page.click('[data-mov="1"] .linea');
+  await page.click('[data-mov="1"] .desc');
   await A.enfocado(page, "mImporte");
   assert.equal(await page.isChecked("#mFijo"), true);
   await page.uncheck("#mFijo");
