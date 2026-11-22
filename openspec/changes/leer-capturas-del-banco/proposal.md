@@ -1,6 +1,7 @@
 ---
 cambio: leer-capturas-del-banco
-estado: aprobada
+estado: construida
+preview: no
 datos: sin-cambios
 ---
 # Importar movimientos desde capturas de pantalla del banco
