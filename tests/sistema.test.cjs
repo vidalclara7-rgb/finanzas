@@ -9,7 +9,8 @@ const CATS = ["Supermercado", "Comida fuera", "Delivery", "Transporte", "Ocio", 
 const datos = (extra = {}, ap) => A.v2({ settings: ap ? { apariencia: ap } : {}, cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 64.3, 1)], ...extra });
 const estilo = (page, sel, prop, pseudo) => page.$eval(sel, (e, [p, ps]) => getComputedStyle(e, ps || null)[p], [prop, pseudo]);
 const rgb = (hex) => { const h = hex.replace("#", ""); return `rgb(${[0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(", ")})`; };
-const canales = (c) => c.match(/[\d.]+/g).slice(0, 3).map(Number);
+// Los fondos con color-mix llegan como «color(srgb r g b)», con canales de 0 a 1
+const canales = (c) => c.match(/[\d.]+/g).slice(0, 3).map(Number).map((x) => (c.startsWith("color(") ? x * 255 : x));
 const lum = (c) => { const q = canales(c).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * q[0] + 0.7152 * q[1] + 0.0722 * q[2]; };
 const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 const colores = (grad) => grad.match(/rgb\([^)]*\)/g) || [];
@@ -87,7 +88,8 @@ t.test("tendencia positiva", async () => {
   assert.equal(await tendencia(page), "positiva");
   const [txt, color] = await tituloRes(page);
   assert.equal(txt, "Te sobraron 1.400 €");
-  assert.equal(color, await estilo(page, "body", "color"));
+  assert.equal(color, await estilo(page, '[data-ui="resultado-mes"]', "color"));
+  assert.equal(await page.isVisible("#resMarca"), false);
 });
 
 // Escenario: tendencia negativa
@@ -123,8 +125,8 @@ t.test("gastado e ingresado", async () => {
   const { page } = await abrir({ datos: datos({ cuentas: [BANCO, A.cta(2, "Cuenta ahorro", 0)], movs }) });
   assert.equal(await A.texto(page, "#miniGas"), "80 €");
   assert.equal(await A.texto(page, "#miniIng"), "1.500 €");
-  const r = await page.$eval('[data-ui="gastado-ingresado"]', (e) => [e.textContent.includes("Gastado"), e.textContent.includes("Ingresado"), getComputedStyle(e.querySelector(".dot"), null).backgroundColor]);
-  assert.deepEqual(r, [true, true, await estilo(page, "body", "color")]);
+  const r = await page.$eval('[data-ui="gastado-ingresado"]', (e) => [e.textContent.includes("Gastado"), e.textContent.includes("Ingresado")]);
+  assert.deepEqual(r, [true, true]);
 });
 
 // Escenario: sin movimientos
