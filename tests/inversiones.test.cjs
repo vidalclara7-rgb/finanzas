@@ -11,7 +11,7 @@ const compra = (id, activo, cantidad, precio, fecha = "2026-10-10", extra = {}) 
 const venta = (id, activo, cantidad, precio, fecha = "2026-10-12") => ({ id, activo, tipo: "venta", cantidad, precio, fecha });
 const con = ({ cuentas = [BROKER], activos = [FONDO_A], ops = [], movs = [] } = {}) => ({ datos: A.v2({ cuentas, activos, ops, movs }) });
 
-const hojaInv = async (page) => { await A.ir(page, "cuentas"); await page.click("[data-ver-rend]"); };
+const hojaInv = async (page) => { await A.ir(page, "cuentas"); await A.verRend(page); };
 const activoTxt = (page, id) => A.texto(page, `[data-activo="${id}"]`).then((x) => x.replace(/\s+/g, " "));
 async function operacion(page, { tipo = "compra", cant, precio, com, fecha, activo } = {}) {
   await page.click("[data-nueva-op]");
@@ -57,7 +57,7 @@ t.test("compra", async () => {
   assert.match(await activoTxt(page, 10), /10 unidades/);
   assert.match(await resumen(page), /Efectivo 500 €/);
   await page.click("#invCerrar");
-  assert.equal(await A.texto(page, '[data-cta="1"] .v .num'), "1000 €");
+  assert.equal(await A.saldoCta(page, 1), "1000 €");
 });
 
 // Escenario: compra con comisión
@@ -100,9 +100,9 @@ t.test("cantidad o precio en cero", async () => {
 // Escenario: no es gasto ni ingreso
 t.test("no es gasto ni ingreso", async () => {
   const { page } = await abrir(con({ ops: [compra(1, 10, 10, 50, "2026-10-10")] }));
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 0 €");
-  assert.equal(await A.texto(page, "#ingMes"), "Ingresos 0 €");
-  assert.match(await A.texto(page, "#resultado"), /^0/);
+  assert.equal(await A.texto(page, "#miniGas"), "0 €");
+  assert.equal(await A.texto(page, "#miniIng"), "0 €");
+  assert.equal(await A.texto(page, "#resTit"), "Sin resultado este mes");
 });
 
 // Escenario: efectivo negativo
@@ -153,7 +153,7 @@ t.test("precio inválido", async () => {
 t.test("valor con una posición", async () => {
   const { page } = await abrir(con({ activos: [{ ...FONDO_A, precio: 55, fechaPrecio: "2026-10-12" }], ops: [compra(1, 10, 10, 50)] }));
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="1"] .v .num'), "1050 €");
+  assert.equal(await A.saldoCta(page, 1), "1050 €");
   assert.equal(await A.texto(page, "#activos"), "1050 €");
 });
 
@@ -161,7 +161,7 @@ t.test("valor con una posición", async () => {
 t.test("cuenta sin activos", async () => {
   const { page } = await abrir(con({ cuentas: [A.cta(1, "Broker X", 2000, { tipo: "inversion", aportado: 1500 })], activos: [] }));
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="1"] .v .num'), "2000 €");
+  assert.equal(await A.saldoCta(page, 1), "2000 €");
   assert.match(await A.texto(page, '[data-cta="1"]'), /\+500 € \(\+33,3 %\) sobre 1500 €/);
 });
 
@@ -203,7 +203,7 @@ t.test("rendimiento de la cuenta", async () => {
 t.test("sin cuentas de inversión", async () => {
   const { page } = await abrir(con({ cuentas: [A.cta(2, "Banco A", 500)], activos: [] }));
   await A.ir(page, "cuentas");
-  assert.equal(await page.locator("[data-ver-rend]").count(), 0);
+  assert.equal(await page.locator("[data-ver-rend]:visible").count(), 0);
 });
 
 // Escenario: borrar una operación

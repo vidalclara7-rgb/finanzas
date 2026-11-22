@@ -2,7 +2,7 @@
 
 ## Requisito: colores del sistema
 
-La app tiene una sola paleta, con versión clara y oscura. Clara: fondo #FFFFFF, tarjeta #F4F4F6, texto #0B0B0F, texto secundario #66666E. Oscura: fondo #000000, tarjeta #141416, texto #F5F5F7, texto secundario #9A9AA2. El acento es lima (#E8F94B). Lo que entra es verde: relleno #34C759 y, en los importes escritos, #1F8A4C en la clara y #4ADE80 en la oscura. Lo que sale se escribe en el color del texto. El rosa queda para los avisos (un tope excedido, un mes en negativo): #C81E4A en la clara y #FF8AA6 en la oscura. Ya no hay degradado azul y violeta.
+La app tiene una sola paleta, con versión clara y oscura. Clara: fondo #FFFFFF, tarjeta #F4F4F6, texto #0B0B0F, texto secundario #66666E. Oscura: fondo #000000, tarjeta #141416, texto #F5F5F7, texto secundario #9A9AA2. El acento es lima (#E8F94B). Lo que entra es verde: relleno #34C759 y, en los importes escritos, #17773F en la clara y #4ADE80 en la oscura. Lo que sale se escribe en el color del texto. El rosa queda para los avisos (un tope excedido, un mes en negativo): #C81E4A en la clara y #FF8AA6 en la oscura. Ya no hay degradado azul y violeta.
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara

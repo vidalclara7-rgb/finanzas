@@ -16,8 +16,8 @@ t.test("ver el mes anterior en Inicio", async () => {
   assert.equal(await etiqueta(page), "noviembre 2026");
   await anterior(page);
   assert.equal(await etiqueta(page), "octubre 2026");
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 40 €");
-  assert.deepEqual(await page.$$eval("#torta circle", (c) => c.map((x) => x.dataset.cat)), ["Supermercado"]);
+  assert.equal(await A.texto(page, "#miniGas"), "40 €");
+  assert.deepEqual(await page.$$eval("#mosaico .bloque", (c) => c.map((x) => x.dataset.cat)), ["Supermercado"]);
 });
 
 // Escenario: no pasa del mes en curso
@@ -106,6 +106,6 @@ t.test("mes sin datos", async () => {
   await anterior(page);
   await anterior(page);
   assert.equal(await etiqueta(page), "septiembre 2026");
-  assert.equal(await A.texto(page, "#cats"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
-  assert.equal(await A.texto(page, "#resultado"), "0 €");
+  assert.equal(await A.texto(page, "#mosaicoVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
+  assert.equal(await A.texto(page, "#resTit"), "Sin resultado este mes");
 });

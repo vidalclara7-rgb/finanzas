@@ -60,7 +60,7 @@ t.test("crear una categoría de gasto", async () => {
   assert.equal(n[n.length - 2], "Mascotas");
   assert.equal(n[n.length - 1], "Otros");
   assert.equal((await guardadas(page)).gasto.find((c) => c.nombre === "Mascotas").color, 5);
-  const punto = await page.$eval('#ccGasto [data-n="Mascotas"] .dot', (d) => d.getAttribute("style"));
+  const punto = await page.$eval('#ccGasto [data-n="Mascotas"] .tile', (d) => d.getAttribute("style"));
   assert.match(punto, /--cat5/);
 });
 
@@ -112,8 +112,8 @@ t.test("renombrar con movimientos", async () => {
   await A.ir(page, "movs");
   assert.equal((await A.guardados(page)).movs[0].cat, "Salidas");
   await A.ir(page, "inicio");
-  assert.equal(await page.locator('#torta circle[data-cat="Salidas"]').count(), 1);
-  await page.click('#cats [data-cat="Salidas"]');
+  assert.equal(await page.locator('#mosaico [data-cat="Salidas"]').count(), 1);
+  await page.click('#mosaico [data-cat="Salidas"]');
   assert.equal(await A.texto(page, "#catTitulo"), "Salidas");
   assert.equal(await A.texto(page, "#catTotal"), "20 €");
 });
@@ -141,8 +141,10 @@ t.test("cambiar el color", async () => {
   await A.aviso(page, "Categoría guardada");
   await page.click("#ccCerrar");
   await A.ir(page, "inicio");
-  assert.match(await page.$eval('#torta circle[data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
-  assert.match(await page.$eval('#cats [data-cat="Ocio"] .dot', (d) => d.getAttribute("style")), /--cat9/);
+  assert.match(await page.$eval('#mosaico [data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
+  await page.click("#gastoHdr");
+  assert.match(await page.$eval('#pila [data-cat="Ocio"]', (d) => d.getAttribute("style")), /--cat9/);
+  await page.click("#pilaCerrar");
   await A.ir(page, "movs");
   assert.match(await page.$eval('[data-mov="1"] .ico', (m) => m.getAttribute("style")), /--cat9/);
 });
@@ -277,8 +279,8 @@ t.test("cancelar la creación", async () => {
 // Escenario: datos de la versión anterior
 t.test("datos de la versión anterior (categorías)", async () => {
   const { page } = await abrir({ datos: base({ movs: [mov("2026-10-05", 20, "Ocio", "", 1), mov("2026-10-06", 64.3, "Supermercado", "", 2)] }) });
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 84,3 €");
-  assert.equal(await page.locator("#torta circle").count(), 2);
+  assert.equal(await A.texto(page, "#miniGas"), "84,3 €");
+  assert.equal(await page.locator("#mosaico .bloque").count(), 2);
   await enCategorias(page);
   assert.deepEqual(await nombres(page, "#ccGasto"), GASTO_BASE);
 });

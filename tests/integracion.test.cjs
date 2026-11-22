@@ -27,7 +27,7 @@ t.test("el texto de la persona en inversiones y documentos no se interpreta como
   });
   const { page, errores } = await abrir({ datos });
   await A.ir(page, "cuentas");
-  await page.click("[data-ver-rend]");
+  await A.verRend(page);
   assert.equal(await page.locator("#inyectado, #en-cuenta").count(), 0);
   assert.match(await A.texto(page, "#invCuerpo"), /<b id="inyectado">x<\/b>/);
   await page.click('[data-activo="10"]');
@@ -151,7 +151,7 @@ t.test("tocar la tarjeta en modo seleccionar marca el gasto y no abre la hoja", 
 t.test("editar una operación de inversión", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BROKER], activos: [FONDO], ops: [compra(1, 10, 50)] }) });
   await A.ir(page, "cuentas");
-  await page.click("[data-ver-rend]");
+  await A.verRend(page);
   await page.click('[data-activo="10"]');
   await page.click('[data-op="1"]');
   await A.enfocado(page, "oCant");
@@ -170,7 +170,7 @@ t.test("editar una compra para que deje de cubrir una venta se rechaza", async (
   const ops = [compra(1, 10, 50, "2026-10-01"), { id: 2, activo: 10, tipo: "venta", cantidad: 8, precio: 60, fecha: "2026-10-05" }];
   const { page } = await abrir({ datos: A.v2({ cuentas: [BROKER], activos: [FONDO], ops }) });
   await A.ir(page, "cuentas");
-  await page.click("[data-ver-rend]");
+  await A.verRend(page);
   await page.click('[data-activo="10"]');
   await page.click('[data-op="1"]');
   await A.enfocado(page, "oCant");
@@ -183,7 +183,7 @@ t.test("editar una compra para que deje de cubrir una venta se rechaza", async (
 t.test("cantidades con decimales", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BROKER], activos: [FONDO] }) });
   await A.ir(page, "cuentas");
-  await page.click("[data-ver-rend]");
+  await A.verRend(page);
   await page.click("[data-nueva-op]");
   await A.enfocado(page, "oCant");
   await page.fill("#oCant", "0,5");
@@ -216,7 +216,7 @@ t.test("conciliar una inversión con posiciones", async () => {
   await A.aviso(page, "Cuenta conciliada");
   assert.equal(await A.texto(page, '[data-conc="3"] .chip'), "Conciliada");
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="3"] .v .num'), "1080 €");
+  assert.equal(await A.saldoCta(page, 3), "1080 €");
   assert.deepEqual(errores, []);
 });
 
@@ -236,7 +236,7 @@ t.test("el patrimonio neto suma las inversiones con posiciones y se anota en el 
 t.test("las posiciones sobreviven a recargar la app", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BROKER], activos: [], ops: [] }) });
   await A.ir(page, "cuentas");
-  await page.click("[data-ver-rend]");
+  await A.verRend(page);
   await page.click("[data-nuevo-activo]");
   await A.enfocado(page, "aNombre");
   await page.fill("#aNombre", "Fondo A");
@@ -250,8 +250,8 @@ t.test("las posiciones sobreviven a recargar la app", async () => {
   await A.aviso(page, "Operación guardada");
   await page.reload();
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="3"] .v .num'), "1000 €");
-  await page.click("[data-ver-rend]");
+  assert.equal(await A.saldoCta(page, 3), "1000 €");
+  await A.verRend(page);
   assert.match(sinEspacios(await A.texto(page, '[data-activo]')), /Fondo A.*10 unidades/);
 });
 
@@ -328,7 +328,7 @@ for (const esquema of ["light", "dark"]) {
     await page.click("#cerrar");
     await A.ir(page, "cuentas"); await sinDesborde("cuentas");
     await page.click('[data-cta="2"]'); await sinDesborde("hoja de tarjeta"); await page.click("#cCerrar");
-    await page.click("[data-ver-rend]"); await sinDesborde("inversiones");
+    await A.verRend(page); await sinDesborde("inversiones");
     await page.click('[data-activo="11"]'); await sinDesborde("activo"); await page.click("#aCerrar");
     await page.click("[data-nueva-op]"); await sinDesborde("operación");
     assert.deepEqual(errores, []);

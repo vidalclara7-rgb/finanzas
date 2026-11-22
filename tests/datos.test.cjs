@@ -32,7 +32,7 @@ t.test("se conserva al volver a abrir", async () => {
   await A.ir(otra, "movs");
   assert.match(await A.texto(otra, "#movs"), /prueba/);
   await A.ir(otra, "cuentas");
-  assert.match(await A.texto(otra, "#grupos"), /Banco B/);
+  assert.match(await A.texto(otra, "#carCtas"), /Banco B/);
 });
 
 // Escenario: nada sale del teléfono
@@ -58,7 +58,7 @@ t.test("restaurar una copia", async () => {
   await A.ir(page, "movs");
   assert.equal(await page.locator("#movs .mov").count(), 2);
   await A.ir(page, "cuentas");
-  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+  assert.match(await A.texto(page, "#carCtas"), /Banco A/);
 });
 
 // Escenario: copia inválida
@@ -78,7 +78,7 @@ t.test("datos de la primera versión", async () => {
   const fondo = d.cuentas.find((c) => c.fondo);
   assert.equal(fondo.nombre, "Fondo de emergencia");
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, `[data-cta="${fondo.id}"] .v .num`), "150 €");
+  assert.equal(await A.saldoCta(page, fondo.id), "150 €");
   await A.ir(page, "movs");
   const movs = await page.locator("#movs .mov").allInnerTexts();
   assert.equal(movs.length, 4);
@@ -123,7 +123,7 @@ t.test("datos de la versión con cuentas", async () => {
   assert.equal(c.saldoInicial, 1200);
   assert.equal(c.desde, "2026-10-10");
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="5"] .v .num'), "1200 €");
+  assert.equal(await A.saldoCta(page, 5), "1200 €");
 });
 
 // Escenario: copia de seguridad de la primera versión
@@ -332,7 +332,7 @@ t.test("gastos de tarjeta guardados antes de las cuotas", async () => {
   assert.equal(await A.texto(page, "#totGas"), "100 €");
   assert.equal(await page.locator('[data-ui="chip-cuota"]').count(), 0);
   await A.ir(page, "cuentas");
-  assert.equal(await A.texto(page, '[data-cta="2"] .v .num'), "-100 €");
+  assert.equal(await A.saldoCta(page, 2), "-100 €");
 });
 
 // Escenario: la copia conserva las cuotas
@@ -443,7 +443,7 @@ t.test("la copia conserva las posiciones", async () => {
   await restaurar(otra, copia);
   await A.aviso(otra, "Copia restaurada");
   await A.ir(otra, "cuentas");
-  await otra.click("[data-ver-rend]");
+  await A.verRend(otra);
   assert.match((await A.texto(otra, '[data-activo="10"]')).replace(/\s+/g, " "), /Fondo A.*10 unidades/);
 });
 
@@ -457,7 +457,7 @@ t.test("copia con una operación huérfana", async () => {
   assert.equal(g.ops.length, 0);
   assert.equal(g.cuentas.length, 2);
   await A.ir(page, "cuentas");
-  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+  assert.match(await A.texto(page, "#carCtas"), /Banco A/);
   assert.deepEqual(errores, []);
 });
 
@@ -507,7 +507,7 @@ t.test("restaurar desde un archivo", async () => {
   await A.ir(page, "movs");
   assert.equal(await page.locator("#movs .mov").count(), 2);
   await A.ir(page, "cuentas");
-  assert.match(await A.texto(page, "#grupos"), /Banco A/);
+  assert.match(await A.texto(page, "#carCtas"), /Banco A/);
 });
 
 // Escenario: archivo inválido

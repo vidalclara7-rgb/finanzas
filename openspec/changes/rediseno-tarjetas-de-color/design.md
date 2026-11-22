@@ -36,7 +36,7 @@ Fichas de la paleta (variables en `:root` y `:root[data-apariencia="oscura"]`):
 | `--acc` acento | #E8F94B (relleno; no se usa como texto sobre blanco) | #E8F94B |
 | `--dest` / `--dest-t` destacada y botón | #0B0B0F / #FFFFFF | #E8F94B / #0B0B0F |
 | `--logo-punto` | #4C5BD8 | #E8F94B |
-| `--verde` relleno / `--verde-t` texto | #34C759 / #1F8A4C | #34C759 / #4ADE80 |
+| `--verde` relleno / `--verde-t` texto | #34C759 / #17773F | #34C759 / #4ADE80 |
 | `--aviso-t` rosa de aviso | #C81E4A | #FF8AA6 |
 | barra flotante | #1C1C1E con íconos #8E8E93; activa blanca con ícono #0B0B0F | igual; activa #E8F94B con ícono #0B0B0F |
 

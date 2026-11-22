@@ -6,7 +6,7 @@ const A = require("./ayuda.cjs");
 const abrir = A.preparar(t);
 const BANCO = A.cta(1, "Banco A", 1000);
 const TARJETA = A.cta(2, "Tarjeta Y", 350, { tipo: "tarjeta" });
-const saldo = (page, id) => A.texto(page, `[data-cta="${id}"] .v .num`);
+const saldo = (page, id) => A.saldoCta(page, id);
 const enCuentas = async (page) => { await A.ir(page, "cuentas"); };
 
 // Escenario: gasto desde una cuenta propia
@@ -207,14 +207,15 @@ t.test("categorías ordenadas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [
     A.gasto(1, "2026-10-02", 18, 1, "Comida fuera"), A.gasto(2, "2026-10-03", 64.3, 1, "Supermercado"),
     A.gasto(3, "2026-10-04", 42, 1, "Trabajo (reembolsable)"), A.ingreso(4, "2026-10-01", 1500, 1)] }) });
-  const cats = await page.locator("#cats .item > span:first-child").allInnerTexts();
+  await page.click("#gastoHdr");
+  const cats = await page.$$eval("#pila .sc", (s) => s.map((x) => x.dataset.cat));
   assert.deepEqual(cats, ["Supermercado", "Trabajo (reembolsable)", "Comida fuera"]);
 });
 
 // Escenario: sin gastos por categoría
 t.test("sin gastos por categoría", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
-  assert.equal(await A.texto(page, "#cats"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
+  assert.equal(await A.texto(page, "#mosaicoVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
 });
 
 // Escenario: resultado con ingresos y gastos
@@ -222,16 +223,16 @@ t.test("resultado con ingresos y gastos", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [
     A.ingreso(1, "2026-10-01", 1500, 1), A.ingreso(2, "2026-10-09", 200, 1, "Venta o trabajo extra"),
     A.gasto(3, "2026-10-03", 64.3, 1), A.gasto(4, "2026-10-05", 18, 1, "Comida fuera")] }) });
-  assert.equal(await A.texto(page, "#ingMes"), "Ingresos 1700 €");
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 82,3 €");
-  assert.equal(await A.texto(page, "#resultado"), "1617,7 €");
+  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1617,7 €");
+  assert.equal(await A.texto(page, "#resEntro"), "de 1700 € que entraron");
+  assert.equal(await A.texto(page, "#miniGas"), "82,3 €");
 });
 
 // Escenario: mes en negativo
 t.test("mes en negativo", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 100, 1), A.gasto(2, "2026-10-02", 150, 1)] }) });
-  assert.equal(await A.texto(page, "#resultado"), "-50 €");
-  assert.match(await page.getAttribute("#resultado", "class"), /\bneg\b/);
+  assert.equal(await A.texto(page, "#resTit"), "Te faltaron 50 €");
+  assert.match(await page.getAttribute("#resTit", "class"), /\bneg\b/);
 });
 
 const CASA = "Casa/Splitwise";
@@ -361,9 +362,8 @@ t.test("gastos sin nota", async () => {
 t.test("reembolsos fuera del resultado", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1000, 1), A.ingreso(2, "2026-10-10", 50, 1, "Reembolso"),
     A.gasto(3, "2026-10-03", 200, 1), A.gasto(4, "2026-10-04", 50, 1, "Trabajo (reembolsable)")] }) });
-  assert.equal(await A.texto(page, "#ingMes"), "Ingresos 1000 €");
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 200 €");
-  assert.equal(await A.texto(page, "#resultado"), "800 €");
+  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 800 €");
+  assert.equal(await A.texto(page, "#resEntro"), "de 1000 € que entraron");
   await A.ir(page, "movs");
   assert.equal(await A.texto(page, "#totIng"), "1050 €");
   assert.equal(await A.texto(page, "#totGas"), "250 €");
@@ -500,7 +500,7 @@ t.test("compra fraccionada", async () => {
   assert.equal(await A.texto(page, "#totGas"), "240 €");
   assert.match(await A.texto(page, '[data-mov="' + (await A.guardados(page)).movs[0].id + '"]'), /Cuota 1 de 3/);
   await A.ir(page, "inicio");
-  assert.match(await A.texto(page, "#cats"), /Compras\s*240 €/);
+  assert.match(await A.texto(page, '#mosaico [data-cat="Compras"]'), /Compras\s*240 €/);
 });
 
 // Escenario: cuotas en los meses siguientes
@@ -644,20 +644,6 @@ t.test("sin gastos con documento", async () => {
 const altos = (page) => page.$$eval("#movs .mov", (e) => e.map((x) => { const r = x.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, alto: r.height }; }));
 const buscar = async (page, q) => { if (!(await page.isVisible("#busca"))) await page.click("#lupaBtn"); await page.fill("#busca", q); };
 
-// Escenario: cada movimiento en una fila con círculo
-t.test("cada movimiento en una fila con círculo", async () => {
-  const movs = Array.from({ length: 10 }, (_, i) => A.gasto(i + 1, "2026-10-" + String(i + 1).padStart(2, "0"), 10 + i, 1, "Supermercado", i === 3 ? "Compra semanal" : ""));
-  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs }) });
-  await A.ir(page, "movs");
-  const h = await altos(page);
-  assert.equal(h.length, 10);
-  h.forEach((x, i) => { assert.ok(x.alto <= 72, `alto ${x.alto}`); if (i) assert.ok(x.top >= h[i - 1].bottom - 0.5, "no se solapa"); });
-  assert.equal(await page.locator("#movs .mov .ico").count(), 10);
-  const circulo = await page.$eval('[data-mov="4"] .ico', (e) => { const r = e.getBoundingClientRect(), m = e.closest(".mov").getBoundingClientRect(); return [Math.round(r.width) === Math.round(r.height), r.left < m.left + 24, getComputedStyle(e).borderTopLeftRadius]; });
-  assert.deepEqual(circulo.slice(0, 2), [true, true]);
-  assert.equal(await A.texto(page, '[data-mov="4"] .desc'), "Compra semanal");
-  assert.equal(await A.texto(page, '[data-mov="4"] .det'), "Supermercado");
-});
 
 // Escenario: sin nota se ve la categoría
 t.test("sin nota se ve la categoría", async () => {
@@ -680,18 +666,6 @@ t.test("marcas bajo el concepto", async () => {
   assert.ok(yMarcas >= yDesc - 0.5, "las marcas van debajo del concepto");
 });
 
-// Escenario: importes verdes y rosas
-t.test("importes verdes y rosas", async () => {
-  const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 80, 1)] }) });
-  await A.ir(page, "movs");
-  assert.match(await A.texto(page, '[data-mov="1"] .num'), /^\+1500 €$/);
-  assert.match(await A.texto(page, '[data-mov="2"] .num'), /^−80 €$/);
-  const [verde, rosa] = await Promise.all([page.$eval('[data-mov="1"] .num', (e) => getComputedStyle(e).color), page.$eval('[data-mov="2"] .num', (e) => getComputedStyle(e).color)]);
-  assert.notEqual(verde, rosa);
-  const canales = (c) => c.match(/[\d.]+/g).map(Number);
-  assert.ok(canales(verde)[1] > canales(verde)[0] && canales(verde)[1] > canales(verde)[2], `verde ${verde}`);
-  assert.ok(canales(rosa)[0] > canales(rosa)[1], `rosa ${rosa}`);
-});
 
 // Escenario: una descripción larga no desborda
 t.test("una descripción larga no desborda", async () => {

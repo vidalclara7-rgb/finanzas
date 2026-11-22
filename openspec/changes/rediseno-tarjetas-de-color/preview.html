@@ -10,8 +10,8 @@
   /* Paleta: fondo blanco, tarjetas gris claro, texto casi negro, acento lima. Sin sombras ni degradado azul */
   --bg:#FFFFFF; --card:#F4F4F6; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
   /* Lo que entra es verde; lo que sale, el color del texto; el rosa queda para los avisos */
-  --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#1F8A4C; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
-  --ingreso:#1F8A4C; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
+  --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#17773F; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
+  --ingreso:#17773F; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C81E4A; --bad-soft:#FBE1E6;
   /* Destacados (patrimonio, botón principal, barra resaltada): negro en la clara, lima en la oscura */
   --acc:#E8F94B; --dest:#0B0B0F; --dest-t:#FFFFFF; --logo-punto:#4C5BD8; --chip:rgba(0,0,0,.07);
@@ -168,13 +168,6 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
 .ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-/* Torta (dona) de categorías */
-.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
-.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
-.torta circle{fill:none;stroke-width:26}
-.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.torta .centro span{font-size:13px;color:var(--muted)}
 /* Barras por semana: rayadas, la actual en negro */
 .barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
 .barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
@@ -262,9 +255,6 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .mini{padding:16px 18px;border-radius:22px;gap:4px}
 .mini .t{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .mini .big{font-size:26px} .mini .big.g{color:var(--ink)} .mini .big.i{color:var(--verde-t)}
-.marca{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.22)}
-.marca::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,#FFFFFF)}
-html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="negativa"] .marca{--c:var(--rosa)}
 /* Ingresos contra gastos: dos curvas con un globo en el mes tocado */
 .curvas{position:relative;height:150px;margin-top:6px}
 .curvas svg{width:100%;height:100%;overflow:visible}
@@ -310,6 +300,7 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
 /* Mosaico: un bloque por categoría, de área proporcional a lo gastado */
 .mosaico{display:flex;gap:4px;height:230px}
 .mosaico .colm{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tm{display:flex;gap:4px;min-width:0;min-height:0}
 .mosaico .filam{display:flex;gap:4px;min-height:0}
 .bloque{border:0;font:inherit;text-align:left;border-radius:18px;padding:10px 11px;display:flex;flex-direction:column;justify-content:space-between;background:var(--g);color:var(--t);min-width:0;min-height:0;overflow:hidden;cursor:pointer}
 .bloque svg{width:18px;height:18px;flex:none}

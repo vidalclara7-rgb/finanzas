@@ -16,8 +16,8 @@
   /* Paleta: fondo blanco, tarjetas gris claro, texto casi negro, acento lima. Sin sombras ni degradado azul */
   --bg:#FFFFFF; --card:#F4F4F6; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
   /* Lo que entra es verde; lo que sale, el color del texto; el rosa queda para los avisos */
-  --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#1F8A4C; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
-  --ingreso:#1F8A4C; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
+  --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#17773F; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
+  --ingreso:#17773F; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
   --warn:#B45309; --warn-soft:#FFE9D2; --bad:#C81E4A; --bad-soft:#FBE1E6;
   /* Destacados (patrimonio, botón principal, barra resaltada): negro en la clara, lima en la oscura */
   --acc:#E8F94B; --dest:#0B0B0F; --dest-t:#FFFFFF; --logo-punto:#4C5BD8; --chip:rgba(0,0,0,.07);
@@ -174,13 +174,6 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
 .ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-/* Torta (dona) de categorías */
-.torta{position:relative;width:180px;height:180px;margin:4px auto 6px}
-.torta svg{width:100%;height:100%;transform:rotate(-90deg)}
-.torta circle{fill:none;stroke-width:26}
-.torta .centro{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.torta .centro b{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.torta .centro span{font-size:13px;color:var(--muted)}
 /* Barras por semana: rayadas, la actual en negro */
 .barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
 .barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
@@ -268,9 +261,6 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .mini{padding:16px 18px;border-radius:22px;gap:4px}
 .mini .t{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .mini .big{font-size:26px} .mini .big.g{color:var(--ink)} .mini .big.i{color:var(--verde-t)}
-.marca{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.22)}
-.marca::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,#FFFFFF)}
-html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="negativa"] .marca{--c:var(--rosa)}
 /* Ingresos contra gastos: dos curvas con un globo en el mes tocado */
 .curvas{position:relative;height:150px;margin-top:6px}
 .curvas svg{width:100%;height:100%;overflow:visible}
@@ -316,6 +306,7 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
 /* Mosaico: un bloque por categoría, de área proporcional a lo gastado */
 .mosaico{display:flex;gap:4px;height:230px}
 .mosaico .colm{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tm{display:flex;gap:4px;min-width:0;min-height:0}
 .mosaico .filam{display:flex;gap:4px;min-height:0}
 .bloque{border:0;font:inherit;text-align:left;border-radius:18px;padding:10px 11px;display:flex;flex-direction:column;justify-content:space-between;background:var(--g);color:var(--t);min-width:0;min-height:0;overflow:hidden;cursor:pointer}
 .bloque svg{width:18px;height:18px;flex:none}
@@ -380,20 +371,19 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
     <button type="button" class="card color" id="objCard" data-ui="tarjeta-transferir" style="--c:var(--k3);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Toca transferir</span><span class="sub">Ver objetivos ›</span></div><div class="list" id="objCardLista"></div></button>
     <div class="card toca" id="fvCard" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
     <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--k5)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
-    <div class="card destacada" data-ui="resultado-mes">
+    <div class="card" data-ui="resultado-mes">
+      <span class="res-tit" id="resTit" data-ui="titulo-resultado"></span>
+      <span class="sub" id="resEntro"></span>
       <span class="sub" id="formaTxt" data-ui="porcentaje-ingresos"></span>
-      <span class="sub">Resultado del mes</span>
-      <span class="monto" id="resultado"></span>
-      <div class="row sub"><span id="ingMes"></span><span id="gasMes"></span></div>
-      <span class="marca" id="tendMarca" data-ui="marca-tendencia"></span>
+      <div id="destino" data-ui="destino-sobrante" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
-    <div class="grid2" data-ui="gastado-ingresado"><div class="card mini"><span class="t"><i class="dot" style="--c:var(--rosa)"></i>Gastado</span><span class="big g" id="miniGas"></span></div><div class="card mini"><span class="t"><i class="dot" style="--c:var(--verde)"></i>Ingresado</span><span class="big i" id="miniIng"></span></div></div>
+    <div class="grid2" data-ui="gastado-ingresado"><div class="card mini"><span class="t"><i class="dot" style="--c:var(--ink)"></i>Gastado</span><span class="big g" id="miniGas"></span></div><div class="card mini"><span class="t"><i class="dot" style="--c:var(--verde)"></i>Ingresado</span><span class="big i" id="miniIng"></span></div></div>
     <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--k3)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
     <button type="button" class="card color" id="cuotasCard" data-ui="tarjeta-cuotas" style="--c:var(--k4);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
-    <div class="card" data-ui="gasto-categorias"><span class="lbl">Gasto del mes</span><span class="sub" id="catsPista">Tocá una categoría para ver en qué se fue.</span><div class="torta" id="torta" data-ui="torta-categorias" hidden></div><div class="list" id="cats" data-ui="categorias-que-se-abren"></div></div>
+    <div class="card" data-ui="gasto-categorias"><button type="button" class="row toca" id="gastoHdr" data-ui="abrir-pila" style="border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;width:100%"><span class="lbl">Gasto del mes</span><span class="mas num" id="gastoTot"></span></button><div class="mosaico" id="mosaico" data-ui="mosaico-categorias"></div><div class="empty" id="mosaicoVacio">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
     <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--k5)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
-    <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--k1)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--verde)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--rosa)"></i>Gastos</span></span></div><div class="curvas" id="meses"></div><div class="ejes" id="mesesEjes"></div></div>
+    <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--k1)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--verde)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="curvas" id="meses"></div><div class="ejes" id="mesesEjes"></div></div>
     <div class="card color" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--k1)" hidden>
       <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
       <span class="big" id="netoIni">–</span>
@@ -408,7 +398,7 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
     <span class="sub" id="buscaN" data-ui="cantidad-resultados" hidden></span>
     <input type="file" id="pdfIn" multiple hidden>
     <div id="filtroReembBox" data-ui="filtro-reembolsos"><span class="sub">Reembolsos</span><div class="seg" id="segReemb" style="margin-top:8px"></div></div>
-    <div class="grid2" id="totMesRow" data-ui="totales-mes"><div class="card mini"><span class="t"><i class="dot" style="--c:var(--rosa)"></i>Gastado</span><span class="big g" id="totGas"></span></div><div class="card mini"><span class="t"><i class="dot" style="--c:var(--verde)"></i>Ingresado</span><span class="big i" id="totIng"></span></div></div>
+    <div class="grid2" id="totMesRow" data-ui="totales-mes"><div class="card mini"><span class="t"><i class="dot" style="--c:var(--ink)"></i>Gastado</span><span class="big g" id="totGas"></span></div><div class="card mini"><span class="t"><i class="dot" style="--c:var(--verde)"></i>Ingresado</span><span class="big i" id="totIng"></span></div></div>
     <div class="row" id="accMov" data-ui="acciones-lista"><button type="button" class="btn sec" id="selBtn" style="padding:8px 14px">Seleccionar</button><div class="seg" id="segDoc"></div></div>
     <div class="row" id="selBar" data-pantalla="movs-seleccion" data-ui="barra-seleccion" hidden><span class="lbl" id="selN"></span><div class="row" style="gap:8px"><button type="button" class="btn sec" id="selCancel" style="padding:8px 14px">Cancelar</button><button type="button" class="btn" id="selAdj" style="padding:8px 14px">Adjuntar documento</button></div></div>
     <input type="file" id="docIn" hidden>
@@ -436,7 +426,12 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
       <span class="sub" id="cuotasSub"></span>
     </div>
     <div class="card" id="patCard" data-ui="grafico-patrimonio" hidden><div class="row"><span class="lbl">Patrimonio por mes</span><span class="sub">últimos cinco</span></div><div class="pat" id="pat"></div></div>
-    <div id="grupos" data-ui="grupos-color" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="carBox" hidden style="display:flex;flex-direction:column;gap:12px">
+      <div class="carcta" id="carCtas" data-ui="carrusel-cuentas"></div>
+      <div class="dots" id="carDots"></div>
+      <div class="saldo-cta" data-ui="saldo-cuenta"><span class="sub">Saldo actual</span><span class="monto" id="carSaldo"></span><span class="chip" id="carConc"></span><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap"><button type="button" class="btn sec" id="carMovs" data-ui="ver-movimientos-cuenta">Ver movimientos</button><button type="button" class="btn sec" id="carRend" data-ver-rend="1" data-ui="ver-rendimiento" hidden>Ver rendimiento</button></div></div>
+    </div>
+    <div class="card" id="tiposCard" data-ui="totales-tipo" hidden><span class="lbl">Por tipo</span><div class="list" id="tipos"></div></div>
     <button class="btn" id="addCuenta">Agregar cuenta</button>
   </section>
 
@@ -621,6 +616,14 @@ html[data-tendencia="positiva"] .marca{--c:var(--verde)} html[data-tendencia="ne
   <div class="card" id="fvHoja" style="display:flex;flex-direction:column;gap:10px"></div>
 </div>
 <!-- Una categoría por dentro: total, comparación, por cuenta y sus gastos -->
+<!-- Gasto por categoría: todas las categorías del mes en tarjetas de color apiladas -->
+<div id="sheetPila" class="sheet" data-pantalla="gasto-categorias" data-ui="hoja-gasto-categorias" hidden>
+  <div class="row"><h2>Gasto por categoría</h2><button type="button" class="btn sec" id="pilaCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="mesnav"><button type="button" id="pilaAnt" aria-label="Mes anterior">‹</button><span id="pilaMes"></span><button type="button" id="pilaSig" aria-label="Mes siguiente">›</button></div>
+  <span class="sub" id="pilaSub"></span>
+  <div class="apilada" id="pila" data-ui="pila-categorias"></div>
+  <div class="empty" id="pilaVacio" hidden>Todavía no anotaste gastos este mes. Tocá + para empezar.</div>
+</div>
 <div id="sheetCat" class="sheet" data-pantalla="hoja-categoria" data-ui="hoja-categoria" hidden>
   <div class="row"><h2 id="catTitulo"></h2><button type="button" class="btn sec" id="catCerrar" style="padding:8px 12px">Cerrar</button></div>
   <div class="mesnav" data-ui="flechas-mes"><button type="button" id="catAnt" aria-label="Mes anterior">‹</button><span id="catMes"></span><button type="button" id="catSig" aria-label="Mes siguiente">›</button></div>
@@ -995,11 +998,6 @@ function anillo(el,usado,tope){el.hidden=!(tope>0);if(el.hidden)return;
   el.innerHTML=`<svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:${v.toFixed(1)} ${C.toFixed(1)}"/></svg><b>${Math.round(p)} %</b>`;}
 // Color de cada categoría por su nombre: Regalos llegó después y tiene el 13, sin mover los demás
 const colorCat=c=>`var(--cat${(catDe(c)||{}).color||12})`,gradCat=c=>`var(--cat${(catDe(c)||{}).color||12}g)`,textoCat=c=>`var(--cat${(catDe(c)||{}).color||12}t)`;
-// Torta (dona) de gastos por categoría, con el total al centro
-function torta(el,cs,mes){el.hidden=!cs.length;if(el.hidden)return;
-  const tot=cs.reduce((a,[,v])=>a+v,0),C=2*Math.PI*77;let off=0;
-  const segs=cs.map(([c,v])=>{const l=v/tot*C,hueco=cs.length>1?2:0;const h=`<circle cx="90" cy="90" r="77" data-cat="${esc(c)}" data-v="${v}" style="stroke:${colorCat(c)};stroke-dasharray:${Math.max(l-hueco,0).toFixed(1)} ${C.toFixed(1)};stroke-dashoffset:${(-off).toFixed(1)}"/>`;off+=l;return h;}).join("");
-  el.innerHTML=`<svg viewBox="0 0 180 180">${segs}</svg><div class="centro"><b>${eur(tot)}</b><span>gastado en ${MESES[+mes.slice(5)-1]}</span></div>`;}
 // Barras de gasto por semana del mes: 1-7, 8-14, 15-21, 22-28 y 29 a fin de mes
 function barras(card,el,gs,id){card.hidden=!gs.length;if(card.hidden)return;
   const [y,m]=id.split("-").map(Number),dias=new Date(y,m,0).getDate(),hoyD=id===mesId()?+hoy().slice(8):0;
@@ -1051,11 +1049,60 @@ function abrirFV(){if(!fvDatos)return;const {tot,grupos}=fvDatos;$("fvMes").text
   mostrar("sheetFV");}
 $("fvCard").onclick=abrirFV;
 $("fvHoja").addEventListener("click",e=>{const f=e.target.closest("[data-rank]");if(f)abrirCat(f.dataset.rank,mesV());});
-document.querySelector('[data-ui="gasto-categorias"]').addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(x)abrirCat(x.dataset.cat,mesV());});
+document.querySelector('[data-ui="gasto-categorias"]').addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(x){abrirCat(x.dataset.cat,mesV());return;}if(e.target.closest("[data-resto],#gastoHdr"))abrirPila(mesV());});
+// Resultado del mes: cuánto sobró y adónde fue, según las transferencias del mes a inversiones y a ahorro
+function destinoSobrante(ms){const esInv=c=>!!c&&c.tipo==="inversion",ids=new Set(S.objetivos.map(o=>o.cuenta).filter(x=>x!=null));S.cuentas.forEach(c=>{if(c.fondo)ids.add(c.id);});
+  const esAho=c=>!!c&&!esInv(c)&&ids.has(c.id),inv={},aho={},suma=(o,k,v)=>o[k]=r2((o[k]||0)+v);
+  ms.filter(m=>m.tipo==="transferencia").forEach(t=>{const A=cuentaDe(t.cuenta),B=cuentaDe(t.destino);if(!A||!B)return;
+    if(!esInv(A)&&esInv(B))suma(inv,B.id,t.importe);else if(esInv(A)&&!esInv(B))suma(inv,A.id,-t.importe);
+    if(!esAho(A)&&esAho(B))suma(aho,B.id,t.importe);else if(esAho(A)&&!esAho(B))suma(aho,A.id,-t.importe);});
+  const tot=o=>r2(Object.values(o).reduce((a,v)=>a+v,0)),det=o=>Object.entries(o).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const nomAho=id=>{const os=S.objetivos.filter(o=>o.cuenta===+id).map(o=>o.nombre);if(os.length)return os.join(", ");const c=cuentaDe(+id);return c&&c.fondo?"Fondo de emergencia":nombreDe(+id);};
+  return {inv:tot(inv),invDet:det(inv).map(([id,v])=>`${nombreDe(+id)} ${eur(v)}`),aho:tot(aho),ahoDet:det(aho).map(([id])=>nomAho(id))};}
+let moverImp=0;
+function pintarResultado(ms,rm,ing){const t=$("resTit");t.textContent=rm>0?`Te sobraron ${eur(rm)}`:rm<0?`Te faltaron ${eur(-rm)}`:"Sin resultado este mes";t.classList.toggle("neg",rm<0);
+  $("resEntro").hidden=!(ing>0);$("resEntro").textContent=`de ${eur(ing)} que entraron`;
+  const d=destinoSobrante(ms),inv=Math.max(0,d.inv),aho=Math.max(0,d.aho),sin=r2(rm-inv-aho),filas=[];
+  const fila=(tile,desc,det,der)=>`<div class="mov">${tile}<div class="cuerpo"><span class="desc">${desc}</span>${det?`<div class="det"><span>${det}</span></div>`:""}</div>${der}</div>`;
+  if(inv>0)filas.push(fila(`<span class="ico" style="--cg:var(--cat1g);--ct:var(--cat1t)">${ico("sube")}</span>`,"Invertiste",esc(d.invDet.join(" · ")),`<span class="num" data-ui="invertiste">${eur(inv)}</span>`));
+  if(aho>0)filas.push(fila(`<span class="ico" style="--cg:var(--cat4g);--ct:var(--cat4t)">${ico("corazon")}</span>`,"Ahorraste",esc(d.ahoDet.join(" · ")),`<span class="num" data-ui="ahorraste">${eur(aho)}</span>`));
+  let nota="";moverImp=0;
+  if(rm>0&&sin>0){moverImp=sin;filas.push(fila(`<span class="ico">${ico("tarjeta")}</span>`,"Sin mover",eur(sin),`<button type="button" class="boton" id="moverBtn" data-ui="boton-mover">Mover</button>`));}
+  else if(rm>0&&sin<0)nota=`<span class="sub" data-ui="movio-de-mas">Moviste ${eur(-sin)} más de lo que sobró este mes</span>`;
+  const barra=rm>0&&filas.length?`<div class="partida fina">${inv>0?`<i style="flex:${inv};--c:var(--cat1)"></i>`:""}${aho>0?`<i style="flex:${aho};--c:var(--cat4)"></i>`:""}${sin>0?`<i style="flex:${sin};--c:var(--barra)"></i>`:""}</div>`:"";
+  $("destino").hidden=!filas.length&&!nota;$("destino").innerHTML=barra+(filas.length?`<div class="grp">${filas.join("")}</div>`:"")+nota;}
+$("destino").addEventListener("click",e=>{if(e.target.closest("#moverBtn"))abrirTransferencia(moverImp);});
+function abrirTransferencia(imp){abrirMov(null);if(!mov)return;mov.tipo="transferencia";seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();$("mImporte").value=imp>0?aTexto(imp):"";}
+// Mosaico: hasta cinco categorías y «Resto», cada una con un área proporcional a lo gastado (se parte en dos grupos parejos, alternando filas y columnas)
+function mosaico(cs){const tot=r2(cs.reduce((a,x)=>a+x[1],0));$("gastoTot").textContent=cs.length?eur(tot)+" ›":"";$("mosaico").hidden=!cs.length;$("mosaicoVacio").hidden=!!cs.length;if(!cs.length){$("mosaico").innerHTML="";return;}
+  let it=cs.slice(0,5).map(([c,v])=>({c,v}));if(cs.length>5)it.push({resto:cs.length-5,v:r2(cs.slice(5).reduce((a,x)=>a+x[1],0))});
+  const bloque=x=>{const f=x.v/tot,cls=f>=.25?" grande":f<.08?" chico":"";
+    if(x.resto)return `<button type="button" class="bloque${cls}" data-resto="1" data-ui="bloque-resto" style="flex:1;--g:var(--resto-g);--t:var(--resto-t)">${ico("puntos")}<span><b>Resto</b><br><span>${eur(x.v)}</span></span></button>`;
+    const n=(catDe(x.c)||{}).color||12;
+    return `<button type="button" class="bloque${cls}" data-cat="${esc(x.c)}" data-ui="bloque-categoria" style="flex:1;--g:var(--cat${n}g);--t:var(--cat${n}t)">${icoCat(x.c)}<span>${f<.08?`<span>${eur(x.v)}</span>`:`<b>${esc(x.c)}</b><br><span>${eur(x.v)}</span>${f>=.12?`<br><span>${Math.round(f*100)} %</span>`:""}`}</span></button>`;};
+  const arma=(xs,dir)=>{if(xs.length===1)return bloque(xs[0]);const s=xs.reduce((a,x)=>a+x.v,0);let k=1,acc=xs[0].v,mejor=Math.abs(s-2*acc);
+    for(let j=2;j<xs.length;j++){const a2=acc+xs[j-1].v;if(Math.abs(s-2*a2)<mejor){mejor=Math.abs(s-2*a2);k=j;acc=a2;}else break;}
+    const otro=dir==="row"?"column":"row",parte=g=>`<div class="tm" style="flex:${r2(g.reduce((a,x)=>a+x.v,0))} 1 0;flex-direction:${otro}">${arma(g,otro)}</div>`;
+    return parte(xs.slice(0,k))+parte(xs.slice(k));};
+  $("mosaico").innerHTML=arma(it,"row");}
+// Hoja «Gasto por categoría»: todas las categorías del mes, de mayor a menor, en tarjetas apiladas
+let pilaMes=null,volverPila=null;
+function abrirPila(mes){pilaMes=mes||mesV();pintarPila();mostrar("sheetPila");}
+function pintarPila(){const mes=pilaMes,gs=movsMes(mes).filter(m=>m.tipo==="gasto"),pc={},nc={};gs.forEach(m=>{pc[m.cat]=r2((pc[m.cat]||0)+m.importe);nc[m.cat]=(nc[m.cat]||0)+1;});
+  const cs=Object.entries(pc).sort((a,b)=>b[1]-a[1]),tot=r2(cs.reduce((a,x)=>a+x[1],0)),ant=mesSig(mes,-1),pa={};movsMes(ant).forEach(m=>{if(m.tipo==="gasto")pa[m.cat]=(pa[m.cat]||0)+m.importe;});
+  $("pilaMes").textContent=mesDe(mes);$("pilaSig").disabled=mes>=mesId();$("pilaSub").hidden=!cs.length;$("pilaSub").textContent=`${eur(tot)} en ${cs.length} ${cs.length===1?"categoría":"categorías"}`;$("pilaVacio").hidden=!!cs.length;
+  const ab=MESES[+ant.slice(5)-1].slice(0,3)+".";
+  $("pila").innerHTML=cs.map(([c,v])=>{const n=(catDe(c)||{}).color||12,p=pa[c]||0,d=p>0?Math.round((v-p)/p*100):null;
+    const chips=`<span class="chipb">${Math.round(v/tot*100)} %</span><span class="chipb">${nc[c]} ${nc[c]===1?"gasto":"gastos"}</span>`+(catFija(c)?`<span class="chipb">Fijo</span>`:"")+(d!=null?`<span class="chipb">${d>=0?"+":"−"}${Math.abs(d)} % vs ${ab}</span>`:"");
+    return `<button type="button" class="sc" data-cat="${esc(c)}" style="--g:var(--cat${n}g);--t:var(--cat${n}t);--c:var(--cat${n});--s:var(--cat${n}s)"><span class="r1"><span class="nm">${icoCat(c)}<span>${esc(c)}</span></span><span class="amt">${eur(v)}</span></span><span class="r2">${chips}<span class="go">${ico("flecha")}</span></span></button>`;}).join("");}
+$("pila").addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(!x)return;const m=pilaMes;abrirCat(x.dataset.cat,m);volverPila=m;});
+$("pilaAnt").onclick=()=>{pilaMes=mesSig(pilaMes,-1);pintarPila();};
+$("pilaSig").onclick=()=>{if(pilaMes>=mesId())return;pilaMes=mesSig(pilaMes,1);pintarPila();};
+$("pilaCerrar").onclick=()=>{volverPila=null;cerrar();};
 // Una categoría por dentro, en un mes: total, comparación con el anterior, por cuenta y sus gastos
 let catSel=null,catMesSel=null,catResto=false;
 const gastosCat=(c,mes)=>movsMes(mes).filter(m=>m.tipo==="gasto"&&m.cat===c);
-function abrirCat(c,mes){catSel=c;catMesSel=mes||mesId();catResto=false;pintarCat();mostrar("sheetCat");}
+function abrirCat(c,mes){volverPila=null;catSel=c;catMesSel=mes||mesId();catResto=false;pintarCat();mostrar("sheetCat");}
 function pintarCat(){const c=catSel,mes=catMesSel,gs=gastosCat(c,mes).sort((a,b)=>b.importe-a.importe||b.fecha.localeCompare(a.fecha)),tot=r2(gs.reduce((a,m)=>a+m.importe,0));
   $("catTitulo").textContent=c;$("catMes").textContent=mesDe(mes);$("catSig").disabled=mes>=mesId();
   const hay=gs.length>0;$("catTotBox").hidden=$("catCuentas").hidden=$("catGastos").hidden=!hay;$("catVacio").hidden=hay;
@@ -1077,7 +1124,8 @@ $("catLista").addEventListener("click",e=>{const it=e.target.closest("[data-edit
 $("fvCerrar").onclick=$("catCerrar").onclick=cerrar;
 // Categorías de la persona: lista, creación, edición y borrado
 function abrirCats(){
-  const fila=(t,c)=>`<button type="button" class="item tap" data-ui="fila-categoria" data-ed="${t}" data-n="${esc(c.nombre)}"><span class="con-dot" style="gap:12px">${t==="g"?`<span class="tile" style="--g:var(--cat${c.color}g);--t:var(--cat${c.color}t)">${icoCat(c.nombre)}</span>`:`<i class="dot" style="--c:var(--muted)"></i>`}${esc(c.nombre)}</span>${c.fija?`<span class="chip idle">Siempre fija</span>`:`<span class="mas sub">›</span>`}</button>`;
+  const icos=new Map(S.categorias.gasto.map(x=>[x,icoCat(x.nombre)]));
+  const fila=(t,c,ic=icos.get(c)||"")=>`<button type="button" class="item tap" data-ui="fila-categoria" data-ed="${t}" data-n="${esc(c.nombre)}"><span class="con-dot" style="gap:12px">${t==="g"?`<span class="tile" style="--g:var(--cat${c.color}g);--t:var(--cat${c.color}t)">${ic}</span>`:`<i class="dot" style="--c:var(--muted)"></i>`}${esc(c.nombre)}</span>${c.fija?`<span class="chip idle">Siempre fija</span>`:`<span class="mas sub">›</span>`}</button>`;
   $("ccGasto").innerHTML=S.categorias.gasto.map(c=>fila("g",c)).join("");$("ccIngreso").innerHTML=S.categorias.ingreso.map(c=>fila("i",c)).join("");
   mostrar("sheetCats");}
 const colorLibre=()=>{const u=new Set(S.categorias.gasto.map(c=>c.color));for(let k=1;k<=19;k++)if(!u.has(k))return k;return 1;};
@@ -1209,7 +1257,7 @@ function render(){
   const gs=ms.filter(m=>m.tipo==="gasto"), ing=sumaTipo(ms,"ingreso"), gas=sumaTipo(ms,"gasto");
   // Arriba de Inicio, sólo la plata propia: sin gastos reembolsables ni ingresos de Reembolso
   const propios=ms.filter(m=>!(m.tipo==="gasto"&&m.cat===REEMB)&&!(m.tipo==="ingreso"&&m.cat==="Reembolso")),ingP=sumaTipo(propios,"ingreso"),gasP=sumaTipo(propios,"gasto");
-  porcentajeIng(ingP,gasP);fijosVar(gs);pintarSugerencia();monto($("resultado"),r2(ingP-gasP));const rm=r2(ingP-gasP);document.documentElement.dataset.tendencia=rm>0?"positiva":rm<0?"negativa":"neutra";$("ingMes").textContent="Ingresos "+eur(ingP);$("gasMes").textContent="Gastos "+eur(gasP);$("miniGas").textContent=eur(gasP);$("miniIng").textContent=eur(ingP);$("tendMarca").textContent=rm>0?"Mes en positivo":rm<0?"Mes en negativo":"Mes sin resultado";
+  porcentajeIng(ingP,gasP);fijosVar(gs);pintarSugerencia();const rm=r2(ingP-gasP);document.documentElement.dataset.tendencia=rm>0?"positiva":rm<0?"negativa":"neutra";pintarResultado(ms,rm,ingP);$("miniGas").textContent=eur(gasP);$("miniIng").textContent=eur(ingP);
   const ord=[...ms].sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.id-a.id);
   const pc=porCobrar(),nP=pc.filter(m=>m.reembolso.estado==="pendiente").length,nA=pc.length-nP;$("porCobrar").hidden=!pc.length;
   $("cobrarVal").textContent=eur(pc.reduce((a,m)=>a+m.importe,0));
@@ -1227,9 +1275,8 @@ function render(){
   $("catsSub").textContent=`${S.categorias.gasto.length} de gasto · ${S.categorias.ingreso.length} de ingreso`;
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const cs=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
-  torta($("torta"),cs,id); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"),id);
-  $("catsPista").hidden=!cs.length;
-  $("cats").innerHTML=cs.length?cs.map(([c,v])=>`<div class="item toca" data-cat="${esc(c)}"><span class="con-dot"><i class="dot" style="--c:${colorCat(c)}"></i>${esc(c)}</span><span class="num">${eur(v)} <span class="mas">›</span></span></div>`).join(""):`<div class="empty">Todavía no anotaste gastos este mes. Tocá + para empezar.</div>`;
+  mosaico(cs); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"),id);
+  if(!$("sheetPila").hidden)pintarPila();
   // Movimientos
   $("totIng").textContent=eur(ing);$("totGas").textContent=eur(gas);
   // Filtro de reembolsos: con un estado elegido, sólo esos gastos, de cualquier mes, con su suma
@@ -1255,6 +1302,13 @@ function render(){
   renderCuentas();
 }
 
+let ctaSel=0,ctasCar=[];
+// La cuenta centrada del carrusel: su saldo, si está conciliada y sus botones
+function pintarCtaSel(){const c=ctasCar[ctaSel];if(!c)return;const v=valorCuenta(c),e=estadoConc(c,mesId());
+  $("carSaldo").textContent=eur(v);$("carSaldo").classList.toggle("neg",v<0);$("carConc").textContent=e.txt;$("carConc").className="chip "+e.cls;$("carRend").hidden=c.tipo!=="inversion";
+  [...$("carDots").children].forEach((d,i)=>d.classList.toggle("on",i===ctaSel));}
+$("carCtas").addEventListener("scroll",()=>{const el=$("carCtas"),f=el.firstElementChild;if(!f)return;const i=Math.round(el.scrollLeft/(f.offsetWidth+12));if(i!==ctaSel&&i>=0&&i<ctasCar.length){ctaSel=i;pintarCtaSel();}},{passive:true});
+$("carMovs").onclick=()=>{const c=ctasCar[ctaSel];if(c)abrirMovsCta(c.id,mesId());};
 function renderCuentas(){
   const hay=S.cuentas.length>0, t=totales(), id=mesId(), vm=mesV(), tv=vm===id?t:totales(finDeMes(vm));
   $("cuentasVacio").hidden=hay;$("netoBox").hidden=!hay;$("netoCard").hidden=!hay;$("patCard").hidden=!hay;
@@ -1265,11 +1319,16 @@ function renderCuentas(){
   $("cuotasSub").textContent=t.cuotas>0?`Cuotas de financiaciones: ${eur(t.cuotas)} por mes`:"";
   $("netoIniSub").textContent=(vm===id?"":`Al cierre de ${mesDe(vm)} · `)+`Tenés ${eur(tv.activos)} · debés ${eur(tv.deudas)}`+(tv.cuotas>0?` · cuotas ${eur(tv.cuotas)}/mes`:"");
   pintarPatrimonio(vm,id,t);
-  let n=0;
-  $("grupos").innerHTML=TIPOS.map(([tipo,titulo])=>{const cs=S.cuentas.filter(c=>c.tipo===tipo);if(!cs.length)return "";
-    const tot=cs.reduce((a,c)=>a+valorCuenta(c),0);
-    return `<div class="grupo-cta" style="${cTipo(tipo)}"${tipo==="inversion"?` data-ui="grupo-inversiones"`:""}><div class="row card-tit"><span class="lbl con-dot"><i class="dot" style="--c:var(${COLOR[tipo]})"></i>${titulo}</span><span class="num sub">${eur(tot)}</span></div><div class="carrusel">${cs.map(c=>{const v=valorCuenta(c),det=[c.tope>0?"tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · "),e=estadoConc(c,id);n++;
-      return `<button type="button" class="cta" data-cta="${c.id}"><span class="n">${pad(n)}</span><span class="v"><span class="num ${v<0?"neg":""}">${eur(v)}</span></span><span class="d">${esc(c.nombre)}</span>${det?`<span class="d">${esc(det)}</span>`:""}<span class="chip ${e.cls}" style="align-self:flex-start;margin-top:8px">${esc(e.txt)}</span></button>`;}).join("")}</div>${tipo==="inversion"?`<button type="button" class="btn sec" data-ver-rend="1" data-ui="ver-rendimiento">Ver rendimiento</button>`:""}</div>`;}).join("");
+  // Carrusel: una tarjeta grande por cuenta, ordenadas por tipo; debajo, el saldo de la centrada
+  const cs=TIPOS.flatMap(([tipo])=>S.cuentas.filter(c=>c.tipo===tipo));$("carBox").hidden=$("tiposCard").hidden=!cs.length;
+  if(ctaSel>=cs.length)ctaSel=Math.max(0,cs.length-1);
+  $("carCtas").innerHTML=cs.map(c=>{const k=COLOR[c.tipo].slice(2),det=[c.tope>0?"Tope "+eur(c.tope):"",detalleCuenta(c)].filter(Boolean).join(" · ");
+    return `<button type="button" class="tcta" data-cta="${c.id}" style="--g:var(--${k}g);--t:var(--${k}t)"><span><span class="top"><span>${esc(c.nombre)}</span></span><span class="tipo">${esc(TIPOS.find(x=>x[0]===c.tipo)[1])}</span></span><span class="bot">${esc(det)}</span></button>`;}).join("");
+  $("carDots").innerHTML=cs.map((_,i)=>`<i${i===ctaSel?' class="on"':""}></i>`).join("");
+  $("tipos").innerHTML=TIPOS.map(([tipo,titulo])=>{const xs=S.cuentas.filter(c=>c.tipo===tipo);if(!xs.length)return "";const tot=r2(xs.reduce((a,c)=>a+valorCuenta(c),0));
+    return `<div class="item" data-tipo-tot="${tipo}"><span class="con-dot"><i class="dot" style="--c:var(${COLOR[tipo]})"></i>${titulo}</span><span class="num${tot<0?" neg":""}">${eur(tot)}</span></div>`;}).join("");
+  ctasCar=cs;pintarCtaSel();
+  requestAnimationFrame(()=>{const el=$("carCtas"),w=el.firstElementChild?el.firstElementChild.offsetWidth+12:0;if(w)el.scrollLeft=ctaSel*w;});
 }
 // Patrimonio al cierre de los últimos cinco meses (hasta el que se ve): la barra del mes que se ve lleva el degradado y un globo con su valor
 function pintarPatrimonio(vm,id,t){const el=$("pat");if(!S.cuentas.length){el.innerHTML="";return;}
@@ -1285,11 +1344,12 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetObj","sheetObjEd","sheetMovsCta","sheetCats","sheetCatEd"];
+const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetObj","sheetObjEd","sheetMovsCta","sheetCats","sheetCatEd","sheetPila"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 // Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
 let volverCta=null,ce=null;
-function cerrar(){resolverSigno(null);const eraMov=!$("sheet").hidden,eraCuenta=!$("sheetC").hidden,eraEd=!$("sheetCatEd").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
+function cerrar(){resolverSigno(null);const eraMov=!$("sheet").hidden,eraCuenta=!$("sheetC").hidden,eraEd=!$("sheetCatEd").hidden,eraCat=!$("sheetCat").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
+  if(volverPila&&eraCat){const m=volverPila;volverPila=null;abrirPila(m);return;}
   if(volverCta){const v=volverCta;volverCta=null;if(eraMov)abrirMovsCta(v.id,v.mes);}
   // Una cuenta nueva abierta desde la revisión de un extracto: al cerrar sin guardar se vuelve a la revisión, sin cambios
   if(imp&&imp.nuevaPara!=null&&eraCuenta){imp.nuevaPara=null;mostrar("sheetI");pintarBorr();}
@@ -1302,7 +1362,7 @@ const titles={inicio:"Este mes",movs:"Movimientos",cuentas:"Mis cuentas",mes:"Ci
 let vista="inicio";
 function ir(v){vista=v;if(v!=="movs"&&(seleccion||busq!==null)){seleccion=null;busq=null;$("busca").value="";render();}$("lupaBtn").hidden=v!=="movs";document.querySelectorAll("nav [data-v], header [data-v]").forEach(x=>{if(x.dataset.v===v)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");});
   ["inicio","movs","cuentas","mes","ajustes"].forEach(k=>{const s=$("v-"+k);s.hidden=k!==v;if(!s.hidden)s.style.display="flex";});
-  $("title").textContent=titles[v];pintarMesNav();$("logoHdr").hidden=v!=="inicio";$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Nuevo movimiento");window.scrollTo(0,0);}
+  $("title").textContent=titles[v];pintarMesNav();$("logoHdr").hidden=v!=="inicio";$("title").hidden=v==="inicio";$("fab").setAttribute("aria-label",v==="cuentas"?"Agregar cuenta":"Nuevo movimiento");window.scrollTo(0,0);}
 // Selector de mes (Inicio, Movimientos y Cierre): las flechas sólo están en esas tres pantallas
 const CON_MES=["inicio","movs","mes"];
 function pintarMesNav(){const con=CON_MES.includes(vista);$("mesLabel").textContent=mesDe(con?mesV():mesId());
