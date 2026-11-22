@@ -1,7 +1,8 @@
 ---
 cambio: forecast-tarjeta-prestamos
-estado: diseno-aprobado
+estado: archivado
 datos: amplia
+archivado: 2026-11-22
 ---
 # Forecast con ingreso guardado, el resumen de la tarjeta y préstamos
 
