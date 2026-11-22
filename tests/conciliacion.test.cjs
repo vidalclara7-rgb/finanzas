@@ -93,7 +93,7 @@ t.test("inversión que subió", async () => {
   await conciliar(page, 3, 2180);
   await page.click("#kAjuste");
   await A.aviso(page, "Cuenta conciliada");
-  assert.equal(await A.texto(page, '[data-conc="3"] .v .num'), "2180 €");
+  assert.equal(await A.texto(page, '[data-conc="3"] .v .num'), "2.180 €");
   assert.equal(await estado(page, 3), "Conciliada");
   await A.ir(page, "inicio");
   assert.equal(await A.texto(page, "#resTit"), "Te sobraron 500 €");

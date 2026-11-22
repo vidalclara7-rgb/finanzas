@@ -54,7 +54,7 @@ t.test("objetivo con su progreso", async () => {
   await lista(page);
   const x = await tarjeta(page);
   assert.match(x, /Vacaciones/);
-  assert.match(x, /400 de 1000 €/);
+  assert.match(x, /400 de 1.000 €/);
   assert.match(x, /40 %/);
   assert.match(x, /En plan/);
 });
@@ -174,7 +174,7 @@ t.test("el progreso sigue al saldo", async () => {
   await page.evaluate(() => { S.movs.push({ id: 99, tipo: "ingreso", fecha: "2026-10-10", importe: 100, cuenta: 1, cat: "Sueldo", nota: "" }); cambio(); });
   await lista(page);
   const x = await tarjeta(page);
-  assert.match(x, /500 de 1000 €/);
+  assert.match(x, /500 de 1.000 €/);
   assert.match(x, /50 %/);
 });
 
@@ -183,7 +183,7 @@ t.test("saldo negativo", async () => {
   const { page } = await abrir({ datos: con({}, -50) });
   await lista(page);
   const x = await tarjeta(page);
-  assert.match(x, /0 de 1000 €/);
+  assert.match(x, /0 de 1.000 €/);
   assert.match(x, /0 %/);
 });
 

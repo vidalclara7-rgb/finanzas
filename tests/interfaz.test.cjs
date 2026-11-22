@@ -120,7 +120,7 @@ t.test("punto de color por tipo de cuenta", async () => {
 // Escenario: mismo color por categoría
 t.test("mismo color por categoría", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
-  const bloque = await page.$eval('#mosaico [data-cat="Supermercado"]', (c) => getComputedStyle(c).backgroundImage);
+  const bloque = await page.$eval('#lcat [data-cat="Supermercado"] .tile', (c) => getComputedStyle(c).backgroundImage);
   await A.ir(page, "movs");
   assert.equal(bloque, await page.$eval('[data-mov="2"] .ico', (c) => getComputedStyle(c).backgroundImage));
 });
@@ -149,7 +149,7 @@ t.test("abrir sin conexión", async () => {
   await ctx.setOffline(true);
   await page.reload();
   assert.equal(await A.texto(page, "#title"), "Este mes");
-  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1617,7 €");
+  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1.617,7 €");
 });
 
 // Escenario: reembolsos distinguibles
@@ -221,7 +221,7 @@ t.test("saldo de una cuenta con coma", async () => {
   await A.aviso(page, "Cuenta guardada");
   const b = (await A.guardados(page)).cuentas.find((c) => c.nombre === "Banco B");
   assert.equal(b.saldoInicial, 1234.56);
-  assert.equal(await A.saldoCta(page, b.id), "1234,56 €");
+  assert.equal(await A.saldoCta(page, b.id), "1.234,56 €");
 });
 
 // Escenario: importe guardado al editar

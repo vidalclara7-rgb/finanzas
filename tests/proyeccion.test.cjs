@@ -29,11 +29,11 @@ const ingreso = (page) => page.inputValue("#foreIng");
 // Escenario: cuotas que se liberan
 t.test("cuotas que se liberan", async () => {
   const { page } = await conForecast({ cuentas: [BANCO, FIN(), TARJ], movs: [...BASE, FIJO(), COMPRA] });
-  assert.match(await fila(page, "2026-11"), /Fijos 600 € · cuotas 290 € 1110 € Libre/);
+  assert.match(await fila(page, "2026-11"), /Fijos 600 € · cuotas 290 € 1.110 € Libre/);
   assert.equal((await barra(page, "2026-11")).comp, 890);
-  assert.match(await fila(page, "2027-01"), /Fijos 600 € · cuotas 50 € 1350 € Libre/);
+  assert.match(await fila(page, "2027-01"), /Fijos 600 € · cuotas 50 € 1.350 € Libre/);
   assert.equal((await barra(page, "2027-01")).comp, 650);
-  assert.match(await fila(page, "2027-02"), /Fijos 600 € · cuotas 0 € 1400 € Libre/);
+  assert.match(await fila(page, "2027-02"), /Fijos 600 € · cuotas 0 € 1.400 € Libre/);
   assert.equal((await barra(page, "2027-02")).comp, 600);
 });
 
@@ -62,7 +62,7 @@ t.test("un mes en que se gasta más de lo que entra", async () => {
 t.test("promedio de tres meses", async () => {
   const { page } = await conForecast({ movs: [ING(1, "2026-07-10", 1800), ING(2, "2026-08-10", 2100), ING(3, "2026-09-10", 2400)] });
   assert.equal(await ingreso(page), "2100");
-  assert.match(await page.innerText("#foreResumen"), /Entra por mes\s*2100 €/);
+  assert.match(await page.innerText("#foreResumen"), /Entra por mes\s*2.100 €/);
 });
 
 // Escenario: los reembolsos no cuentan
@@ -137,7 +137,7 @@ t.test("sin cuotas ni gastos fijos", async () => {
   const { page } = await conForecast({ movs: BASE });
   assert.equal(await page.isVisible("#foreSinComp"), true);
   assert.match(await page.innerText("#foreSinComp"), /No hay cuotas ni gastos fijos para proyectar\./);
-  assert.match(await fila(page, "2026-11"), /2000 € Libre/);
+  assert.match(await fila(page, "2026-11"), /2.000 € Libre/);
 });
 
 // --- gráfico de lo comprometido

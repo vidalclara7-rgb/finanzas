@@ -86,7 +86,7 @@ t.test("tendencia positiva", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 100, 1)] }) });
   assert.equal(await tendencia(page), "positiva");
   const [txt, color] = await tituloRes(page);
-  assert.equal(txt, "Te sobraron 1400 €");
+  assert.equal(txt, "Te sobraron 1.400 €");
   assert.equal(color, await estilo(page, "body", "color"));
 });
 
@@ -94,9 +94,10 @@ t.test("tendencia positiva", async () => {
 t.test("tendencia negativa", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.ingreso(1, "2026-10-01", 100, 1), A.gasto(2, "2026-10-03", 300, 1)] }) });
   assert.equal(await tendencia(page), "negativa");
-  const [txt, color] = await tituloRes(page);
+  const [txt] = await tituloRes(page);
   assert.equal(txt, "Te faltaron 200 €");
-  assert.equal(color, rgb("#FF8AA6"));
+  assert.equal(await page.isVisible("#resMarca"), true);
+  assert.equal(await A.texto(page, "#resMarca"), "Mes en negativo");
 });
 
 // Escenario: tendencia neutra
@@ -121,7 +122,7 @@ t.test("gastado e ingresado", async () => {
   const movs = [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 80, 1), A.transf(3, "2026-10-04", 300, 1, 2)];
   const { page } = await abrir({ datos: datos({ cuentas: [BANCO, A.cta(2, "Cuenta ahorro", 0)], movs }) });
   assert.equal(await A.texto(page, "#miniGas"), "80 €");
-  assert.equal(await A.texto(page, "#miniIng"), "1500 €");
+  assert.equal(await A.texto(page, "#miniIng"), "1.500 €");
   const r = await page.$eval('[data-ui="gastado-ingresado"]', (e) => [e.textContent.includes("Gastado"), e.textContent.includes("Ingresado"), getComputedStyle(e.querySelector(".dot"), null).backgroundColor]);
   assert.deepEqual(r, [true, true, await estilo(page, "body", "color")]);
 });
@@ -183,7 +184,7 @@ t.test("barras de cinco meses", async () => {
   assert.deepEqual(cols.map((c) => c[3]), ["jun", "jul", "ago", "sep", "oct"]);
   assert.deepEqual(cols.filter((c) => c[1]).map((c) => c[0]), ["2026-10"]);
   assert.deepEqual(cols.filter((c) => c[2]).map((c) => c[0]), ["2026-10"]);
-  assert.match(await A.texto(page, "#pat .globo"), /2135,7 €/);
+  assert.match(await A.texto(page, "#pat .globo"), /2.135,7 €/);
   assert.equal(await estilo(page, "#pat .col.on i", "backgroundColor"), await page.evaluate(() => { const d = document.createElement("i"); d.style.color = "var(--dest)"; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; }));
   assert.equal(await estilo(page, "#pat .col:not(.on) i", "backgroundImage"), "none");
 });

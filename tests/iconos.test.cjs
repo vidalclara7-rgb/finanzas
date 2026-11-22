@@ -44,7 +44,7 @@ t.test("cambiar el ícono de una de siempre", async () => {
   await guardar(page);
   assert.equal(await page.$eval('#sheetCats [data-n="Ocio"] use', (u) => u.getAttribute("href")), "#i-copa");
   await page.click("#ccCerrar");
-  assert.equal(await page.$eval('#mosaico [data-cat="Ocio"] use', (u) => u.getAttribute("href")).catch(async () => { await A.ir(page, "inicio"); return page.$eval('#mosaico [data-cat="Ocio"] use', (u) => u.getAttribute("href")); }), "#i-copa");
+  assert.equal(await page.$eval('#lcat [data-cat="Ocio"] use', (u) => u.getAttribute("href")).catch(async () => { await A.ir(page, "inicio"); return page.$eval('#lcat [data-cat="Ocio"] use', (u) => u.getAttribute("href")); }), "#i-copa");
   await A.ir(page, "movs");
   assert.equal(await icono(page, 1), "copa");
 });

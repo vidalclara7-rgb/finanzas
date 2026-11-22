@@ -57,7 +57,7 @@ t.test("compra", async () => {
   assert.match(await activoTxt(page, 10), /10 unidades/);
   assert.match(await resumen(page), /Efectivo 500 €/);
   await page.click("#invCerrar");
-  assert.equal(await A.saldoCta(page, 1), "1000 €");
+  assert.equal(await A.saldoCta(page, 1), "1.000 €");
 });
 
 // Escenario: compra con comisión
@@ -153,16 +153,16 @@ t.test("precio inválido", async () => {
 t.test("valor con una posición", async () => {
   const { page } = await abrir(con({ activos: [{ ...FONDO_A, precio: 55, fechaPrecio: "2026-10-12" }], ops: [compra(1, 10, 10, 50)] }));
   await A.ir(page, "cuentas");
-  assert.equal(await A.saldoCta(page, 1), "1050 €");
-  assert.equal(await A.texto(page, "#activos"), "1050 €");
+  assert.equal(await A.saldoCta(page, 1), "1.050 €");
+  assert.equal(await A.texto(page, "#activos"), "1.050 €");
 });
 
 // Escenario: cuenta sin activos
 t.test("cuenta sin activos", async () => {
   const { page } = await abrir(con({ cuentas: [A.cta(1, "Broker X", 2000, { tipo: "inversion", aportado: 1500 })], activos: [] }));
   await A.ir(page, "cuentas");
-  assert.equal(await A.saldoCta(page, 1), "2000 €");
-  assert.match(await A.texto(page, '[data-cta="1"]'), /\+500 € \(\+33,3 %\) sobre 1500 €/);
+  assert.equal(await A.saldoCta(page, 1), "2.000 €");
+  assert.match(await A.texto(page, '[data-cta="1"]'), /\+500 € \(\+33,3 %\) sobre 1.500 €/);
 });
 
 // Escenario: rendimiento con una venta
@@ -216,7 +216,7 @@ t.test("borrar una operación", async () => {
   await page.click("#oBorrar");
   await A.aviso(page, "Operación borrada");
   assert.match(await activoTxt(page, 10), /0 unidades/);
-  assert.match(await resumen(page), /Efectivo 1000 €/);
+  assert.match(await resumen(page), /Efectivo 1.000 €/);
 });
 
 // Escenario: borrar una compra que respalda ventas
@@ -240,7 +240,7 @@ t.test("borrar un activo con operaciones", async () => {
   assert.match(await A.texto(page, "#aBorrar"), /se borran sus 2 operaciones/);
   await page.click("#aBorrar");
   await A.aviso(page, "Activo borrado");
-  assert.match(await resumen(page), /Efectivo 1000 €/);
+  assert.match(await resumen(page), /Efectivo 1.000 €/);
   const g = await A.guardados(page);
   assert.deepEqual([g.activos.length, g.ops.length], [0, 0]);
 });
