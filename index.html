@@ -345,6 +345,21 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .icono-op{aspect-ratio:1;border-radius:12px;border:2px solid transparent;background:var(--card);color:var(--ink);display:grid;place-items:center;padding:0;font:inherit;font-weight:700}
 .icono-op svg{width:22px;height:22px}
 .icono-op[aria-pressed=true]{border-color:var(--ink)}
+/* Tarjetas de Inicio en parejas de color: fondo con su degradado y todo (texto, barras, anillos) en el otro color de la pareja */
+.card.par{background:var(--g);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
+.card.par .grp{background:color-mix(in srgb,var(--t) 12%,transparent)}
+.card.par{--medio:color-mix(in srgb,var(--t) 55%,transparent)}
+.card.par .sub{font-weight:500}
+.marca2{align-self:flex-start;font-size:12px;font-weight:600;border:1.5px solid currentColor;border-radius:99px;padding:3px 10px;white-space:nowrap}
+/* Gasto del mes: una fila por categoría con su cuadradito, nombre, importe, porcentaje y una barra de su color */
+.lcat{display:flex;flex-direction:column;gap:14px}
+.lcat .fila{border:0;background:none;font:inherit;color:inherit;text-align:left;padding:0;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:6px 12px;align-items:center;cursor:pointer;width:100%}
+.lcat .fila .tile{grid-row:span 2}
+.lcat .nom{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.lcat .imp{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.lcat .imp small{font-weight:500;color:var(--muted);margin-left:6px}
+.lcat .bar{grid-column:2/4;height:8px;background:var(--barra);border-radius:99px}
+.lcat .bar>i{background:var(--c);border-radius:99px}
 [hidden]{display:none!important}
 </style>
 <script>
