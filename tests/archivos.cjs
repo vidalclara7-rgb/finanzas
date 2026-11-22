@@ -53,6 +53,22 @@ async function imagenTabla(page, filas) {
   }, filas);
   return Buffer.from(b64, "base64");
 }
+// Una captura de un historial agrupado por día: título, selector de mes, botones, y cada día con su fecha sola y sus movimientos (descripción a la izquierda, importe a la derecha)
+async function imagenLista(page, grupos, { cabecera = true } = {}) {
+  const b64 = await page.evaluate(([gs, cab]) => {
+    const filas = gs.reduce((a, g) => a + 1 + g.movs.length, 0), alto = (cab ? 330 : 40) + filas * 80;
+    const c = document.createElement("canvas"); c.width = 900; c.height = alto; const x = c.getContext("2d");
+    x.fillStyle = "#fff"; x.fillRect(0, 0, 900, alto); x.fillStyle = "#000"; x.font = "30px sans-serif";
+    let y = 50;
+    if (cab) { x.fillText("Statement history", 280, y); y += 70; x.fillText("Select the month", 30, y); y += 50; x.fillText("NOVEMBER", 30, y); y += 80; x.fillText("Purchase map", 60, y); x.fillText("PDF statement", 520, y); y += 90; }
+    for (const g of gs) {
+      x.fillStyle = "#666"; x.fillText(g.fecha, 30, y); y += 70; x.fillStyle = "#000";
+      for (const m of g.movs) { x.fillText(m[0], 30, y); const w = x.measureText(m[1]).width; x.fillText(m[1], 870 - w, y); y += 80; }
+    }
+    return c.toDataURL("image/png").split(",")[1];
+  }, [grupos, cabecera]);
+  return Buffer.from(b64, "base64");
+}
 const FOTO_TABLA = [["05/10/2026", "Supermercado Uno", "-12,50 €"], ["06/10/2026", "Cafeteria Dos", "-3,20 €"], ["07/10/2026", "Taller Tres", "-45,00 €"]];
 const PNG = (buffer, name = "foto.png") => ({ name, mimeType: "image/png", buffer });
 // Un PDF que es sólo una imagen (sin texto): como un documento escaneado
@@ -64,4 +80,4 @@ async function pdfEscaneado(page, buffer) {
   return pdf;
 }
 
-module.exports = { zip, xlsx, XLSX, CSV, TXT, imagenTabla, FOTO_TABLA, PNG, pdfEscaneado };
+module.exports = { zip, xlsx, XLSX, CSV, TXT, imagenTabla, imagenLista, FOTO_TABLA, PNG, pdfEscaneado };
