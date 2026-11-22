@@ -60,19 +60,22 @@ t.test("la apariencia se recuerda", async () => {
 // Escenario: fondo de cada apariencia
 t.test("fondo de cada apariencia", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
-  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
+  assert.equal(await fondoCuerpo(page), rgb("#000000"));
   assert.equal(await page.locator(".fondo").count(), 0, "no queda el fondo fluido");
   await elegirAp(page, "clara");
-  assert.equal(await fondoCuerpo(page), rgb("#F1F0F2"));
+  assert.equal(await fondoCuerpo(page), rgb("#FFFFFF"));
 });
 
 // Escenario: tarjetas de cada apariencia
 t.test("tarjetas de cada apariencia", async () => {
   const { page } = await abrir({ datos: conApariencia("clara") });
-  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#FFFFFF"));
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#F4F4F6"));
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "boxShadow"), "none");
+  assert.ok(parseFloat(await estilo(page, '[data-ui="gasto-categorias"]', "borderTopLeftRadius")) >= 22);
   await elegirAp(page, "oscura");
   await A.ir(page, "inicio");
-  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#1F3252"));
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "backgroundColor"), rgb("#141416"));
+  assert.equal(await estilo(page, '[data-ui="gasto-categorias"]', "boxShadow"), "none");
 });
 
 // Escenario: nada se mueve solo
@@ -102,10 +105,10 @@ t.test("sin cargar nada de otros sitios", async () => {
 t.test("barra oscura y clara", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
   const barra = () => page.$eval('meta[name="theme-color"]', (m) => m.content.toLowerCase());
-  assert.equal(await barra(), "#151c2a");
+  assert.equal(await barra(), "#000000");
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "black-translucent");
   await elegirAp(page, "clara");
-  assert.equal(await barra(), "#f1f0f2");
+  assert.equal(await barra(), "#ffffff");
   await page.reload();
   assert.equal(await page.$eval('meta[name="apple-mobile-web-app-status-bar-style"]', (m) => m.content), "default");
 });
@@ -115,28 +118,16 @@ const colorDe = (page, sel) => page.$eval(sel, (e) => getComputedStyle(e).color)
 // Escenario: los colores de la clara
 t.test("los colores de la clara", async () => {
   const { page } = await abrir({ datos: conApariencia("clara") });
-  assert.equal(await fondoCuerpo(page), rgb("#F1F0F2"));
-  assert.equal(await colorDe(page, "body"), rgb("#151C2A"));
+  assert.equal(await fondoCuerpo(page), rgb("#FFFFFF"));
+  assert.equal(await colorDe(page, "body"), rgb("#0B0B0F"));
 });
 
 // Escenario: los colores de la oscura
 t.test("los colores de la oscura", async () => {
   const { page } = await abrir({ datos: conApariencia("oscura") });
-  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
-  assert.equal(await colorDe(page, "body"), rgb("#F1F0F2"));
-  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--muted").trim().toUpperCase()), "#A1B6DB");
-});
-
-// Escenario: verde para lo que entra y rosa para lo que sale
-t.test("verde para lo que entra y rosa para lo que sale", async () => {
-  for (const [ap, verde, rosa] of [["clara", "#0F7A3B", "#C81E4A"], ["oscura", "#41FF8B", "#FF8AA6"]]) {
-    const { page } = await abrir({ datos: conApariencia(ap) });
-    await A.ir(page, "movs");
-    const c = await page.evaluate(() => { const f = (sel) => { const n = document.querySelector(sel); return [getComputedStyle(n).color, getComputedStyle(n.closest(".mov")).backgroundColor]; }; return { ing: f("#movs .mov[data-tipo=ingreso] .num"), gas: f("#movs .mov[data-tipo=gasto] .num") }; });
-    assert.equal(c.ing[0], rgb(verde), ap);
-    assert.equal(c.gas[0], rgb(rosa), ap);
-    assert.ok(contraste(c.ing[0], c.ing[1]) >= 4.5 && contraste(c.gas[0], c.gas[1]) >= 4.5, ap);
-  }
+  assert.equal(await fondoCuerpo(page), rgb("#000000"));
+  assert.equal(await colorDe(page, "body"), rgb("#F5F5F7"));
+  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--muted").trim().toUpperCase()), "#9A9AA2");
 });
 
 // Escenario: texto secundario legible
@@ -167,6 +158,6 @@ t.test("una paleta vieja guardada", async () => {
   const { page } = await abrir({ datos: conApariencia(undefined, "pastel") });
   page.on("pageerror", (e) => errores.push(String(e)));
   await page.reload();
-  assert.equal(await fondoCuerpo(page), rgb("#151C2A"));
+  assert.equal(await fondoCuerpo(page), rgb("#000000"));
   assert.deepEqual(errores, []);
 });

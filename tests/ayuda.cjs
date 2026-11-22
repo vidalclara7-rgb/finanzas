@@ -108,6 +108,22 @@ async function nuevaCuenta(page, { tipo, nombre, saldo, signo, fondo, extra = {}
   await page.click('#sheetC button[type="submit"]');
 }
 
+// Saldo de una cuenta en Cuentas: se desliza el carrusel hasta su tarjeta y se lee el saldo de debajo
+async function saldoCta(page, id) {
+  if (await page.isHidden("#v-cuentas")) await ir(page, "cuentas");
+  await page.$eval("#carCtas", (el, i) => { const cs = [...el.children], k = cs.findIndex((c) => c.dataset.cta === String(i)); el.scrollLeft = k * (cs[0].offsetWidth + 12); el.dispatchEvent(new Event("scroll")); }, id);
+  await page.waitForFunction((i) => typeof ctasCar !== "undefined" && ctasCar[ctaSel] && String(ctasCar[ctaSel].id) === String(i), id);
+  return page.innerText("#carSaldo");
+}
+
+// «Ver rendimiento»: se centra en el carrusel la primera cuenta de inversión y se toca el botón de debajo
+async function verRend(page) {
+  if (await page.isHidden("#v-cuentas")) await ir(page, "cuentas");
+  const id = await page.evaluate(() => (ctasCar.find((c) => c.tipo === "inversion") || {}).id);
+  await saldoCta(page, id);
+  await page.click("#carRend");
+}
+
 // Datos del modelo v2, armados a mano
 const cta = (id, nombre, saldoInicial, extra = {}) => ({ id, tipo: "liquidez", nombre, saldoInicial, desde: "2026-10-01", ...extra });
 const gasto = (id, fecha, importe, cuenta, cat = "Supermercado", nota = "") => ({ id, tipo: "gasto", fecha, importe, cuenta, cat, nota });
@@ -150,4 +166,4 @@ function preparar(nodeTest) {
   return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
 }
 
-module.exports = { enfocado, hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
+module.exports = { saldoCta, verRend, enfocado, hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };

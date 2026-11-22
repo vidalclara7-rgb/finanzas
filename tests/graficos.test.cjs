@@ -8,21 +8,7 @@ const BANCO = A.cta(1, "Banco A", 1000);
 const con = (movs, cuentas = [BANCO]) => ({ datos: A.v2({ cuentas, movs }) });
 const TRES = [A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-08", 42, 1, "Trabajo (reembolsable)"), A.gasto(3, "2026-10-05", 18, 1, "Comida fuera")];
 
-// Escenario: torta con tres categorías
-t.test("torta con tres categorías", async () => {
-  const { page } = await abrir(con(TRES));
-  const porciones = await page.locator("#torta circle").evaluateAll((cs) => cs.map((c) => [c.dataset.cat, parseFloat(c.style.strokeDasharray)]));
-  assert.equal(porciones.length, 3);
-  assert.equal(await A.texto(page, "#torta .centro b"), "124,3 €");
-  assert.equal(porciones.reduce((a, b) => (b[1] > a[1] ? b : a))[0], "Supermercado");
-});
 
-// Escenario: torta sin gastos
-t.test("torta sin gastos", async () => {
-  const { page } = await abrir(con([]));
-  assert.equal(await page.isVisible("#torta"), false);
-  assert.equal(await A.texto(page, "#cats"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
-});
 
 // Escenario: tope usado en parte
 t.test("tope usado en parte", async () => {
@@ -60,8 +46,8 @@ t.test("dos meses con datos", async () => {
   assert.equal(await page.locator("#meses path.cg").count(), 1);
   assert.equal(await page.locator("#meses .pto.i").count(), 6);
   assert.equal(await page.locator("#meses .pto.g").count(), 6);
-  assert.equal(await page.$eval("#meses path.ci", (p) => getComputedStyle(p).stroke), "rgb(65, 255, 139)");
-  assert.equal(await page.$eval("#meses path.cg", (p) => getComputedStyle(p).stroke), "rgb(255, 89, 132)");
+  assert.equal(await page.$eval("#meses path.ci", (p) => getComputedStyle(p).stroke), "rgb(52, 199, 89)");
+  assert.equal(await page.$eval("#meses path.cg", (p) => getComputedStyle(p).stroke), await page.$eval("body", (b) => getComputedStyle(b).color));
   assert.deepEqual(await page.$$eval("#mesesEjes span", (e) => e.map((x) => x.textContent)), ["may", "jun", "jul", "ago", "sep", "oct"]);
 });
 
@@ -92,7 +78,7 @@ t.test("sin ingresos ni gastos", async () => {
 t.test("gasto chico frente a lo que entró", async () => {
   const { page } = await abrir(con([A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 149.8, 1)]));
   assert.equal(await A.texto(page, "#formaTxt"), "Gastaste el 9 % de lo que entró");
-  assert.equal(await A.texto(page, "#resultado"), "1550,2 €");
+  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1550,2 €");
   assert.doesNotMatch(await page.getAttribute("#formaTxt", "class"), /\bexc\b/);
 });
 
@@ -179,48 +165,26 @@ const B = { ...BANCO, desde: "2026-08-01" };
 const conCat = (movs, cuentas = [B, TAR]) => ({ datos: A.v2({ cuentas, movs }) });
 const total = (page) => A.texto(page, "#catTotal");
 
-// Escenario: abrir desde la lista
-t.test("abrir desde la lista", async () => {
-  const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-05", 18, 1, "Comida fuera")]));
-  await page.click('#cats [data-cat="Supermercado"]');
-  assert.equal(await A.texto(page, "#catTitulo"), "Supermercado");
-  assert.equal(await total(page), "64,3 €");
-  assert.equal(await A.texto(page, "#catMes"), "octubre 2026");
-});
 
-// Escenario: abrir desde la torta
-t.test("abrir desde la torta", async () => {
-  const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-05", 18, 1, "Comida fuera")]));
-  await page.evaluate(() => document.getElementById("torta").scrollIntoView({ block: "center" }));
-  const caja = await page.locator('#torta circle[data-cat="Comida fuera"]').boundingBox();
-  // Un punto del anillo dentro de la porción: se toca donde el trazo es de esa categoría
-  const punto = await page.evaluate(() => { const c = document.querySelector('#torta circle[data-cat="Comida fuera"]'), svg = c.ownerSVGElement.getBoundingClientRect();
-    const [l] = c.style.strokeDasharray.split(" ").map(parseFloat), off = -parseFloat(c.style.strokeDashoffset || 0), a = ((off + l / 2) / (2 * Math.PI * 77)) * 2 * Math.PI - Math.PI / 2, k = svg.width / 180;
-    return [svg.left + (90 + 77 * Math.cos(a)) * k, svg.top + (90 + 77 * Math.sin(a)) * k]; });
-  assert.ok(caja);
-  await page.mouse.click(punto[0], punto[1]);
-  assert.equal(await A.texto(page, "#catTitulo"), "Comida fuera");
-  assert.equal(await total(page), "18 €");
-});
 
 // Escenario: más que el mes anterior
 t.test("más que el mes anterior", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 100, 1), A.gasto(2, "2026-09-10", 80, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.equal(await A.texto(page, "#catComp"), "20 € más que en septiembre (+25 %)");
 });
 
 // Escenario: menos que el mes anterior
 t.test("menos que el mes anterior", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 60, 1), A.gasto(2, "2026-09-10", 80, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.equal(await A.texto(page, "#catComp"), "20 € menos que en septiembre (−25 %)");
 });
 
 // Escenario: sin gasto el mes anterior
 t.test("sin gasto el mes anterior", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 50, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.equal(await A.texto(page, "#catComp"), "En septiembre no gastaste en Supermercado");
 });
 
@@ -229,7 +193,7 @@ const filasCat = (page) => page.locator("#catRank .fila .row").evaluateAll((rs) 
 // Escenario: dos cuentas
 t.test("dos cuentas", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 40, 2), A.gasto(2, "2026-10-04", 60, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.deepEqual(await filasCat(page), [["Banco A", "60 € · 60 %"], ["Tarjeta", "40 € · 40 %"]]);
 });
 
@@ -238,7 +202,7 @@ t.test("más de cinco cuentas", async () => {
   const cuentas = [1, 2, 3, 4, 5, 6, 7].map((i) => A.cta(i, `Cuenta ${i}`, 0, { desde: "2026-08-01" }));
   const movs = [70, 60, 50, 40, 30, 20, 10].map((v, i) => A.gasto(i + 1, "2026-10-03", v, i + 1));
   const { page } = await abrir(conCat(movs, cuentas));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   const f = await filasCat(page);
   assert.equal(f.length, 6);
   assert.deepEqual(f.slice(0, 5).map((x) => x[0]), ["Cuenta 1", "Cuenta 2", "Cuenta 3", "Cuenta 4", "Cuenta 5"]);
@@ -250,28 +214,28 @@ t.test("más de cinco cuentas", async () => {
 // Escenario: ordenados por importe
 t.test("ordenados por importe", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 5, 1), A.gasto(2, "2026-10-04", 30, 1), A.gasto(3, "2026-10-05", 12, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.deepEqual(await page.locator("#catLista .item .num").allInnerTexts(), ["30 €", "12 €", "5 €"]);
 });
 
 // Escenario: editar desde el detalle
 t.test("editar desde el detalle", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 30, 1, "Supermercado", "pan"), A.gasto(2, "2026-10-04", 12, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   await page.click('#catLista [data-edit="1"]');
   assert.equal(await A.texto(page, "#mTitulo"), "Editar movimiento");
   await A.elegir(page, "segCat", "Ocio");
   await page.click("#mGuardar");
   await A.aviso(page, "Gasto guardado");
   assert.equal((await A.guardados(page)).movs.find((m) => m.id === 1).cat, "Ocio");
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.equal(await page.locator('#catLista [data-edit="1"]').count(), 0);
 });
 
 // Escenario: mes anterior
 t.test("mes anterior", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64, 1), A.gasto(2, "2026-09-10", 40, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   await page.click("#catAnt");
   assert.equal(await A.texto(page, "#catMes"), "septiembre 2026");
   assert.equal(await total(page), "40 €");
@@ -280,7 +244,7 @@ t.test("mes anterior", async () => {
 // Escenario: no pasa del mes en curso
 t.test("no pasa del mes en curso", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   assert.ok(await page.isDisabled("#catSig"));
   await page.click("#catAnt");
   assert.equal(await page.isDisabled("#catSig"), false);
@@ -289,7 +253,7 @@ t.test("no pasa del mes en curso", async () => {
 // Escenario: mes sin gastos en la categoría
 t.test("mes sin gastos en la categoría", async () => {
   const { page } = await abrir(conCat([A.gasto(1, "2026-10-03", 64, 1)]));
-  await page.click('#cats [data-cat="Supermercado"]');
+  await page.click('#mosaico [data-cat="Supermercado"]');
   await page.click("#catAnt");
   await page.click("#catAnt");
   assert.equal(await A.texto(page, "#catMes"), "agosto 2026");

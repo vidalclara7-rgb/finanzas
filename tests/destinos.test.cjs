@@ -27,7 +27,7 @@ async function nuevaCuenta(page, nota, { tipo, nombre }) {
   await page.click('#sheetC button[type="submit"]');
 }
 async function guardarImportacion(page) { await page.click("#iGuardar"); await page.waitForFunction(() => !document.getElementById("sheetIC").hidden); }
-const saldo = (page, id) => A.texto(page, `[data-cta="${id}"] .v .num`);
+const saldo = (page, id) => A.saldoCta(page, id);
 async function restaurar(page, texto) {
   await A.ir(page, "ajustes");
   await page.fill("#backupIn", texto);
@@ -141,7 +141,7 @@ t.test("garantía como cuenta propia", async () => {
   assert.equal(await saldo(page, 4), "300 €");
   assert.equal(await A.texto(page, "#neto"), "1000 €");
   await A.ir(page, "inicio");
-  assert.equal(await A.texto(page, "#gasMes"), "Gastos 0 €");
+  assert.equal(await A.texto(page, "#miniGas"), "0 €");
 });
 
 // Pruebas extra: el nombre de la cuenta nueva se escapa y nada se desborda en 390 px

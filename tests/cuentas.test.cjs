@@ -5,7 +5,7 @@ const A = require("./ayuda.cjs");
 
 const abrir = A.preparar(t);
 const enCuentas = async (opciones) => { const r = await abrir(opciones); await A.ir(r.page, "cuentas"); return r; };
-const saldo = (page, id) => A.texto(page, `[data-cta="${id}"] .v .num`);
+const saldo = (page, id) => A.saldoCta(page, id);
 // Las cuentas de ejemplo en el modelo v2
 const EJEMPLO = () => A.v2({ cuentas: [
   A.cta(11, "Banco A", 1200), A.cta(12, "Broker X", 2100, { tipo: "inversion", aportado: 2000 }),
@@ -17,11 +17,10 @@ t.test("cuenta de banco", async () => {
   const { page } = await enCuentas();
   await A.nuevaCuenta(page, { tipo: "liquidez", nombre: "Banco A", saldo: 1200 });
   await A.aviso(page, "Cuenta guardada");
-  const grupo = await A.texto(page, "#grupos .grupo-cta");
-  assert.match(grupo, /Bancos y efectivo/);
-  assert.match(grupo, /Banco A/);
-  assert.match(grupo, /1200 €/);
-  assert.match(grupo, /Sin conciliar/);
+  assert.match(await A.texto(page, "#tipos"), /Bancos y efectivo\s+1200 €/);
+  assert.match(await A.texto(page, "#carCtas"), /Banco A/);
+  assert.equal(await A.saldoCta(page, (await A.guardados(page)).cuentas[0].id), "1200 €");
+  assert.equal(await A.texto(page, "#carConc"), "Sin conciliar");
 });
 
 // Escenario: cuenta sin nombre
