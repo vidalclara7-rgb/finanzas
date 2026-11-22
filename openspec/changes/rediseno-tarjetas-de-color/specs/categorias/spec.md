@@ -19,7 +19,7 @@ Las de siempre traen el suyo: Supermercado el carrito, Comida fuera el café, De
 entrada, Compras la bolsa, Ropa la remera, Belleza el brillo, Casa/Splitwise la casa, Salud el corazón, Viajes el avión, Regalos el
 regalo, Salidas bar/disco la copa, Plan Iberia la maleta, Servicios mensuales repetir, Alquiler la llave, Carga móvil el teléfono,
 Trabajo (reembolsable) el maletín y Otros los puntos. En la hoja de una categoría, «Ícono» muestra la lista con el elegido marcado,
-más «Sin ícono», que deja la inicial. Una categoría nueva empieza sin ícono. El ícono se ve en Movimientos, en el mosaico, en
+más «Sin ícono», que deja la inicial. Una categoría nueva empieza sin ícono. El ícono se ve en Movimientos, en «Gasto del mes», en
 «Gasto por categoría» y en la lista de categorías. Renombrar una categoría no le cambia el ícono.
 
 ### Escenario: elegir un ícono
@@ -36,7 +36,7 @@ más «Sin ícono», que deja la inicial. Una categoría nueva empieza sin ícon
 ### Escenario: cambiar el ícono de una de siempre
 - **Dado** la categoría «Ocio» con su ícono de siempre
 - **Cuando** la persona elige el ícono de la copa y guarda
-- **Entonces** «Ocio» se ve con la copa en Movimientos, el mosaico y la lista de categorías
+- **Entonces** «Ocio» se ve con la copa en Movimientos, en «Gasto del mes» y en la lista de categorías
 
 ### Escenario: sin ícono
 - **Dado** la categoría «Ocio» con un ícono
@@ -62,7 +62,7 @@ lo marcado como fijo siguen con la categoría renombrada.
 - **Dado** un gasto de 20 € en Ocio
 - **Cuando** la persona renombra «Ocio» a «Salidas»
 - **Entonces** el gasto aparece en Movimientos como «Salidas»
-- **Y** el mosaico de Inicio y la hoja de la categoría lo cuentan en «Salidas»
+- **Y** «Gasto del mes» de Inicio y la hoja de la categoría lo cuentan en «Salidas»
 
 ### Escenario: lo aprendido sigue
 - **Dado** una importación anterior en la que la persona guardó «Bar Ejemplo» como Ocio
@@ -72,4 +72,4 @@ lo marcado como fijo siguen con la categoría renombrada.
 ### Escenario: cambiar el color
 - **Dado** la categoría «Ocio» con su color
 - **Cuando** la persona elige otro color y guarda
-- **Entonces** «Ocio» se ve con el nuevo color en el mosaico, la pila de «Gasto por categoría» y los cuadraditos de Movimientos
+- **Entonces** «Ocio» se ve con el nuevo color en «Gasto del mes», la pila de «Gasto por categoría» y los cuadraditos de Movimientos

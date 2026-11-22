@@ -1,36 +1,36 @@
 # Capacidad: graficos
 
 ## Retirado: torta de gastos por categoría
-La sustituye «mosaico de gastos por categoría»: la torta quedaba apretada.
+La sustituye «lista de gastos por categoría»: la torta quedaba apretada.
 
-## Requisito: mosaico de gastos por categoría
+## Requisito: lista de gastos por categoría
 
-En «Gasto del mes», Inicio muestra el gasto del mes que se ve repartido por categoría en un mosaico: un bloque por categoría, del color de la categoría, con un área proporcional a lo gastado, el más grande primero. El encabezado dice el total del mes. Entran las cinco categorías con más gasto; si hay más, las demás se suman en un bloque gris «Resto». Cada bloque lleva el ícono de la categoría y, si cabe, su nombre, su importe y su porcentaje del mes. Ingresos, transferencias y ajustes no cuentan; los gastos reembolsables sí.
+En «Gasto del mes», Inicio muestra el gasto del mes que se ve por categoría en una lista, de mayor a menor: una fila por categoría con el cuadradito de su color y su ícono, su nombre, su importe y su porcentaje del mes, y debajo una barra de su color proporcional a lo gastado (la más grande llega al ancho entero). El encabezado dice el total del mes. Entran las cinco categorías con más gasto; si hay más, las demás se suman en una fila gris «Resto (N categorías)». Cada nombre tiene su renglón: si es largo, se corta con puntos suspensivos y nunca se pisa con el importe. Ingresos, transferencias y ajustes no cuentan; los gastos reembolsables sí.
 
-### Escenario: mosaico con tres categorías
+### Escenario: lista con tres categorías
 - **Dado** 60 € en Supermercado, 30 € en Comida fuera y 10 € en Transporte este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** «Gasto del mes» dice 100 € y el mosaico tiene tres bloques
-- **Y** el bloque de Supermercado ocupa el 60 % del área del mosaico, con un margen de 3 puntos
+- **Entonces** «Gasto del mes» dice 100 € y la lista tiene tres filas: Supermercado, Comida fuera y Transporte, en ese orden
+- **Y** la fila de Supermercado dice «60 €» y «60 %», y su barra es el doble de larga que la de Comida fuera
 
 ### Escenario: más de cinco categorías
 - **Dado** gastos en siete categorías este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** el mosaico tiene cinco bloques de color y uno gris «Resto» con la suma de las otras dos
+- **Entonces** la lista tiene cinco filas de color y una gris «Resto (2 categorías)» con la suma de las otras dos
 
-### Escenario: mosaico sin gastos
+### Escenario: lista sin gastos
 - **Dado** que no hay gastos en el mes que se ve
 - **Cuando** la persona abre Inicio
-- **Entonces** no se dibuja el mosaico y se lee «Todavía no anotaste gastos este mes. Tocá + para empezar.»
+- **Entonces** no se dibuja la lista y se lee «Todavía no anotaste gastos este mes. Tocá + para empezar.»
 
-### Escenario: el mosaico cabe en el ancho
-- **Dado** gastos en siete categorías, una con un nombre de 30 caracteres
+### Escenario: un nombre largo no se pisa
+- **Dado** gastos en una categoría con un nombre de 30 caracteres
 - **Cuando** la persona abre Inicio a 390 px
-- **Entonces** ningún texto se sale de su bloque y la pantalla no tiene desplazamiento horizontal
+- **Entonces** el nombre se corta con puntos suspensivos, no se superpone con el importe y la pantalla no tiene desplazamiento horizontal
 
 ## Requisito: gasto por categoría en tarjetas apiladas
 
-Tocar el encabezado de «Gasto del mes» o el bloque «Resto» abre la hoja «Gasto por categoría» del mes que se ve: todas las categorías con gasto, de mayor a menor, cada una en una tarjeta de su color con degradado, apiladas de modo que cada una asoma por debajo de la anterior. Cada tarjeta lleva el ícono y el nombre de la categoría, su total, su porcentaje del mes, cuántos gastos tiene, la marca «Fijo» si es una categoría siempre fija, y el cambio frente al mes anterior en porcentaje. Tocar una tarjeta abre la hoja de esa categoría.
+Tocar el encabezado de «Gasto del mes» o la fila «Resto» abre la hoja «Gasto por categoría» del mes que se ve: todas las categorías con gasto, de mayor a menor, cada una en una tarjeta de su color con degradado, apiladas de modo que cada una asoma por debajo de la anterior. Cada tarjeta lleva el ícono y el nombre de la categoría, su total, su porcentaje del mes, cuántos gastos tiene, la marca «Fijo» si es una categoría siempre fija, y el cambio frente al mes anterior en porcentaje. Tocar una tarjeta abre la hoja de esa categoría.
 
 ### Escenario: categorías apiladas de mayor a menor
 - **Dado** que hoy es 2026-10-15, este mes 60 € en Supermercado en tres gastos, 30 € en Comida fuera y 10 € en Transporte
@@ -50,7 +50,7 @@ Tocar el encabezado de «Gasto del mes» o el bloque «Resto» abre la hoja «Ga
 
 ### Escenario: desde Resto
 - **Dado** gastos en siete categorías este mes
-- **Cuando** la persona toca «Resto» en el mosaico
+- **Cuando** la persona toca «Resto» en «Gasto del mes»
 - **Entonces** se abre «Gasto por categoría» con las siete categorías
 
 ### Escenario: el texto de cada tarjeta se lee
@@ -60,17 +60,20 @@ Tocar el encabezado de «Gasto del mes» o el bloque «Resto» abre la hoja «Ga
 
 ## Requisito: abrir una categoría
 
-Tocar un bloque del mosaico o una tarjeta de «Gasto por categoría» abre la hoja de esa categoría en el mes que se está viendo, con su nombre, el total gastado y el mes. Cuenta lo mismo que el mosaico: los gastos de la categoría, sin ingresos, transferencias ni ajustes.
+Tocar una fila de «Gasto del mes» o una tarjeta de «Gasto por categoría» abre la hoja de esa categoría en el mes que se está viendo, con su nombre, el total gastado y el mes. Cuenta lo mismo que la lista: los gastos de la categoría, sin ingresos, transferencias ni ajustes.
 
-### Escenario: abrir desde el mosaico
+### Escenario: abrir desde la lista
 - **Dado** que hoy es 2026-10-15 y este mes 64,30 € en Supermercado y 18 € en Comida fuera
-- **Cuando** la persona toca el bloque de Supermercado
+- **Cuando** la persona toca la fila de Supermercado en «Gasto del mes»
 - **Entonces** se abre la hoja «Supermercado» con 64,3 € y «octubre 2026»
 
 ### Escenario: abrir desde la pila
 - **Dado** este mes 64,30 € en Supermercado y 18 € en Comida fuera
 - **Cuando** la persona abre «Gasto por categoría» y toca Comida fuera
 - **Entonces** se abre la hoja «Comida fuera» con 18 €
+
+## Retirado: barras de gasto por semana
+Inicio ya no muestra el gasto por semana: el detalle de cada semana está en Movimientos.
 
 ## Requisito: ingresos contra gastos por mes
 

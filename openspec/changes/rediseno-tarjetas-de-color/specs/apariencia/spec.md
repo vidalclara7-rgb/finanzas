@@ -2,7 +2,7 @@
 
 ## Requisito: colores del sistema
 
-La app tiene una sola paleta, con versión clara y oscura. Clara: fondo #FFFFFF, tarjeta #F4F4F6, texto #0B0B0F, texto secundario #66666E. Oscura: fondo #000000, tarjeta #141416, texto #F5F5F7, texto secundario #9A9AA2. El acento es lima (#E8F94B). Lo que entra es verde: relleno #34C759 y, en los importes escritos, #17773F en la clara y #4ADE80 en la oscura. Lo que sale se escribe en el color del texto. El rosa queda para los avisos (un tope excedido, un mes en negativo): #C81E4A en la clara y #FF8AA6 en la oscura. Ya no hay degradado azul y violeta.
+La app tiene una sola paleta, con versión clara y oscura. Clara: fondo #FFFFFF, tarjeta #F4F4F6, texto #0B0B0F, texto secundario #66666E. Oscura: fondo #000000, tarjeta #141416, texto #F5F5F7, texto secundario #9A9AA2. El acento es lima (#E8F94B). Lo que entra es verde: relleno #34C759 y, en los importes escritos, #17773F en la clara y #4ADE80 en la oscura. Lo que sale se escribe en el color del texto. El rosa queda para los avisos sobre fondo gris o liso (un mes en negativo en el gráfico, un saldo negativo en Cuentas): #C81E4A en la clara y #FF8AA6 en la oscura. Dentro de una tarjeta de color, los avisos se dicen con texto y una marca, en el color de la pareja. Ya no hay degradado azul y violeta.
 
 ### Escenario: los colores de la clara
 - **Dado** la apariencia Clara
@@ -21,9 +21,9 @@ La app tiene una sola paleta, con versión clara y oscura. Clara: fondo #FFFFFF,
 - **Y** cada importe tiene contraste de al menos 4,5 a 1 con su fondo
 
 ### Escenario: rosa sólo para avisos
-- **Dado** «Tarjeta» con tope de 300 € y 320 € gastados este mes, y un mes con gastos mayores que los ingresos
-- **Cuando** la persona abre Inicio en las dos apariencias
-- **Entonces** el anillo excedido y el título del resultado van en rosa, con contraste de al menos 4,5 a 1
+- **Dado** una tarjeta de crédito con 350 € de deuda y septiembre con gastos mayores que los ingresos
+- **Cuando** la persona abre Inicio y Cuentas en las dos apariencias
+- **Entonces** septiembre se marca en rosa en «Ingresos y gastos» y el total negativo de «Tarjetas de crédito» en «Por tipo» va en rosa, con contraste de al menos 4,5 a 1
 
 ### Escenario: texto secundario legible
 - **Dado** Inicio, Movimientos y Cuentas con datos
@@ -40,7 +40,7 @@ Lo sustituye «fondo liso y tarjetas sin sombra»: fondo blanco o negro y tarjet
 
 ## Requisito: fondo liso y tarjetas sin sombra
 
-Detrás de todas las pantallas hay un fondo liso, sin formas ni animación: blanco #FFFFFF en la apariencia Clara y negro #000000 en la Oscura. Las tarjetas quedan encima, sin sombra ni borde, con esquinas muy redondeadas (al menos 22 px): gris #F4F4F6 en la clara y #141416 en la oscura. Nada en el fondo ni en las tarjetas se mueve por sí solo, así que «Reducir movimiento» no cambia nada.
+Detrás de todas las pantallas hay un fondo liso, sin formas ni animación: blanco #FFFFFF en la apariencia Clara y negro #000000 en la Oscura. Las tarjetas quedan encima, sin sombra ni borde, con esquinas muy redondeadas (al menos 22 px). Las que no llevan una pareja de color son grises: #F4F4F6 en la clara y #141416 en la oscura. Nada en el fondo ni en las tarjetas se mueve por sí solo, así que «Reducir movimiento» no cambia nada.
 
 ### Escenario: fondo de cada apariencia
 - **Dado** la app abierta
@@ -48,7 +48,7 @@ Detrás de todas las pantallas hay un fondo liso, sin formas ni animación: blan
 - **Entonces** el fondo de la pantalla es #FFFFFF en la clara y #000000 en la oscura
 
 ### Escenario: tarjetas de cada apariencia
-- **Dado** una tarjeta de Inicio
+- **Dado** la tarjeta «Gasto del mes» de Inicio
 - **Cuando** la persona la mira en la clara y en la oscura
 - **Entonces** su fondo es #F4F4F6 en la clara y #141416 en la oscura, sin sombra y con esquinas de al menos 22 px
 
