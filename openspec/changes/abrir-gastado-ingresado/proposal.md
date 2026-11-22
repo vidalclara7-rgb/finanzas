@@ -1,6 +1,6 @@
 ---
 cambio: abrir-gastado-ingresado
-estado: diseno-aprobado
+estado: construida
 datos: sin-cambios
 ---
 # Abrir «Gastado» e «Ingresado» para ver qué los compone

@@ -1,6 +1,6 @@
 ---
 cambio: a-pagar-tarjeta
-estado: diseno-aprobado
+estado: construida
 datos: amplia
 ---
 # Lo que hay que pagar de la tarjeta al cierre
