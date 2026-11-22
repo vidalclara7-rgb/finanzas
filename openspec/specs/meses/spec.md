@@ -11,7 +11,7 @@ en curso). En Cierre se puede conciliar y ajustar un mes ya cerrado. Anotar un m
 - **Dado** que hoy es 2026-11-02, un gasto de 40 € en Supermercado del 2026-10-20 y otro de 10 € del 2026-11-01
 - **Cuando** la persona abre Inicio y toca la flecha ‹
 - **Entonces** el selector dice «octubre 2026» y Inicio muestra gastos por 40 €
-- **Y** la torta tiene sólo Supermercado
+- **Y** «Gasto del mes» tiene sólo Supermercado
 
 ### Escenario: no pasa del mes en curso
 - **Dado** que hoy es 2026-11-02
@@ -22,6 +22,7 @@ en curso). En Cierre se puede conciliar y ajustar un mes ya cerrado. Anotar un m
 - **Dado** un gasto del 2026-10-20 y otro del 2026-11-01, y hoy es 2026-11-02
 - **Cuando** la persona abre Movimientos y toca la flecha ‹
 - **Entonces** ve sólo el gasto del 2026-10-20
+
 
 ### Escenario: el mes elegido se mantiene
 - **Dado** el selector en octubre 2026 en Inicio
@@ -53,4 +54,4 @@ en curso). En Cierre se puede conciliar y ajustar un mes ya cerrado. Anotar un m
 ### Escenario: mes sin datos
 - **Dado** que hoy es 2026-11-02 y ningún movimiento en septiembre 2026
 - **Cuando** la persona va a septiembre 2026 en Inicio
-- **Entonces** Inicio muestra «Todavía no anotaste gastos este mes. Tocá + para empezar.» y el resultado es 0 €
+- **Entonces** Inicio muestra «Todavía no anotaste gastos este mes. Tocá + para empezar.» y el resultado dice «Sin resultado este mes»

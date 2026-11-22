@@ -14,7 +14,7 @@
 <style>
 :root{
   /* Paleta: fondo blanco, tarjetas gris claro, texto casi negro, acento lima. Sin sombras ni degradado azul */
-  --bg:#FFFFFF; --card:#F4F4F6; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
+  --bg:#FFFFFF; --card:#F4F4F6; --card-base:#F4F4F6; --tinte:40%; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
   /* Lo que entra es verde; lo que sale, el color del texto; el rosa queda para los avisos */
   --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#17773F; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
   --ingreso:#17773F; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
@@ -26,61 +26,61 @@
   --accent:#0B0B0F; --accent-soft:rgba(0,0,0,.07); --nav:#1C1C1E; --nav-ink:#A1A1A8; --nav-on:#FFFFFF; --nav-on-t:#0B0B0F;
   --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Roboto",system-ui,sans-serif; --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Roboto",system-ui,sans-serif; --font-num:var(--font); --mono:var(--font);
   /* 19 colores de categoría con degradado (más intenso abajo), su color medio y el texto que se lee en todo el degradado (4,5 a 1) */
-  --cat1:#3B1A86; --cat2:#1D5A28; --cat3:#2A3E9E; --cat4:#170E3C; --cat5:#5A0B2E; --cat6:#1A2E8A; --cat7:#6A1E7A; --cat8:#6F220E; --cat9:#902F0F; --cat10:#41459E; --cat11:#5D330E; --cat12:#3A1A5E; --cat13:#901860; --cat14:#1E1E5E; --cat15:#093451; --cat16:#3A1A06; --cat17:#4E2898; --cat18:#2A2A40; --cat19:#4A4A55;
-  --cat1t:#3B1A86; --cat2t:#1D5A28; --cat3t:#FFD84A; --cat4t:#170E3C; --cat5t:#5A0B2E; --cat6t:#1A2E8A; --cat7t:#6A1E7A; --cat8t:#6F220E; --cat9t:#902F0F; --cat10t:#F4F0A0; --cat11t:#5D330E; --cat12t:#3A1A5E; --cat13t:#FFE0F0; --cat14t:#1E1E5E; --cat15t:#093451; --cat16t:#3A1A06; --cat17t:#D6F04A; --cat18t:#2A2A40; --cat19t:#FAE59C;
-  --cat1g:radial-gradient(120% 140% at 50% 120%,#D1B4F2 0%,#C9A7F0 45%,#B193D3 100%);
-  --cat2g:radial-gradient(120% 140% at 50% 120%,#DCEB58 0%,#D6E83A 45%,#BCCC33 100%);
-  --cat3g:radial-gradient(120% 140% at 50% 120%,#45549D 0%,#24368C 45%,#20307B 100%);
-  --cat4g:radial-gradient(120% 140% at 50% 120%,#F4804D 0%,#F26A2E 45%,#D55D28 100%);
-  --cat5g:radial-gradient(120% 140% at 50% 120%,#F49CC3 0%,#F28BB8 45%,#D57AA2 100%);
-  --cat6g:radial-gradient(120% 140% at 50% 120%,#82D4EB 0%,#6CCDE8 45%,#5FB4CC 100%);
-  --cat7g:radial-gradient(120% 140% at 50% 120%,#A0DFBF 0%,#8FD9B4 45%,#7EBF9E 100%);
-  --cat8g:radial-gradient(120% 140% at 50% 120%,#F6BF9C 0%,#F5B48A 45%,#D89E79 100%);
-  --cat9g:radial-gradient(120% 140% at 50% 120%,#FFE665 0%,#FFE14A 45%,#E0C641 100%);
-  --cat10g:radial-gradient(120% 140% at 50% 120%,#5E61AD 0%,#41459E 45%,#393D8B 100%);
-  --cat11g:radial-gradient(120% 140% at 50% 120%,#DEC99C 0%,#D8C08A 45%,#BEA979 100%);
-  --cat12g:radial-gradient(120% 140% at 50% 120%,#C3CB58 0%,#B8C23A 45%,#A2AB33 100%);
-  --cat13g:radial-gradient(120% 140% at 50% 120%,#A13B78 0%,#901860 45%,#7F1554 100%);
-  --cat14g:radial-gradient(120% 140% at 50% 120%,#92B5DE 0%,#7FA8D8 45%,#7094BE 100%);
-  --cat15g:radial-gradient(120% 140% at 50% 120%,#4DCDCD 0%,#2EC4C4 45%,#28ACAC 100%);
-  --cat16g:radial-gradient(120% 140% at 50% 120%,#FF9C4D 0%,#FF8A2E 45%,#E07928 100%);
-  --cat17g:radial-gradient(120% 140% at 50% 120%,#6948A7 0%,#4E2898 45%,#452386 100%);
-  --cat18g:radial-gradient(120% 140% at 50% 120%,#D6D6DE 0%,#CFCFD8 45%,#B6B6BE 100%);
-  --cat19g:radial-gradient(120% 140% at 50% 120%,#65656E 0%,#4A4A55 45%,#41414B 100%);
-  --cat1s:#C9A7F0; --cat2s:#D6E83A; --cat3s:#24368C; --cat4s:#F26A2E; --cat5s:#F28BB8; --cat6s:#6CCDE8; --cat7s:#8FD9B4; --cat8s:#F5B48A; --cat9s:#FFE14A; --cat10s:#41459E; --cat11s:#D8C08A; --cat12s:#B8C23A; --cat13s:#901860; --cat14s:#7FA8D8; --cat15s:#2EC4C4; --cat16s:#FF8A2E; --cat17s:#4E2898; --cat18s:#CFCFD8; --cat19s:#4A4A55;
+  --cat1:#5C9288; --cat2:#808B23; --cat3:#4C8DC0; --cat4:#E6652C; --cat5:#C26F93; --cat6:#4C90A2; --cat7:#64987E; --cat8:#AC7E61; --cat9:#99872C; --cat10:#E1616B; --cat11:#978661; --cat12:#8A922C; --cat13:#E354AA; --cat14:#6C8FB8; --cat15:#229393; --cat16:#CC6E25; --cat17:#349B64; --cat18:#87878C; --cat19:#888897;
+  --cat1t:#0B0B0F; --cat2t:#0B0B0F; --cat3t:#0B0B0F; --cat4t:#0B0B0F; --cat5t:#0B0B0F; --cat6t:#0B0B0F; --cat7t:#0B0B0F; --cat8t:#0B0B0F; --cat9t:#0B0B0F; --cat10t:#0B0B0F; --cat11t:#0B0B0F; --cat12t:#0B0B0F; --cat13t:#0B0B0F; --cat14t:#0B0B0F; --cat15t:#0B0B0F; --cat16t:#0B0B0F; --cat17t:#0B0B0F; --cat18t:#0B0B0F; --cat19t:#0B0B0F;
+  --cat1g:radial-gradient(120% 140% at 50% 120%,#9FE5D9 0%,#8EE0D2 45%,#80CABD 100%);
+  --cat2g:radial-gradient(120% 140% at 50% 120%,#DCEB58 0%,#D6E83A 45%,#C1D134 100%);
+  --cat3g:radial-gradient(120% 140% at 50% 120%,#77BCF2 0%,#5FB0F0 45%,#569ED8 100%);
+  --cat4g:radial-gradient(120% 140% at 50% 120%,#F4804D 0%,#F26A2E 45%,#DA5F29 100%);
+  --cat5g:radial-gradient(120% 140% at 50% 120%,#F49CC3 0%,#F28BB8 45%,#DA7DA6 100%);
+  --cat6g:radial-gradient(120% 140% at 50% 120%,#82D4EB 0%,#6CCDE8 45%,#61B8D1 100%);
+  --cat7g:radial-gradient(120% 140% at 50% 120%,#A0DFBF 0%,#8FD9B4 45%,#81C3A2 100%);
+  --cat8g:radial-gradient(120% 140% at 50% 120%,#F6BF9C 0%,#F5B48A 45%,#DCA27C 100%);
+  --cat9g:radial-gradient(120% 140% at 50% 120%,#FFE665 0%,#FFE14A 45%,#E6CA43 100%);
+  --cat10g:radial-gradient(120% 140% at 50% 120%,#E67981 0%,#E1616B 45%,#CA5760 100%);
+  --cat11g:radial-gradient(120% 140% at 50% 120%,#DEC99C 0%,#D8C08A 45%,#C2AD7C 100%);
+  --cat12g:radial-gradient(120% 140% at 50% 120%,#C3CB58 0%,#B8C23A 45%,#A6AF34 100%);
+  --cat13g:radial-gradient(120% 140% at 50% 120%,#E76EB7 0%,#E354AA 45%,#CC4C99 100%);
+  --cat14g:radial-gradient(120% 140% at 50% 120%,#92B5DE 0%,#7FA8D8 45%,#7297C2 100%);
+  --cat15g:radial-gradient(120% 140% at 50% 120%,#4DCDCD 0%,#2EC4C4 45%,#29B0B0 100%);
+  --cat16g:radial-gradient(120% 140% at 50% 120%,#FF9C4D 0%,#FF8A2E 45%,#E67C29 100%);
+  --cat17g:radial-gradient(120% 140% at 50% 120%,#52AA7B 0%,#349B64 45%,#2F8B5A 100%);
+  --cat18g:radial-gradient(120% 140% at 50% 120%,#D6D6DE 0%,#CFCFD8 45%,#BABAC2 100%);
+  --cat19g:radial-gradient(120% 140% at 50% 120%,#9A9AA7 0%,#888897 45%,#7A7A88 100%);
+  --cat1s:#8EE0D2; --cat2s:#D6E83A; --cat3s:#5FB0F0; --cat4s:#F26A2E; --cat5s:#F28BB8; --cat6s:#6CCDE8; --cat7s:#8FD9B4; --cat8s:#F5B48A; --cat9s:#FFE14A; --cat10s:#E1616B; --cat11s:#D8C08A; --cat12s:#B8C23A; --cat13s:#E354AA; --cat14s:#7FA8D8; --cat15s:#2EC4C4; --cat16s:#FF8A2E; --cat17s:#349B64; --cat18s:#CFCFD8; --cat19s:#888897;
   --resto-g:radial-gradient(120% 140% at 50% 120%,#E3E3E8 0%,#D6D6DC 45%,#BCBCC2 100%); --resto-t:#2A2A40;
   /* Tipos de cuenta: bancos 1, inversiones 3, tarjetas 4, financiaciones 5, deudas compartidas 2 */
-  --k1:var(--cat1); --k1g:var(--cat1g); --k1t:var(--cat1t); --k2:var(--cat3); --k2g:var(--cat3g); --k2t:var(--cat3t); --k3:var(--cat4); --k3g:var(--cat4g); --k3t:var(--cat4t); --k4:var(--cat5); --k4g:var(--cat5g); --k4t:var(--cat5t); --k5:var(--cat2); --k5g:var(--cat2g); --k5t:var(--cat2t);
+  --k1:var(--cat1); --k1g:var(--cat1g); --k1t:var(--cat1t); --k2:var(--cat3); --k2g:var(--cat3g); --k2t:var(--cat3t); --k3:var(--cat4); --k3g:var(--cat4g); --k3t:var(--cat4t); --k4:var(--cat5); --k4g:var(--cat5g); --k4t:var(--cat5t); --k5:var(--cat2); --k5g:var(--cat2g); --k5t:var(--cat2t); --k1s:var(--cat1s); --k2s:var(--cat3s); --k3s:var(--cat4s); --k4s:var(--cat5s); --k5s:var(--cat2s);
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#000000; --card:#141416; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
+  --bg:#000000; --card:#141416; --card-base:#141416; --tinte:55%; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
   --verde-t:#4ADE80; --rosa:#FF8AA6; --rosa-t:#FF8AA6; --aviso-t:#FF8AA6; --ingreso:#4ADE80; --on-ingreso:#0B0B0F; --rojo:#FF8AA6; --naranja:#FFB066; --frambuesa:#3E8BFF;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8AA6; --bad-soft:#3A1520;
   --dest:#E8F94B; --dest-t:#0B0B0F; --logo-punto:#E8F94B; --chip:rgba(255,255,255,.12);
   --barra:#2A2A30; --label:#F5F5F7;
   --accent:#E8F94B; --accent-soft:rgba(255,255,255,.1); --nav:#1C1C1E; --nav-ink:#A1A1A8; --nav-on:#E8F94B; --nav-on-t:#0B0B0F;
-  --cat1:#D9F500; --cat2:#F7A8E8; --cat3:#FFF200; --cat4:#6CC9A0; --cat5:#28BBFF; --cat6:#F79AA0; --cat7:#22F56A; --cat8:#FF6A1A; --cat9:#DEB5FF; --cat10:#E3F07A; --cat11:#FFCBA1; --cat12:#F08A3A; --cat13:#1CF06A; --cat14:#7AD8FF; --cat15:#E8F07A; --cat16:#FF8FAA; --cat17:#3DFFC8; --cat18:#E6E6EA; --cat19:#FFB84D;
-  --cat1t:#D9F500; --cat2t:#F7A8E8; --cat3t:#FFF200; --cat4t:#0A2869; --cat5t:#28BBFF; --cat6t:#570A0F; --cat7t:#22F56A; --cat8t:#1C0C03; --cat9t:#DEB5FF; --cat10t:#E3F07A; --cat11t:#FFCBA1; --cat12t:#1A0A00; --cat13t:#4B1A8A; --cat14t:#720B43; --cat15t:#E8F07A; --cat16t:#FF8FAA; --cat17t:#3DFFC8; --cat18t:#E6E6EA; --cat19t:#FFB84D;
-  --cat1g:radial-gradient(120% 140% at 50% 120%,#8A2EEB 0%,#7A12E8 45%,#640FBE 100%);
-  --cat2g:radial-gradient(120% 140% at 50% 120%,#2C5339 0%,#0F3B1E 45%,#0C3019 100%);
-  --cat3g:radial-gradient(120% 140% at 50% 120%,#9C2C70 0%,#8E0F5C 45%,#740C4B 100%);
-  --cat4g:radial-gradient(120% 140% at 50% 120%,#7ECFAB 0%,#6CC9A0 45%,#59A583 100%);
-  --cat5g:radial-gradient(120% 140% at 50% 120%,#702747 0%,#5C0A2E 45%,#4B0826 100%);
-  --cat6g:radial-gradient(120% 140% at 50% 120%,#F8A6AB 0%,#F79AA0 45%,#CB7E83 100%);
-  --cat7g:radial-gradient(120% 140% at 50% 120%,#28542E 0%,#0B3D12 45%,#09320F 100%);
-  --cat8g:radial-gradient(120% 140% at 50% 120%,#FF7C35 0%,#FF6A1A 45%,#D15715 100%);
-  --cat9g:radial-gradient(120% 140% at 50% 120%,#6E472B 0%,#5A2E0E 45%,#4A260B 100%);
-  --cat10g:radial-gradient(120% 140% at 50% 120%,#54602E 0%,#3D4A12 45%,#323D0F 100%);
-  --cat11g:radial-gradient(120% 140% at 50% 120%,#566027 0%,#3F4A0A 45%,#343D08 100%);
-  --cat12g:radial-gradient(120% 140% at 50% 120%,#F29852 0%,#F08A3A 45%,#C57130 100%);
-  --cat13g:radial-gradient(120% 140% at 50% 120%,#37F27C 0%,#1CF06A 45%,#17C557 100%);
-  --cat14g:radial-gradient(120% 140% at 50% 120%,#8ADDFF 0%,#7AD8FF 45%,#64B1D1 100%);
-  --cat15g:radial-gradient(120% 140% at 50% 120%,#60278A 0%,#4A0A7A 45%,#3D0864 100%);
-  --cat16g:radial-gradient(120% 140% at 50% 120%,#274460 0%,#0A2A4A 45%,#08223D 100%);
-  --cat17g:radial-gradient(120% 140% at 50% 120%,#442760 0%,#2A0A4A 45%,#22083D 100%);
-  --cat18g:radial-gradient(120% 140% at 50% 120%,#525257 0%,#3A3A40 45%,#303034 100%);
-  --cat19g:radial-gradient(120% 140% at 50% 120%,#2C4752 0%,#0F2E3A 45%,#0C2630 100%);--cat1s:#7A12E8; --cat2s:#0F3B1E; --cat3s:#8E0F5C; --cat4s:#6CC9A0; --cat5s:#5C0A2E; --cat6s:#F79AA0; --cat7s:#0B3D12; --cat8s:#FF6A1A; --cat9s:#5A2E0E; --cat10s:#3D4A12; --cat11s:#3F4A0A; --cat12s:#F08A3A; --cat13s:#1CF06A; --cat14s:#7AD8FF; --cat15s:#4A0A7A; --cat16s:#0A2A4A; --cat17s:#2A0A4A; --cat18s:#3A3A40; --cat19s:#0F2E3A;
+  --cat1:#2C59DC; --cat2:#4B6C56; --cat3:#A53F7D; --cat4:#2A7252; --cat5:#8D536D; --cat6:#DC111F; --cat7:#486E4D; --cat8:#B84000; --cat9:#83624A; --cat10:#646E41; --cat11:#656E3B; --cat12:#A34F0C; --cat13:#087530; --cat14:#006F9E; --cat15:#476B77; --cat16:#536A80; --cat17:#805F53; --cat18:#6B6B70; --cat19:#576D75;
+  --cat1t:#FFFFFF; --cat2t:#FFFFFF; --cat3t:#FFFFFF; --cat4t:#FFFFFF; --cat5t:#FFFFFF; --cat6t:#FFFFFF; --cat7t:#FFFFFF; --cat8t:#FFFFFF; --cat9t:#FFFFFF; --cat10t:#FFFFFF; --cat11t:#FFFFFF; --cat12t:#FFFFFF; --cat13t:#FFFFFF; --cat14t:#FFFFFF; --cat15t:#FFFFFF; --cat16t:#FFFFFF; --cat17t:#FFFFFF; --cat18t:#FFFFFF; --cat19t:#FFFFFF;
+  --cat1g:radial-gradient(120% 140% at 50% 120%,#2C59DC 0%,#1446D8 45%,#1039B1 100%);
+  --cat2g:radial-gradient(120% 140% at 50% 120%,#274F34 0%,#0F3B1E 45%,#0C3019 100%);
+  --cat3g:radial-gradient(120% 140% at 50% 120%,#99276C 0%,#8E0F5C 45%,#740C4B 100%);
+  --cat4g:radial-gradient(120% 140% at 50% 120%,#3F8063 0%,#2A7252 45%,#225D43 100%);
+  --cat5g:radial-gradient(120% 140% at 50% 120%,#6C2343 0%,#5C0A2E 45%,#4B0826 100%);
+  --cat6g:radial-gradient(120% 140% at 50% 120%,#E02935 0%,#DC111F 45%,#B40E19 100%);
+  --cat7g:radial-gradient(120% 140% at 50% 120%,#23502A 0%,#0B3D12 45%,#09320F 100%);
+  --cat8g:radial-gradient(120% 140% at 50% 120%,#BF531A 0%,#B84000 45%,#973400 100%);
+  --cat9g:radial-gradient(120% 140% at 50% 120%,#6A4326 0%,#5A2E0E 45%,#4A260B 100%);
+  --cat10g:radial-gradient(120% 140% at 50% 120%,#505C2A 0%,#3D4A12 45%,#323D0F 100%);
+  --cat11g:radial-gradient(120% 140% at 50% 120%,#525C23 0%,#3F4A0A 45%,#343D08 100%);
+  --cat12g:radial-gradient(120% 140% at 50% 120%,#AC6124 0%,#A34F0C 45%,#86410A 100%);
+  --cat13g:radial-gradient(120% 140% at 50% 120%,#218345 0%,#087530 45%,#076027 100%);
+  --cat14g:radial-gradient(120% 140% at 50% 120%,#1A7DA8 0%,#006F9E 45%,#005B82 100%);
+  --cat15g:radial-gradient(120% 140% at 50% 120%,#234E5C 0%,#0A3A4A 45%,#08303D 100%);
+  --cat16g:radial-gradient(120% 140% at 50% 120%,#233F5C 0%,#0A2A4A 45%,#08223D 100%);
+  --cat17g:radial-gradient(120% 140% at 50% 120%,#5C3123 0%,#4A1A0A 45%,#3D1508 100%);
+  --cat18g:radial-gradient(120% 140% at 50% 120%,#4E4E53 0%,#3A3A40 45%,#303034 100%);
+  --cat19g:radial-gradient(120% 140% at 50% 120%,#27434E 0%,#0F2E3A 45%,#0C2630 100%);--cat1s:#1446D8; --cat2s:#0F3B1E; --cat3s:#8E0F5C; --cat4s:#2A7252; --cat5s:#5C0A2E; --cat6s:#DC111F; --cat7s:#0B3D12; --cat8s:#B84000; --cat9s:#5A2E0E; --cat10s:#3D4A12; --cat11s:#3F4A0A; --cat12s:#A34F0C; --cat13s:#087530; --cat14s:#006F9E; --cat15s:#0A3A4A; --cat16s:#0A2A4A; --cat17s:#4A1A0A; --cat18s:#3A3A40; --cat19s:#0F2E3A;
   --resto-g:radial-gradient(120% 140% at 50% 120%,#525257 0%,#3A3A40 45%,#303034 100%); --resto-t:#E6E6EA;
   color-scheme:dark}
 @font-face{font-family:"Roboto";font-style:normal;font-weight:100 900;font-display:swap;src:url("vendor/roboto/roboto-latin-wght-normal.woff2") format("woff2")}
@@ -174,14 +174,6 @@ button.chip{border:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .ring .pista{stroke:var(--line)} .ring .valor{stroke:var(--ink)}
 .ring.warn .valor{stroke:var(--naranja)} .ring.bad .valor{stroke:var(--rojo)}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-/* Barras por semana: rayadas, la actual en negro */
-.barras{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
-.barras .col{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
-.barras .col i{display:block;width:100%;max-width:40px;min-height:4px;border-radius:12px;background:var(--barra)}
-.barras .col.hoy i{background:var(--ink)}
-.barras .col small{font-size:12px;color:var(--muted);white-space:nowrap}
-.barras .col em{font-style:normal;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.barras .col.hoy small{color:var(--ink);font-weight:700}
 .leyenda{display:flex;gap:14px;font-size:13px;color:var(--muted)}
 /* Barras de Forecast: comprometido contra ingreso, dos barras por mes */
 .meses{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
@@ -303,17 +295,6 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .partida.fina{height:14px;gap:3px;margin:4px 0}
 .partida.fina i{border-radius:99px;background:var(--c)}
 .mov .boton{flex:none;font:inherit;font-size:13px;font-weight:600;border:0;border-radius:999px;padding:7px 12px;background:var(--chip);color:var(--ink)}
-/* Mosaico: un bloque por categoría, de área proporcional a lo gastado */
-.mosaico{display:flex;gap:4px;height:230px}
-.mosaico .colm{display:flex;flex-direction:column;gap:4px;min-width:0}
-.tm{display:flex;gap:4px;min-width:0;min-height:0}
-.mosaico .filam{display:flex;gap:4px;min-height:0}
-.bloque{border:0;font:inherit;text-align:left;border-radius:18px;padding:10px 11px;display:flex;flex-direction:column;justify-content:space-between;background:var(--g);color:var(--t);min-width:0;min-height:0;overflow:hidden;cursor:pointer}
-.bloque svg{width:18px;height:18px;flex:none}
-.bloque b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bloque span{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.bloque.grande b{font-size:15px;white-space:normal;-webkit-hyphens:auto;hyphens:auto;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden} .bloque.grande span{font-size:14px}
-.bloque.chico{padding:8px}
 /* Gasto por categoría: tarjetas de color apiladas, cada una asoma por debajo de la anterior */
 .apilada{display:flex;flex-direction:column}
 .sc{border:0;font:inherit;text-align:left;border-radius:28px;padding:18px 18px 52px;position:relative;background:var(--g);color:var(--t);display:flex;flex-direction:column;gap:10px;cursor:pointer}
@@ -345,6 +326,23 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .icono-op{aspect-ratio:1;border-radius:12px;border:2px solid transparent;background:var(--card);color:var(--ink);display:grid;place-items:center;padding:0;font:inherit;font-weight:700}
 .icono-op svg{width:22px;height:22px}
 .icono-op[aria-pressed=true]{border-color:var(--ink)}
+/* Tarjetas de Inicio en parejas de color, suaves: fondo con un tinte del color de la pareja sobre el gris de la tarjeta y todo (texto, barras, anillos) en su tono fuerte */
+.card.par{background:color-mix(in srgb,var(--s) var(--tinte),var(--card-base));--t:var(--ink-base);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
+.card.par .grp{background:color-mix(in srgb,var(--t) 12%,transparent)}
+.card.par{--medio:color-mix(in srgb,var(--t) 55%,transparent)}
+.card.par .sub{font-weight:500}
+.card.par .boton,.card.par .btn.sec{background:var(--card-base);color:var(--t)}
+#disponibles .row>.lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.marca2{align-self:flex-start;font-size:12px;font-weight:600;border:1.5px solid currentColor;border-radius:99px;padding:3px 10px;white-space:nowrap}
+/* Gasto del mes: una fila por categoría con su cuadradito, nombre, importe, porcentaje y una barra de su color */
+.lcat{display:flex;flex-direction:column;gap:14px}
+.lcat .fila{border:0;background:none;font:inherit;color:inherit;text-align:left;padding:0;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:6px 12px;align-items:center;cursor:pointer;width:100%}
+.lcat .fila .tile{grid-row:span 2}
+.lcat .nom{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.lcat .imp{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.lcat .imp small{font-weight:500;color:var(--muted);margin-left:6px}
+.lcat .bar{grid-column:2/4;height:8px;background:var(--barra);border-radius:99px}
+.lcat .bar>i{background:var(--c);border-radius:99px}
 [hidden]{display:none!important}
 </style>
 <script>
@@ -368,23 +366,23 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
       <span>Creá tus cuentas: bancos, tarjetas, inversiones… Después anotá tus ingresos y gastos, y a fin de mes conciliás.</span>
       <button class="btn" id="crearPrimera">Crear cuenta</button>
     </div>
-    <button type="button" class="card color" id="objCard" data-ui="tarjeta-transferir" style="--c:var(--k3);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Toca transferir</span><span class="sub">Ver objetivos ›</span></div><div class="list" id="objCardLista"></div></button>
-    <div class="card toca" id="fvCard" data-ui="fijos-variables"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
+    <button type="button" class="card par" id="objCard" data-ui="tarjeta-transferir" style="--s:var(--cat9s);--tt:var(--cat9);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Toca transferir</span><span class="sub">Ver objetivos ›</span></div><div class="list" id="objCardLista"></div></button>
+    <div class="card toca par" id="fvCard" data-ui="fijos-variables" style="--s:var(--cat1s);--tt:var(--cat1)"><div class="row"><span class="lbl">Fijos y variables</span><span class="mas" id="fvMas">Ver detalle ›</span></div><div id="fv" style="display:flex;flex-direction:column;gap:10px"></div></div>
     <div class="card color" id="sugFijo" data-ui="sugerencia-fijo" style="--c:var(--k5)" hidden><span class="lbl" id="sugTit"></span><span class="sub" id="sugSub"></span><div class="row" style="justify-content:flex-start;gap:8px"><button class="btn" id="sugSi">Sí, es fijo</button><button class="btn sec" id="sugNo">No</button></div></div>
-    <div class="card" data-ui="resultado-mes">
+    <div class="card par" data-ui="resultado-mes" style="--s:var(--cat3s);--tt:var(--cat3)">
       <span class="res-tit" id="resTit" data-ui="titulo-resultado"></span>
       <span class="sub" id="resEntro"></span>
       <span class="sub" id="formaTxt" data-ui="porcentaje-ingresos"></span>
+      <span class="marca2" id="resMarca" data-ui="marca-negativo" hidden>Mes en negativo</span>
       <div id="destino" data-ui="destino-sobrante" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
-    <div class="grid2" data-ui="gastado-ingresado"><div class="card mini"><span class="t"><i class="dot" style="--c:var(--ink)"></i>Gastado</span><span class="big g" id="miniGas"></span></div><div class="card mini"><span class="t"><i class="dot" style="--c:var(--verde)"></i>Ingresado</span><span class="big i" id="miniIng"></span></div></div>
-    <div class="card color" id="porCobrar" data-ui="por-cobrar" style="--c:var(--k3)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
+    <div class="grid2" data-ui="gastado-ingresado"><div class="card mini par" style="--s:var(--cat2s);--tt:var(--cat2)"><span class="t">Gastado</span><span class="big g" id="miniGas"></span></div><div class="card mini par" style="--s:var(--cat7s);--tt:var(--cat7)"><span class="t">Ingresado</span><span class="big i" id="miniIng"></span></div></div>
+    <div class="card par" id="porCobrar" data-ui="por-cobrar" style="--s:var(--cat6s);--tt:var(--cat6)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
-    <button type="button" class="card color" id="cuotasCard" data-ui="tarjeta-cuotas" style="--c:var(--k4);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
-    <div class="card" data-ui="gasto-categorias"><button type="button" class="row toca" id="gastoHdr" data-ui="abrir-pila" style="border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;width:100%"><span class="lbl">Gasto del mes</span><span class="mas num" id="gastoTot"></span></button><div class="mosaico" id="mosaico" data-ui="mosaico-categorias"></div><div class="empty" id="mosaicoVacio">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
-    <div class="card color" id="barrasCard" data-ui="barras-semana" style="--c:var(--k5)" hidden><div class="row"><span class="lbl">Por semana</span><span class="sub">días del mes</span></div><div class="barras" id="barras"></div></div>
+    <button type="button" class="card par" id="cuotasCard" data-ui="tarjeta-cuotas" style="--s:var(--cat5s);--tt:var(--cat5);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
+    <div class="card" data-ui="gasto-categorias"><button type="button" class="row toca" id="gastoHdr" data-ui="abrir-pila" style="border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;width:100%"><span class="lbl">Gasto del mes</span><span class="mas num" id="gastoTot"></span></button><div class="lcat" id="lcat" data-ui="lista-categorias"></div><div class="empty" id="lcatVacio">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
     <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--k1)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--verde)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="curvas" id="meses"></div><div class="ejes" id="mesesEjes"></div></div>
-    <div class="card color" id="netoCard" data-ui="patrimonio-inicio" style="--c:var(--k1)" hidden>
+    <div class="card par" id="netoCard" data-ui="patrimonio-inicio" style="--s:var(--cat4s);--tt:var(--cat4)" hidden>
       <div class="row"><span class="lbl">Patrimonio neto</span><button class="btn sec" id="irCuentas" style="padding:6px 12px;font-size:14px">Ver cuentas</button></div>
       <span class="big" id="netoIni">–</span>
       <span class="sub" id="netoIniSub"></span>
@@ -762,11 +760,13 @@ const tipoDe=t=>TIPOS.find(x=>x[0]===t)||TIPOS[0];
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 const r2=n=>Math.round(n*100)/100;
-const eur=n=>r2(n).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
+// Importe: miles con punto (también los de cuatro cifras, que es-ES no agrupa) y decimales con coma
+const conMiles=n=>{const [e,d]=Math.abs(r2(n)).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2,useGrouping:false}).split(",");return (r2(n)<0?"-":"")+e.replace(/\B(?=(\d{3})+(?!\d))/g,".")+(d?","+d:"");};
+const eur=n=>conMiles(n)+" €";
 // Moneda de un movimiento: sólo una etiqueta (sin conversión). Ausente o no válida = euros
 const MONEDAS=["EUR","USD","GBP","Otra"];
 const monedaDe=m=>typeof m.moneda==="string"&&/^[A-Z]{3}$/.test(m.moneda)&&m.moneda!=="EUR"?m.moneda:"EUR";
-const eurM=(n,m)=>{const mo=monedaDe(m);return mo==="EUR"?eur(n):r2(n).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2})+" "+mo;};
+const eurM=(n,m)=>{const mo=monedaDe(m);return mo==="EUR"?eur(n):conMiles(n)+" "+mo;};
 const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
 const mesId=()=>hoy().slice(0,7);
 // El mes que se ve en Inicio, Movimientos y Cierre: se elige con las flechas y se olvida al cerrar la app
@@ -998,13 +998,6 @@ function anillo(el,usado,tope){el.hidden=!(tope>0);if(el.hidden)return;
   el.innerHTML=`<svg viewBox="0 0 64 64"><circle class="pista" cx="32" cy="32" r="28"/><circle class="valor" cx="32" cy="32" r="28" style="stroke-dasharray:${v.toFixed(1)} ${C.toFixed(1)}"/></svg><b>${Math.round(p)} %</b>`;}
 // Color de cada categoría por su nombre: Regalos llegó después y tiene el 13, sin mover los demás
 const colorCat=c=>`var(--cat${(catDe(c)||{}).color||12})`,gradCat=c=>`var(--cat${(catDe(c)||{}).color||12}g)`,textoCat=c=>`var(--cat${(catDe(c)||{}).color||12}t)`;
-// Barras de gasto por semana del mes: 1-7, 8-14, 15-21, 22-28 y 29 a fin de mes
-function barras(card,el,gs,id){card.hidden=!gs.length;if(card.hidden)return;
-  const [y,m]=id.split("-").map(Number),dias=new Date(y,m,0).getDate(),hoyD=id===mesId()?+hoy().slice(8):0;
-  const sem=[];for(let d=1;d<=dias;d+=7)sem.push([d,Math.min(d+6,dias),0]);
-  gs.forEach(g=>{sem[Math.floor((+g.fecha.slice(8)-1)/7)][2]+=g.importe;});
-  const mx=Math.max(...sem.map(x=>x[2]));
-  el.innerHTML=sem.map(([a,b,v])=>`<div class="col${hoyD>=a&&hoyD<=b?" hoy":""}"><em>${v?eur(v):""}</em><i style="height:${Math.max(v/mx*100,3).toFixed(0)}%"></i><small>${a}–${b}</small></div>`).join("");}
 // Ingresos contra gastos de los últimos seis meses: dos curvas suaves (verde y rosa), un punto por mes y un globo en el mes tocado
 function curva(pts){if(pts.length<2)return "";const f=n=>n.toFixed(1),cl=y=>Math.min(Math.max(y,0),140);let d=`M${f(pts[0][0])} ${f(pts[0][1])}`;
   for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
@@ -1060,31 +1053,27 @@ function destinoSobrante(ms){const esInv=c=>!!c&&c.tipo==="inversion",ids=new Se
   const nomAho=id=>{const os=S.objetivos.filter(o=>o.cuenta===+id).map(o=>o.nombre);if(os.length)return os.join(", ");const c=cuentaDe(+id);return c&&c.fondo?"Fondo de emergencia":nombreDe(+id);};
   return {inv:tot(inv),invDet:det(inv).map(([id,v])=>`${nombreDe(+id)} ${eur(v)}`),aho:tot(aho),ahoDet:det(aho).map(([id])=>nomAho(id))};}
 let moverImp=0;
-function pintarResultado(ms,rm,ing){const t=$("resTit");t.textContent=rm>0?`Te sobraron ${eur(rm)}`:rm<0?`Te faltaron ${eur(-rm)}`:"Sin resultado este mes";t.classList.toggle("neg",rm<0);
+function pintarResultado(ms,rm,ing){const t=$("resTit");t.textContent=rm>0?`Te sobraron ${eur(rm)}`:rm<0?`Te faltaron ${eur(-rm)}`:"Sin resultado este mes";t.classList.toggle("neg",rm<0);$("resMarca").hidden=!(rm<0);
   $("resEntro").hidden=!(ing>0);$("resEntro").textContent=`de ${eur(ing)} que entraron`;
   const d=destinoSobrante(ms),inv=Math.max(0,d.inv),aho=Math.max(0,d.aho),sin=r2(rm-inv-aho),filas=[];
   const fila=(tile,desc,det,der)=>`<div class="mov">${tile}<div class="cuerpo"><span class="desc">${desc}</span>${det?`<div class="det"><span>${det}</span></div>`:""}</div>${der}</div>`;
   if(inv>0)filas.push(fila(`<span class="ico" style="--cg:var(--cat1g);--ct:var(--cat1t)">${ico("sube")}</span>`,"Invertiste",esc(d.invDet.join(" · ")),`<span class="num" data-ui="invertiste">${eur(inv)}</span>`));
   if(aho>0)filas.push(fila(`<span class="ico" style="--cg:var(--cat4g);--ct:var(--cat4t)">${ico("corazon")}</span>`,"Ahorraste",esc(d.ahoDet.join(" · ")),`<span class="num" data-ui="ahorraste">${eur(aho)}</span>`));
   let nota="";moverImp=0;
-  if(rm>0&&sin>0){moverImp=sin;filas.push(fila(`<span class="ico">${ico("tarjeta")}</span>`,"Sin mover",eur(sin),`<button type="button" class="boton" id="moverBtn" data-ui="boton-mover">Mover</button>`));}
+  if(rm>0&&sin>0){moverImp=sin;filas.push(fila(`<span class="ico" style="--cg:var(--barra);--ct:var(--t)">${ico("tarjeta")}</span>`,"Sin mover",eur(sin),`<button type="button" class="boton" id="moverBtn" data-ui="boton-mover">Mover</button>`));}
   else if(rm>0&&sin<0)nota=`<span class="sub" data-ui="movio-de-mas">Moviste ${eur(-sin)} más de lo que sobró este mes</span>`;
-  const barra=rm>0&&filas.length?`<div class="partida fina">${inv>0?`<i style="flex:${inv};--c:var(--cat1)"></i>`:""}${aho>0?`<i style="flex:${aho};--c:var(--cat4)"></i>`:""}${sin>0?`<i style="flex:${sin};--c:var(--barra)"></i>`:""}</div>`:"";
+  const barra=rm>0&&filas.length?`<div class="partida fina">${inv>0?`<i style="flex:${inv};--c:var(--t)"></i>`:""}${aho>0?`<i style="flex:${aho};--c:var(--medio)"></i>`:""}${sin>0?`<i style="flex:${sin};--c:var(--barra)"></i>`:""}</div>`:"";
   $("destino").hidden=!filas.length&&!nota;$("destino").innerHTML=barra+(filas.length?`<div class="grp">${filas.join("")}</div>`:"")+nota;}
 $("destino").addEventListener("click",e=>{if(e.target.closest("#moverBtn"))abrirTransferencia(moverImp);});
 function abrirTransferencia(imp){abrirMov(null);if(!mov)return;mov.tipo="transferencia";seg($("segMov"),[["gasto","Gasto"],["ingreso","Ingreso"],["transferencia","Transferencia"]],mov.tipo,v=>{mov.tipo=v;movUI();});movUI();$("mImporte").value=imp>0?aTexto(imp):"";}
-// Mosaico: hasta cinco categorías y «Resto», cada una con un área proporcional a lo gastado (se parte en dos grupos parejos, alternando filas y columnas)
-function mosaico(cs){const tot=r2(cs.reduce((a,x)=>a+x[1],0));$("gastoTot").textContent=cs.length?eur(tot)+" ›":"";$("mosaico").hidden=!cs.length;$("mosaicoVacio").hidden=!!cs.length;if(!cs.length){$("mosaico").innerHTML="";return;}
-  let it=cs.slice(0,5).map(([c,v])=>({c,v}));if(cs.length>5)it.push({resto:cs.length-5,v:r2(cs.slice(5).reduce((a,x)=>a+x[1],0))});
-  const bloque=x=>{const f=x.v/tot,cls=f>=.25?" grande":f<.08?" chico":"";
-    if(x.resto)return `<button type="button" class="bloque${cls}" data-resto="1" data-ui="bloque-resto" style="flex:1;--g:var(--resto-g);--t:var(--resto-t)">${ico("puntos")}<span><b>Resto</b><br><span>${eur(x.v)}</span></span></button>`;
+// Gasto del mes: una fila por categoría (las cinco con más gasto y «Resto»), con su cuadradito, nombre, importe, porcentaje y una barra proporcional a la más grande
+function listaCats(cs){const tot=r2(cs.reduce((a,x)=>a+x[1],0));$("gastoTot").textContent=cs.length?eur(tot)+" ›":"";$("lcat").hidden=!cs.length;$("lcatVacio").hidden=!!cs.length;if(!cs.length){$("lcat").innerHTML="";return;}
+  const filas=cs.slice(0,5).map(([c,v])=>({c,v}));if(cs.length>5)filas.push({resto:cs.length-5,v:r2(cs.slice(5).reduce((a,x)=>a+x[1],0))});
+  const mx=Math.max(...filas.map(x=>x.v)),pct=v=>Math.round(v/tot*100);
+  $("lcat").innerHTML=filas.map(x=>{const barra=`<span class="bar"><i style="width:${(x.v/mx*100).toFixed(1)}%"></i></span>`;
+    if(x.resto)return `<button type="button" class="fila" data-resto="1" data-ui="fila-resto" style="--c:var(--muted)"><span class="tile gris">${ico("puntos")}</span><span class="nom">Resto (${x.resto} ${x.resto===1?"categoría":"categorías"})</span><span class="imp">${eur(x.v)}<small>${pct(x.v)} %</small></span>${barra}</button>`;
     const n=(catDe(x.c)||{}).color||12;
-    return `<button type="button" class="bloque${cls}" data-cat="${esc(x.c)}" data-ui="bloque-categoria" style="flex:1;--g:var(--cat${n}g);--t:var(--cat${n}t)">${icoCat(x.c)}<span>${f<.08?`<span>${eur(x.v)}</span>`:`<b>${esc(x.c)}</b><br><span>${eur(x.v)}</span>${f>=.12?`<br><span>${Math.round(f*100)} %</span>`:""}`}</span></button>`;};
-  const arma=(xs,dir)=>{if(xs.length===1)return bloque(xs[0]);const s=xs.reduce((a,x)=>a+x.v,0);let k=1,acc=xs[0].v,mejor=Math.abs(s-2*acc);
-    for(let j=2;j<xs.length;j++){const a2=acc+xs[j-1].v;if(Math.abs(s-2*a2)<mejor){mejor=Math.abs(s-2*a2);k=j;acc=a2;}else break;}
-    const otro=dir==="row"?"column":"row",parte=g=>`<div class="tm" style="flex:${r2(g.reduce((a,x)=>a+x.v,0))} 1 0;flex-direction:${otro}">${arma(g,otro)}</div>`;
-    return parte(xs.slice(0,k))+parte(xs.slice(k));};
-  $("mosaico").innerHTML=arma(it,"row");}
+    return `<button type="button" class="fila" data-cat="${esc(x.c)}" data-ui="fila-gasto-categoria" style="--g:var(--cat${n}g);--t:var(--cat${n}t);--c:var(--cat${n})"><span class="tile">${icoCat(x.c)}</span><span class="nom">${esc(x.c)}</span><span class="imp">${eur(x.v)}<small>${pct(x.v)} %</small></span>${barra}</button>`;}).join("");}
 // Hoja «Gasto por categoría»: todas las categorías del mes, de mayor a menor, en tarjetas apiladas
 let pilaMes=null,volverPila=null;
 function abrirPila(mes){pilaMes=mes||mesV();pintarPila();mostrar("sheetPila");}
@@ -1264,9 +1253,9 @@ function render(){
   $("cobrarSub").textContent=`${nP} ${nP===1?"pendiente":"pendientes"} · ${nA} ${nA===1?"aprobado":"aprobados"}`;
   // Disponible del mes en cada cuenta con tope (sin los gastos reembolsables)
   const conTope=S.cuentas.filter(c=>c.tope>0);$("disponibles").hidden=!conTope.length;
-  $("disponibles").innerHTML=conTope.map(c=>`<div class="card color" style="${cTipo(c.tipo)}" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span></div>`).join("");
+  $("disponibles").innerHTML=conTope.map(c=>{const k=COLOR[c.tipo].slice(2);return `<div class="card par" style="--s:var(--${k}s);--tt:var(--${k})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span><span class="marca2" data-ui="marca-excedido" hidden>Excedido</span></div>`;}).join("");
   conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
-    anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
+    anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".marca2").hidden=!(u>c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
   const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
   if(cd.n){$("cuotasMes").textContent=eur(cd.total);$("cuotasSubI").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");}
   const pt=pendientesTransferir();$("objCard").hidden=!pt.length;
@@ -1275,7 +1264,7 @@ function render(){
   $("catsSub").textContent=`${S.categorias.gasto.length} de gasto · ${S.categorias.ingreso.length} de ingreso`;
   const porCat={}; gs.forEach(g=>porCat[g.cat]=(porCat[g.cat]||0)+g.importe);
   const cs=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
-  mosaico(cs); barras($("barrasCard"),$("barras"),gs,id); mesesIG($("mesesCard"),$("meses"),id);
+  listaCats(cs); mesesIG($("mesesCard"),$("meses"),id);
   if(!$("sheetPila").hidden)pintarPila();
   // Movimientos
   $("totIng").textContent=eur(ing);$("totGas").textContent=eur(gas);

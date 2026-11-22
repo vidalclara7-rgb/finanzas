@@ -69,12 +69,12 @@ Todos los textos usan la letra del sistema del teléfono: en el iPhone, SF Pro. 
 
 ## Requisito: las categorías nuevas tienen color propio
 
-Cada categoría de gasto nueva tiene un color fijo, distinto del de las demás, que es el mismo en el mosaico de Inicio, en la pila de «Gasto por categoría» y en el cuadradito de sus movimientos. En las dos apariencias, el texto sobre ese color se lee con contraste de al menos 4,5 a 1.
+Cada categoría de gasto nueva tiene un color fijo, distinto del de las demás, que es el mismo en «Gasto del mes» de Inicio, en la pila de «Gasto por categoría» y en el cuadradito de sus movimientos. En las dos apariencias, el texto sobre ese color se lee con contraste de al menos 4,5 a 1.
 
-### Escenario: color en el mosaico y en la fila
+### Escenario: color en la lista y en la fila
 - **Dado** un gasto de 30 € en Alquiler este mes
-- **Cuando** la persona mira el mosaico de Inicio y la fila del gasto en Movimientos
-- **Entonces** el color de «Alquiler» es el mismo en el mosaico, la pila y el cuadradito de la fila
+- **Cuando** la persona mira «Gasto del mes» de Inicio y la fila del gasto en Movimientos
+- **Entonces** el color de «Alquiler» es el mismo en «Gasto del mes», la pila y el cuadradito de la fila
 - **Y** no coincide con el de otra categoría
 
 ### Escenario: contraste con cada categoría nueva
@@ -108,12 +108,12 @@ El encabezado de Inicio muestra el monograma «mf.» en negrita, grande: las let
 
 ## Requisito: color por categoría
 
-Cada categoría de gasto tiene su color con degradado, el mismo en el mosaico, en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Cada uno de los 19 colores es una pareja de dos tonos: un fondo de color con un degradado suave y el texto y el ícono en otro color vivo, con versión clara (por ejemplo lila con violeta oscuro o naranja con azul marino) y oscura (por ejemplo violeta con lima o verde oscuro con rosa). Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco u oscuro, el que mejor se lea, con contraste de al menos 4,5 a 1.
+Cada categoría de gasto tiene su color con degradado, el mismo en «Gasto del mes», en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Cada uno de los 19 colores es un fondo de color con un degradado suave, con versión clara (pasteles y vivos) y oscura (profundos), sin fondos violetas. Sobre ese fondo, el texto y el ícono van en blanco en la apariencia Oscura y casi negros en la Clara. Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco en la Oscura y casi negro en la Clara, con contraste de al menos 4,5 a 1.
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
-- **Cuando** la persona mira el mosaico de Inicio y la fila del gasto en Movimientos
-- **Entonces** el bloque de Supermercado y el cuadradito de la fila tienen el mismo color
+- **Cuando** la persona mira «Gasto del mes» de Inicio y la fila del gasto en Movimientos
+- **Entonces** el cuadradito de Supermercado en «Gasto del mes» y el cuadradito de la fila tienen el mismo color
 
 ### Escenario: ícono legible en el cuadradito
 - **Dado** un gasto en cada categoría
@@ -127,7 +127,7 @@ Cada categoría de gasto tiene su color con degradado, el mismo en el mosaico, e
 
 ### Escenario: el color no cambia de un mes a otro
 - **Dado** un gasto en Alquiler en octubre y otro en septiembre, y Alquiler con más gasto en un mes que en el otro
-- **Cuando** la persona mira Movimientos y el mosaico en cada mes
+- **Cuando** la persona mira Movimientos y «Gasto del mes» en cada mes
 - **Entonces** Alquiler tiene el mismo color en los dos meses
 
 ## Requisito: tarjeta destacada
@@ -166,7 +166,7 @@ El botón principal de cada hoja y pantalla es una píldora negra con texto blan
 
 ## Requisito: tendencia del mes
 
-El título del resultado del mes sigue la tendencia del mes que se ve: positiva si el resultado (ingresos menos gastos de plata propia) es mayor que 0, negativa si es menor que 0, neutra si es 0 o no hay datos. Positiva: «Te sobraron X €», en el color del texto. Negativa: «Te faltaron X €», en el rosa de aviso. Neutra: «Sin resultado este mes». Ya no hay marca de tendencia aparte.
+El título del resultado del mes sigue la tendencia del mes que se ve: positiva si el resultado (ingresos menos gastos de plata propia) es mayor que 0, negativa si es menor que 0, neutra si es 0 o no hay datos. Positiva: «Te sobraron X €». Negativa: «Te faltaron X €», con la marca «Mes en negativo». Neutra: «Sin resultado este mes».
 
 ### Escenario: tendencia positiva
 - **Dado** ingresos de 1500 € y gastos de 100 € este mes
@@ -176,7 +176,7 @@ El título del resultado del mes sigue la tendencia del mes que se ve: positiva 
 ### Escenario: tendencia negativa
 - **Dado** ingresos de 100 € y gastos de 300 € este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** la tendencia es negativa y el resultado dice «Te faltaron 200 €», en rosa
+- **Entonces** la tendencia es negativa y el resultado dice «Te faltaron 200 €», con la marca «Mes en negativo»
 
 ### Escenario: tendencia neutra
 - **Dado** un mes sin movimientos
@@ -190,7 +190,7 @@ El título del resultado del mes sigue la tendencia del mes que se ve: positiva 
 
 ## Requisito: muestras de color
 
-Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, las parejas lila con violeta oscuro, lima con verde, azul con amarillo, naranja con azul marino y rosa con bordó, y en la Oscura, las parejas violeta con lima, verde oscuro con rosa, magenta con amarillo, menta con azul marino y bordó con celeste. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
+Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, verde agua, lima, azul, naranja y rosa, y en la Oscura, azul, verde oscuro, magenta, verde menta oscuro y bordó. Ningún color tiene el fondo violeta, y ninguna letra va en color: es blanca en la Oscura y casi negra en la Clara. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
 
 ### Escenario: 19 colores distintos
 - **Dado** la app abierta
@@ -205,7 +205,7 @@ Los 19 colores de categoría son todos distintos entre sí en cada apariencia. L
 ### Escenario: los primeros colores de la paleta
 - **Dado** la apariencia Clara
 - **Cuando** se miran los colores de las categorías Supermercado, Comida fuera y Delivery
-- **Entonces** son los fondos lila, lima y azul de la paleta
+- **Entonces** son los fondos verde agua, lima y azul de la paleta
 
 ## Retirado: tarjetas blancas
 Lo sustituyen «fondo liso y tarjetas sin sombra», en apariencia, y «títulos de las tarjetas».
@@ -226,7 +226,7 @@ Cada tarjeta tiene su título en negrita, en el color del texto, y los textos de
 
 ## Requisito: Inicio con la tarjeta de resultado
 
-Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y, debajo, dos tarjetas pequeñas, «Gastado» (con un punto del color del texto) e «Ingresado» (con un punto verde), con los totales del mes que se ve. Transferencias y ajustes no suman en ninguna. El resto de las tarjetas de Inicio sigue en el mismo orden que antes: la torta pasa a ser el mosaico.
+Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y, debajo, dos tarjetas pequeñas, «Gastado» (con un punto del color del texto) e «Ingresado» (con un punto verde), con los totales del mes que se ve. Transferencias y ajustes no suman en ninguna. El resto de las tarjetas de Inicio sigue en el mismo orden que antes: la torta pasa a ser una lista con barras y «Por semana» deja de estar.
 
 ### Escenario: gastado e ingresado
 - **Dado** un ingreso de 1500 € y un gasto de 80 € este mes, y una transferencia de 300 €
@@ -241,7 +241,7 @@ Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y
 ### Escenario: el orden de Inicio
 - **Dado** gastos fijos y variables, una cuenta con tope, ingresos de seis meses y cuentas cargadas
 - **Cuando** la persona abre Inicio
-- **Entonces** de arriba abajo ve «Fijos y variables», el resultado del mes, «Gastado» e «Ingresado», el disponible por cuenta, «Gasto del mes», «Por semana», «Ingresos y gastos» y «Patrimonio neto»
+- **Entonces** de arriba abajo ve «Fijos y variables», el resultado del mes, «Gastado» e «Ingresado», el disponible por cuenta, «Gasto del mes», «Ingresos y gastos» y «Patrimonio neto», y no ve «Por semana»
 
 ## Requisito: Cuentas con el patrimonio por mes
 
@@ -292,3 +292,56 @@ Debajo del patrimonio, cada cuenta es una tarjeta grande, del color con degradad
 - **Dado** Banco A con 1200 € y Banco B con 300 €
 - **Cuando** la persona abre Cuentas
 - **Entonces** la lista de totales dice «Bancos y efectivo» 1500 €, con el punto de color de los bancos
+
+## Requisito: tarjetas de Inicio en parejas de color
+
+En Inicio, las tarjetas del resumen llevan un fondo de color suave, del color de una categoría: todo su texto, sus barras y sus anillos van en blanco en la apariencia Oscura y casi negros en la Clara. Son el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de cada cuenta con tope (con el color de su tipo de cuenta), «Cuotas del mes», «Por cobrar», «Toca transferir» y «Patrimonio neto». Las demás (los avisos, la sugerencia de gasto fijo, «Gasto del mes» e «Ingresos y gastos») siguen grises. El texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 en el punto de su degradado donde peor se lee, en las dos apariencias. Dentro de una tarjeta de color, un tope excedido o un mes en negativo se dicen con texto y una marca, no con rosa.
+
+### Escenario: el resumen de Inicio en color
+- **Dado** gastos fijos y variables, ingresos, una tarjeta de crédito con tope y cuentas cargadas este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de la tarjeta y «Patrimonio neto» tienen fondo de color
+- **Y** «Gasto del mes» e «Ingresos y gastos» son grises
+
+### Escenario: tarjetas de color distintas
+- **Dado** el resultado del mes, «Fijos y variables», «Gastado» e «Ingresado» a la vista
+- **Cuando** la persona mira Inicio
+- **Entonces** cada una de esas cuatro tarjetas tiene un color de fondo distinto de las otras tres
+
+### Escenario: el texto de las tarjetas de color se lee
+- **Dado** todas las tarjetas de color de Inicio a la vista
+- **Cuando** la persona las mira en las apariencias Clara y Oscura
+- **Entonces** todo su texto tiene contraste de al menos 4,5 a 1 con cada punto de su degradado
+
+### Escenario: tope excedido en una tarjeta de color
+- **Dado** «Tarjeta» con tope de 300 € y 320 € gastados este mes
+- **Cuando** la persona abre Inicio
+- **Entonces** el disponible de Tarjeta dice «-20 €», su anillo dice «107 %» y lleva la marca «Excedido»
+
+## Requisito: importes con punto de miles
+
+Todos los importes que muestra la app separan los miles con punto y los decimales con coma, también los de cuatro cifras: «1.284 €», «2.450,3 €», «1.000.000 €», «-1.060 €». Los campos donde se escribe un importe no cambian: aceptan «1.234,56», «1234,56» y «1234.56».
+
+### Escenario: miles con punto
+- **Dado** «Banco A» con 1234,56 € y un gasto de 1284 € este mes
+- **Cuando** la persona abre Cuentas y Movimientos
+- **Entonces** Banco A muestra «1.234,56 €» y el gasto, «−1.284 €»
+
+### Escenario: millones y negativos
+- **Dado** «Broker X» con 1.000.000 € y «Tarjeta Y» con 1060 € de deuda
+- **Cuando** la persona abre Cuentas
+- **Entonces** Broker X muestra «1.000.000 €» y el total de tarjetas, «-1.060 €»
+
+### Escenario: importes chicos sin punto
+- **Dado** un gasto de 64,30 €
+- **Cuando** la persona abre Movimientos
+- **Entonces** el gasto muestra «−64,3 €»
+
+## Requisito: ningún texto se pisa
+
+En ninguna pantalla ni hoja un texto se superpone con otro texto ni se sale de la tarjeta o el botón que lo contiene, en 390 px de ancho y en las dos apariencias. Un texto que no entra en su renglón se corta con puntos suspensivos o pasa al renglón siguiente.
+
+### Escenario: recorrido sin textos pisados
+- **Dado** la app con cuentas, categorías y notas de nombres largos (30 caracteres o más) e importes de seis cifras
+- **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre, Ajustes, «Gasto por categoría», la hoja de una categoría y la de una cuenta, a 390 px, en las apariencias Clara y Oscura
+- **Entonces** ningún texto se superpone con otro y ninguno se sale de su tarjeta o su botón

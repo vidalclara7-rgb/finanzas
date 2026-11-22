@@ -17,9 +17,9 @@ t.test("cuenta de banco", async () => {
   const { page } = await enCuentas();
   await A.nuevaCuenta(page, { tipo: "liquidez", nombre: "Banco A", saldo: 1200 });
   await A.aviso(page, "Cuenta guardada");
-  assert.match(await A.texto(page, "#tipos"), /Bancos y efectivo\s+1200 €/);
+  assert.match(await A.texto(page, "#tipos"), /Bancos y efectivo\s+1.200 €/);
   assert.match(await A.texto(page, "#carCtas"), /Banco A/);
-  assert.equal(await A.saldoCta(page, (await A.guardados(page)).cuentas[0].id), "1200 €");
+  assert.equal(await A.saldoCta(page, (await A.guardados(page)).cuentas[0].id), "1.200 €");
   assert.equal(await A.texto(page, "#carConc"), "Sin conciliar");
 });
 
@@ -67,7 +67,7 @@ t.test("gasto con la tarjeta", async () => {
 // Escenario: movimientos anteriores al saldo de partida
 t.test("movimientos anteriores al saldo de partida", async () => {
   const { page } = await enCuentas({ datos: A.v2({ cuentas: [A.cta(1, "Banco A", 1000, { desde: "2026-10-10" })], movs: [A.gasto(1, "2026-10-05", 30, 1)] }) });
-  assert.equal(await saldo(page, 1), "1000 €");
+  assert.equal(await saldo(page, 1), "1.000 €");
 });
 
 // Escenario: renombrar una cuenta
@@ -122,12 +122,12 @@ t.test("patrimonio del mes guardado", async () => {
 // Escenario: patrimonio con todos los tipos
 t.test("patrimonio con todos los tipos", async () => {
   const { page } = await enCuentas({ datos: EJEMPLO() });
-  assert.equal(await A.texto(page, "#neto"), "2305 €");
-  assert.equal(await A.texto(page, "#activos"), "3300 €");
+  assert.equal(await A.texto(page, "#neto"), "2.305 €");
+  assert.equal(await A.texto(page, "#activos"), "3.300 €");
   assert.equal(await A.texto(page, "#deudas"), "995 €");
   assert.equal(await A.texto(page, "#cuotasSub"), "Cuotas de financiaciones: 50 € por mes");
   await A.ir(page, "inicio");
-  assert.equal(await A.texto(page, "#netoIni"), "2305 €");
+  assert.equal(await A.texto(page, "#netoIni"), "2.305 €");
 });
 
 // Escenario: deuda compartida a favor
@@ -140,13 +140,13 @@ t.test("deuda compartida a favor", async () => {
 // Escenario: ganancia de una inversión
 t.test("ganancia de una inversión", async () => {
   const { page } = await enCuentas({ datos: EJEMPLO() });
-  assert.match(await A.texto(page, '[data-cta="12"]'), /\+100 € \(\+5,0 %\) sobre 2000 €/);
+  assert.match(await A.texto(page, '[data-cta="12"]'), /\+100 € \(\+5,0 %\) sobre 2.000 €/);
 });
 
 // Escenario: disponible de una tarjeta
 t.test("disponible de una tarjeta", async () => {
   const { page } = await enCuentas({ datos: EJEMPLO() });
-  assert.match(await A.texto(page, '[data-cta="13"]'), /Disponible 1150 € de 1500 €/);
+  assert.match(await A.texto(page, '[data-cta="13"]'), /Disponible 1.150 € de 1.500 €/);
 });
 
 // Escenario: fin de una financiación

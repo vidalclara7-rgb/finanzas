@@ -118,3 +118,17 @@ Los `data-pantalla` y `data-ui` existentes que no se retiran arriba. `esc()` en 
 - Contraste en degradados: el texto oscuro sobre la parte intensa del claro y el blanco sobre la parte clara del oscuro. Las pruebas miden el peor punto; si algún color no llega, se oscurece/aclara ese extremo del degradado en el preview.
 - El mosaico con muchas categorías chicas: bloques muy finos. Por eso tope de 5 + «Resto».
 - Tests existentes que buscan la torta, `.cta`, la destacada de Inicio o el rosa en los gastos: se actualizan con el cambio (sus requisitos se sustituyen en el delta).
+
+## Segunda vuelta (2026-11-22, después del Gate 3, antes de archivar)
+
+La persona probó la app construida y pidió cambios. Como el cambio no estaba archivado ni publicado, se reabre (vuelve a `aprobada`) y pasa otra vez por el preview y la construcción.
+
+| Pedido | Decisión | Descartado |
+|---|---|---|
+| En el mosaico se pisan los nombres | Lista con barras: una fila por categoría (cuadradito, nombre, importe, porcentaje y barra de su color), cinco y «Resto» | Barra de almacenamiento con leyenda; sólo el total y la pila |
+| «Por semana» no le sirve en Inicio | Se retira de Inicio (el detalle por semana está en Movimientos) | — |
+| Ningún texto pisado en ningún lado | Requisito y test que recorre las pantallas y hojas principales a 390 px en las dos apariencias y busca textos superpuestos o fuera de su caja | — |
+| Separador de miles con punto, decimales con coma | `eur()` agrupa siempre los miles con punto (Intl `es-ES` no agrupa los números de cuatro cifras, así que se agrupa a mano) | — |
+| «Quedó aburrida de colores» | Las tarjetas del resumen de Inicio llevan parejas de color (fondo con degradado suave y texto en el otro color); los avisos dentro de esas tarjetas se dicen con texto y marca, no con rosa | Acentos vivos sobre gris; fondo de pantalla con color |
+
+- 2026-11-22, después de probar la versión: sin letras amarillas ni fondos violetas, y después «toda la letra en blanco»: en la Oscura todo el texto sobre color es blanco (`--catNt` #FFFFFF, fondos oscurecidos hasta 4,5 a 1 en todo el degradado) y en la Clara casi negro (#0B0B0F, fondos aclarados); las tarjetas del resumen usan `--ink-base` como texto y el tinte sube a 40 % / 55 %. `--catN` (puntos y barras) es el fondo oscurecido o aclarado hasta 3 a 1 contra la tarjeta.

@@ -84,7 +84,7 @@ verlos, se abre Movimientos.
 
 ## Requisito: gasto por categoría
 
-Inicio muestra lo gastado en el mes por categoría, de mayor a menor, en el mosaico de «Gasto del mes», incluidos los gastos
+Inicio muestra lo gastado en el mes por categoría, de mayor a menor, en la lista de «Gasto del mes», incluidos los gastos
 reembolsables; la hoja «Gasto por categoría» las muestra todas. Ingresos, transferencias y ajustes no aparecen.
 
 ### Escenario: categorías ordenadas
@@ -111,7 +111,7 @@ Reembolso: el resultado es el de la plata propia. Los totales de Movimientos sí
 ### Escenario: mes en negativo
 - **Dado** un ingreso de 100 € y gastos por 150 € este mes
 - **Cuando** la persona abre Inicio
-- **Entonces** el resultado dice «Te faltaron 50 €» y se marca en rosa
+- **Entonces** el resultado dice «Te faltaron 50 €» y lleva la marca «Mes en negativo»
 
 ### Escenario: reembolsos fuera del resultado
 - **Dado** un ingreso de 1000 € en Sueldo y otro de 50 € en Reembolso, y gastos de 200 € en Supermercado y 50 € en Trabajo (reembolsable) este mes

@@ -9,7 +9,7 @@ y al restaurar una copia de seguridad vieja. Las categorías viajan en la copia.
 ### Escenario: datos de la versión anterior
 - **Dado** datos guardados antes de poder editar categorías, con gastos en Ocio y Supermercado
 - **Cuando** la persona abre la app actualizada
-- **Entonces** Movimientos, el mosaico y los totales son los de antes
+- **Entonces** Movimientos, «Gasto del mes» y los totales son los de antes
 - **Y** la hoja «Categorías» tiene las de siempre
 
 ### Escenario: categoría que no está en la lista

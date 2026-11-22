@@ -139,7 +139,7 @@ t.test("garantía como cuenta propia", async () => {
   await A.ir(page, "cuentas");
   assert.equal(await saldo(page, 1), "700 €");
   assert.equal(await saldo(page, 4), "300 €");
-  assert.equal(await A.texto(page, "#neto"), "1000 €");
+  assert.equal(await A.texto(page, "#neto"), "1.000 €");
   await A.ir(page, "inicio");
   assert.equal(await A.texto(page, "#miniGas"), "0 €");
 });

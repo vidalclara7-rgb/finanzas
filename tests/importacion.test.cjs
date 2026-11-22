@@ -499,7 +499,7 @@ t.test("deuda del resumen con lo pendiente", async () => {
   await page.click("#iGuardar");
   await A.aviso(page, "movimientos importados");
   assert.equal(await A.texto(page, "#icExtLbl"), "Deuda del resumen");
-  assert.equal(await A.texto(page, "#icExt"), "1070,35 €");
+  assert.equal(await A.texto(page, "#icExt"), "1.070,35 €");
   assert.equal(await A.texto(page, "#icDet"), "a pagar 767,47 € + pendiente en cuotas 302,88 €");
   assert.equal(await A.texto(page, "#icDif"), "0 €");
 });

@@ -112,8 +112,8 @@ t.test("renombrar con movimientos", async () => {
   await A.ir(page, "movs");
   assert.equal((await A.guardados(page)).movs[0].cat, "Salidas");
   await A.ir(page, "inicio");
-  assert.equal(await page.locator('#mosaico [data-cat="Salidas"]').count(), 1);
-  await page.click('#mosaico [data-cat="Salidas"]');
+  assert.equal(await page.locator('#lcat [data-cat="Salidas"]').count(), 1);
+  await page.click('#lcat [data-cat="Salidas"]');
   assert.equal(await A.texto(page, "#catTitulo"), "Salidas");
   assert.equal(await A.texto(page, "#catTotal"), "20 €");
 });
@@ -141,7 +141,7 @@ t.test("cambiar el color", async () => {
   await A.aviso(page, "Categoría guardada");
   await page.click("#ccCerrar");
   await A.ir(page, "inicio");
-  assert.match(await page.$eval('#mosaico [data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
+  assert.match(await page.$eval('#lcat [data-cat="Ocio"]', (c) => c.getAttribute("style")), /--cat9/);
   await page.click("#gastoHdr");
   assert.match(await page.$eval('#pila [data-cat="Ocio"]', (d) => d.getAttribute("style")), /--cat9/);
   await page.click("#pilaCerrar");
@@ -280,7 +280,7 @@ t.test("cancelar la creación", async () => {
 t.test("datos de la versión anterior (categorías)", async () => {
   const { page } = await abrir({ datos: base({ movs: [mov("2026-10-05", 20, "Ocio", "", 1), mov("2026-10-06", 64.3, "Supermercado", "", 2)] }) });
   assert.equal(await A.texto(page, "#miniGas"), "84,3 €");
-  assert.equal(await page.locator("#mosaico .bloque").count(), 2);
+  assert.equal(await page.locator("#lcat .fila[data-cat]").count(), 2);
   await enCategorias(page);
   assert.deepEqual(await nombres(page, "#ccGasto"), GASTO_BASE);
 });

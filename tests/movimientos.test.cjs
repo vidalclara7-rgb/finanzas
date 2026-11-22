@@ -59,7 +59,7 @@ t.test("ingreso extra", async () => {
   await A.ir(page, "movs");
   assert.match(await A.texto(page, "#movs .mov"), /\+200 €/);
   await enCuentas(page);
-  assert.equal(await saldo(page, 1), "1200 €");
+  assert.equal(await saldo(page, 1), "1.200 €");
 });
 
 // Escenario: devolución en la tarjeta
@@ -122,7 +122,7 @@ t.test("mes sin movimientos", async () => {
 t.test("totales sin transferencias", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJETA], movs: [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-02", 80, 1), A.transf(3, "2026-10-03", 300, 1, 2)] }) });
   await A.ir(page, "movs");
-  assert.equal(await A.texto(page, "#totIng"), "1500 €");
+  assert.equal(await A.texto(page, "#totIng"), "1.500 €");
   assert.equal(await A.texto(page, "#totGas"), "80 €");
   const t = await A.texto(page, '[data-ui="totales-mes"]');
   assert.match(t, /Gastado/);
@@ -215,7 +215,7 @@ t.test("categorías ordenadas", async () => {
 // Escenario: sin gastos por categoría
 t.test("sin gastos por categoría", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO] }) });
-  assert.equal(await A.texto(page, "#mosaicoVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
+  assert.equal(await A.texto(page, "#lcatVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
 });
 
 // Escenario: resultado con ingresos y gastos
@@ -223,8 +223,8 @@ t.test("resultado con ingresos y gastos", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [
     A.ingreso(1, "2026-10-01", 1500, 1), A.ingreso(2, "2026-10-09", 200, 1, "Venta o trabajo extra"),
     A.gasto(3, "2026-10-03", 64.3, 1), A.gasto(4, "2026-10-05", 18, 1, "Comida fuera")] }) });
-  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1617,7 €");
-  assert.equal(await A.texto(page, "#resEntro"), "de 1700 € que entraron");
+  assert.equal(await A.texto(page, "#resTit"), "Te sobraron 1.617,7 €");
+  assert.equal(await A.texto(page, "#resEntro"), "de 1.700 € que entraron");
   assert.equal(await A.texto(page, "#miniGas"), "82,3 €");
 });
 
@@ -232,7 +232,7 @@ t.test("resultado con ingresos y gastos", async () => {
 t.test("mes en negativo", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 100, 1), A.gasto(2, "2026-10-02", 150, 1)] }) });
   assert.equal(await A.texto(page, "#resTit"), "Te faltaron 50 €");
-  assert.match(await page.getAttribute("#resTit", "class"), /\bneg\b/);
+  assert.equal(await A.texto(page, "#resMarca"), "Mes en negativo");
 });
 
 const CASA = "Casa/Splitwise";
@@ -363,9 +363,9 @@ t.test("reembolsos fuera del resultado", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1000, 1), A.ingreso(2, "2026-10-10", 50, 1, "Reembolso"),
     A.gasto(3, "2026-10-03", 200, 1), A.gasto(4, "2026-10-04", 50, 1, "Trabajo (reembolsable)")] }) });
   assert.equal(await A.texto(page, "#resTit"), "Te sobraron 800 €");
-  assert.equal(await A.texto(page, "#resEntro"), "de 1000 € que entraron");
+  assert.equal(await A.texto(page, "#resEntro"), "de 1.000 € que entraron");
   await A.ir(page, "movs");
-  assert.equal(await A.texto(page, "#totIng"), "1050 €");
+  assert.equal(await A.texto(page, "#totIng"), "1.050 €");
   assert.equal(await A.texto(page, "#totGas"), "250 €");
 });
 
@@ -500,7 +500,7 @@ t.test("compra fraccionada", async () => {
   assert.equal(await A.texto(page, "#totGas"), "240 €");
   assert.match(await A.texto(page, '[data-mov="' + (await A.guardados(page)).movs[0].id + '"]'), /Cuota 1 de 3/);
   await A.ir(page, "inicio");
-  assert.match(await A.texto(page, '#mosaico [data-cat="Compras"]'), /Compras\s*240 €/);
+  assert.match(await A.texto(page, '#lcat [data-cat="Compras"]'), /Compras\s*240 €/);
 });
 
 // Escenario: cuotas en los meses siguientes

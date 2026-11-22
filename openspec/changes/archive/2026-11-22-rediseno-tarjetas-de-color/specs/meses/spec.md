@@ -11,7 +11,7 @@ en curso). En Cierre se puede conciliar y ajustar un mes ya cerrado. Anotar un m
 - **Dado** que hoy es 2026-11-02, un gasto de 40 € en Supermercado del 2026-10-20 y otro de 10 € del 2026-11-01
 - **Cuando** la persona abre Inicio y toca la flecha ‹
 - **Entonces** el selector dice «octubre 2026» y Inicio muestra gastos por 40 €
-- **Y** el mosaico tiene sólo Supermercado
+- **Y** «Gasto del mes» tiene sólo Supermercado
 
 ### Escenario: no pasa del mes en curso
 - **Dado** que hoy es 2026-11-02

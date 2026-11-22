@@ -137,8 +137,13 @@ t.test("texto secundario legible", async () => {
     for (const v of ["inicio", "movs", "cuentas"]) {
       await A.ir(page, v);
       const malos = await page.evaluate(() => {
-        const lumC = (rgb) => { const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x = Number(x) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
-        const fondoDe = (e) => { for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\(.*, 0\)$|transparent/.test(c)) return c; } return getComputedStyle(document.body).backgroundColor; };
+        const lumC = (rgb) => { const k = rgb.startsWith("color(") ? 1 : 255; const [r, g, b] = rgb.match(/[\d.]+/g).slice(0, 3).map((x) => { x = Number(x) / k; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+        // Fondo detrás del texto: el primero opaco hacia arriba, con las capas translúcidas de encima mezcladas
+        const canal = (c) => { const k = c.startsWith("color(") ? 255 : 1, v = c.match(/[\d.]+/g).map(Number); return [v[0] * k, v[1] * k, v[2] * k, /\/|rgba/.test(c) ? (v[3] ?? 1) : 1]; };
+        const fondoDe = (e) => { const capas = []; let base = getComputedStyle(document.body).backgroundColor;
+          for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (!c || /rgba\(.*, 0\)$|transparent/.test(c)) continue; if (canal(c)[3] < 1) capas.unshift(c); else { base = c; break; } }
+          let [r, g, b] = canal(base); for (const c of capas) { const [x, y, z, al] = canal(c); r = x * al + r * (1 - al); g = y * al + g * (1 - al); b = z * al + b * (1 - al); }
+          return `rgb(${r}, ${g}, ${b})`; };
         const out = [];
         for (const e of document.querySelectorAll(".sub, .det, .mini .t, .ejes span, .pat small, .cta .d, .mov .det span")) {
           if (!e.offsetParent || e.closest(".destacada") || e.closest("[hidden]")) continue;

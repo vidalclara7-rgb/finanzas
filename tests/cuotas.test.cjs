@@ -32,7 +32,7 @@ t.test("financiación y compra en cuotas", async () => {
   const { page } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ, FIN()], movs: [COMPRA] }) });
   assert.ok(await tarjeta(page));
   assert.equal(await A.texto(page, "#cuotasMes"), "290 €");
-  assert.equal(await A.texto(page, "#cuotasSubI"), "2 cuotas · te quedan por pagar 1320 €");
+  assert.equal(await A.texto(page, "#cuotasSubI"), "2 cuotas · te quedan por pagar 1.320 €");
 });
 
 // Escenario: sin cuotas no hay tarjeta

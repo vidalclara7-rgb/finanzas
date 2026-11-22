@@ -1,4 +1,4 @@
-// Capacidad: graficos — mosaico de «Gasto del mes» y hoja «Gasto por categoría»
+// Capacidad: graficos — lista de «Gasto del mes» y hoja «Gasto por categoría»
 const t = require("node:test");
 const assert = require("node:assert/strict");
 const A = require("./ayuda.cjs");
@@ -13,39 +13,38 @@ const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q -
 // Los tres puntos del degradado de un elemento (radial-gradient(… A 0%, B 45%, C 100%))
 const paradas = (g) => (g.match(/rgba?\([^)]*\)/g) || []);
 
-// Escenario: mosaico con tres categorías
-t.test("mosaico con tres categorías", async () => {
+// Escenario: lista con tres categorías
+t.test("lista con tres categorías", async () => {
   const { page } = await abrir({ datos: tres() });
   assert.equal(await A.texto(page, "#gastoTot"), "100 € ›");
-  const bloques = await page.$$eval("#mosaico .bloque", (bs) => bs.map((b) => { const r = b.getBoundingClientRect(); return { cat: b.dataset.cat, a: r.width * r.height }; }));
-  assert.equal(bloques.length, 3);
-  const total = await page.$eval("#mosaico", (m) => { const r = m.getBoundingClientRect(); return r.width * r.height; });
-  const sup = bloques.find((b) => b.cat === "Supermercado").a / total * 100;
-  assert.ok(Math.abs(sup - 60) <= 3, `Supermercado ocupa ${sup.toFixed(1)} %`);
+  const filas = await page.$$eval("#lcat .fila[data-cat]", (fs) => fs.map((f) => ({ cat: f.dataset.cat, txt: f.querySelector(".imp").innerText.replace(/\s+/g, " "), barra: f.querySelector(".bar i").getBoundingClientRect().width })));
+  assert.deepEqual(filas.map((f) => f.cat), ["Supermercado", "Comida fuera", "Transporte"]);
+  assert.match(filas[0].txt, /^60 €\s*60 %$/);
+  assert.ok(Math.abs(filas[0].barra / filas[1].barra - 2) < 0.05, `proporción ${filas[0].barra / filas[1].barra}`);
 });
 
 // Escenario: más de cinco categorías
 t.test("más de cinco categorías", async () => {
   const { page } = await abrir({ datos: siete() });
-  assert.equal(await page.locator("#mosaico .bloque[data-cat]").count(), 5);
-  assert.equal(await page.locator('#mosaico [data-ui="bloque-resto"]').count(), 1);
-  assert.match(await A.texto(page, '#mosaico [data-ui="bloque-resto"]'), /Resto\s+85 €/);
+  assert.equal(await page.locator("#lcat .fila[data-cat]").count(), 5);
+  assert.equal(await page.locator('#lcat [data-ui="fila-resto"]').count(), 1);
+  assert.match(await A.texto(page, '#lcat [data-ui="fila-resto"]'), /Resto \(2 categorías\)\s+85 €/);
 });
 
-// Escenario: mosaico sin gastos
-t.test("mosaico sin gastos", async () => {
+// Escenario: lista sin gastos
+t.test("lista sin gastos", async () => {
   const { page } = await abrir({ datos: datos([]) });
-  assert.equal(await page.locator("#mosaico").isVisible(), false);
-  assert.equal(await A.texto(page, "#mosaicoVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
+  assert.equal(await page.locator("#lcat").isVisible(), false);
+  assert.equal(await A.texto(page, "#lcatVacio"), "Todavía no anotaste gastos este mes. Tocá + para empezar.");
 });
 
-// Escenario: el mosaico cabe en el ancho
-t.test("el mosaico cabe en el ancho", async () => {
+// Escenario: un nombre largo no se pisa
+t.test("un nombre largo no se pisa", async () => {
   const largo = "Una categoría con nombre largo";
   const d = siete();d.movs[0].cat = largo;d.categorias = { gasto: [{ nombre: largo, color: 6 }], ingreso: [] };
   const { page } = await abrir({ datos: d });
-  const fuera = await page.$$eval("#mosaico .bloque", (bs) => bs.filter((b) => { const r = b.getBoundingClientRect(); return [...b.querySelectorAll("b, span, svg")].some((x) => { const q = x.getBoundingClientRect(); return q.width && q.height && x.checkVisibility() && (q.right > r.right + 1 || q.left < r.left - 1) && getComputedStyle(b).overflow !== "hidden"; }); }).length);
-  assert.equal(fuera, 0);
+  const r = await page.$eval(`#lcat [data-cat="${largo}"]`, (f) => { const n = f.querySelector(".nom"), i = f.querySelector(".imp"), a = n.getBoundingClientRect(), b = i.getBoundingClientRect(); return { corta: n.scrollWidth > n.clientWidth && getComputedStyle(n).textOverflow === "ellipsis", pisa: a.right > b.left + 0.5 }; });
+  assert.equal(r.pisa, false);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= 390));
 });
 
@@ -81,7 +80,7 @@ t.test("sin gasto el mes anterior", async () => {
 // Escenario: desde Resto
 t.test("desde Resto", async () => {
   const { page } = await abrir({ datos: siete() });
-  await page.click('#mosaico [data-ui="bloque-resto"]');
+  await page.click('#lcat [data-ui="fila-resto"]');
   await page.waitForSelector("#sheetPila:not([hidden])");
   assert.equal(await page.locator("#pila .sc").count(), 7);
 });
@@ -99,10 +98,10 @@ t.test("el texto de cada tarjeta se lee", async () => {
   }
 });
 
-// Escenario: abrir desde el mosaico
-t.test("abrir desde el mosaico", async () => {
+// Escenario: abrir desde la lista
+t.test("abrir desde la lista", async () => {
   const { page } = await abrir({ datos: datos([A.gasto(1, "2026-10-03", 64.3, 1), A.gasto(2, "2026-10-04", 18, 1, "Comida fuera")]) });
-  await page.click('#mosaico .bloque[data-cat="Supermercado"]');
+  await page.click('#lcat .fila[data-cat][data-cat="Supermercado"]');
   await page.waitForSelector("#sheetCat:not([hidden])");
   assert.equal(await A.texto(page, "#catTitulo"), "Supermercado");
   assert.match(await A.texto(page, "#catTotal"), /64,3/);

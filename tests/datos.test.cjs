@@ -123,7 +123,7 @@ t.test("datos de la versión con cuentas", async () => {
   assert.equal(c.saldoInicial, 1200);
   assert.equal(c.desde, "2026-10-10");
   await A.ir(page, "cuentas");
-  assert.equal(await A.saldoCta(page, 5), "1200 €");
+  assert.equal(await A.saldoCta(page, 5), "1.200 €");
 });
 
 // Escenario: copia de seguridad de la primera versión
@@ -146,8 +146,8 @@ t.test("resumen con conciliación", async () => {
   await A.aviso(page, "Resumen copiado");
   const txt = await A.portapapeles(page);
   assert.ok(txt.startsWith("Resumen octubre 2026"), txt.split("\n")[0]);
-  assert.match(txt, /Ingresos: 1500 € · Gastos: 100 € · Resultado: 1400 €/);
-  assert.match(txt, /^- Banco A \(Bancos y efectivo\): 2500 € · conciliada/m);
+  assert.match(txt, /Ingresos: 1.500 € · Gastos: 100 € · Resultado: 1.400 €/);
+  assert.match(txt, /^- Banco A \(Bancos y efectivo\): 2.500 € · conciliada/m);
   assert.match(txt, /^- Tarjeta Y \(Tarjetas de crédito\): -100 € · sin conciliar/m);
 });
 
@@ -158,7 +158,7 @@ t.test("resumen con objetivos", async () => {
   await A.ir(page, "ajustes");
   await page.click("#copiarResumen");
   await A.aviso(page, "Resumen copiado");
-  assert.match(await A.portapapeles(page), /^Objetivo Vacaciones: 150 € de 1000 € \(plan 200 €\)$/m);
+  assert.match(await A.portapapeles(page), /^Objetivo Vacaciones: 150 € de 1.000 € \(plan 200 €\)$/m);
 });
 
 // Escenario: resumen sin objetivos
@@ -418,8 +418,8 @@ t.test("inversiones guardadas antes de las posiciones", async () => {
   const datos = A.v2({ cuentas: [A.cta(1, "Broker X", 2100, { tipo: "inversion", aportado: 2000 })] });
   const { page } = await abrir({ datos });
   await A.ir(page, "cuentas");
-  assert.match(await A.texto(page, '[data-cta="1"]'), /\+100 € \(\+5,0 %\) sobre 2000 €/);
-  assert.equal(await A.texto(page, "#activos"), "2100 €");
+  assert.match(await A.texto(page, '[data-cta="1"]'), /\+100 € \(\+5,0 %\) sobre 2.000 €/);
+  assert.equal(await A.texto(page, "#activos"), "2.100 €");
 });
 
 // Escenario: copia de seguridad vieja

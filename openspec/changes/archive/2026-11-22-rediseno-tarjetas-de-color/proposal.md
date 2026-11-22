@@ -1,7 +1,8 @@
 ---
 cambio: rediseno-tarjetas-de-color
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-11-22
 ---
 # Rediseño: blanco y negro, tarjetas de color y qué hiciste con lo que sobró
 
@@ -14,7 +15,7 @@ Además, el resultado del mes en grande («+916 €») no le dice nada. Le impor
 ## Qué cambia
 
 - **Paleta nueva.** Claro: fondo blanco, tarjetas gris muy claro, texto casi negro. Oscuro: fondo negro, tarjetas gris muy oscuro, texto casi blanco. Sin sombras. Acento lima.
-- **Colores de categoría con degradado.** Los 19 colores se rehacen como parejas de dos colores: en el claro, fondos vivos con el texto y el ícono en otro color (lila con violeta oscuro, lima con verde, azul con amarillo, naranja con azul marino, rosa con bordó…); en el oscuro, parejas de dos colores sobre negro, un fondo de color con el texto y el ícono en otro color vivo (violeta con lima, verde oscuro con rosa, magenta con amarillo, menta con azul marino, bordó con celeste…). Cada categoría conserva su color todos los meses.
+- **Colores de categoría con degradado.** Los 19 colores se rehacen: fondos con un degradado suave, pasteles y vivos en el claro y profundos en el oscuro, sin fondos violetas. Toda la letra sobre ellos es blanca en el oscuro y casi negra en el claro. Cada categoría conserva su color todos los meses.
 - **Ícono por categoría.** Cada categoría de gasto lleva un ícono dibujado por la app (café, carrito, colectivo…). Las de siempre traen el suyo, y la persona puede elegir otro de una lista para cualquier categoría. Sin ícono elegido, se ve la inicial.
 - **Letra del sistema.** En el iPhone, la del sistema (SF Pro); en otros teléfonos, Roboto, que sigue dentro de la app.
 - **Títulos grandes, barra flotante.** El título de cada pantalla es grande y está alineado a la izquierda. La barra inferior es una píldora oscura flotante, con «+» en el centro.

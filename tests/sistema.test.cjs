@@ -9,7 +9,8 @@ const CATS = ["Supermercado", "Comida fuera", "Delivery", "Transporte", "Ocio", 
 const datos = (extra = {}, ap) => A.v2({ settings: ap ? { apariencia: ap } : {}, cuentas: [BANCO], movs: [A.ingreso(1, "2026-10-01", 1700, 1), A.gasto(2, "2026-10-03", 64.3, 1)], ...extra });
 const estilo = (page, sel, prop, pseudo) => page.$eval(sel, (e, [p, ps]) => getComputedStyle(e, ps || null)[p], [prop, pseudo]);
 const rgb = (hex) => { const h = hex.replace("#", ""); return `rgb(${[0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(", ")})`; };
-const canales = (c) => c.match(/[\d.]+/g).slice(0, 3).map(Number);
+// Los fondos con color-mix llegan como «color(srgb r g b)», con canales de 0 a 1
+const canales = (c) => c.match(/[\d.]+/g).slice(0, 3).map(Number).map((x) => (c.startsWith("color(") ? x * 255 : x));
 const lum = (c) => { const q = canales(c).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }); return 0.2126 * q[0] + 0.7152 * q[1] + 0.0722 * q[2]; };
 const contraste = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 const colores = (grad) => grad.match(/rgb\([^)]*\)/g) || [];
@@ -86,17 +87,19 @@ t.test("tendencia positiva", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 100, 1)] }) });
   assert.equal(await tendencia(page), "positiva");
   const [txt, color] = await tituloRes(page);
-  assert.equal(txt, "Te sobraron 1400 €");
-  assert.equal(color, await estilo(page, "body", "color"));
+  assert.equal(txt, "Te sobraron 1.400 €");
+  assert.equal(color, await estilo(page, '[data-ui="resultado-mes"]', "color"));
+  assert.equal(await page.isVisible("#resMarca"), false);
 });
 
 // Escenario: tendencia negativa
 t.test("tendencia negativa", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.ingreso(1, "2026-10-01", 100, 1), A.gasto(2, "2026-10-03", 300, 1)] }) });
   assert.equal(await tendencia(page), "negativa");
-  const [txt, color] = await tituloRes(page);
+  const [txt] = await tituloRes(page);
   assert.equal(txt, "Te faltaron 200 €");
-  assert.equal(color, rgb("#FF8AA6"));
+  assert.equal(await page.isVisible("#resMarca"), true);
+  assert.equal(await A.texto(page, "#resMarca"), "Mes en negativo");
 });
 
 // Escenario: tendencia neutra
@@ -121,9 +124,9 @@ t.test("gastado e ingresado", async () => {
   const movs = [A.ingreso(1, "2026-10-01", 1500, 1), A.gasto(2, "2026-10-03", 80, 1), A.transf(3, "2026-10-04", 300, 1, 2)];
   const { page } = await abrir({ datos: datos({ cuentas: [BANCO, A.cta(2, "Cuenta ahorro", 0)], movs }) });
   assert.equal(await A.texto(page, "#miniGas"), "80 €");
-  assert.equal(await A.texto(page, "#miniIng"), "1500 €");
-  const r = await page.$eval('[data-ui="gastado-ingresado"]', (e) => [e.textContent.includes("Gastado"), e.textContent.includes("Ingresado"), getComputedStyle(e.querySelector(".dot"), null).backgroundColor]);
-  assert.deepEqual(r, [true, true, await estilo(page, "body", "color")]);
+  assert.equal(await A.texto(page, "#miniIng"), "1.500 €");
+  const r = await page.$eval('[data-ui="gastado-ingresado"]', (e) => [e.textContent.includes("Gastado"), e.textContent.includes("Ingresado")]);
+  assert.deepEqual(r, [true, true]);
 });
 
 // Escenario: sin movimientos
@@ -183,7 +186,7 @@ t.test("barras de cinco meses", async () => {
   assert.deepEqual(cols.map((c) => c[3]), ["jun", "jul", "ago", "sep", "oct"]);
   assert.deepEqual(cols.filter((c) => c[1]).map((c) => c[0]), ["2026-10"]);
   assert.deepEqual(cols.filter((c) => c[2]).map((c) => c[0]), ["2026-10"]);
-  assert.match(await A.texto(page, "#pat .globo"), /2135,7 €/);
+  assert.match(await A.texto(page, "#pat .globo"), /2.135,7 €/);
   assert.equal(await estilo(page, "#pat .col.on i", "backgroundColor"), await page.evaluate(() => { const d = document.createElement("i"); d.style.color = "var(--dest)"; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; }));
   assert.equal(await estilo(page, "#pat .col:not(.on) i", "backgroundImage"), "none");
 });

@@ -106,7 +106,7 @@ t.test("datos con cuotas inválidas se tratan como gasto normal", async () => {
   const malas = [{ ...EN_CUOTAS, id: 1, cuotas: { n: 1, cuota: 240 } }, { ...EN_CUOTAS, id: 2, cuotas: { n: 3, cuota: 900 } }, { ...EN_CUOTAS, id: 3, cuenta: 1, cuotas: { n: 3, cuota: 240 } }, { ...EN_CUOTAS, id: 4, cuotas: "x" }];
   const { page, errores } = await abrir({ datos: A.v2({ cuentas: [BANCO, TARJ], movs: malas }) });
   await A.ir(page, "movs");
-  assert.equal(await A.texto(page, "#totGas"), "2800 €");
+  assert.equal(await A.texto(page, "#totGas"), "2.800 €");
   assert.equal(await page.locator('[data-ui="chip-cuota"]').count(), 0);
   assert.deepEqual(errores, []);
 });
@@ -211,12 +211,12 @@ t.test("conciliar una inversión con posiciones", async () => {
   await A.ir(page, "mes");
   await page.click('[data-conc="3"]');
   await page.fill("#kReal", "1080");
-  assert.equal(await A.texto(page, "#kCalc"), "1050 €");
+  assert.equal(await A.texto(page, "#kCalc"), "1.050 €");
   await page.click("#kAjuste");
   await A.aviso(page, "Cuenta conciliada");
   assert.equal(await A.texto(page, '[data-conc="3"] .chip'), "Conciliada");
   await A.ir(page, "cuentas");
-  assert.equal(await A.saldoCta(page, 3), "1080 €");
+  assert.equal(await A.saldoCta(page, 3), "1.080 €");
   assert.deepEqual(errores, []);
 });
 
@@ -229,7 +229,7 @@ t.test("el patrimonio neto suma las inversiones con posiciones y se anota en el 
   await page.fill("#cNombre", "Banco principal");
   await page.click('#sheetC button[type="submit"]');
   await A.aviso(page, "Cuenta guardada");
-  assert.equal(await A.texto(page, "#activos"), "3050 €");
+  assert.equal(await A.texto(page, "#activos"), "3.050 €");
   assert.equal((await guardadosFin(page)).meses["2026-10"].neto, 3050);
 });
 
@@ -250,7 +250,7 @@ t.test("las posiciones sobreviven a recargar la app", async () => {
   await A.aviso(page, "Operación guardada");
   await page.reload();
   await A.ir(page, "cuentas");
-  assert.equal(await A.saldoCta(page, 3), "1000 €");
+  assert.equal(await A.saldoCta(page, 3), "1.000 €");
   await A.verRend(page);
   assert.match(sinEspacios(await A.texto(page, '[data-activo]')), /Fondo A.*10 unidades/);
 });
