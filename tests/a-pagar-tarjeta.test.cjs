@@ -114,7 +114,7 @@ t.test("cada mes su fecha", async () => {
   const { page } = await abrir({ hoy: NOV15, datos: datos([TARJ({ cierres: { "2026-10": "2026-10-18" } })], []) });
   await hoja(page);
   assert.equal(await page.inputValue('#pgLista input[data-cierre="2"]'), "");
-  assert.match(await A.texto(page, '#pgLista [data-cid="2"] .sub'), /^Sin fecha de cierre/);
+  assert.match(await A.texto(page, '#pgLista [data-cid="2"] .sub >> nth=0'), /^Sin fecha de cierre/);
   await page.click("#pgAnt");
   assert.equal(await page.inputValue('#pgLista input[data-cierre="2"]'), "2026-10-18");
 });

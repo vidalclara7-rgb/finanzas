@@ -149,6 +149,7 @@ button.card{border:0;font:inherit;color:var(--ink);text-align:left;cursor:pointe
 .mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
 .mesnav button:disabled{opacity:.3}
 .mesnav span{font-weight:600}
+.item .d .prest{color:var(--verde-t)}
 .pfila{display:flex;flex-direction:column;gap:2px;width:100%}
 .toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
 .gastos-cat .item{cursor:pointer}
@@ -523,8 +524,16 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
   <button type="button" class="btn sec" id="cVerMovs" data-ui="ver-movimientos">Ver movimientos</button>
   <label class="f" for="cAportado" data-t="inversion">Total aportado (€, opcional, para ver la ganancia)<input type="text" inputmode="decimal" autocomplete="off" id="cAportado"></label>
   <label class="f" for="cLimite" data-t="tarjeta">Límite de la tarjeta (€, opcional)<input type="text" inputmode="decimal" autocomplete="off" id="cLimite"></label>
+  <label class="check" for="cPrest" data-t="financiacion" data-ui="es-prestamo" id="cPrestCheck"><input type="checkbox" id="cPrest"><span>Es un préstamo que voy a recibir</span></label>
+  <div class="card" id="cPrestBox" data-ui="datos-prestamo" style="display:flex;flex-direction:column;gap:14px" hidden>
+    <label class="f" for="cPrestImp">Importe del préstamo (€)<input type="text" inputmode="decimal" autocomplete="off" id="cPrestImp"></label>
+    <label class="f" for="cPrestFecha">Llega el<input type="date" id="cPrestFecha"></label>
+    <label class="f" for="cPrestDest">A qué cuenta llega<select id="cPrestDest"></select></label>
+    <span class="sub">Ese día se anota la entrada: la financiación pasa a deber el importe y la cuenta lo tiene.</span>
+  </div>
   <label class="f" for="cCuota" data-t="financiacion">Cuota mensual (€)<input type="text" inputmode="decimal" autocomplete="off" id="cCuota"></label>
   <label class="f" for="cCuotas" data-t="financiacion">Cuotas que faltan (opcional)<input type="number" inputmode="numeric" step="1" id="cCuotas"></label>
+  <label class="f" for="cPrimera" data-t="financiacion" data-ui="primera-cuota">Primera cuota (opcional)<input type="month" id="cPrimera"></label>
   <label class="f" for="cTope" data-t="liquidez tarjeta">Tope de gasto mensual (€, opcional)<input type="text" inputmode="decimal" autocomplete="off" id="cTope" placeholder="Sin tope"></label>
   <label class="check" for="cFondo" data-t="liquidez" data-ui="es-fondo"><input type="checkbox" id="cFondo"><span>Es mi fondo de emergencia</span></label>
   <div class="card" id="cAdj" data-pantalla="adjuntos-cuenta" data-ui="adjuntos"><span class="lbl">Adjuntos</span><div id="cAdjLista"></div>
@@ -683,6 +692,7 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
   <div class="card color" id="foreResumen" data-ui="forecast-resumen" style="--c:var(--k2)"><span class="lbl">Próximos 12 meses</span><div class="list" id="foreResumenLista"></div></div>
   <label class="f" for="foreIng">Ingreso por mes (€)<input type="text" inputmode="decimal" autocomplete="off" id="foreIng" data-ui="forecast-ingreso"></label>
   <span class="sub" id="foreIngSub"></span>
+  <button type="button" class="btn sec" id="forePromedio" data-ui="usar-promedio" hidden>Usar el promedio</button>
   <div class="card color" id="foreBarrasCard" data-ui="forecast-barras" style="--c:var(--k1)"><div class="row"><span class="lbl">Comprometido contra ingreso</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--ingreso)"></i>Ingreso</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Comprometido</span></span></div><div class="meses" id="foreBarras"></div></div>
   <div class="list" id="foreLista" data-ui="forecast-lista"></div>
 </div>
@@ -843,7 +853,7 @@ function categoriasDatosNorm(s){
 // Cuotas que faltan de una financiación: «cuotasMes» es el mes en que se cargó el número (la cuenta regresiva parte de ahí).
 // Si falta o no es un mes válido, parte del mes actual; sin «cuotas», se descarta
 let cuotasNuevo=false;
-function cuotasMesNorm(s){s.cuentas.forEach(c=>{if(c.tipo==="financiacion"&&c.cuotas>0){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(c.cuotasMes)){c.cuotasMes=mesId();cuotasNuevo=true;}}else delete c.cuotasMes;});return s;}
+function cuotasMesNorm(s){s.cuentas.forEach(c=>{const ok=/^\d{4}-(0[1-9]|1[0-2])$/.test(c.cuotasMes);if(c.tipo==="financiacion"&&c.cuotas>0){if(!ok){c.cuotasMes=mesId();cuotasNuevo=true;}}else if(!(c.tipo==="financiacion"&&ok))delete c.cuotasMes;});return s;}
 // Inversiones: activos (de una cuenta de inversión) y sus operaciones de compra y venta. Se descarta lo que no sea válido:
 // activos sin cuenta de inversión o sin nombre, operaciones sin activo, de otro tipo o con cantidad o precio que no sean positivos
 function invNorm(s){
@@ -883,9 +893,17 @@ function reglasNorm(s){if(!s.reglas||typeof s.reglas!=="object"||Array.isArray(s
 // La marca de compra fraccionada (`fracc`) es un texto: lo demás se ignora
 // Fechas de cierre de las tarjetas de crédito, una por mes: sólo las de una tarjeta, con mes AAAA-MM y una fecha real de ese mes
 const cierreOk=(k,f)=>/^\d{4}-(0[1-9]|1[0-2])$/.test(k)&&typeof f==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(f)&&f.slice(0,7)===k&&+f.slice(8)>=1&&+f.slice(8)<=finMes(k);
-function cierresNorm(s){s.cuentas.forEach(c=>{if(c.cierres===undefined)return;
+function cierresNorm(s){if(s.settings&&s.settings.foreIng!==undefined&&!(typeof s.settings.foreIng==="number"&&isFinite(s.settings.foreIng)&&s.settings.foreIng>=0))delete s.settings.foreIng;
+  s.cuentas.forEach(c=>{if(c.cierres===undefined)return;
   if(c.tipo!=="tarjeta"||!c.cierres||typeof c.cierres!=="object"||Array.isArray(c.cierres)){delete c.cierres;return;}
-  const ok={};Object.keys(c.cierres).forEach(k=>{if(cierreOk(k,c.cierres[k]))ok[k]=c.cierres[k];});if(Object.keys(ok).length)c.cierres=ok;else delete c.cierres;});return s;}
+  const ok={};Object.keys(c.cierres).forEach(k=>{if(cierreOk(k,c.cierres[k]))ok[k]=c.cierres[k];});if(Object.keys(ok).length)c.cierres=ok;else delete c.cierres;});
+  s.cuentas.forEach(c=>{if(c.pagos===undefined)return;
+  if(c.tipo!=="tarjeta"||!c.pagos||typeof c.pagos!=="object"||Array.isArray(c.pagos)){delete c.pagos;return;}
+  const ok={};Object.keys(c.pagos).forEach(k=>{if(pagoOk(c,k,c.pagos[k]))ok[k]=c.pagos[k];});if(Object.keys(ok).length)c.pagos=ok;else delete c.pagos;});return s;}
+// La fecha de pago del resumen de un mes: real, después del cierre y como mucho el último día del mes siguiente
+const fechaReal=f=>typeof f==="string"&&/^\d{4}-(0[1-9]|1[0-2])-\d{2}$/.test(f)&&+f.slice(8)>=1&&+f.slice(8)<=finMes(f.slice(0,7));
+const finSig=k=>{const [y,m]=k.split("-").map(Number),d=new Date(y,m+1,0);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
+const pagoOk=(c,k,f)=>/^\d{4}-(0[1-9]|1[0-2])$/.test(k)&&fechaReal(f)&&f>cierreDe(c,k)&&f<=finSig(k);
 function fraccNorm(s){s.movs.forEach(m=>{if(m.fracc!==undefined&&(typeof m.fracc!=="string"||!m.fracc))delete m.fracc;});return s;}
 function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
 const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
@@ -911,7 +929,7 @@ function efecto(m,id){
   if(m.tipo==="ingreso"||m.tipo==="ajuste")return m.cuenta===id?m.importe:0;
   if(m.tipo==="transferencia")return (m.cuenta===id?-m.importe:0)+(m.destino===id?m.importe:0);
   return 0;}
-function valorCuenta(c,hasta){let v=valorInicial(c);for(const m of S.movs)if(m.fecha>=c.desde&&(!hasta||m.fecha<=hasta))v+=efecto(m,c.id);
+function valorCuenta(c,hasta){if(!hasta)hasta=hoy();let v=valorInicial(c);for(const m of S.movs)if(m.fecha>=c.desde&&(!hasta||m.fecha<=hasta))v+=efecto(m,c.id);
   // Inversión con activos: el efectivo sigue las compras y ventas, y se suma lo que valen las posiciones
   if(c.tipo==="inversion")S.activos.forEach(a=>{if(a.cuenta!==c.id)return;const p=posicion(a,hasta);v+=p.valor+p.cobrado-p.pagado;});
   return r2(v);}
@@ -935,7 +953,7 @@ function cantidadesOk(ops){const por={};ops.forEach(o=>(por[o.activo]=por[o.acti
   return Object.values(por).every(l=>{l=[...l].sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.tipo==="compra"?0:1)-(b.tipo==="compra"?0:1));let q=0;return l.every(o=>{q=r6(q+(o.tipo==="compra"?o.cantidad:-o.cantidad));return q>=-1e-9;});});}
 const cuentaDe=id=>S.cuentas.find(c=>c.id===id);
 const nombreDe=id=>{const c=cuentaDe(id);return c?c.nombre:"Sin cuenta";};
-function totales(hasta){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c,hasta);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota&&!(c.cuotas>0&&cuotasFaltan(c)===0))q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
+function totales(hasta){let a=0,d=0,q=0;S.cuentas.forEach(c=>{const v=valorCuenta(c,hasta);if(v>=0)a+=v;else d-=v;if(c.tipo==="financiacion"&&c.cuota&&!(c.cuotas>0&&cuotasFaltan(c)===0)&&!antesPrimera(c,mesId()))q+=c.cuota;});return {activos:r2(a),deudas:r2(d),neto:r2(a-d),cuotas:q};}
 function guardarNeto(){mesData(mesId()).neto=totales().neto;}
 // Compra en cuotas (sólo gastos de tarjeta): la deuda cuenta el total, pero en cada mes de sus cuotas cuenta sólo la cuota.
 // cuotaEnMes() devuelve una copia del gasto con el importe de ese mes (cuotaN = nº de cuota, total = lo que se debe), o null si no le toca
@@ -987,10 +1005,13 @@ function icsObjetivo(o){const c=cuentaDe(o.cuenta);if(c&&valorCuenta(c)>=o.monto
 // Meses entre dos «AAAA-MM» (b menos a)
 const difMeses=(a,b)=>{const [y1,m1]=a.split("-").map(Number),[y2,m2]=b.split("-").map(Number);return (y2-y1)*12+m2-m1;};
 // Cuotas que faltan de una financiación en un mes, contando la de ese mes: bajan una por mes desde el mes en que se cargó el número
+// Antes del mes de la primera cuota una financiación no paga cuota
+const antesPrimera=(c,mes)=>!!c.cuotasMes&&mes<c.cuotasMes;
+const iniCuotas=(c,mes)=>c.cuotasMes&&c.cuotasMes>mes?c.cuotasMes:mes;
 const cuotasFaltan=(c,mes)=>c.cuotas>0?Math.max(0,c.cuotas-Math.max(0,difMeses(c.cuotasMes||mesId(),mes||mesId()))):null;
 // Lo que se paga en cuotas en un mes: financiaciones con cuota y compras en cuotas de tarjeta
 function cuotasDelMes(mes){
-  const fin=S.cuentas.filter(c=>c.tipo==="financiacion"&&c.cuota>0).map(c=>{const f=cuotasFaltan(c,mes);return f===0?null:{nombre:c.nombre,cuota:c.cuota,faltan:f,hasta:f?mesDe(mesSig(mes,f-1)):null,quedan:f?r2(c.cuota*f):null};}).filter(Boolean);
+  const fin=S.cuentas.filter(c=>c.tipo==="financiacion"&&c.cuota>0&&!antesPrimera(c,mes)).map(c=>{const f=cuotasFaltan(c,mes);return f===0?null:{nombre:c.nombre,cuota:c.cuota,faltan:f,hasta:f?mesDe(mesSig(mes,f-1)):null,quedan:f?r2(c.cuota*f):null};}).filter(Boolean);
   const compras=S.movs.map(m=>{const q=cuotaEnMes(m,mes);if(!q)return null;const f=m.cuotas.n-q.cuotaN+1;return {nombre:nombreDe(m.cuenta),nota:m.nota||"",cuota:q.importe,k:q.cuotaN,n:m.cuotas.n,faltan:f,hasta:mesDe(mesSig(mes,f-1)),quedan:r2(q.importe*f)};}).filter(Boolean);
   const todas=[...fin,...compras];
   return {fin,compras,total:r2(todas.reduce((a,x)=>a+x.cuota,0)),n:todas.length,quedan:r2(todas.reduce((a,x)=>a+(x.quedan||0),0))};}
@@ -1010,7 +1031,7 @@ function detalleCuenta(c){const v=valorCuenta(c);
   if(c.tipo==="inversion"&&S.activos.some(a=>a.cuenta===c.id)){const i=invCuenta(c);return i.pagado>0?`${rendTxt(i.rend,i.pagado)} en activos`:"Activos sin compras todavía";}
   if(c.tipo==="inversion"&&c.aportado>0){const g=r2(v-c.aportado);return `${g>=0?"+":""}${eur(g)} (${g>=0?"+":""}${(g/c.aportado*100).toFixed(1).replace(".",",")} %) sobre ${eur(c.aportado)}`;}
   if(c.tipo==="tarjeta"&&c.limite>0)return `Disponible ${eur(c.limite+v)} de ${eur(c.limite)}`;
-  if(c.tipo==="financiacion"&&c.cuota>0){const f=cuotasFaltan(c);return f===0?"Sin cuotas pendientes":`${eur(c.cuota)}/mes`+(f?` · faltan ${f} (hasta ${mesMas(f)})`:"");}
+  if(c.tipo==="financiacion"&&c.cuota>0){const f=cuotasFaltan(c);return f===0?"Sin cuotas pendientes":`${eur(c.cuota)}/mes`+(f?` · faltan ${f} (hasta ${mesDe(mesSig(iniCuotas(c,mesId()),f-1))})`:"");}
   if(c.tipo==="compartida")return v>=0?"Te deben":"Debés";
   if(c.fondo)return "fondo de emergencia";
   return "";}
@@ -1204,23 +1225,28 @@ $("sheetCats").addEventListener("click",e=>{const f=e.target.closest("[data-ed]"
 // Cuotas del mes: el detalle de cada financiación y de cada compra en cuotas
 // Lo que hay que pagar de cada tarjeta al cierre del resumen del mes: la deuda a esa fecha menos las cuotas que vencen después
 const tarjetasCred=()=>S.cuentas.filter(c=>c.tipo==="tarjeta");
-const cierreDe=(c,mes)=>(c.cierres||{})[mes]||mes+"-"+pad(finMes(mes));
+function cierreDe(c,mes){return (c.cierres||{})[mes]||mes+"-"+pad(finMes(mes));}
 function aPagar(c,mes){const cierre=cierreDe(c,mes),deuda=r2(-valorCuenta(c,cierre)),sig=mesSig(mes,1);
   const vienen=r2(S.movs.filter(m=>m.cuenta===c.id&&m.fecha<=cierre).reduce((a,m)=>a+cuotasQuedan(m,sig),0));
   return {cierre,deuda,vienen,pagar:Math.max(0,r2(deuda-vienen)),cargada:!!(c.cierres||{})[mes]};}
+const pagoDe=(c,mes)=>(c.pagos||{})[mes]||null;
 const estadoCierre=x=>!x.cargada?"Sin fecha de cierre":hoy()<=x.cierre?`Hasta hoy · cierra el ${diaCorto(x.cierre)}`:`Cerró el ${diaCorto(x.cierre)}`;
 function pintarPagar(mes){const ts=tarjetasCred();$("pagarCard").hidden=!ts.length;if(!ts.length)return;
   const xs=ts.map(c=>({c,x:aPagar(c,mes)})),nom=new Map(ts.map(c=>[c.id,esc(c.nombre)]));
   $("pagarTot").textContent=eur(r2(xs.reduce((a,{x})=>a+x.pagar,0)));
-  $("pagarFilas").innerHTML=xs.map(({c,x})=>`<span class="pfila" data-cid="${c.id}"><span class="row"><span>${nom.get(c.id)}</span><span class="num">${eur(x.pagar)}</span></span><span class="sub">${estadoCierre(x)}</span></span>`).join("");}
-let pagarMes=null;
+  $("pagarFilas").innerHTML=xs.map(({c,x})=>`<span class="pfila" data-cid="${c.id}"><span class="row"><span>${nom.get(c.id)}</span><span class="num">${eur(x.pagar)}</span></span><span class="sub">${estadoCierre(x)}${pagoDe(c,mes)?` · pagás el ${diaCorto(pagoDe(c,mes))}`:""}</span></span>`).join("");}
+let pagarMes=null;const pagoMesH=()=>pagarMes;
 function abrirPagar(){pagarMes=mesV();pintarHojaPagar();mostrar("sheetPagar");}
 function pintarHojaPagar(){const mes=pagarMes,ts=tarjetasCred(),xs=ts.map(c=>({c,x:aPagar(c,mes)})),nom=new Map(ts.map(c=>[c.id,esc(c.nombre)])),fin=mes+"-"+pad(finMes(mes));
   $("pgMes").textContent=mesDe(mes);$("pgSig").disabled=mes>=mesId();
   $("pgSub").textContent=`${eur(r2(xs.reduce((a,{x})=>a+x.pagar,0)))} entre ${ts.length} ${ts.length===1?"tarjeta":"tarjetas"}`;
-  $("pgLista").innerHTML=xs.map(({c,x})=>`<div class="card" data-ui="detalle-a-pagar" data-cid="${c.id}"><span class="lbl">${nom.get(c.id)}</span><label class="f" data-ui="fecha-cierre">Fecha de cierre<input type="date" data-cierre="${c.id}" min="${mes}-01" max="${fin}" value="${x.cargada?x.cierre:""}"></label><span class="sub">${x.cargada?estadoCierre(x):`Sin fecha de cierre: cuenta hasta el ${diaCorto(fin)}`}</span>
+  $("pgLista").innerHTML=xs.map(({c,x})=>`<div class="card" data-ui="detalle-a-pagar" data-cid="${c.id}"><span class="lbl">${nom.get(c.id)}</span><label class="f" data-ui="fecha-cierre">Fecha de cierre<input type="date" data-cierre="${c.id}" min="${mes}-01" max="${fin}" value="${x.cargada?x.cierre:""}"></label><span class="sub">${x.cargada?estadoCierre(x):`Sin fecha de cierre: cuenta hasta el ${diaCorto(fin)}`}</span><label class="f" data-ui="fecha-pago">Fecha de pago<input type="date" data-pago="${c.id}" min="${x.cierre}" max="${finSig(mes)}" value="${pagoDe(c,mes)||""}"></label><span class="sub">${pagoDe(c,mes)?`Pagás el ${diaCorto(pagoDe(c,mes))}`:`Sin fecha de pago: cuenta en ${MESES[+mesSig(mes,1).slice(5)-1]}.`}</span>
     <div class="list"><div class="item"><span>Deuda al cierre</span><span class="num">${eur(x.deuda)}</span></div><div class="item"><span>Cuotas que vienen después</span><span class="num">− ${eur(x.vienen)}</span></div><div class="item"><b>A pagar</b><b class="num">${eur(x.pagar)}</b></div></div></div>`).join("");}
-$("pgLista").addEventListener("change",e=>{const i=e.target.closest("[data-cierre]");if(!i)return;const c=S.cuentas.find(x=>x.id===+i.dataset.cierre);if(!c)return;const mes=pagarMes,v=i.value;
+$("pgLista").addEventListener("change",e=>{const q=e.target.closest("[data-pago]");if(q){const c=S.cuentas.find(x=>x.id===+q.dataset.pago);if(!c)return;const mes=pagoMesH(),v=q.value;
+    if(v&&!pagoOk(c,mes,v)){toast(`La fecha de pago tiene que ser después del cierre y antes de fin de ${mesDe(mesSig(mes,1))}.`);q.value=pagoDe(c,mes)||"";return;}
+    if(v)c.pagos={...(c.pagos||{}),[mes]:v};else if(c.pagos){delete c.pagos[mes];if(!Object.keys(c.pagos).length)delete c.pagos;}
+    persist();toast(v?"Fecha de pago guardada":"Fecha de pago borrada");pintarHojaPagar();render();return;}
+  const i=e.target.closest("[data-cierre]");if(!i)return;const c=S.cuentas.find(x=>x.id===+i.dataset.cierre);if(!c)return;const mes=pagarMes,v=i.value;
   if(v&&!cierreOk(mes,v)){toast(`Elegí una fecha de ${mesDe(mes)}.`);i.value=(c.cierres||{})[mes]||"";return;}
   if(v){c.cierres={...(c.cierres||{}),[mes]:v};}else if(c.cierres){delete c.cierres[mes];if(!Object.keys(c.cierres).length)delete c.cierres;}
   persist();toast(v?"Fecha de cierre guardada":"Fecha de cierre borrada");pintarHojaPagar();render();});
@@ -1500,7 +1526,10 @@ $("mCrearCuenta").onclick=()=>{ir("cuentas");abrirCuenta(null);};
 // Hoja de cuenta
 let selTipo="liquidez", selSigno="mas", editId=null;
 function tipoUI(){$("cNombre").placeholder=tipoDe(selTipo)[2];
-  document.querySelectorAll("#sheetC [data-t]").forEach(el=>el.hidden=!el.dataset.t.split(" ").includes(selTipo)||(el.dataset.t==="compartida"&&editId!=null));}
+  document.querySelectorAll("#sheetC [data-t]").forEach(el=>el.hidden=!el.dataset.t.split(" ").includes(selTipo)||(el.dataset.t==="compartida"&&editId!=null));
+  // El préstamo sólo al crear una financiación; con el préstamo marcado, la deuda sale de la entrada
+  const prest=selTipo==="financiacion"&&editId==null;$("cPrestCheck").hidden=!prest;const on=prest&&$("cPrest").checked;$("cPrestBox").hidden=!on;$("cSaldo").closest("label").hidden=on;}
+$("cPrest").addEventListener("change",tipoUI);
 function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));editId=c?c.id:null;
   selTipo=c?c.tipo:"liquidez";selSigno="mas";
   seg($("segTipo"),TIPOS.map(x=>[x[0],x[1]]),selTipo,v=>{selTipo=v;tipoUI();});
@@ -1510,6 +1539,8 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
   $("cNombre").value=c?c.nombre:"";$("cSaldo").value="";$("cCalc").textContent=c?eur(valorCuenta(c)):"";pintarDesglose(c);
   $("cAportado").value=aTexto(c&&c.aportado||"");$("cLimite").value=aTexto(c&&c.limite||"");$("cCuota").value=aTexto(c&&c.cuota||"");$("cCuotas").value=c&&c.cuotas>0?(c.tipo==="financiacion"?cuotasFaltan(c)||"":c.cuotas):"";
   $("cTope").value=aTexto(c&&c.tope||"");$("cFondo").checked=!!(c&&c.fondo);
+  $("cPrimera").value=c&&c.cuotasMes&&c.cuotasMes>mesId()?c.cuotasMes:"";$("cPrest").checked=false;$("cPrestImp").value="";$("cPrestFecha").value="";
+  {const ds=S.cuentas.filter(x=>x.tipo!=="financiacion"),noms=new Map(ds.map(x=>[x.id,esc(x.nombre)]));$("cPrestDest").innerHTML=`<option value="">Elegí una cuenta</option>`+ds.map(x=>`<option value="${x.id}">${noms.get(x.id)}</option>`).join("");}
   {const q=c&&c.tipo==="tarjeta"?S.movs.map(m=>m.cuenta===c.id?cuotaEnMes(m,mesId()):null).filter(Boolean):[];
     $("cCuotasMes").hidden=!q.length;if(q.length)$("cCuotasTxt").innerHTML=`Cuotas de este mes: <b class="num">${eur(q.reduce((a,m)=>a+m.importe,0))}</b> · ${q.length} ${q.length===1?"compra":"compras"} en cuotas`;}
   $("cVerMovs").hidden=!c;$("cAdj").hidden=!c;adjConfirm=null;if(c)pintarAdj();
@@ -1517,6 +1548,10 @@ function abrirCuenta(id){const c=S.cuentas.find(x=>String(x.id)===String(id));ed
 $("sheetC").addEventListener("submit",e=>{e.preventDefault();
   const nombre=$("cNombre").value.trim(), viejo=S.cuentas.find(x=>x.id===editId);
   if(!nombre){toast("Ponele un nombre a la cuenta");return;}
+  const prest=!viejo&&selTipo==="financiacion"&&$("cPrest").checked,pImp=prest?num("cPrestImp"):null,pFecha=prest?$("cPrestFecha").value:"",pDest=prest?+$("cPrestDest").value:null;
+  if(prest&&!(pImp>0)){toast("Poné el importe del préstamo");return;}
+  if(prest&&!fechaReal(pFecha)){toast("Poné el día que llega el préstamo");return;}
+  if(prest&&!S.cuentas.some(x=>x.id===pDest&&x.tipo!=="financiacion")){toast("Elegí a qué cuenta llega el préstamo");return;}
   const saldo=num("cSaldo")??0;if(!viejo&&saldo<0){toast("Poné el importe en positivo");return;}
   const c=viejo?{...viejo,nombre}:{id:nid(),tipo:selTipo,nombre,saldoInicial:selTipo==="compartida"&&selSigno==="menos"?-saldo:saldo,desde:imp&&imp.nuevaPara!=null?imp.r.movs.reduce((m,x)=>x.fecha<m?x.fecha:m,hoy()):hoy()};
   const faltaAntes=viejo&&viejo.tipo==="financiacion"&&viejo.cuotas>0?cuotasFaltan(viejo):null;
@@ -1527,10 +1562,15 @@ $("sheetC").addEventListener("submit",e=>{e.preventDefault();
   if(c.tipo==="financiacion"){if(pos("cCuota"))c.cuota=pos("cCuota");
     if(pos("cCuotas")){const n=Math.round(pos("cCuotas"));
       // Si el número es el mismo que se veía, la cuenta regresiva sigue; si cambió, parte de este mes
-      if(viejo&&viejo.cuotas>0&&n===faltaAntes){c.cuotas=viejo.cuotas;c.cuotasMes=viejo.cuotasMes;}else{c.cuotas=n;c.cuotasMes=mesId();}}}
+      if(viejo&&viejo.cuotas>0&&n===faltaAntes){c.cuotas=viejo.cuotas;c.cuotasMes=viejo.cuotasMes;}else{c.cuotas=n;c.cuotasMes=mesId();}}
+    // La primera cuota más adelante: hasta ese mes no hay cuota y las que faltan no bajan
+    const pr=$("cPrimera").value;if(/^\d{4}-(0[1-9]|1[0-2])$/.test(pr)&&pr>mesId())c.cuotasMes=pr;else if(c.cuotasMes&&c.cuotasMes>mesId())c.cuotasMes=mesId();
+    if(!(c.cuotas>0)&&c.cuotasMes&&c.cuotasMes<=mesId())delete c.cuotasMes;
+    if(prest){c.saldoInicial=0;c.desde=pFecha<hoy()?pFecha:hoy();}}
   if((c.tipo==="liquidez"||c.tipo==="tarjeta")&&pos("cTope"))c.tope=pos("cTope");
   if(c.tipo==="liquidez"&&$("cFondo").checked){S.cuentas.forEach(x=>delete x.fondo);c.fondo=true;}
   const i=S.cuentas.findIndex(x=>x.id===editId);if(i>=0)S.cuentas[i]=c;else S.cuentas.push(c);
+  if(prest)S.movs.push({id:nid(),tipo:"transferencia",fecha:pFecha,importe:r2(pImp),cuenta:c.id,destino:pDest,nota:"Préstamo"});
   if(imp&&imp.nuevaPara!=null){const x=borrDe(imp.nuevaPara);if(x){x.que="t|"+c.id;x.cubre=[];fijoDe(x);}imp.nuevaPara=null;cerrar();cambio();mostrar("sheetI");segCuentasImp();pintarBorr();toast("Cuenta guardada");return;}
   cerrar();cambio();toast("Cuenta guardada");});
 // Borrar todos los movimientos de una cuenta: dos toques, con respaldo de lo que había
@@ -2195,21 +2235,37 @@ function ingresoPromedio(){let tot=0,n=0;for(let i=1;i<=3;i++){const v=r2(movsMe
 // Gastos fijos del último mes cerrado (las compras en cuotas ya entran por sus cuotas)
 const fijosBase=()=>r2(movsMes(mesSig(mesId(),-1)).filter(m=>esFijo(m)&&!m.cuotas&&!m.cuotaN).reduce((a,m)=>a+m.importe,0));
 // Los 12 meses que vienen: ingreso constante menos gastos fijos y cuotas
-function proyeccion(ing){const fij=fijosBase();
-  return Array.from({length:12},(_,i)=>{const k=mesSig(mesId(),i+1),cu=cuotasDelMes(k).total,comp=r2(fij+cu);return {mes:k,fijos:fij,cuotas:cu,comp,libre:r2(ing-comp)};});}
+// El resumen de cada tarjeta del mes en curso, sin sus gastos fijos ni las cuotas del mes (ya cuentan aparte), en el mes en que se paga
+function resumenesTarjeta(){const mes=mesId();return tarjetasCred().map(c=>{const x=aPagar(c,mes),ini=cierreDe(c,mesSig(mes,-1));
+  const fij=r2(S.movs.filter(m=>m.cuenta===c.id&&m.tipo==="gasto"&&!m.cuotas&&esFijo(m)&&m.fecha>ini&&m.fecha<=x.cierre).reduce((a,m)=>a+m.importe,0));
+  // Las cuotas del mes de sus compras en cuotas ya entran en «cuotas»
+  const cuo=r2(S.movs.filter(m=>m.cuenta===c.id&&m.fecha<=x.cierre).reduce((a,m)=>{const q=cuotaEnMes(m,mes);return a+(q?q.importe:0);},0));
+  return {mes:(pagoDe(c,mes)||"").slice(0,7)||mesSig(mes,1),monto:Math.max(0,r2(x.pagar-fij-cuo))};});}
+// Un préstamo que llega: transferencia de una financiación a una cuenta que no es de financiaciones
+const esFin=id=>{const c=S.cuentas.find(x=>x.id===id);return !!c&&c.tipo==="financiacion";};
+const prestamosMes=k=>r2(S.movs.filter(m=>m.tipo==="transferencia"&&m.fecha.slice(0,7)===k&&esFin(m.cuenta)&&!esFin(m.destino)).reduce((a,m)=>a+m.importe,0));
+function proyeccion(ing){const fij=fijosBase(),rs=resumenesTarjeta();
+  return Array.from({length:12},(_,i)=>{const k=mesSig(mesId(),i+1),cu=cuotasDelMes(k).total,tj=r2(rs.filter(r=>r.mes===k).reduce((a,r)=>a+r.monto,0)),pr=prestamosMes(k),comp=r2(fij+cu+tj);
+    return {mes:k,fijos:fij,cuotas:cu,tarjeta:tj,prestamo:pr,comp,libre:r2(ing+pr-comp)};});}
 let foreIngV=null;
-function pintarFore(){const prom=ingresoPromedio(),ing=foreIngV!=null?foreIngV:prom,fs=proyeccion(ing);
+const ingGuardado=()=>typeof S.settings.foreIng==="number"?S.settings.foreIng:null;
+function pintarFore(){const prom=ingresoPromedio(),g=ingGuardado(),ing=foreIngV!=null?foreIngV:g!=null?g:prom,fs=proyeccion(ing);
   const f1=fs[0],f12=fs[11],sinComp=fs.every(f=>f.comp===0);
   $("foreSinIng").hidden=ing>0;$("foreSinComp").hidden=!sinComp;
   const fila=(t,v)=>`<div class="item"><span>${t}</span><span class="num">${eur(v)}</span></div>`;
   $("foreResumenLista").innerHTML=fila("Entra por mes",ing)+fila("Comprometido el mes que viene",f1.comp)+fila("Libre el mes que viene",f1.libre)+fila("Libre dentro de 12 meses",f12.libre);
-  $("foreIngSub").textContent=foreIngV!=null?"Estás probando otro monto: no se guarda.":(prom>0?"Promedio de los últimos meses cerrados, sin reembolsos. Podés probar otro monto: no se guarda.":"Escribí cuánto entra por mes. No se guarda.");
-  const mx=Math.max(ing,...fs.map(f=>f.comp),1);
-  $("foreBarras").innerHTML=fs.map(f=>`<div class="col${f.libre<0?" neg":""}" data-mes="${f.mes}" data-ing="${ing}" data-comp="${f.comp}"><div class="par"><i class="ing" style="height:${Math.max(ing/mx*100,2).toFixed(0)}%"></i><i class="gas" style="height:${Math.max(f.comp/mx*100,2).toFixed(0)}%"></i></div><small>${MESES[+f.mes.slice(5)-1].slice(0,3).toLowerCase()}</small></div>`).join("");
-  $("foreLista").innerHTML=fs.map(f=>`<div class="item" data-mes="${f.mes}"><div class="d"><span>${mesDe(f.mes)}</span><span>Fijos ${eur(f.fijos)} · cuotas ${eur(f.cuotas)}</span></div><div class="v"><span class="num">${eur(f.libre)}</span><span class="chip ${f.libre<0?"badc":"ok"}">${f.libre<0?"En rojo":"Libre"}</span></div></div>`).join("");}
-function abrirFore(){foreIngV=null;const p=ingresoPromedio();$("foreIng").value=String(p).replace(".",",");pintarFore();mostrar("sheetFore");}
+  $("foreIngSub").textContent=g!=null&&foreIngV==null?"Ingreso guardado: se usa todos los meses.":(prom>0?"Promedio de los últimos meses cerrados, sin reembolsos. Si escribís otro monto, se guarda.":"Escribí cuánto entra por mes. Se guarda.");
+  $("forePromedio").hidden=g==null;$("forePromedio").textContent=`Usar el promedio (${eur(prom)})`;
+  const mx=Math.max(...fs.map(f=>ing+f.prestamo),...fs.map(f=>f.comp),1);
+  $("foreBarras").innerHTML=fs.map(f=>`<div class="col${f.libre<0?" neg":""}" data-mes="${f.mes}" data-ing="${r2(ing+f.prestamo)}" data-comp="${f.comp}"><div class="par"><i class="ing" style="height:${Math.max((ing+f.prestamo)/mx*100,2).toFixed(0)}%"></i><i class="gas" style="height:${Math.max(f.comp/mx*100,2).toFixed(0)}%"></i></div><small>${MESES[+f.mes.slice(5)-1].slice(0,3).toLowerCase()}</small></div>`).join("");
+  $("foreLista").innerHTML=fs.map(f=>`<div class="item" data-mes="${f.mes}" data-ui="forecast-mes"><div class="d"><span>${mesDe(f.mes)}</span><span>Fijos ${eur(f.fijos)} · cuotas ${eur(f.cuotas)}${f.tarjeta?` · tarjeta ${eur(f.tarjeta)}`:""}${f.prestamo?`<br><span class="prest">Entra un préstamo de ${eur(f.prestamo)}</span>`:""}</span></div><div class="v"><span class="num">${eur(f.libre)}</span><span class="chip ${f.libre<0?"badc":"ok"}">${f.libre<0?"En rojo":"Libre"}</span></div></div>`).join("");}
+function abrirFore(){foreIngV=null;const g=ingGuardado(),p=g!=null?g:ingresoPromedio();$("foreIng").value=String(p).replace(".",",");pintarFore();mostrar("sheetFore");}
 $("foreIng").addEventListener("input",()=>{const t=$("foreIng").value.trim();if(!t){foreIngV=null;pintarFore();return;}const v=numX("foreIng");if(v!=null&&v>=0){foreIngV=r2(v);pintarFore();}});
-$("foreIng").addEventListener("change",()=>{const t=$("foreIng").value.trim(),v=t?numX("foreIng"):0;if(t&&(v==null||v<0)){toast("Poné un importe válido");$("foreIng").value=String(foreIngV!=null?foreIngV:ingresoPromedio()).replace(".",",");}});
+$("foreIng").addEventListener("change",()=>{const t=$("foreIng").value.trim(),v=t?numX("foreIng"):0;const g=ingGuardado();
+  if(t&&(v==null||v<0)){toast("Poné un importe válido");foreIngV=null;$("foreIng").value=String(g!=null?g:ingresoPromedio()).replace(".",",");pintarFore();return;}
+  if(!t){delete S.settings.foreIng;foreIngV=null;persist();$("foreIng").value=String(ingresoPromedio()).replace(".",",");pintarFore();return;}
+  S.settings.foreIng=r2(v);foreIngV=null;persist();pintarFore();toast("Ingreso guardado");});
+$("forePromedio").onclick=()=>{delete S.settings.foreIng;foreIngV=null;persist();$("foreIng").value=String(ingresoPromedio()).replace(".",",");pintarFore();};
 $("foreCerrar").onclick=cerrar;
 // --- Objetivos de ahorro
 $("panelObj").onclick=()=>{cerrarPanel();abrirObj();};

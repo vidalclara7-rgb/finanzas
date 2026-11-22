@@ -623,3 +623,52 @@ las demás con su inicial, sin que la app reescriba nada de lo guardado. Pasa al
 - **Dado** una copia con una categoría «Ocio» cuyo ícono no es de la lista
 - **Cuando** la persona la restaura
 - **Entonces** la app avisa «Copia restaurada» y «Ocio» se ve con su ícono de siempre, sin error
+
+## Requisito: tarjetas guardadas antes de la fecha de cierre
+
+Las tarjetas guardadas antes de este cambio no tienen fechas de cierre: siguen valiendo tal cual y cada mes cuenta su último día, sin reescribir nada. Al cargar y al restaurar una copia, de las fechas de cierre sólo se conservan las válidas: de una tarjeta de crédito, con un mes AAAA-MM y una fecha real de ese mes. Las fechas de cierre viajan en la copia de seguridad.
+
+### Escenario: datos de la versión anterior (cierre)
+- **Dado** datos guardados con «Tarjeta Y» sin fechas de cierre y un gasto de 100 € este mes
+- **Cuando** la persona abre la app
+- **Entonces** «A pagar de la tarjeta» dice 100 € y «Sin fecha de cierre»
+- **Y** lo guardado de Tarjeta Y no cambia
+
+### Escenario: copia de seguridad vieja (cierre)
+- **Dado** una copia de seguridad sin fechas de cierre
+- **Cuando** la persona la restaura
+- **Entonces** se restaura sin errores y cada tarjeta dice «Sin fecha de cierre»
+
+### Escenario: fecha de cierre inválida en la copia
+- **Dado** una copia con «Tarjeta Y» con cierres «2026-11»: «2026-12-03», «2026-10»: «hola» y «2026-09»: «2026-09-18», y «Banco A» con cierres
+- **Cuando** la persona la restaura
+- **Entonces** Tarjeta Y conserva sólo el cierre de septiembre y Banco A queda sin cierres
+
+### Escenario: la fecha de cierre viaja en la copia
+- **Dado** «Tarjeta Y» con cierre de noviembre el 2026-11-20
+- **Cuando** la persona copia la copia de seguridad y la restaura en otro teléfono
+- **Entonces** Tarjeta Y tiene el cierre de noviembre el 2026-11-20
+
+## Requisito: ingreso del Forecast y fechas de pago guardados antes
+
+Los datos guardados antes de este cambio no tienen ingreso del Forecast ni fechas de pago: siguen valiendo, el Forecast usa el promedio y las tarjetas no dicen cuándo se pagan, sin reescribir nada. Al cargar y al restaurar una copia, el ingreso guardado se conserva sólo si es un número de 0 o más, y de las fechas de pago sólo las válidas: de una tarjeta de crédito, con un mes AAAA-MM y una fecha real posterior al cierre de ese mes y como mucho del último día del mes siguiente. Los dos viajan en la copia de seguridad.
+
+### Escenario: datos de la versión anterior (Forecast)
+- **Dado** datos guardados sin ingreso del Forecast ni fechas de pago, con ingresos de 2000 € en septiembre de 2026
+- **Cuando** la persona abre Forecast
+- **Entonces** el ingreso por mes es 2000 € y lo guardado no cambia
+
+### Escenario: copia de seguridad vieja (Forecast)
+- **Dado** una copia de seguridad sin ingreso del Forecast ni fechas de pago
+- **Cuando** la persona la restaura
+- **Entonces** se restaura sin errores y el Forecast usa el promedio
+
+### Escenario: ingreso y fechas de pago inválidos en la copia
+- **Dado** una copia con ingreso del Forecast «hola», y «Tarjeta Y» con cierre de noviembre el 2026-11-20 y pagos «2026-11»: «2026-11-10» y «2026-10»: «2026-11-05»
+- **Cuando** la persona la restaura
+- **Entonces** no queda ingreso guardado y Tarjeta Y conserva sólo el pago de octubre
+
+### Escenario: el ingreso y la fecha de pago viajan en la copia
+- **Dado** un ingreso guardado de 1500 € y «Tarjeta Y» con pago de noviembre el 2026-12-05
+- **Cuando** la persona copia la copia de seguridad y la restaura en otro teléfono
+- **Entonces** el ingreso guardado es 1500 € y Tarjeta Y tiene el pago de noviembre el 2026-12-05

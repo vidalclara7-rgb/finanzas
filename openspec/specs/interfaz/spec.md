@@ -325,7 +325,7 @@ Los 19 colores de categoría son todos distintos entre sí en cada apariencia. L
 
 ## Requisito: Inicio con la tarjeta de resultado
 
-Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y, debajo, dos tarjetas pequeñas, «Gastado» (con un punto del color del texto) e «Ingresado» (con un punto verde), con los totales del mes que se ve. Transferencias y ajustes no suman en ninguna. El resto de las tarjetas de Inicio sigue en el mismo orden que antes: la torta pasa a ser una lista con barras y «Por semana» deja de estar.
+Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y, debajo, «Gastado» e «Ingresado», con los totales del mes que se ve. Cada una ocupa todo el ancho, una debajo de otra, con el mismo formato que «Por cobrar»: el título en negrita, el importe grande y un botón «Ver». Tocar la tarjeta o «Ver» la abre. Transferencias y ajustes no suman en ninguna, «Gastado» no suma los gastos de «Trabajo (reembolsable)» e «Ingresado» no suma los ingresos de «Reembolso». El resto de las tarjetas de Inicio sigue en el mismo orden que antes: la torta pasa a ser una lista con barras y «Por semana» deja de estar.
 
 ### Escenario: gastado e ingresado
 - **Dado** un ingreso de 1500 € y un gasto de 80 € este mes, y una transferencia de 300 €
@@ -341,6 +341,23 @@ Inicio muestra el resultado del mes en una tarjeta con el destino del sobrante y
 - **Dado** gastos fijos y variables, una cuenta con tope, ingresos de seis meses y cuentas cargadas
 - **Cuando** la persona abre Inicio
 - **Entonces** de arriba abajo ve «Fijos y variables», el resultado del mes, «Gastado» e «Ingresado», el disponible por cuenta, «Gasto del mes», «Ingresos y gastos» y «Patrimonio neto», y no ve «Por semana»
+
+### Escenario: el mismo formato que «Por cobrar»
+- **Dado** un gasto reembolsable pendiente, un gasto de 80 € y un ingreso de 1500 € este mes
+- **Cuando** la persona abre Inicio en 390 px
+- **Entonces** «Gastado», «Ingresado» y «Por cobrar» tienen el mismo ancho, el mismo tamaño y peso de título y el mismo tamaño de importe
+- **Y** «Ingresado» está debajo de «Gastado»
+- **Y** cada una lleva «Ver»
+
+### Escenario: abrir gastado
+- **Dado** un gasto de 80 € en Supermercado este mes
+- **Cuando** la persona toca «Gastado» en Inicio
+- **Entonces** se abre «Gasto por categoría» del mes que se ve
+
+### Escenario: abrir ingresado
+- **Dado** un ingreso de 1500 € en Sueldo este mes
+- **Cuando** la persona toca «Ver» en «Ingresado»
+- **Entonces** se abre «Ingresos por categoría» del mes que se ve
 
 ## Requisito: Cuentas con el patrimonio por mes
 
@@ -446,7 +463,7 @@ Debajo del patrimonio, cada cuenta es una tarjeta grande, del color con degradad
 
 ## Requisito: tarjetas de Inicio en parejas de color
 
-En Inicio, las tarjetas del resumen llevan un fondo de color suave, del color de una categoría: todo su texto, sus barras y sus anillos van en blanco en la apariencia Oscura y casi negros en la Clara. Son el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de cada cuenta con tope (con el color de su tipo de cuenta), «Cuotas del mes», «Por cobrar», «Toca transferir» y «Patrimonio neto». Las demás (los avisos, la sugerencia de gasto fijo, «Gasto del mes» e «Ingresos y gastos») siguen grises. El texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 en el punto de su degradado donde peor se lee, en las dos apariencias. Dentro de una tarjeta de color, un tope excedido o un mes en negativo se dicen con texto y una marca, no con rosa.
+En Inicio, las tarjetas del resumen llevan un fondo de color suave, del color de una categoría: todo su texto, sus barras y sus anillos van en blanco en la apariencia Oscura y casi negros en la Clara. Son el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de cada cuenta con tope (con el color de su tipo de cuenta), «Cuotas del mes», «A pagar de la tarjeta», «Por cobrar», «Toca transferir» y «Patrimonio neto». Las demás (los avisos, la sugerencia de gasto fijo, «Gasto del mes» e «Ingresos y gastos») siguen grises. El texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 en el punto de su degradado donde peor se lee, en las dos apariencias. Dentro de una tarjeta de color, un tope excedido o un mes en negativo se dicen con texto y una marca, no con rosa.
 
 ### Escenario: el resumen de Inicio en color
 - **Dado** gastos fijos y variables, ingresos, una tarjeta de crédito con tope y cuentas cargadas este mes
