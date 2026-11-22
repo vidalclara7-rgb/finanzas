@@ -80,7 +80,7 @@ t.test("el respaldo funciona sin conexión", async () => {
 // Escenario: color en el mosaico y en la fila
 t.test("color en el mosaico y en la fila", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.gasto(1, "2026-10-03", 30, 1, "Alquiler"), A.gasto(2, "2026-10-04", 10, 1)] }) });
-  const enMosaico = await page.$eval('#mosaico [data-cat="Alquiler"]', (b) => getComputedStyle(b).backgroundImage);
+  const enMosaico = await (await page.waitForFunction(() => { const b = document.querySelector('#mosaico [data-cat="Alquiler"]'); const g = b && getComputedStyle(b).backgroundImage; return g && g !== "none" ? g : false; })).jsonValue();
   await page.click("#gastoHdr");
   const enPila = await page.$eval('#pila [data-cat="Alquiler"]', (b) => getComputedStyle(b).backgroundImage);
   await page.click("#pilaCerrar");

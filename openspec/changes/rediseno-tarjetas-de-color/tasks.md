@@ -27,8 +27,8 @@
 - [x] Actualizar los tests existentes de los requisitos sustituidos o retirados
 
 ## Comprobar
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y comparar con el preview aprobado, en claro y en oscuro
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y comparar con el preview aprobado, en claro y en oscuro
 
 ## Documentación
 - [x] `CLAUDE.md`: paleta, íconos, resultado, mosaico, pila, carrusel y modelo de categorías
