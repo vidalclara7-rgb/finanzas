@@ -7,4 +7,4 @@
 ## Construcción
 - [x] `sw.js`: `CACHE` a `finanzas-v54`
 - [x] Tests: «títulos en negrita» y «el resaltado tiene aire»
-- [ ] `python3 kit.py check` en verde y capturas de la app real
+- [x] `python3 kit.py check` en verde y capturas de la app real
