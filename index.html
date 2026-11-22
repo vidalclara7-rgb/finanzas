@@ -149,6 +149,7 @@ button.card{border:0;font:inherit;color:var(--ink);text-align:left;cursor:pointe
 .mesnav button{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-size:20px}
 .mesnav button:disabled{opacity:.3}
 .mesnav span{font-weight:600}
+.pfila{display:flex;flex-direction:column;gap:2px;width:100%}
 .toca{cursor:pointer} .toca .mas{color:var(--muted);font-size:14px}
 .gastos-cat .item{cursor:pointer}
 /* Importar extracto: borradores para revisar (casilla, descripción, importe y, debajo, qué es) */
@@ -376,10 +377,11 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
       <span class="marca2" id="resMarca" data-ui="marca-negativo" hidden>Mes en negativo</span>
       <div id="destino" data-ui="destino-sobrante" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
-    <div class="grid2" data-ui="gastado-ingresado"><div class="card mini par" style="--s:var(--cat2s);--tt:var(--cat2)"><span class="t">Gastado</span><span class="big g" id="miniGas"></span></div><div class="card mini par" style="--s:var(--cat7s);--tt:var(--cat7)"><span class="t">Ingresado</span><span class="big i" id="miniIng"></span></div></div>
+    <div data-ui="gastado-ingresado" style="display:flex;flex-direction:column;gap:14px"><div class="card par toca" id="cardGas" data-ui="tarjeta-gastado" style="--s:var(--cat2s);--tt:var(--cat2)"><div class="row"><span class="lbl">Gastado</span><button type="button" class="btn sec" id="verGas" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="miniGas"></span></div><div class="card par toca" id="cardIng" data-ui="tarjeta-ingresado" style="--s:var(--cat7s);--tt:var(--cat7)"><div class="row"><span class="lbl">Ingresado</span><button type="button" class="btn sec" id="verIng" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="miniIng"></span></div></div>
     <div class="card par" id="porCobrar" data-ui="por-cobrar" style="--s:var(--cat6s);--tt:var(--cat6)" hidden><div class="row"><span class="lbl">Por cobrar</span><button class="btn sec" id="verCobrar" style="padding:6px 12px;font-size:14px">Ver</button></div><span class="big" id="cobrarVal"></span><span class="sub" id="cobrarSub"></span></div>
     <div class="grid2" id="disponibles" data-ui="disponibles-color"></div>
     <button type="button" class="card par" id="cuotasCard" data-ui="tarjeta-cuotas" style="--s:var(--cat5s);--tt:var(--cat5);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">Cuotas del mes</span><span class="sub">Ver detalle ›</span></div><span class="big" id="cuotasMes"></span><span class="sub" id="cuotasSubI"></span></button>
+    <button type="button" class="card par" id="pagarCard" data-ui="a-pagar-tarjeta" style="--s:var(--cat8s);--tt:var(--cat8);text-align:left;font:inherit" hidden><div class="row"><span class="lbl">A pagar de la tarjeta</span><span class="mas">Ver ›</span></div><span class="big" id="pagarTot"></span><span id="pagarFilas" style="display:flex;flex-direction:column;gap:8px"></span></button>
     <div class="card" data-ui="gasto-categorias"><button type="button" class="row toca" id="gastoHdr" data-ui="abrir-pila" style="border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;width:100%"><span class="lbl">Gasto del mes</span><span class="mas num" id="gastoTot"></span></button><div class="lcat" id="lcat" data-ui="lista-categorias"></div><div class="empty" id="lcatVacio">Todavía no anotaste gastos este mes. Tocá + para empezar.</div></div>
     <div class="card color" id="mesesCard" data-ui="ingresos-gastos" style="--c:var(--k1)" hidden><div class="row"><span class="lbl">Ingresos y gastos</span><span class="leyenda"><span class="con-dot"><i class="dot" style="--c:var(--verde)"></i>Ingresos</span><span class="con-dot"><i class="dot" style="--c:var(--ink)"></i>Gastos</span></span></div><div class="curvas" id="meses"></div><div class="ejes" id="mesesEjes"></div></div>
     <div class="card par" id="netoCard" data-ui="patrimonio-inicio" style="--s:var(--cat4s);--tt:var(--cat4)" hidden>
@@ -620,14 +622,24 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
   <div class="mesnav"><button type="button" id="pilaAnt" aria-label="Mes anterior">‹</button><span id="pilaMes"></span><button type="button" id="pilaSig" aria-label="Mes siguiente">›</button></div>
   <span class="sub" id="pilaSub"></span>
   <div class="apilada" id="pila" data-ui="pila-categorias"></div>
+  <div class="apilada" id="pilaNo" data-ui="no-suma" hidden></div>
   <div class="empty" id="pilaVacio" hidden>Todavía no anotaste gastos este mes. Tocá + para empezar.</div>
+</div>
+<!-- Ingresos por categoría: la misma pila, con las categorías de ingreso -->
+<div id="sheetPilaI" class="sheet" data-pantalla="ingreso-categorias" data-ui="hoja-ingreso-categorias" hidden>
+  <div class="row"><h2>Ingresos por categoría</h2><button type="button" class="btn sec" id="pilaICerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="mesnav"><button type="button" id="pilaIAnt" aria-label="Mes anterior">‹</button><span id="pilaIMes"></span><button type="button" id="pilaISig" aria-label="Mes siguiente">›</button></div>
+  <span class="sub" id="pilaISub"></span>
+  <div class="apilada" id="pilaI" data-ui="pila-ingresos"></div>
+  <div class="apilada" id="pilaINo" hidden></div>
+  <div class="empty" id="pilaIVacio" hidden>Todavía no anotaste ingresos este mes. Tocá + para empezar.</div>
 </div>
 <div id="sheetCat" class="sheet" data-pantalla="hoja-categoria" data-ui="hoja-categoria" hidden>
   <div class="row"><h2 id="catTitulo"></h2><button type="button" class="btn sec" id="catCerrar" style="padding:8px 12px">Cerrar</button></div>
   <div class="mesnav" data-ui="flechas-mes"><button type="button" id="catAnt" aria-label="Mes anterior">‹</button><span id="catMes"></span><button type="button" id="catSig" aria-label="Mes siguiente">›</button></div>
   <div id="catTotBox" style="display:flex;flex-direction:column;gap:4px"><span class="monto" id="catTotal"></span><span class="sub" id="catComp" data-ui="comparacion-mes"></span></div>
   <div class="card" id="catCuentas" data-ui="reparto-cuenta"><span class="lbl">Por cuenta</span><div class="rank" id="catRank" style="border-top:0;padding-top:0"></div></div>
-  <div class="card gastos-cat" id="catGastos" data-ui="gastos-categoria"><span class="lbl">Gastos, de mayor a menor</span><div class="list" id="catLista"></div></div>
+  <div class="card gastos-cat" id="catGastos" data-ui="gastos-categoria"><span class="lbl" id="catListaLbl">Gastos, de mayor a menor</span><div class="list" id="catLista"></div></div>
   <div class="card" id="catVacio" hidden><div class="empty" id="catVacioTxt"></div></div>
 </div>
 
@@ -696,6 +708,13 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
   <button type="button" class="btn sec" id="obCal" data-ui="boton-calendario" hidden>Agregar al calendario</button>
   <button type="button" class="btn" id="obGuardar" data-ui="guardar-objetivo">Guardar</button>
   <button type="button" class="btn danger" id="obBorrar" data-ui="boton-borrar-objetivo" hidden>Borrar objetivo</button>
+</div>
+<!-- Lo que hay que pagar de cada tarjeta de crédito al cierre del resumen del mes -->
+<div id="sheetPagar" class="sheet" data-pantalla="a-pagar-tarjeta" data-ui="hoja-a-pagar" hidden>
+  <div class="row"><h2>A pagar de la tarjeta</h2><button type="button" class="btn sec" id="pgCerrar" style="padding:8px 12px">Cerrar</button></div>
+  <div class="mesnav"><button type="button" id="pgAnt" aria-label="Mes anterior">‹</button><span id="pgMes"></span><button type="button" id="pgSig" aria-label="Mes siguiente">›</button></div>
+  <span class="sub" id="pgSub"></span>
+  <div id="pgLista" style="display:flex;flex-direction:column;gap:14px"></div>
 </div>
 <div id="sheetCuotas" class="sheet" data-pantalla="hoja-cuotas" data-ui="hoja-cuotas" hidden>
   <div class="row"><h2>Cuotas del mes</h2><button type="button" class="btn sec" id="cuotasCerrar" style="padding:8px 12px">Cerrar</button></div>
@@ -769,6 +788,8 @@ const monedaDe=m=>typeof m.moneda==="string"&&/^[A-Z]{3}$/.test(m.moneda)&&m.mon
 const eurM=(n,m)=>{const mo=monedaDe(m);return mo==="EUR"?eur(n):conMiles(n)+" "+mo;};
 const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
 const mesId=()=>hoy().slice(0,7);
+const finMes=k=>new Date(+k.slice(0,4),+k.slice(5,7),0).getDate();
+const diaCorto=f=>+f.slice(8)+" "+MESES[+f.slice(5,7)-1].slice(0,3)+".";
 // El mes que se ve en Inicio, Movimientos y Cierre: se elige con las flechas y se olvida al cerrar la app
 let mesVista=null;
 const mesV=()=>mesVista&&mesVista<mesId()?mesVista:mesId();
@@ -785,7 +806,7 @@ let ultimoId=0;const nid=()=>ultimoId=Math.max(Date.now(),ultimoId+1);
 function norm(s){
   if(!s||typeof s!=="object")s={};
   if(!s.settings)s.settings={};if(!s.meses)s.meses={};if(!Array.isArray(s.cuentas))s.cuentas=[];
-  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s)))))))));}
+  if(s.v===2){if(!Array.isArray(s.movs))s.movs=[];if(!Array.isArray(s.tareas))s.tareas=[];return cierresNorm(cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s))))))))));}
   const st=s.settings, gastos=Array.isArray(s.gastos)?s.gastos:[];
   // Versión con cuentas: el saldo escrito a mano pasa a ser el saldo de partida
   s.cuentas.forEach(c=>{if(c.saldoInicial==null){c.saldoInicial=c.saldo??0;c.desde=c.actualizado||hoy();delete c.saldo;delete c.actualizado;}});
@@ -804,7 +825,7 @@ function norm(s){
   s.tareas=Array.isArray(s.gastos)?[["tr",`Transferir ${st.aporte?eur(st.aporte):"el aporte"} al fondo`],["rev",`Transferir ${st.topeRevolut?eur(st.topeRevolut):"el presupuesto"} a Revolut`],
     ["total","Tarjeta cobrada en pago total, sin fraccionar"],["empresa","Gastos de empresa cargados en la app"],["mitad","Día 15: tarjeta por debajo de la mitad del tope"]].map(([id,texto])=>({id,texto})):[];
   delete s.gastos;delete st.topeTarjeta;delete st.topeRevolut;s.v=2;
-  return cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s)))))))));}
+  return cierresNorm(cuotasMesNorm(fraccNorm(categoriasDatosNorm(categoriasNorm(reglasNorm(fijosNorm(reembolsos(objetivosNorm(invNorm(s))))))))));}
 // Las categorías de la persona: {gasto:[{nombre, color 1..19, fija?}], ingreso:[{nombre}]}. Si faltan, son las de siempre; se ignora lo inválido
 // (sin nombre, repetido, con «|») y se conserva toda categoría que use un movimiento. «Otros» va al final
 function categoriasDatosNorm(s){
@@ -860,6 +881,11 @@ function categoriasNorm(s){const n=c=>RENOMBRADAS[c]||c;
 // Categoría que la persona eligió para cada comercio al importar: {"g|<comercio>": categoría}
 function reglasNorm(s){if(!s.reglas||typeof s.reglas!=="object"||Array.isArray(s.reglas))s.reglas={};return s;}
 // La marca de compra fraccionada (`fracc`) es un texto: lo demás se ignora
+// Fechas de cierre de las tarjetas de crédito, una por mes: sólo las de una tarjeta, con mes AAAA-MM y una fecha real de ese mes
+const cierreOk=(k,f)=>/^\d{4}-(0[1-9]|1[0-2])$/.test(k)&&typeof f==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(f)&&f.slice(0,7)===k&&+f.slice(8)>=1&&+f.slice(8)<=finMes(k);
+function cierresNorm(s){s.cuentas.forEach(c=>{if(c.cierres===undefined)return;
+  if(c.tipo!=="tarjeta"||!c.cierres||typeof c.cierres!=="object"||Array.isArray(c.cierres)){delete c.cierres;return;}
+  const ok={};Object.keys(c.cierres).forEach(k=>{if(cierreOk(k,c.cierres[k]))ok[k]=c.cierres[k];});if(Object.keys(ok).length)c.cierres=ok;else delete c.cierres;});return s;}
 function fraccNorm(s){s.movs.forEach(m=>{if(m.fracc!==undefined&&(typeof m.fracc!=="string"||!m.fracc))delete m.fracc;});return s;}
 function fijosNorm(s){if(!s.fijos||typeof s.fijos!=="object"||Array.isArray(s.fijos))s.fijos={};return s;}
 const claveFijo=(cat,nota)=>{const n=String(nota||"").trim().replace(/\s+/g," ").toLowerCase();return n?cat+"|"+n:null;};
@@ -1075,34 +1101,49 @@ function listaCats(cs){const tot=r2(cs.reduce((a,x)=>a+x[1],0));$("gastoTot").te
     const n=(catDe(x.c)||{}).color||12;
     return `<button type="button" class="fila" data-cat="${esc(x.c)}" data-ui="fila-gasto-categoria" style="--g:var(--cat${n}g);--t:var(--cat${n}t);--c:var(--cat${n})"><span class="tile">${icoCat(x.c)}</span><span class="nom">${esc(x.c)}</span><span class="imp">${eur(x.v)}<small>${pct(x.v)} %</small></span>${barra}</button>`;}).join("");}
 // Hoja «Gasto por categoría»: todas las categorías del mes, de mayor a menor, en tarjetas apiladas
-let pilaMes=null,volverPila=null;
+let pilaMes=null,volverPila=null,pilaIMes=null,volverPilaI=null;
+// Pilas de categorías: la de gastos (sin contar «Trabajo (reembolsable)») y la de ingresos (sin contar «Reembolso»), que van al final con «No suma en …»
+const PILA={gasto:{no:REEMB,ids:["pila","pilaNo","pilaMes","pilaSig","pilaSub","pilaVacio"],uno:"gasto",varios:"gastos",tarjeta:"Gastado"},ingreso:{no:"Reembolso",ids:["pilaI","pilaINo","pilaIMes","pilaISig","pilaISub","pilaIVacio"],uno:"ingreso",varios:"ingresos",tarjeta:"Ingresado"}};
+const icoIng=c=>ico(ICONO_BASE[c]||"entra");
+function pintarPilaDe(tipo,mes){const P=PILA[tipo],[idL,idNo,idMes,idSig,idSub,idVac]=P.ids,pc={},nc={},pa={},ant=mesSig(mes,-1);
+  movsMes(mes).forEach(m=>{if(m.tipo!==tipo)return;pc[m.cat]=r2((pc[m.cat]||0)+m.importe);nc[m.cat]=(nc[m.cat]||0)+1;});
+  movsMes(ant).forEach(m=>{if(m.tipo===tipo)pa[m.cat]=(pa[m.cat]||0)+m.importe;});
+  const cs=Object.entries(pc).filter(([c])=>c!==P.no).sort((a,b)=>b[1]-a[1]),tot=r2(cs.reduce((a,x)=>a+x[1],0)),hayNo=pc[P.no]>0;
+  $(idMes).textContent=mesDe(mes);$(idSig).disabled=mes>=mesId();$(idSub).hidden=!cs.length&&!hayNo;$(idSub).textContent=`${eur(tot)} en ${cs.length} ${cs.length===1?"categoría":"categorías"}`;$(idVac).hidden=cs.length>0||hayNo;
+  const ab=MESES[+ant.slice(5)-1].slice(0,3)+".",cant=c=>`<span class="chipb">${nc[c]} ${nc[c]===1?P.uno:P.varios}</span>`;
+  const tarjeta=(c,v,chips)=>{const n=tipo==="gasto"?(catDe(c)||{}).color||12:7,icono=tipo==="gasto"?icoCat(c):icoIng(c);
+    return `<button type="button" class="sc" data-cat="${esc(c)}" style="--g:var(--cat${n}g);--t:var(--cat${n}t);--c:var(--cat${n});--s:var(--cat${n}s)"><span class="r1"><span class="nm">${icono}<span>${esc(c)}</span></span><span class="amt">${eur(v)}</span></span><span class="r2">${chips}<span class="go">${ico("flecha")}</span></span></button>`;};
+  $(idL).innerHTML=cs.map(([c,v])=>{const p=pa[c]||0,d=p>0?Math.round((v-p)/p*100):null;
+    return tarjeta(c,v,`<span class="chipb">${Math.round(v/tot*100)} %</span>`+cant(c)+(tipo==="gasto"&&catFija(c)?`<span class="chipb">Fijo</span>`:"")+(d!=null?`<span class="chipb">${d>=0?"+":"−"}${Math.abs(d)} % vs ${ab}</span>`:""));}).join("");
+  $(idNo).innerHTML=hayNo?tarjeta(P.no,pc[P.no],cant(P.no)+`<span class="chipb">No suma en ${P.tarjeta}</span>`):"";$(idNo).hidden=!hayNo;}
 function abrirPila(mes){pilaMes=mes||mesV();pintarPila();mostrar("sheetPila");}
-function pintarPila(){const mes=pilaMes,gs=movsMes(mes).filter(m=>m.tipo==="gasto"),pc={},nc={};gs.forEach(m=>{pc[m.cat]=r2((pc[m.cat]||0)+m.importe);nc[m.cat]=(nc[m.cat]||0)+1;});
-  const cs=Object.entries(pc).sort((a,b)=>b[1]-a[1]),tot=r2(cs.reduce((a,x)=>a+x[1],0)),ant=mesSig(mes,-1),pa={};movsMes(ant).forEach(m=>{if(m.tipo==="gasto")pa[m.cat]=(pa[m.cat]||0)+m.importe;});
-  $("pilaMes").textContent=mesDe(mes);$("pilaSig").disabled=mes>=mesId();$("pilaSub").hidden=!cs.length;$("pilaSub").textContent=`${eur(tot)} en ${cs.length} ${cs.length===1?"categoría":"categorías"}`;$("pilaVacio").hidden=!!cs.length;
-  const ab=MESES[+ant.slice(5)-1].slice(0,3)+".";
-  $("pila").innerHTML=cs.map(([c,v])=>{const n=(catDe(c)||{}).color||12,p=pa[c]||0,d=p>0?Math.round((v-p)/p*100):null;
-    const chips=`<span class="chipb">${Math.round(v/tot*100)} %</span><span class="chipb">${nc[c]} ${nc[c]===1?"gasto":"gastos"}</span>`+(catFija(c)?`<span class="chipb">Fijo</span>`:"")+(d!=null?`<span class="chipb">${d>=0?"+":"−"}${Math.abs(d)} % vs ${ab}</span>`:"");
-    return `<button type="button" class="sc" data-cat="${esc(c)}" style="--g:var(--cat${n}g);--t:var(--cat${n}t);--c:var(--cat${n});--s:var(--cat${n}s)"><span class="r1"><span class="nm">${icoCat(c)}<span>${esc(c)}</span></span><span class="amt">${eur(v)}</span></span><span class="r2">${chips}<span class="go">${ico("flecha")}</span></span></button>`;}).join("");}
-$("pila").addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(!x)return;const m=pilaMes;abrirCat(x.dataset.cat,m);volverPila=m;});
+function pintarPila(){pintarPilaDe("gasto",pilaMes);}
+function abrirPilaI(mes){pilaIMes=mes||mesV();pintarPilaI();mostrar("sheetPilaI");}
+function pintarPilaI(){pintarPilaDe("ingreso",pilaIMes);}
+["pila","pilaNo"].forEach(id=>$(id).addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(!x)return;const m=pilaMes;abrirCat(x.dataset.cat,m);volverPila=m;}));
+["pilaI","pilaINo"].forEach(id=>$(id).addEventListener("click",e=>{const x=e.target.closest("[data-cat]");if(!x)return;const m=pilaIMes;abrirCat(x.dataset.cat,m,"ingreso");volverPilaI=m;}));
 $("pilaAnt").onclick=()=>{pilaMes=mesSig(pilaMes,-1);pintarPila();};
 $("pilaSig").onclick=()=>{if(pilaMes>=mesId())return;pilaMes=mesSig(pilaMes,1);pintarPila();};
+$("pilaIAnt").onclick=()=>{pilaIMes=mesSig(pilaIMes,-1);pintarPilaI();};
+$("pilaISig").onclick=()=>{if(pilaIMes>=mesId())return;pilaIMes=mesSig(pilaIMes,1);pintarPilaI();};
+$("pilaICerrar").onclick=()=>{volverPilaI=null;cerrar();};
 $("pilaCerrar").onclick=()=>{volverPila=null;cerrar();};
 // Una categoría por dentro, en un mes: total, comparación con el anterior, por cuenta y sus gastos
-let catSel=null,catMesSel=null,catResto=false;
-const gastosCat=(c,mes)=>movsMes(mes).filter(m=>m.tipo==="gasto"&&m.cat===c);
-function abrirCat(c,mes){volverPila=null;catSel=c;catMesSel=mes||mesId();catResto=false;pintarCat();mostrar("sheetCat");}
-function pintarCat(){const c=catSel,mes=catMesSel,gs=gastosCat(c,mes).sort((a,b)=>b.importe-a.importe||b.fecha.localeCompare(a.fecha)),tot=r2(gs.reduce((a,m)=>a+m.importe,0));
+let catSel=null,catMesSel=null,catResto=false,catTipo="gasto";
+const gastosCat=(c,mes,tipo="gasto")=>movsMes(mes).filter(m=>m.tipo===tipo&&m.cat===c);
+function abrirCat(c,mes,tipo="gasto"){volverPila=volverPilaI=null;catSel=c;catTipo=tipo;catMesSel=mes||mesId();catResto=false;pintarCat();mostrar("sheetCat");}
+function pintarCat(){const c=catSel,mes=catMesSel,ing=catTipo==="ingreso",gs=gastosCat(c,mes,catTipo).sort((a,b)=>b.importe-a.importe||b.fecha.localeCompare(a.fecha)),tot=r2(gs.reduce((a,m)=>a+m.importe,0));
   $("catTitulo").textContent=c;$("catMes").textContent=mesDe(mes);$("catSig").disabled=mes>=mesId();
   const hay=gs.length>0;$("catTotBox").hidden=$("catCuentas").hidden=$("catGastos").hidden=!hay;$("catVacio").hidden=hay;
-  if(!hay){$("catVacioTxt").textContent=`No gastaste en ${c} en ${mesDe(mes)}.`;return;}
+  $("catListaLbl").textContent=ing?"Ingresos, de mayor a menor":"Gastos, de mayor a menor";
+  if(!hay){$("catVacioTxt").textContent=ing?`No entró nada de ${c} en ${mesDe(mes)}.`:`No gastaste en ${c} en ${mesDe(mes)}.`;return;}
   monto($("catTotal"),tot);
-  const ant=mesSig(mes,-1),pa=r2(gastosCat(c,ant).reduce((a,m)=>a+m.importe,0)),nAnt=MESES[+ant.slice(5)-1],d=r2(tot-pa);
-  $("catComp").textContent=!(pa>0)?`En ${nAnt} no gastaste en ${c}`:Math.abs(d)<0.005?`Igual que en ${nAnt}`:`${eur(Math.abs(d))} ${d>0?"más":"menos"} que en ${nAnt} (${d>0?"+":"−"}${Math.round(Math.abs(d)/pa*100)} %)`;
+  const ant=mesSig(mes,-1),pa=r2(gastosCat(c,ant,catTipo).reduce((a,m)=>a+m.importe,0)),nAnt=MESES[+ant.slice(5)-1],d=r2(tot-pa);
+  $("catComp").textContent=!(pa>0)?(ing?`En ${nAnt} no entró nada de ${c}`:`En ${nAnt} no gastaste en ${c}`):Math.abs(d)<0.005?`Igual que en ${nAnt}`:`${eur(Math.abs(d))} ${d>0?"más":"menos"} que en ${nAnt} (${d>0?"+":"−"}${Math.round(Math.abs(d)/pa*100)} %)`;
   // Por cuenta, de mayor a menor; con más de cinco, las cinco primeras y «Resto»
   const pc={};gs.forEach(m=>pc[m.cuenta]=(pc[m.cuenta]||0)+m.importe);
   const filas=Object.entries(pc).map(([id,v])=>[nombreDe(+id),r2(v)]).sort((a,b)=>b[1]-a[1]);
-  const fila=(n,v,resto)=>`<div class="fila${resto?" toca":""}"${resto?' data-resto="1"':""}><div class="row"><span>${esc(n)}</span><span class="num">${eur(v)} · ${Math.round(v/tot*100)} %${resto?' <span class="mas">›</span>':""}</span></div><div class="bar cat" style="--c:${colorCat(c)}"><i style="width:${(v/tot*100).toFixed(1)}%"></i></div></div>`;
+  const fila=(n,v,resto)=>`<div class="fila${resto?" toca":""}"${resto?' data-resto="1"':""}><div class="row"><span>${esc(n)}</span><span class="num">${eur(v)} · ${Math.round(v/tot*100)} %${resto?' <span class="mas">›</span>':""}</span></div><div class="bar cat" style="--c:${ing?"var(--cat7)":colorCat(c)}"><i style="width:${(v/tot*100).toFixed(1)}%"></i></div></div>`;
   const resto=filas.slice(5);
   $("catRank").innerHTML=filas.length>5&&!catResto?filas.slice(0,5).map(([n,v])=>fila(n,v)).join("")+fila(`Resto (${resto.length} ${resto.length===1?"cuenta":"cuentas"})`,r2(resto.reduce((a,x)=>a+x[1],0)),true):filas.map(([n,v])=>fila(n,v)).join("");
   $("catLista").innerHTML=gs.map(m=>`<div class="item" data-edit="${m.id}"><div class="d"><span>${m.nota?esc(m.nota):esc(c)}</span><span>${diaMes(m.fecha)} · ${esc(nombreDe(m.cuenta))}</span></div><div class="v"><span class="num">${eur(m.importe)}</span></div></div>`).join("");}
@@ -1161,6 +1202,31 @@ $("catsCard").onclick=abrirCats;$("ccCerrar").onclick=cerrar;$("ceCerrar").oncli
 $("ccNuevaG").onclick=()=>abrirEdCat({tipo:"gasto"});$("ccNuevaI").onclick=()=>abrirEdCat({tipo:"ingreso"});
 $("sheetCats").addEventListener("click",e=>{const f=e.target.closest("[data-ed]");if(f)abrirEdCat({tipo:f.dataset.ed==="g"?"gasto":"ingreso",nombre:f.dataset.n});});
 // Cuotas del mes: el detalle de cada financiación y de cada compra en cuotas
+// Lo que hay que pagar de cada tarjeta al cierre del resumen del mes: la deuda a esa fecha menos las cuotas que vencen después
+const tarjetasCred=()=>S.cuentas.filter(c=>c.tipo==="tarjeta");
+const cierreDe=(c,mes)=>(c.cierres||{})[mes]||mes+"-"+pad(finMes(mes));
+function aPagar(c,mes){const cierre=cierreDe(c,mes),deuda=r2(-valorCuenta(c,cierre)),sig=mesSig(mes,1);
+  const vienen=r2(S.movs.filter(m=>m.cuenta===c.id&&m.fecha<=cierre).reduce((a,m)=>a+cuotasQuedan(m,sig),0));
+  return {cierre,deuda,vienen,pagar:Math.max(0,r2(deuda-vienen)),cargada:!!(c.cierres||{})[mes]};}
+const estadoCierre=x=>!x.cargada?"Sin fecha de cierre":hoy()<=x.cierre?`Hasta hoy · cierra el ${diaCorto(x.cierre)}`:`Cerró el ${diaCorto(x.cierre)}`;
+function pintarPagar(mes){const ts=tarjetasCred();$("pagarCard").hidden=!ts.length;if(!ts.length)return;
+  const xs=ts.map(c=>({c,x:aPagar(c,mes)})),nom=new Map(ts.map(c=>[c.id,esc(c.nombre)]));
+  $("pagarTot").textContent=eur(r2(xs.reduce((a,{x})=>a+x.pagar,0)));
+  $("pagarFilas").innerHTML=xs.map(({c,x})=>`<span class="pfila" data-cid="${c.id}"><span class="row"><span>${nom.get(c.id)}</span><span class="num">${eur(x.pagar)}</span></span><span class="sub">${estadoCierre(x)}</span></span>`).join("");}
+let pagarMes=null;
+function abrirPagar(){pagarMes=mesV();pintarHojaPagar();mostrar("sheetPagar");}
+function pintarHojaPagar(){const mes=pagarMes,ts=tarjetasCred(),xs=ts.map(c=>({c,x:aPagar(c,mes)})),nom=new Map(ts.map(c=>[c.id,esc(c.nombre)])),fin=mes+"-"+pad(finMes(mes));
+  $("pgMes").textContent=mesDe(mes);$("pgSig").disabled=mes>=mesId();
+  $("pgSub").textContent=`${eur(r2(xs.reduce((a,{x})=>a+x.pagar,0)))} entre ${ts.length} ${ts.length===1?"tarjeta":"tarjetas"}`;
+  $("pgLista").innerHTML=xs.map(({c,x})=>`<div class="card" data-ui="detalle-a-pagar" data-cid="${c.id}"><span class="lbl">${nom.get(c.id)}</span><label class="f" data-ui="fecha-cierre">Fecha de cierre<input type="date" data-cierre="${c.id}" min="${mes}-01" max="${fin}" value="${x.cargada?x.cierre:""}"></label><span class="sub">${x.cargada?estadoCierre(x):`Sin fecha de cierre: cuenta hasta el ${diaCorto(fin)}`}</span>
+    <div class="list"><div class="item"><span>Deuda al cierre</span><span class="num">${eur(x.deuda)}</span></div><div class="item"><span>Cuotas que vienen después</span><span class="num">− ${eur(x.vienen)}</span></div><div class="item"><b>A pagar</b><b class="num">${eur(x.pagar)}</b></div></div></div>`).join("");}
+$("pgLista").addEventListener("change",e=>{const i=e.target.closest("[data-cierre]");if(!i)return;const c=S.cuentas.find(x=>x.id===+i.dataset.cierre);if(!c)return;const mes=pagarMes,v=i.value;
+  if(v&&!cierreOk(mes,v)){toast(`Elegí una fecha de ${mesDe(mes)}.`);i.value=(c.cierres||{})[mes]||"";return;}
+  if(v){c.cierres={...(c.cierres||{}),[mes]:v};}else if(c.cierres){delete c.cierres[mes];if(!Object.keys(c.cierres).length)delete c.cierres;}
+  persist();toast(v?"Fecha de cierre guardada":"Fecha de cierre borrada");pintarHojaPagar();render();});
+$("pgAnt").onclick=()=>{pagarMes=mesSig(pagarMes,-1);pintarHojaPagar();};
+$("pgSig").onclick=()=>{if(pagarMes>=mesId())return;pagarMes=mesSig(pagarMes,1);pintarHojaPagar();};
+$("pagarCard").onclick=abrirPagar;$("pgCerrar").onclick=cerrar;
 function abrirCuotas(){const cd=cuotasDelMes(mesV());monto($("cuTotal"),cd.total);
   $("cuSub").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");
   const fila=(d,v)=>`<div class="item" data-ui="fila-cuota"><div class="d">${d}</div>${v}</div>`,quedan=x=>x.quedan!=null?`<div class="v"><span class="num">${eur(x.quedan)}</span><span class="sub">te quedan</span></div>`:"";
@@ -1256,7 +1322,7 @@ function render(){
   $("disponibles").innerHTML=conTope.map(c=>{const k=COLOR[c.tipo].slice(2);return `<div class="card par" style="--s:var(--${k}s);--tt:var(--${k})" data-ui="disponible" data-disp="${c.id}"><div class="row"><span class="lbl">${esc(c.nombre)}</span><div class="ring" data-ui="anillo-tope"></div></div><span class="big"></span><span class="sub"></span><span class="marca2" data-ui="marca-excedido" hidden>Excedido</span></div>`;}).join("");
   conTope.forEach(c=>{const el=$("disponibles").querySelector(`[data-disp="${c.id}"]`),u=r2(gs.filter(g=>g.cuenta===c.id&&g.cat!==REEMB).reduce((a,g)=>a+g.importe,0));
     anillo(el.querySelector(".ring"),u,c.tope);el.querySelector(".marca2").hidden=!(u>c.tope);el.querySelector(".big").textContent=eur(c.tope-u);el.querySelector(".sub").textContent=`Gastado ${eur(u)} de ${eur(c.tope)}`;});
-  const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;
+  const cd=cuotasDelMes(id);$("cuotasCard").hidden=!cd.n;pintarPagar(id);
   if(cd.n){$("cuotasMes").textContent=eur(cd.total);$("cuotasSubI").textContent=`${cd.n} ${cd.n===1?"cuota":"cuotas"}`+(cd.quedan>0?` · te quedan por pagar ${eur(cd.quedan)}`:"");}
   const pt=pendientesTransferir();$("objCard").hidden=!pt.length;
   $("objCardLista").innerHTML=pt.map(({o,c,falta})=>`<div class="item"><span>Transferí ${eur(falta)} a ${esc(c.nombre)} para ${esc(o.nombre)}</span></div>`).join("");
@@ -1333,12 +1399,13 @@ const num=id=>{let t=String($(id).value).trim().replace(/\s|€/g,"");if(t.inclu
 const aTexto=v=>v==null||v===""?"":String(v).replace(".",",");
 function seg(el,opts,sel,cb){el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${esc(v)}" aria-pressed="${String(v)===String(sel)}">${esc(l)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb(b.dataset.v);};}
-const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetObj","sheetObjEd","sheetMovsCta","sheetCats","sheetCatEd","sheetPila"];
+const HOJAS=["sheetAdjQ","sheetSigno","sheet","sheetInv","sheetAct","sheetOp","sheetC","sheetK","sheetT","sheetI","sheetIC","sheetFV","sheetCat","sheetCuotas","sheetFore","sheetObj","sheetObjEd","sheetMovsCta","sheetCats","sheetCatEd","sheetPila","sheetPilaI","sheetPagar"];
 function mostrar(h){HOJAS.forEach(x=>$(x).hidden=x!==h);$("sheetBg").hidden=false;}
 // Al editar un movimiento desde la lista de una cuenta, cerrar la hoja vuelve a esa lista (el mismo mes)
 let volverCta=null,ce=null;
 function cerrar(){resolverSigno(null);const eraMov=!$("sheet").hidden,eraCuenta=!$("sheetC").hidden,eraEd=!$("sheetCatEd").hidden,eraCat=!$("sheetCat").hidden;HOJAS.forEach(x=>$(x).hidden=true);$("sheetBg").hidden=true;
   if(volverPila&&eraCat){const m=volverPila;volverPila=null;abrirPila(m);return;}
+  if(volverPilaI&&eraCat){const m=volverPilaI;volverPilaI=null;abrirPilaI(m);return;}
   if(volverCta){const v=volverCta;volverCta=null;if(eraMov)abrirMovsCta(v.id,v.mes);}
   // Una cuenta nueva abierta desde la revisión de un extracto: al cerrar sin guardar se vuelve a la revisión, sin cambios
   if(imp&&imp.nuevaPara!=null&&eraCuenta){imp.nuevaPara=null;mostrar("sheetI");pintarBorr();}
@@ -1426,6 +1493,7 @@ $("mCubreList").addEventListener("change",e=>{const id=+e.target.dataset.cubre;i
 $("mCat").addEventListener("change",e=>{if(e.target.value==="n|categoria"){abrirEdCat({tipo:mov.tipo==="ingreso"?"ingreso":"gasto",retorno:"mov"});return;}mov.cat=e.target.value;movUI();});
 $("mNota").addEventListener("input",movUI);$("mCuotasOn").addEventListener("change",()=>{mov.cuotas=$("mCuotasOn").checked;movUI();});$("mCuotasN").addEventListener("input",movUI);$("mCuotaV").addEventListener("input",movUI);$("mFijo").addEventListener("change",()=>mov.fijoTocado=true);
 $("mImporte").addEventListener("input",()=>{if(!$("mCubre").hidden)cubreTot();if(mov.cuotas)movUI();});
+$("cardGas").onclick=()=>abrirPila(mesV());$("cardIng").onclick=()=>abrirPilaI(mesV());
 $("verCobrar").onclick=()=>{filtroR="pendiente";ir("movs");render();};
 $("mCrearCuenta").onclick=()=>{ir("cuentas");abrirCuenta(null);};
 

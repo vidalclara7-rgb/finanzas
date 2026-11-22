@@ -242,7 +242,7 @@ t.test("rosa sólo para avisos", async () => {
 
 const RESUMEN = () => A.v2({ cuentas: [BANCO, A.cta(2, "Tarjeta Y", 0, { tipo: "tarjeta", tope: 300 })], movs: [A.ingreso(1, "2026-10-01", 1000, 1), { ...A.gasto(2, "2026-10-03", 40, 1, "Alquiler"), fijo: true }, A.gasto(3, "2026-10-04", 64.3, 2)] });
 const fondoDe = (page, sel) => page.$eval(sel, (e) => getComputedStyle(e).backgroundColor);
-const SEL = { resultado: '[data-ui="resultado-mes"]', fijos: '[data-ui="fijos-variables"]', gastado: '[data-ui="gastado-ingresado"] .card:nth-child(1)', ingresado: '[data-ui="gastado-ingresado"] .card:nth-child(2)', tarjeta: '[data-disp="2"]', patrimonio: "#netoCard" };
+const SEL = { resultado: '[data-ui="resultado-mes"]', fijos: '[data-ui="fijos-variables"]', gastado: '[data-ui="gastado-ingresado"] .card:nth-child(1)', ingresado: '[data-ui="gastado-ingresado"] .card:nth-child(2)', tarjeta: '[data-disp="2"]', pagar: "#pagarCard", patrimonio: "#netoCard" };
 
 // Escenario: el resumen de Inicio en color
 t.test("el resumen de Inicio en color", async () => {
