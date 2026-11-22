@@ -1,6 +1,6 @@
 ---
 cambio: titulos-negrita-y-barra
-estado: aprobada
+estado: diseno-aprobado
 datos: sin-cambios
 ---
 # Títulos en negrita y más aire en la barra inferior

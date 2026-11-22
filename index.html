@@ -118,7 +118,7 @@ button.card{border:0;font:inherit;color:var(--ink);text-align:left;cursor:pointe
 .color-op{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:var(--c);padding:0;cursor:pointer}
 .color-op[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--card)}
 .lbl{font-size:15px;color:var(--label);font-weight:500}
-.card>.lbl:first-child,.card>.row:first-child>.lbl:first-child{font-size:20px;font-weight:500}
+.card>.lbl:first-child,.card>.row:first-child>.lbl:first-child{font-size:20px;font-weight:700;letter-spacing:-.01em}
 .big{font-family:var(--font-display);font-size:28px;font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:-.01em;line-height:1.1}
 /* Importe grande con los decimales en gris */
 .monto{font-family:var(--font-display);font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
@@ -232,8 +232,8 @@ textarea{font-family:var(--mono);font-size:12px;min-height:120px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{font:inherit;font-size:15px;border:0;background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px}
 .seg button[aria-pressed=true]{background:var(--dest);color:var(--dest-t);font-weight:600}
-nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:999px;display:grid;grid-template-columns:1fr 1fr 64px 1fr 1fr;align-items:center;gap:2px;padding:6px;box-shadow:0 10px 30px -8px rgba(0,0,0,.45)}
-nav button{font:inherit;font-size:10px;background:none;border:0;border-radius:999px;color:var(--nav-ink);padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav{position:fixed;z-index:10;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-radius:999px;display:grid;grid-template-columns:auto auto 52px auto auto;justify-content:space-between;align-items:center;gap:2px;padding:6px;box-shadow:0 10px 30px -8px rgba(0,0,0,.45)}
+nav button{font:inherit;font-size:10px;letter-spacing:-.01em;background:none;border:0;border-radius:999px;color:var(--nav-ink);padding:6px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;white-space:nowrap}
 nav button svg{width:22px;height:22px}
 nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);font-weight:600}
 .fab{justify-self:center;width:52px;height:52px;border-radius:26px;border:0;background:var(--acc);color:#0B0B0F;font-size:30px;line-height:1;padding:0;display:grid;place-items:center;font-weight:400;box-shadow:none}
@@ -280,7 +280,7 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .cta .n{font-size:48px;line-height:1;font-weight:300;background:var(--grad-t);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .cta .v{font-size:17px;font-weight:500;margin-top:10px} .cta .d{font-size:13px;color:var(--muted)}
 .cta .t{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
-.grupo-cta{display:flex;flex-direction:column;gap:6px} .grupo-cta .row{padding:0 4px} .grupo-cta .lbl{font-size:20px;font-weight:500} .grupo-cta>.btn{align-self:flex-start}
+.grupo-cta{display:flex;flex-direction:column;gap:6px} .grupo-cta .row{padding:0 4px} .grupo-cta .lbl{font-size:20px;font-weight:700} .grupo-cta>.btn{align-self:flex-start}
 /* Cuadradito de esquinas redondeadas con el ícono de la categoría (o su inicial), sobre su degradado */
 .tile{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:var(--g,var(--barra));color:var(--t,var(--ink));font-size:15px;font-weight:700}
 .tile svg,.ico svg{width:20px;height:20px}
