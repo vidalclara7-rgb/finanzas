@@ -108,7 +108,7 @@ El encabezado de Inicio muestra el monograma «mf.» en negrita, grande: las let
 
 ## Requisito: color por categoría
 
-Cada categoría de gasto tiene su color con degradado, el mismo en «Gasto del mes», en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Cada uno de los 19 colores es una pareja de dos tonos: un fondo de color con un degradado suave y el texto y el ícono en otro color vivo, con versión clara (por ejemplo naranja con azul marino o rosa con bordó) y oscura (por ejemplo verde oscuro con rosa o magenta con menta), sin letras amarillas ni fondos violetas. Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco u oscuro, el que mejor se lea, con contraste de al menos 4,5 a 1.
+Cada categoría de gasto tiene su color con degradado, el mismo en «Gasto del mes», en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Cada uno de los 19 colores es un fondo de color con un degradado suave, con versión clara (pasteles y vivos) y oscura (profundos), sin fondos violetas. Sobre ese fondo, el texto y el ícono van en blanco en la apariencia Oscura y casi negros en la Clara. Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco en la Oscura y casi negro en la Clara, con contraste de al menos 4,5 a 1.
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
@@ -190,7 +190,7 @@ El título del resultado del mes sigue la tendencia del mes que se ve: positiva 
 
 ## Requisito: muestras de color
 
-Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, las parejas verde agua con petróleo, lima con verde, azul marino con celeste, naranja con azul marino y rosa con bordó, y en la Oscura, azul con celeste claro, verde oscuro con rosa, magenta con menta, menta con azul marino y bordó con celeste. Ningún color tiene la letra amarilla ni el fondo violeta. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
+Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, verde agua, lima, azul, naranja y rosa, y en la Oscura, azul, verde oscuro, magenta, verde menta oscuro y bordó. Ningún color tiene el fondo violeta, y ninguna letra va en color: es blanca en la Oscura y casi negra en la Clara. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
 
 ### Escenario: 19 colores distintos
 - **Dado** la app abierta
@@ -205,7 +205,7 @@ Los 19 colores de categoría son todos distintos entre sí en cada apariencia. L
 ### Escenario: los primeros colores de la paleta
 - **Dado** la apariencia Clara
 - **Cuando** se miran los colores de las categorías Supermercado, Comida fuera y Delivery
-- **Entonces** son los fondos verde agua, lima y azul marino de la paleta
+- **Entonces** son los fondos verde agua, lima y azul de la paleta
 
 ## Retirado: tarjetas blancas
 Lo sustituyen «fondo liso y tarjetas sin sombra», en apariencia, y «títulos de las tarjetas».
@@ -295,7 +295,7 @@ Debajo del patrimonio, cada cuenta es una tarjeta grande, del color con degradad
 
 ## Requisito: tarjetas de Inicio en parejas de color
 
-En Inicio, las tarjetas del resumen llevan una pareja de color, como las categorías: un fondo de color con un degradado suave y todo su texto, sus barras y sus anillos en el otro color de la pareja. Son el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de cada cuenta con tope (con la pareja de su tipo de cuenta), «Cuotas del mes», «Por cobrar», «Toca transferir» y «Patrimonio neto». Las demás (los avisos, la sugerencia de gasto fijo, «Gasto del mes» e «Ingresos y gastos») siguen grises. El texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 en el punto de su degradado donde peor se lee, en las dos apariencias. Dentro de una tarjeta de color, un tope excedido o un mes en negativo se dicen con texto y una marca, no con rosa.
+En Inicio, las tarjetas del resumen llevan un fondo de color suave, del color de una categoría: todo su texto, sus barras y sus anillos van en blanco en la apariencia Oscura y casi negros en la Clara. Son el resultado del mes, «Fijos y variables», «Gastado», «Ingresado», el disponible de cada cuenta con tope (con el color de su tipo de cuenta), «Cuotas del mes», «Por cobrar», «Toca transferir» y «Patrimonio neto». Las demás (los avisos, la sugerencia de gasto fijo, «Gasto del mes» e «Ingresos y gastos») siguen grises. El texto de cada tarjeta de color tiene contraste de al menos 4,5 a 1 en el punto de su degradado donde peor se lee, en las dos apariencias. Dentro de una tarjeta de color, un tope excedido o un mes en negativo se dicen con texto y una marca, no con rosa.
 
 ### Escenario: el resumen de Inicio en color
 - **Dado** gastos fijos y variables, ingresos, una tarjeta de crédito con tope y cuentas cargadas este mes

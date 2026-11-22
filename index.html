@@ -14,7 +14,7 @@
 <style>
 :root{
   /* Paleta: fondo blanco, tarjetas gris claro, texto casi negro, acento lima. Sin sombras ni degradado azul */
-  --bg:#FFFFFF; --card:#F4F4F6; --card-base:#F4F4F6; --tinte:18%; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
+  --bg:#FFFFFF; --card:#F4F4F6; --card-base:#F4F4F6; --tinte:40%; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
   /* Lo que entra es verde; lo que sale, el color del texto; el rosa queda para los avisos */
   --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#17773F; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
   --ingreso:#17773F; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
@@ -26,61 +26,61 @@
   --accent:#0B0B0F; --accent-soft:rgba(0,0,0,.07); --nav:#1C1C1E; --nav-ink:#A1A1A8; --nav-on:#FFFFFF; --nav-on-t:#0B0B0F;
   --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Roboto",system-ui,sans-serif; --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Roboto",system-ui,sans-serif; --font-num:var(--font); --mono:var(--font);
   /* 19 colores de categoría con degradado (más intenso abajo), su color medio y el texto que se lee en todo el degradado (4,5 a 1) */
-  --cat1:#0A3A40; --cat2:#1D5A28; --cat3:#24368C; --cat4:#170E3C; --cat5:#5A0B2E; --cat6:#1A2E8A; --cat7:#6A1E7A; --cat8:#6F220E; --cat9:#7A2A0A; --cat10:#A31F2A; --cat11:#5D330E; --cat12:#2A3A0A; --cat13:#901860; --cat14:#1E1E5E; --cat15:#093451; --cat16:#3A1A06; --cat17:#1E5A3A; --cat18:#2A2A40; --cat19:#4A4A55;
-  --cat1t:#0A3A40; --cat2t:#1D5A28; --cat3t:#CFE3FF; --cat4t:#170E3C; --cat5t:#5A0B2E; --cat6t:#1A2E8A; --cat7t:#6A1E7A; --cat8t:#6F220E; --cat9t:#7A2A0A; --cat10t:#FFE5E8; --cat11t:#5D330E; --cat12t:#2A3A0A; --cat13t:#FFE0F0; --cat14t:#1E1E5E; --cat15t:#093451; --cat16t:#3A1A06; --cat17t:#C5F7D9; --cat18t:#2A2A40; --cat19t:#D1EAFF;
-  --cat1g:radial-gradient(120% 140% at 50% 120%,#9FE5D9 0%,#8EE0D2 45%,#7DC5B9 100%);
-  --cat2g:radial-gradient(120% 140% at 50% 120%,#DCEB58 0%,#D6E83A 45%,#BCCC33 100%);
-  --cat3g:radial-gradient(120% 140% at 50% 120%,#45549D 0%,#24368C 45%,#20307B 100%);
-  --cat4g:radial-gradient(120% 140% at 50% 120%,#F4804D 0%,#F26A2E 45%,#D55D28 100%);
-  --cat5g:radial-gradient(120% 140% at 50% 120%,#F49CC3 0%,#F28BB8 45%,#D57AA2 100%);
-  --cat6g:radial-gradient(120% 140% at 50% 120%,#82D4EB 0%,#6CCDE8 45%,#5FB4CC 100%);
-  --cat7g:radial-gradient(120% 140% at 50% 120%,#A0DFBF 0%,#8FD9B4 45%,#7EBF9E 100%);
-  --cat8g:radial-gradient(120% 140% at 50% 120%,#F6BF9C 0%,#F5B48A 45%,#D89E79 100%);
-  --cat9g:radial-gradient(120% 140% at 50% 120%,#FFE665 0%,#FFE14A 45%,#E0C641 100%);
-  --cat10g:radial-gradient(120% 140% at 50% 120%,#B1414A 0%,#A31F2A 45%,#8F1B25 100%);
-  --cat11g:radial-gradient(120% 140% at 50% 120%,#DEC99C 0%,#D8C08A 45%,#BEA979 100%);
-  --cat12g:radial-gradient(120% 140% at 50% 120%,#C3CB58 0%,#B8C23A 45%,#A2AB33 100%);
-  --cat13g:radial-gradient(120% 140% at 50% 120%,#A13B78 0%,#901860 45%,#7F1554 100%);
-  --cat14g:radial-gradient(120% 140% at 50% 120%,#92B5DE 0%,#7FA8D8 45%,#7094BE 100%);
-  --cat15g:radial-gradient(120% 140% at 50% 120%,#4DCDCD 0%,#2EC4C4 45%,#28ACAC 100%);
-  --cat16g:radial-gradient(120% 140% at 50% 120%,#FF9C4D 0%,#FF8A2E 45%,#E07928 100%);
-  --cat17g:radial-gradient(120% 140% at 50% 120%,#407358 0%,#1E5A3A 45%,#1A4F33 100%);
-  --cat18g:radial-gradient(120% 140% at 50% 120%,#D6D6DE 0%,#CFCFD8 45%,#B6B6BE 100%);
-  --cat19g:radial-gradient(120% 140% at 50% 120%,#65656E 0%,#4A4A55 45%,#41414B 100%);
-  --cat1s:#8EE0D2; --cat2s:#D6E83A; --cat3s:#24368C; --cat4s:#F26A2E; --cat5s:#F28BB8; --cat6s:#6CCDE8; --cat7s:#8FD9B4; --cat8s:#F5B48A; --cat9s:#FFE14A; --cat10s:#A31F2A; --cat11s:#D8C08A; --cat12s:#B8C23A; --cat13s:#901860; --cat14s:#7FA8D8; --cat15s:#2EC4C4; --cat16s:#FF8A2E; --cat17s:#1E5A3A; --cat18s:#CFCFD8; --cat19s:#4A4A55;
+  --cat1:#5C9288; --cat2:#808B23; --cat3:#4C8DC0; --cat4:#E6652C; --cat5:#C26F93; --cat6:#4C90A2; --cat7:#64987E; --cat8:#AC7E61; --cat9:#99872C; --cat10:#E1616B; --cat11:#978661; --cat12:#8A922C; --cat13:#E354AA; --cat14:#6C8FB8; --cat15:#229393; --cat16:#CC6E25; --cat17:#349B64; --cat18:#87878C; --cat19:#888897;
+  --cat1t:#0B0B0F; --cat2t:#0B0B0F; --cat3t:#0B0B0F; --cat4t:#0B0B0F; --cat5t:#0B0B0F; --cat6t:#0B0B0F; --cat7t:#0B0B0F; --cat8t:#0B0B0F; --cat9t:#0B0B0F; --cat10t:#0B0B0F; --cat11t:#0B0B0F; --cat12t:#0B0B0F; --cat13t:#0B0B0F; --cat14t:#0B0B0F; --cat15t:#0B0B0F; --cat16t:#0B0B0F; --cat17t:#0B0B0F; --cat18t:#0B0B0F; --cat19t:#0B0B0F;
+  --cat1g:radial-gradient(120% 140% at 50% 120%,#9FE5D9 0%,#8EE0D2 45%,#80CABD 100%);
+  --cat2g:radial-gradient(120% 140% at 50% 120%,#DCEB58 0%,#D6E83A 45%,#C1D134 100%);
+  --cat3g:radial-gradient(120% 140% at 50% 120%,#77BCF2 0%,#5FB0F0 45%,#569ED8 100%);
+  --cat4g:radial-gradient(120% 140% at 50% 120%,#F4804D 0%,#F26A2E 45%,#DA5F29 100%);
+  --cat5g:radial-gradient(120% 140% at 50% 120%,#F49CC3 0%,#F28BB8 45%,#DA7DA6 100%);
+  --cat6g:radial-gradient(120% 140% at 50% 120%,#82D4EB 0%,#6CCDE8 45%,#61B8D1 100%);
+  --cat7g:radial-gradient(120% 140% at 50% 120%,#A0DFBF 0%,#8FD9B4 45%,#81C3A2 100%);
+  --cat8g:radial-gradient(120% 140% at 50% 120%,#F6BF9C 0%,#F5B48A 45%,#DCA27C 100%);
+  --cat9g:radial-gradient(120% 140% at 50% 120%,#FFE665 0%,#FFE14A 45%,#E6CA43 100%);
+  --cat10g:radial-gradient(120% 140% at 50% 120%,#E67981 0%,#E1616B 45%,#CA5760 100%);
+  --cat11g:radial-gradient(120% 140% at 50% 120%,#DEC99C 0%,#D8C08A 45%,#C2AD7C 100%);
+  --cat12g:radial-gradient(120% 140% at 50% 120%,#C3CB58 0%,#B8C23A 45%,#A6AF34 100%);
+  --cat13g:radial-gradient(120% 140% at 50% 120%,#E76EB7 0%,#E354AA 45%,#CC4C99 100%);
+  --cat14g:radial-gradient(120% 140% at 50% 120%,#92B5DE 0%,#7FA8D8 45%,#7297C2 100%);
+  --cat15g:radial-gradient(120% 140% at 50% 120%,#4DCDCD 0%,#2EC4C4 45%,#29B0B0 100%);
+  --cat16g:radial-gradient(120% 140% at 50% 120%,#FF9C4D 0%,#FF8A2E 45%,#E67C29 100%);
+  --cat17g:radial-gradient(120% 140% at 50% 120%,#52AA7B 0%,#349B64 45%,#2F8B5A 100%);
+  --cat18g:radial-gradient(120% 140% at 50% 120%,#D6D6DE 0%,#CFCFD8 45%,#BABAC2 100%);
+  --cat19g:radial-gradient(120% 140% at 50% 120%,#9A9AA7 0%,#888897 45%,#7A7A88 100%);
+  --cat1s:#8EE0D2; --cat2s:#D6E83A; --cat3s:#5FB0F0; --cat4s:#F26A2E; --cat5s:#F28BB8; --cat6s:#6CCDE8; --cat7s:#8FD9B4; --cat8s:#F5B48A; --cat9s:#FFE14A; --cat10s:#E1616B; --cat11s:#D8C08A; --cat12s:#B8C23A; --cat13s:#E354AA; --cat14s:#7FA8D8; --cat15s:#2EC4C4; --cat16s:#FF8A2E; --cat17s:#349B64; --cat18s:#CFCFD8; --cat19s:#888897;
   --resto-g:radial-gradient(120% 140% at 50% 120%,#E3E3E8 0%,#D6D6DC 45%,#BCBCC2 100%); --resto-t:#2A2A40;
   /* Tipos de cuenta: bancos 1, inversiones 3, tarjetas 4, financiaciones 5, deudas compartidas 2 */
   --k1:var(--cat1); --k1g:var(--cat1g); --k1t:var(--cat1t); --k2:var(--cat3); --k2g:var(--cat3g); --k2t:var(--cat3t); --k3:var(--cat4); --k3g:var(--cat4g); --k3t:var(--cat4t); --k4:var(--cat5); --k4g:var(--cat5g); --k4t:var(--cat5t); --k5:var(--cat2); --k5g:var(--cat2g); --k5t:var(--cat2t); --k1s:var(--cat1s); --k2s:var(--cat3s); --k3s:var(--cat4s); --k4s:var(--cat5s); --k5s:var(--cat2s);
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#000000; --card:#141416; --card-base:#141416; --tinte:26%; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
+  --bg:#000000; --card:#141416; --card-base:#141416; --tinte:55%; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
   --verde-t:#4ADE80; --rosa:#FF8AA6; --rosa-t:#FF8AA6; --aviso-t:#FF8AA6; --ingreso:#4ADE80; --on-ingreso:#0B0B0F; --rojo:#FF8AA6; --naranja:#FFB066; --frambuesa:#3E8BFF;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8AA6; --bad-soft:#3A1520;
   --dest:#E8F94B; --dest-t:#0B0B0F; --logo-punto:#E8F94B; --chip:rgba(255,255,255,.12);
   --barra:#2A2A30; --label:#F5F5F7;
   --accent:#E8F94B; --accent-soft:rgba(255,255,255,.1); --nav:#1C1C1E; --nav-ink:#A1A1A8; --nav-on:#E8F94B; --nav-on-t:#0B0B0F;
-  --cat1:#D9E9FF; --cat2:#F7A8E8; --cat3:#7CF5C8; --cat4:#6CC9A0; --cat5:#28BBFF; --cat6:#F79AA0; --cat7:#22F56A; --cat8:#FF6A1A; --cat9:#FFC9A8; --cat10:#B8F5D0; --cat11:#FFCBA1; --cat12:#F08A3A; --cat13:#1CF06A; --cat14:#7AD8FF; --cat15:#FFA999; --cat16:#FF8FAA; --cat17:#3DFFC8; --cat18:#E6E6EA; --cat19:#FF9F7A;
-  --cat1t:#D9E9FF; --cat2t:#F7A8E8; --cat3t:#7CF5C8; --cat4t:#0A2869; --cat5t:#28BBFF; --cat6t:#570A0F; --cat7t:#22F56A; --cat8t:#1C0C03; --cat9t:#FFC9A8; --cat10t:#B8F5D0; --cat11t:#FFCBA1; --cat12t:#1A0A00; --cat13t:#0B3D2A; --cat14t:#720B43; --cat15t:#FFA999; --cat16t:#FF8FAA; --cat17t:#3DFFC8; --cat18t:#E6E6EA; --cat19t:#FF9F7A;
-  --cat1g:radial-gradient(120% 140% at 50% 120%,#305CDD 0%,#1446D8 45%,#1039B1 100%);
-  --cat2g:radial-gradient(120% 140% at 50% 120%,#2C5339 0%,#0F3B1E 45%,#0C3019 100%);
-  --cat3g:radial-gradient(120% 140% at 50% 120%,#9C2C70 0%,#8E0F5C 45%,#740C4B 100%);
-  --cat4g:radial-gradient(120% 140% at 50% 120%,#7ECFAB 0%,#6CC9A0 45%,#59A583 100%);
-  --cat5g:radial-gradient(120% 140% at 50% 120%,#702747 0%,#5C0A2E 45%,#4B0826 100%);
-  --cat6g:radial-gradient(120% 140% at 50% 120%,#F8A6AB 0%,#F79AA0 45%,#CB7E83 100%);
-  --cat7g:radial-gradient(120% 140% at 50% 120%,#28542E 0%,#0B3D12 45%,#09320F 100%);
-  --cat8g:radial-gradient(120% 140% at 50% 120%,#FF7C35 0%,#FF6A1A 45%,#D15715 100%);
-  --cat9g:radial-gradient(120% 140% at 50% 120%,#6E472B 0%,#5A2E0E 45%,#4A260B 100%);
-  --cat10g:radial-gradient(120% 140% at 50% 120%,#54602E 0%,#3D4A12 45%,#323D0F 100%);
-  --cat11g:radial-gradient(120% 140% at 50% 120%,#566027 0%,#3F4A0A 45%,#343D08 100%);
-  --cat12g:radial-gradient(120% 140% at 50% 120%,#F29852 0%,#F08A3A 45%,#C57130 100%);
-  --cat13g:radial-gradient(120% 140% at 50% 120%,#37F27C 0%,#1CF06A 45%,#17C557 100%);
-  --cat14g:radial-gradient(120% 140% at 50% 120%,#8ADDFF 0%,#7AD8FF 45%,#64B1D1 100%);
-  --cat15g:radial-gradient(120% 140% at 50% 120%,#275260 0%,#0A3A4A 45%,#08303D 100%);
-  --cat16g:radial-gradient(120% 140% at 50% 120%,#274460 0%,#0A2A4A 45%,#08223D 100%);
-  --cat17g:radial-gradient(120% 140% at 50% 120%,#603527 0%,#4A1A0A 45%,#3D1508 100%);
-  --cat18g:radial-gradient(120% 140% at 50% 120%,#525257 0%,#3A3A40 45%,#303034 100%);
-  --cat19g:radial-gradient(120% 140% at 50% 120%,#2C4752 0%,#0F2E3A 45%,#0C2630 100%);--cat1s:#1446D8; --cat2s:#0F3B1E; --cat3s:#8E0F5C; --cat4s:#6CC9A0; --cat5s:#5C0A2E; --cat6s:#F79AA0; --cat7s:#0B3D12; --cat8s:#FF6A1A; --cat9s:#5A2E0E; --cat10s:#3D4A12; --cat11s:#3F4A0A; --cat12s:#F08A3A; --cat13s:#1CF06A; --cat14s:#7AD8FF; --cat15s:#0A3A4A; --cat16s:#0A2A4A; --cat17s:#4A1A0A; --cat18s:#3A3A40; --cat19s:#0F2E3A;
+  --cat1:#2C59DC; --cat2:#4B6C56; --cat3:#A53F7D; --cat4:#2A7252; --cat5:#8D536D; --cat6:#DC111F; --cat7:#486E4D; --cat8:#B84000; --cat9:#83624A; --cat10:#646E41; --cat11:#656E3B; --cat12:#A34F0C; --cat13:#087530; --cat14:#006F9E; --cat15:#476B77; --cat16:#536A80; --cat17:#805F53; --cat18:#6B6B70; --cat19:#576D75;
+  --cat1t:#FFFFFF; --cat2t:#FFFFFF; --cat3t:#FFFFFF; --cat4t:#FFFFFF; --cat5t:#FFFFFF; --cat6t:#FFFFFF; --cat7t:#FFFFFF; --cat8t:#FFFFFF; --cat9t:#FFFFFF; --cat10t:#FFFFFF; --cat11t:#FFFFFF; --cat12t:#FFFFFF; --cat13t:#FFFFFF; --cat14t:#FFFFFF; --cat15t:#FFFFFF; --cat16t:#FFFFFF; --cat17t:#FFFFFF; --cat18t:#FFFFFF; --cat19t:#FFFFFF;
+  --cat1g:radial-gradient(120% 140% at 50% 120%,#2C59DC 0%,#1446D8 45%,#1039B1 100%);
+  --cat2g:radial-gradient(120% 140% at 50% 120%,#274F34 0%,#0F3B1E 45%,#0C3019 100%);
+  --cat3g:radial-gradient(120% 140% at 50% 120%,#99276C 0%,#8E0F5C 45%,#740C4B 100%);
+  --cat4g:radial-gradient(120% 140% at 50% 120%,#3F8063 0%,#2A7252 45%,#225D43 100%);
+  --cat5g:radial-gradient(120% 140% at 50% 120%,#6C2343 0%,#5C0A2E 45%,#4B0826 100%);
+  --cat6g:radial-gradient(120% 140% at 50% 120%,#E02935 0%,#DC111F 45%,#B40E19 100%);
+  --cat7g:radial-gradient(120% 140% at 50% 120%,#23502A 0%,#0B3D12 45%,#09320F 100%);
+  --cat8g:radial-gradient(120% 140% at 50% 120%,#BF531A 0%,#B84000 45%,#973400 100%);
+  --cat9g:radial-gradient(120% 140% at 50% 120%,#6A4326 0%,#5A2E0E 45%,#4A260B 100%);
+  --cat10g:radial-gradient(120% 140% at 50% 120%,#505C2A 0%,#3D4A12 45%,#323D0F 100%);
+  --cat11g:radial-gradient(120% 140% at 50% 120%,#525C23 0%,#3F4A0A 45%,#343D08 100%);
+  --cat12g:radial-gradient(120% 140% at 50% 120%,#AC6124 0%,#A34F0C 45%,#86410A 100%);
+  --cat13g:radial-gradient(120% 140% at 50% 120%,#218345 0%,#087530 45%,#076027 100%);
+  --cat14g:radial-gradient(120% 140% at 50% 120%,#1A7DA8 0%,#006F9E 45%,#005B82 100%);
+  --cat15g:radial-gradient(120% 140% at 50% 120%,#234E5C 0%,#0A3A4A 45%,#08303D 100%);
+  --cat16g:radial-gradient(120% 140% at 50% 120%,#233F5C 0%,#0A2A4A 45%,#08223D 100%);
+  --cat17g:radial-gradient(120% 140% at 50% 120%,#5C3123 0%,#4A1A0A 45%,#3D1508 100%);
+  --cat18g:radial-gradient(120% 140% at 50% 120%,#4E4E53 0%,#3A3A40 45%,#303034 100%);
+  --cat19g:radial-gradient(120% 140% at 50% 120%,#27434E 0%,#0F2E3A 45%,#0C2630 100%);--cat1s:#1446D8; --cat2s:#0F3B1E; --cat3s:#8E0F5C; --cat4s:#2A7252; --cat5s:#5C0A2E; --cat6s:#DC111F; --cat7s:#0B3D12; --cat8s:#B84000; --cat9s:#5A2E0E; --cat10s:#3D4A12; --cat11s:#3F4A0A; --cat12s:#A34F0C; --cat13s:#087530; --cat14s:#006F9E; --cat15s:#0A3A4A; --cat16s:#0A2A4A; --cat17s:#4A1A0A; --cat18s:#3A3A40; --cat19s:#0F2E3A;
   --resto-g:radial-gradient(120% 140% at 50% 120%,#525257 0%,#3A3A40 45%,#303034 100%); --resto-t:#E6E6EA;
   color-scheme:dark}
 @font-face{font-family:"Roboto";font-style:normal;font-weight:100 900;font-display:swap;src:url("vendor/roboto/roboto-latin-wght-normal.woff2") format("woff2")}
@@ -327,7 +327,7 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .icono-op svg{width:22px;height:22px}
 .icono-op[aria-pressed=true]{border-color:var(--ink)}
 /* Tarjetas de Inicio en parejas de color, suaves: fondo con un tinte del color de la pareja sobre el gris de la tarjeta y todo (texto, barras, anillos) en su tono fuerte */
-.card.par{background:color-mix(in srgb,var(--s) var(--tinte),var(--card-base));--t:var(--tt);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
+.card.par{background:color-mix(in srgb,var(--s) var(--tinte),var(--card-base));--t:var(--ink-base);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
 .card.par .grp{background:color-mix(in srgb,var(--t) 12%,transparent)}
 .card.par{--medio:color-mix(in srgb,var(--t) 55%,transparent)}
 .card.par .sub{font-weight:500}
