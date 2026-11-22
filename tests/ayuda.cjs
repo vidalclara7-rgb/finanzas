@@ -124,6 +124,9 @@ async function verRend(page) {
   await page.click("#carRend");
 }
 
+// Un estilo calculado, esperando a que la pantalla termine de pintarse (con la máquina cargada se puede leer entre dos repintados)
+const estiloListo = async (page, sel, prop) => (await page.waitForFunction(([s, p]) => { const e = document.querySelector(s); const v = e && getComputedStyle(e)[p]; return v && v !== "none" ? v : false; }, [sel, prop])).jsonValue();
+
 // Datos del modelo v2, armados a mano
 const cta = (id, nombre, saldoInicial, extra = {}) => ({ id, tipo: "liquidez", nombre, saldoInicial, desde: "2026-10-01", ...extra });
 const gasto = (id, fecha, importe, cuenta, cat = "Supermercado", nota = "") => ({ id, tipo: "gasto", fecha, importe, cuenta, cat, nota });
@@ -166,4 +169,4 @@ function preparar(nodeTest) {
   return async (opciones) => { const r = await pagina(estado.ent, opciones); estado.abiertos.push(r.ctx); return r; };
 }
 
-module.exports = { saldoCta, verRend, enfocado, hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };
+module.exports = { estiloListo, saldoCta, verRend, enfocado, hojaLista, iniciar, pagina, preparar, guardados, ir, aviso, texto, portapapeles, elegir, nuevoMov, nuevoGasto, nuevaCuenta, cta, gasto, ingreso, transf, v2, con, datosEjemplo, AJUSTES, CLAVE, HOY, VISTAS, RAIZ };

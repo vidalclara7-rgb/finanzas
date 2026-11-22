@@ -120,9 +120,9 @@ t.test("punto de color por tipo de cuenta", async () => {
 // Escenario: mismo color por categoría
 t.test("mismo color por categoría", async () => {
   const { page } = await abrir({ datos: EJEMPLO() });
-  const bloque = await page.$eval('#lcat [data-cat="Supermercado"] .tile', (c) => getComputedStyle(c).backgroundImage);
+  const bloque = await A.estiloListo(page, '#lcat [data-cat="Supermercado"] .tile', "backgroundImage");
   await A.ir(page, "movs");
-  assert.equal(bloque, await page.$eval('[data-mov="2"] .ico', (c) => getComputedStyle(c).backgroundImage));
+  assert.equal(bloque, await A.estiloListo(page, '[data-mov="2"] .ico', "backgroundImage"));
 });
 
 // Escenario: teléfono en modo oscuro
