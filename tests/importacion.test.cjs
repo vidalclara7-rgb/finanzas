@@ -849,7 +849,8 @@ t.test("primero el banco y después la tarjeta", async () => {
 // Escenario: tres resúmenes y el extracto del banco
 t.test("tres resúmenes y el extracto del banco", async () => {
   const pagos = [pagoT(1, "2026-09-01", 700), pagoT(2, "2026-10-01", 6), pagoT(3, "2026-10-02", 736)];
-  const { page } = await abrir({ datos: conTarjeta(pagos, { ...TARJETA_P, saldoInicial: 2000 }) });
+  // El pago nuevo ya pasó: los saldos de hoy no cuentan movimientos con fecha futura
+  const { page } = await abrir({ hoy: "2026-11-15T12:00:00", datos: conTarjeta(pagos, { ...TARJETA_P, saldoInicial: 2000 }) });
   const antes = await deudaTarjeta(page);
   await importar(page, await bancoP(page, [liquid("2026-09-01", 700), liquid("2026-10-01", 6), liquid("2026-10-02", 736), liquid("2026-11-02", 767)]));
   assert.equal(await chipsReemplazo(page), 3);
