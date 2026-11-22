@@ -40,4 +40,4 @@
 - [x] Lista de «Gasto del mes» en lugar del mosaico; «Por semana» fuera de Inicio
 - [x] Tarjetas del resumen en parejas de color; marcas «Mes en negativo» y «Excedido»
 - [x] Tests: lista, tarjetas de color, miles, recorrido sin textos pisados; importes de los tests con punto de miles
-- [ ] `python3 kit.py check` en verde y capturas de la app real
+- [x] `python3 kit.py check` en verde y capturas de la app real
