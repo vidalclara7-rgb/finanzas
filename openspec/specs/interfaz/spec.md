@@ -12,7 +12,7 @@ castellano rioplatense.
 
 ## Requisito: navegación
 
-Una barra inferior flotante, en forma de píldora oscura separada del borde, lleva a Inicio, Movimientos, Cuentas y Cierre, cada una con su ícono y su nombre, con el botón «+» en el centro. La pestaña activa se resalta: blanca en la apariencia Clara y lima en la Oscura. Ajustes se abre con el engranaje del encabezado. El «+» abre «Nuevo movimiento», salvo en Cuentas, donde abre «Nueva cuenta». El título del encabezado cambia con la pantalla.
+Una barra inferior flotante, en forma de píldora oscura separada del borde, lleva a Inicio, Movimientos, Cuentas y Cierre, cada una con su ícono y su nombre, con el botón «+» en el centro. La pestaña activa se resalta con una píldora: blanca en la apariencia Clara y lima en la Oscura. El nombre de cada pestaña, también el de «Movimientos», que es el más largo, entra en su resaltado con al menos 6 px de aire a cada lado. Ajustes se abre con el engranaje del encabezado. El «+» abre «Nuevo movimiento», salvo en Cuentas, donde abre «Nueva cuenta». El título del encabezado cambia con la pantalla.
 
 ### Escenario: el más según la pantalla
 - **Dado** la app abierta en Inicio con al menos una cuenta
@@ -40,6 +40,12 @@ Una barra inferior flotante, en forma de píldora oscura separada del borde, lle
 - **Dado** Inicio con todas sus tarjetas
 - **Cuando** la persona baja hasta el final
 - **Entonces** la última tarjeta queda entera por encima de la barra
+
+### Escenario: el resaltado tiene aire
+- **Dado** la app abierta a 390 px en las dos apariencias
+- **Cuando** la persona va a Movimientos y mira la barra inferior
+- **Entonces** el nombre «Movimientos» queda dentro del resaltado con al menos 6 px a cada lado
+- **Y** lo mismo pasa con «Inicio», «Cuentas» y «Cierre» cuando son la pestaña activa
 
 ## Requisito: modo oscuro
 
@@ -386,7 +392,7 @@ Todos los textos usan la letra del sistema del teléfono: en el iPhone, SF Pro. 
 
 ## Requisito: títulos de las tarjetas
 
-Cada tarjeta tiene su título en negrita, en el color del texto, y los textos de apoyo en el color secundario. En Cuentas, cada tipo de cuenta lleva un punto de su color junto al nombre del tipo. El texto se lee con contraste de al menos 4,5 a 1, también en las tarjetas que son botones, como «Cuotas del mes» y «Toca transferir».
+Cada tarjeta tiene su título en negrita (peso 700), en el color del texto. También los títulos de las hojas, del panel «≡» y de cada tipo en Cuentas van en negrita. Los textos de apoyo van en peso normal y y los textos de apoyo en el color secundario. En Cuentas, cada tipo de cuenta lleva un punto de su color junto al nombre del tipo. El texto se lee con contraste de al menos 4,5 a 1, también en las tarjetas que son botones, como «Cuotas del mes» y «Toca transferir».
 
 ### Escenario: punto de color por tipo de cuenta
 - **Dado** una cuenta de bancos y una tarjeta de crédito
@@ -397,6 +403,11 @@ Cada tarjeta tiene su título en negrita, en el color del texto, y los textos de
 - **Dado** tarjetas «Cuotas del mes» y «Toca transferir» en Inicio
 - **Cuando** la persona las mira en las dos apariencias
 - **Entonces** su texto tiene contraste de al menos 4,5 a 1 con la tarjeta
+
+### Escenario: títulos en negrita
+- **Dado** la app con datos en las dos apariencias
+- **Cuando** la persona recorre Inicio, Movimientos, Cuentas, Cierre y Ajustes, y abre la hoja de un movimiento y el panel «≡»
+- **Entonces** el título de cada tarjeta, de cada hoja y del panel va en negrita
 
 ## Requisito: carrusel de cuentas
 

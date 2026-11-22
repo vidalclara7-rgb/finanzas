@@ -374,3 +374,35 @@ t.test("recorrido sin textos pisados", async () => {
     await A.ir(page, "cuentas"); await page.click('#carCtas [data-cta="2"]'); await page.waitForSelector("#sheetC:not([hidden])"); await revisar("hoja de cuenta");
   }
 });
+
+// --- títulos en negrita y aire en la barra (titulos-negrita-y-barra)
+
+// Escenario: el resaltado tiene aire
+t.test("el resaltado tiene aire", async () => {
+  for (const esquema of ["light", "dark"]) {
+    const { page } = await abrir({ datos: datos(), esquema });
+    for (const v of ["inicio", "movs", "cuentas", "mes"]) {
+      await A.ir(page, v);
+      const m = await page.$eval(`nav [data-v="${v}"]`, (b) => { const p = b.getBoundingClientRect(), n = [...b.childNodes].find((x) => x.nodeType === 3 && x.textContent.trim()), r = document.createRange(); r.selectNodeContents(n); const q = r.getBoundingClientRect(); return { izq: q.left - p.left, der: p.right - q.right, txt: n.textContent.trim() }; });
+      assert.ok(m.izq >= 6 && m.der >= 6, `${esquema} ${m.txt}: ${m.izq.toFixed(1)} / ${m.der.toFixed(1)} px`);
+    }
+  }
+});
+
+// Escenario: títulos en negrita
+t.test("títulos en negrita", async () => {
+  for (const esquema of ["light", "dark"]) {
+    const { page } = await abrir({ datos: datos(), esquema });
+    for (const v of A.VISTAS) {
+      await A.ir(page, v);
+      const flojos = await page.$$eval(".card>.lbl:first-child, .card>.row:first-child>.lbl:first-child", (ls) => ls.filter((l) => l.checkVisibility() && +getComputedStyle(l).fontWeight < 700).map((l) => l.textContent.trim()));
+      assert.deepEqual(flojos, [], `${esquema} ${v}`);
+    }
+    await A.ir(page, "inicio");
+    await page.click("#fab"); await page.waitForSelector("#sheet:not([hidden])");
+    assert.ok(+(await page.$eval("#sheet h2", (h) => getComputedStyle(h).fontWeight)) >= 700, "hoja");
+    await page.click("#cerrar");
+    await page.click("#menuBtn"); await page.waitForSelector("#panel:not([hidden])");
+    assert.ok(+(await page.$eval("#panel h2", (h) => getComputedStyle(h).fontWeight)) >= 700, "panel");
+  }
+});
