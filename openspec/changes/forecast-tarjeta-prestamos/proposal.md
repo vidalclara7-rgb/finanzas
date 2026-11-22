@@ -1,6 +1,6 @@
 ---
 cambio: forecast-tarjeta-prestamos
-estado: aprobada
+estado: diseno-aprobado
 datos: amplia
 ---
 # Forecast con ingreso guardado, el resumen de la tarjeta y préstamos
