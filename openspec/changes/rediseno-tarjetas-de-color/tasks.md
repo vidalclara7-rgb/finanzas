@@ -32,3 +32,12 @@
 
 ## Documentación
 - [x] `CLAUDE.md`: paleta, íconos, resultado, mosaico, pila, carrusel y modelo de categorías
+
+## Segunda vuelta
+- [x] Delta: lista con barras, sin «Por semana», tarjetas de color, punto de miles, ningún texto pisado (Gate 1)
+- [x] Preview de Inicio con tarjetas en parejas de color suaves y la lista (Gate 2)
+- [x] `eur()` con punto de miles en todos los importes
+- [x] Lista de «Gasto del mes» en lugar del mosaico; «Por semana» fuera de Inicio
+- [x] Tarjetas del resumen en parejas de color; marcas «Mes en negativo» y «Excedido»
+- [x] Tests: lista, tarjetas de color, miles, recorrido sin textos pisados; importes de los tests con punto de miles
+- [ ] `python3 kit.py check` en verde y capturas de la app real
