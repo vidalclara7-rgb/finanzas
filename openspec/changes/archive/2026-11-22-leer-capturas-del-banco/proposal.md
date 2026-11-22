@@ -1,8 +1,9 @@
 ---
 cambio: leer-capturas-del-banco
-estado: construida
+estado: archivado
 preview: no
 datos: sin-cambios
+archivado: 2026-11-22
 ---
 # Importar movimientos desde capturas de pantalla del banco
 

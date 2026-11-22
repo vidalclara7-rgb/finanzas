@@ -1,7 +1,8 @@
 ---
 cambio: rediseno-tarjetas-de-color
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-11-22
 ---
 # Rediseño: blanco y negro, tarjetas de color y qué hiciste con lo que sobró
 
