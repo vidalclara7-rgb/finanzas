@@ -131,7 +131,8 @@ t.test("botón principal", async () => {
 // Escenario: los primeros colores de la paleta
 t.test("los primeros colores de la paleta", async () => {
   const { page } = await abrir({ datos: datos({ movs: [A.gasto(1, "2026-10-03", 30, 1, "Supermercado"), A.gasto(2, "2026-10-03", 20, 1, "Comida fuera"), A.gasto(3, "2026-10-03", 10, 1, "Delivery")] }), esquema: "light" });
-  const fondo = (c) => page.$eval(`#lcat [data-cat="${c}"] .tile`, (b) => (getComputedStyle(b).backgroundImage.match(/rgba?\([^)]*\)/g) || [])[1]);
+  // Espera a que la lista esté pintada (con la máquina cargada se puede leer entre dos repintados)
+  const fondo = async (c) => (await page.waitForFunction((cat) => { const b = document.querySelector(`#lcat [data-cat="${cat}"] .tile`); const m = b && getComputedStyle(b).backgroundImage.match(/rgba?\([^)]*\)/g); return m && m[1] ? m[1] : false; }, c)).jsonValue();
   // lila, lima y azul: el punto medio de cada degradado
   const [l, li, az] = [await fondo("Supermercado"), await fondo("Comida fuera"), await fondo("Delivery")];
   const hsl = (s) => { const [r, g, b] = s.match(/[\d.]+/g).map(Number); const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0; if (mx !== mn) { const d = mx - mn; h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; } return (h * 60 + 360) % 360; };
