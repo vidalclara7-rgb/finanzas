@@ -9,7 +9,7 @@ Fecha: 2026-11-22. Origen: la persona pidió que «Gastado» e «Ingresado» ten
 | Forma | Ancho completo, una debajo de otra, como «Por cobrar» (título 20 px en 700, importe 28 px, «Ver») | Lado a lado con la letra de «Por cobrar»: los importes de cinco cifras quedan justos en 390 px |
 | Qué abre «Gastado» | La hoja «Gasto por categoría» existente | Lista plana de gastos (elegido por la persona: por categoría) |
 | Qué abre «Ingresado» | Hoja nueva «Ingresos por categoría» con la misma pila de tarjetas | Lista plana de ingresos |
-| Totales que no coinciden | La hoja muestra el mismo total que la tarjeta; lo reembolsable («Trabajo (reembolsable)», «Reembolso») va al final con «No suma en …» | Esconderlo (la persona no sabría dónde quedó) o sumarlo (el total no coincidiría con la tarjeta) |
+| Totales que no coinciden (también el requisito «gasto por categoría» de movimientos, ajustado al construir el 2026-11-22) | La hoja muestra el mismo total que la tarjeta; lo reembolsable («Trabajo (reembolsable)», «Reembolso») va al final con «No suma en …» | Esconderlo (la persona no sabría dónde quedó) o sumarlo (el total no coincidiría con la tarjeta) |
 | Color de ingresos | Todas las categorías de ingreso con el color 7 (el de «Ingresado») | Colores por categoría de ingreso: necesita datos nuevos |
 | Ícono de ingresos | El de siempre por nombre si existe en `ICONO_BASE`, si no `entra` | La inicial |
 

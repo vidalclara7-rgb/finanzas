@@ -5,17 +5,17 @@
 - [x] Gate 2 aprobado
 
 ## Pantallas
-- [ ] «Gastado» e «Ingresado» a ancho completo, título en negrita, «Ver», toda la tarjeta abre
-- [ ] «Gasto por categoría»: total sin reembolsables, «Trabajo (reembolsable)» al final con «No suma en Gastado»
-- [ ] Hoja «Ingresos por categoría» con flechas de mes, «Reembolso» al final con «No suma en Ingresado», vacío
-- [ ] Hoja de categoría para ingresos: total, comparación, por cuenta, lista; volver a la pila de ingresos
-- [ ] `CACHE` de `sw.js` sube
+- [x] «Gastado» e «Ingresado» a ancho completo, título en negrita, «Ver», toda la tarjeta abre
+- [x] «Gasto por categoría»: total sin reembolsables, «Trabajo (reembolsable)» al final con «No suma en Gastado»
+- [x] Hoja «Ingresos por categoría» con flechas de mes, «Reembolso» al final con «No suma en Ingresado», vacío
+- [x] Hoja de categoría para ingresos: total, comparación, por cuenta, lista; volver a la pila de ingresos
+- [x] `CACHE` de `sw.js` sube
 
 ## Tests
-- [ ] Un test por escenario en `tests/gastado-ingresado.test.cjs`, en claro y oscuro donde aplica
-- [ ] Tests existentes que leen `#miniGas`/`#miniIng` o la pila, al día
+- [x] Un test por escenario en `tests/gastado-ingresado.test.cjs`, en claro y oscuro donde aplica
+- [x] Tests existentes que leen `#miniGas`/`#miniIng` o la pila, al día
 
 ## Cierre
-- [ ] `CLAUDE.md` al día
-- [ ] `python3 kit.py check` en verde
-- [ ] Capturas de la app real contra el preview
+- [x] `CLAUDE.md` al día
+- [x] `python3 kit.py check` en verde
+- [x] Capturas de la app real contra el preview
