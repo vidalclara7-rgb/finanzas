@@ -1,7 +1,8 @@
 ---
 cambio: titulos-negrita-y-barra
-estado: diseno-aprobado
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-22
 ---
 # Títulos en negrita y más aire en la barra inferior
 
