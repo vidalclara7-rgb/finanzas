@@ -10,7 +10,7 @@ Fecha: 2026-11-22. Origen: dos referencias que mandó la persona (una lista «My
 | Fondo claro | Blanco #FFFFFF con tarjetas gris claro | El gris #F1F0F2 de ahora con tarjetas blancas |
 | Estilo | «Como una app de Apple»: letra del sistema, esquinas muy redondeadas, títulos grandes, barra flotante | — |
 | Color de las tarjetas de categoría | Degradado en las dos apariencias | Planos (se probó y se volvió al degradado); sombreado sólo en el oscuro |
-| Paleta | La de la primera preview: claro lila, lima, azul, naranja, rosa; oscuro azul, verde agua suave, magenta, verde salvia, bordó | Pasteles iridiscentes (lavanda, durazno, menta…); verdes, amarillos y rosas fuertes; amarillo y verde neón en el oscuro («mucho impacto») |
+| Paleta | Parejas de dos colores en las dos apariencias. Claro (cambiado el 2026-11-22 por una referencia de cuadrados de color con un círculo de otro color): lila con violeta oscuro, lima con verde, azul con amarillo, naranja con azul marino, rosa con bordó… Oscuro (cambiado el 2026-11-22, después del Gate 2, por una referencia de la persona con carteles de dos colores): parejas de fondo de color y texto en otro color vivo | Pasteles iridiscentes (lavanda, durazno, menta…); verdes, amarillos y rosas fuertes; amarillo y verde neón en el oscuro («mucho impacto») |
 | Color por categoría | Cada categoría conserva el suyo (19 colores rehechos con la paleta) | Color por puesto (la más grande lila, la segunda lima…), que cambiaría de un mes a otro |
 | Resultado del mes | «Te sobraron X €» con destino del sobrante (opción R1) | El número suelto en grande («muy impactante, no me dice nada»); flujo entró-gastaste-invertiste-libre (R2); píldoras compactas (R3) |
 | Torta | Mosaico proporcional (C2) | Barra de almacenamiento (C1); sacar el gráfico y dejar sólo la pila (C3) |
@@ -42,7 +42,7 @@ Fichas de la paleta (variables en `:root` y `:root[data-apariencia="oscura"]`):
 
 ### Los 19 colores de categoría
 
-Cada color es un degradado. Claro: `linear-gradient` o `radial-gradient(120% 140% at 50% 120%, A 0%, B 40%, C 100%)` con la parte más intensa abajo y la más clara arriba, donde va el texto. Oscuro: igual pero la parte más oscura arriba. Los cinco primeros se fijaron en las previews:
+Cada color es un degradado. Claro: `linear-gradient` o `radial-gradient(120% 140% at 50% 120%, A 0%, B 40%, C 100%)` con la parte más intensa abajo y la más clara arriba, donde va el texto. Oscuro: igual pero la parte más oscura arriba. Los cinco primeros del claro se fijaron en las previews. En el oscuro, después del Gate 2, la persona pidió parejas de dos colores (fondo de color y texto e ícono en otro color vivo, como unos carteles de referencia): los valores definitivos están en `index.html` (`--catN` es el tono que mejor se ve sobre la tarjeta negra, para puntos y barras; `--catNs` el fondo sólido; `--catNg` el degradado suave del fondo; `--catNt` el color del texto, ajustado hasta 4,5 a 1 en todo el degradado). Lo mismo vale para el claro (mismos nombres de variables). La tabla de abajo es el registro del claro aprobado en el primer preview, ya reemplazado:
 
 | n | Categoría por defecto | Claro (A → B → C) | Texto | Oscuro (A → B → C) | Texto |
 |---|---|---|---|---|---|

@@ -108,7 +108,7 @@ El encabezado de Inicio muestra el monograma «mf.» en negrita, grande: las let
 
 ## Requisito: color por categoría
 
-Cada categoría de gasto tiene su color con degradado, el mismo en el mosaico, en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Los 19 colores tienen versión clara (pasteles y vivos, que se aclaran hacia arriba) y oscura (profundos sobre negro, que se oscurecen hacia arriba). Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco u oscuro, el que mejor se lea, con contraste de al menos 4,5 a 1.
+Cada categoría de gasto tiene su color con degradado, el mismo en el mosaico, en la pila de «Gasto por categoría», en el cuadradito de cada fila de Movimientos y en las barras de categoría. Cada uno de los 19 colores es una pareja de dos tonos: un fondo de color con un degradado suave y el texto y el ícono en otro color vivo, con versión clara (por ejemplo lila con violeta oscuro o naranja con azul marino) y oscura (por ejemplo violeta con lima o verde oscuro con rosa). Cada categoría conserva su color de un mes a otro. El cuadradito de la fila es un cuadrado de esquinas redondeadas con el ícono de la categoría, o su inicial si no tiene, en blanco u oscuro, el que mejor se lea, con contraste de al menos 4,5 a 1.
 
 ### Escenario: mismo color por categoría
 - **Dado** un gasto en Supermercado este mes
@@ -190,7 +190,7 @@ El título del resultado del mes sigue la tendencia del mes que se ve: positiva 
 
 ## Requisito: muestras de color
 
-Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, lila, lima, azul, naranja y rosa, y en la Oscura, azul, verde agua suave, magenta, verde salvia y bordó. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
+Los 19 colores de categoría son todos distintos entre sí en cada apariencia. Los cinco primeros son, en la Clara, las parejas lila con violeta oscuro, lima con verde, azul con amarillo, naranja con azul marino y rosa con bordó, y en la Oscura, las parejas violeta con lima, verde oscuro con rosa, magenta con amarillo, menta con azul marino y bordó con celeste. Los cinco tipos de cuenta usan esos cinco colores: bancos el primero, deudas compartidas el segundo, inversiones el tercero, tarjetas el cuarto y financiaciones el quinto.
 
 ### Escenario: 19 colores distintos
 - **Dado** la app abierta
@@ -205,7 +205,7 @@ Los 19 colores de categoría son todos distintos entre sí en cada apariencia. L
 ### Escenario: los primeros colores de la paleta
 - **Dado** la apariencia Clara
 - **Cuando** se miran los colores de las categorías Supermercado, Comida fuera y Delivery
-- **Entonces** son el lila, la lima y el azul de la paleta
+- **Entonces** son los fondos lila, lima y azul de la paleta
 
 ## Retirado: tarjetas blancas
 Lo sustituyen «fondo liso y tarjetas sin sombra», en apariencia, y «títulos de las tarjetas».
