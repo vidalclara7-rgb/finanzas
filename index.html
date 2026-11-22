@@ -14,7 +14,7 @@
 <style>
 :root{
   /* Paleta: fondo blanco, tarjetas gris claro, texto casi negro, acento lima. Sin sombras ni degradado azul */
-  --bg:#FFFFFF; --card:#F4F4F6; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
+  --bg:#FFFFFF; --card:#F4F4F6; --card-base:#F4F4F6; --tinte:18%; --surface:#F4F4F6; --ink:#0B0B0F; --ink-base:#0B0B0F; --muted:#66666E; --muted-base:#66666E; --line:#E7E7EB;
   /* Lo que entra es verde; lo que sale, el color del texto; el rosa queda para los avisos */
   --verde:#34C759; --on-verde:#0B0B0F; --rosa:#C81E4A; --verde-t:#17773F; --rosa-t:#C81E4A; --gasto-t:var(--ink); --aviso-t:#C81E4A;
   --ingreso:#17773F; --on-ingreso:#FFFFFF; --rojo:#C81E4A; --naranja:#B45309; --frambuesa:#9F7FF0;
@@ -50,11 +50,11 @@
   --cat1s:#C9A7F0; --cat2s:#D6E83A; --cat3s:#24368C; --cat4s:#F26A2E; --cat5s:#F28BB8; --cat6s:#6CCDE8; --cat7s:#8FD9B4; --cat8s:#F5B48A; --cat9s:#FFE14A; --cat10s:#41459E; --cat11s:#D8C08A; --cat12s:#B8C23A; --cat13s:#901860; --cat14s:#7FA8D8; --cat15s:#2EC4C4; --cat16s:#FF8A2E; --cat17s:#4E2898; --cat18s:#CFCFD8; --cat19s:#4A4A55;
   --resto-g:radial-gradient(120% 140% at 50% 120%,#E3E3E8 0%,#D6D6DC 45%,#BCBCC2 100%); --resto-t:#2A2A40;
   /* Tipos de cuenta: bancos 1, inversiones 3, tarjetas 4, financiaciones 5, deudas compartidas 2 */
-  --k1:var(--cat1); --k1g:var(--cat1g); --k1t:var(--cat1t); --k2:var(--cat3); --k2g:var(--cat3g); --k2t:var(--cat3t); --k3:var(--cat4); --k3g:var(--cat4g); --k3t:var(--cat4t); --k4:var(--cat5); --k4g:var(--cat5g); --k4t:var(--cat5t); --k5:var(--cat2); --k5g:var(--cat2g); --k5t:var(--cat2t);
+  --k1:var(--cat1); --k1g:var(--cat1g); --k1t:var(--cat1t); --k2:var(--cat3); --k2g:var(--cat3g); --k2t:var(--cat3t); --k3:var(--cat4); --k3g:var(--cat4g); --k3t:var(--cat4t); --k4:var(--cat5); --k4g:var(--cat5g); --k4t:var(--cat5t); --k5:var(--cat2); --k5g:var(--cat2g); --k5t:var(--cat2t); --k1s:var(--cat1s); --k2s:var(--cat3s); --k3s:var(--cat4s); --k4s:var(--cat5s); --k5s:var(--cat2s);
   color-scheme:light;
 }
 :root[data-apariencia="oscura"]{
-  --bg:#000000; --card:#141416; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
+  --bg:#000000; --card:#141416; --card-base:#141416; --tinte:26%; --surface:#141416; --ink:#F5F5F7; --ink-base:#F5F5F7; --muted:#9A9AA2; --muted-base:#9A9AA2; --line:#26262A;
   --verde-t:#4ADE80; --rosa:#FF8AA6; --rosa-t:#FF8AA6; --aviso-t:#FF8AA6; --ingreso:#4ADE80; --on-ingreso:#0B0B0F; --rojo:#FF8AA6; --naranja:#FFB066; --frambuesa:#3E8BFF;
   --warn:#FFB066; --warn-soft:#3A2A14; --bad:#FF8AA6; --bad-soft:#3A1520;
   --dest:#E8F94B; --dest-t:#0B0B0F; --logo-punto:#E8F94B; --chip:rgba(255,255,255,.12);
@@ -345,8 +345,8 @@ nav button[aria-current=page]{background:var(--nav-on);color:var(--nav-on-t);fon
 .icono-op{aspect-ratio:1;border-radius:12px;border:2px solid transparent;background:var(--card);color:var(--ink);display:grid;place-items:center;padding:0;font:inherit;font-weight:700}
 .icono-op svg{width:22px;height:22px}
 .icono-op[aria-pressed=true]{border-color:var(--ink)}
-/* Tarjetas de Inicio en parejas de color: fondo con su degradado y todo (texto, barras, anillos) en el otro color de la pareja */
-.card.par{background:var(--g);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
+/* Tarjetas de Inicio en parejas de color, suaves: fondo con un tinte del color de la pareja sobre el gris de la tarjeta y todo (texto, barras, anillos) en su tono fuerte */
+.card.par{background:color-mix(in srgb,var(--s) var(--tinte),var(--card-base));--t:var(--tt);color:var(--t);--ink:var(--t);--label:var(--t);--muted:var(--t);--line:color-mix(in srgb,var(--t) 24%,transparent);--barra:color-mix(in srgb,var(--t) 24%,transparent);--chip:color-mix(in srgb,var(--t) 16%,transparent);--verde-t:var(--t);--aviso-t:var(--t);--rojo:var(--t);--naranja:var(--t);--frambuesa:color-mix(in srgb,var(--t) 45%,transparent);--c:var(--t)}
 .card.par .grp{background:color-mix(in srgb,var(--t) 12%,transparent)}
 .card.par{--medio:color-mix(in srgb,var(--t) 55%,transparent)}
 .card.par .sub{font-weight:500}
