@@ -23,8 +23,8 @@
 - [x] Un test por escenario (17), con `// Escenario: <título exacto>`, a 390 px en claro y en oscuro
 
 ## Prueba en el navegador
-- [ ] `python3 kit.py check` en verde
-- [ ] `python3 kit.py capturas` y revisar claro y oscuro
+- [x] `python3 kit.py check` en verde
+- [x] `python3 kit.py capturas` y revisar claro y oscuro
 
 ## Documentación
 - [x] `CLAUDE.md`: lector de listas por día, varias capturas y aviso

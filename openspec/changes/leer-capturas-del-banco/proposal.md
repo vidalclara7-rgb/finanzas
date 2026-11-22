@@ -1,6 +1,6 @@
 ---
 cambio: leer-capturas-del-banco
-estado: diseno-aprobado
+estado: construida
 preview: no
 datos: sin-cambios
 ---
