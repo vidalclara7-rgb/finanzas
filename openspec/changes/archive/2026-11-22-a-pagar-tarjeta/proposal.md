@@ -1,7 +1,8 @@
 ---
 cambio: a-pagar-tarjeta
-estado: construida
+estado: archivado
 datos: amplia
+archivado: 2026-11-22
 ---
 # Lo que hay que pagar de la tarjeta al cierre
 

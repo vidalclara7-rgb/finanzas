@@ -1,7 +1,8 @@
 ---
 cambio: abrir-gastado-ingresado
-estado: construida
+estado: archivado
 datos: sin-cambios
+archivado: 2026-11-22
 ---
 # Abrir «Gastado» e «Ingresado» para ver qué los compone
 
