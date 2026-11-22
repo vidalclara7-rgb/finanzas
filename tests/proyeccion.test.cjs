@@ -77,26 +77,14 @@ t.test("un mes sin ingresos no baja el promedio", async () => {
   assert.equal(await ingreso(page), "2000");
 });
 
-// Escenario: probar otro ingreso
-t.test("probar otro ingreso", async () => {
-  const { page } = await conForecast({ cuentas: [BANCO, FIN(), TARJ], movs: [...BASE, FIJO(), COMPRA] });
-  assert.equal(await ingreso(page), "2000");
-  await page.fill("#foreIng", "1500");
-  assert.match(await fila(page, "2026-11"), /610 € Libre/);
-  await page.click("#foreCerrar");
-  await page.click("#menuBtn");
-  await page.click("#panelFore");
-  await page.waitForSelector("#sheetFore:not([hidden])");
-  assert.equal(await ingreso(page), "2000");
-});
-
 // Escenario: monto inválido
 t.test("monto inválido", async () => {
-  const { page } = await conForecast({ movs: BASE });
+  const { page } = await conForecast({ movs: BASE, settings: { foreIng: 1500 } });
   await page.fill("#foreIng", "abc");
   await page.press("#foreIng", "Tab");
   await A.aviso(page, "Poné un importe válido");
-  assert.equal(await ingreso(page), "2000");
+  assert.equal(await ingreso(page), "1500");
+  assert.equal((await A.guardados(page)).settings.foreIng, 1500);
 });
 
 // Escenario: sin ingresos todavía
@@ -127,7 +115,8 @@ t.test("lo variable no entra", async () => {
 // Escenario: la compra en cuotas no se cuenta dos veces
 t.test("la compra en cuotas no se cuenta dos veces", async () => {
   const compra = { ...A.gasto(31, "2026-09-05", 720, 3, "Compras", "notebook"), cuotas: { n: 3, cuota: 240 }, fijo: true };
-  const { page } = await conForecast({ cuentas: [BANCO, TARJ], movs: [...BASE, compra] });
+  // El resumen de septiembre ya se pagó: lo que queda en la tarjeta son las cuotas que vienen
+  const { page } = await conForecast({ cuentas: [BANCO, TARJ], movs: [...BASE, compra, A.transf(32, "2026-10-05", 240, 1, 3)] });
   assert.equal((await barra(page, "2026-11")).comp, 240);
   assert.match(await fila(page, "2026-11"), /Fijos 0 € · cuotas 240 €/);
 });

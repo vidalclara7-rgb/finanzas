@@ -9,6 +9,7 @@ Fecha: 2026-11-22. Origen: la persona pidió (1) guardar el ingreso del Forecast
 | Ingreso | Uno solo guardado (`settings.foreIng`) hasta que se cambie; «Usar el promedio» lo borra (elegido por la persona) | Uno por mes |
 | Fecha de pago | Una por tarjeta y por mes, junto a la de cierre (`pagos:{"AAAA-MM":"AAAA-MM-DD"}`, clave = mes del cierre). Posterior al cierre y como mucho el último día del mes siguiente | Día fijo de pago |
 | Tarjeta en el Forecast | Sólo el resumen del mes en curso (`aPagar(c, mes actual)`), en el mes de su fecha de pago (sin fecha: el mes siguiente) si cae en los 12 meses | Estimar resúmenes futuros |
+| Cuotas con tarjeta | Al resumen también se le restan las cuotas del mes de sus compras en cuotas, que ya entran en «cuotas» (hallado al construir, 2026-11-22: si no, la cuota se contaba dos veces) | — |
 | Fijos con tarjeta | Al resumen se le resta lo que ya cuenta como fijo: gastos fijos de esa tarjeta entre el cierre anterior (excluido) y el de este mes (elegido por la persona) | Sacar esos fijos de los fijos del mes del pago |
 | Préstamo | Cuenta de Financiaciones con saldo inicial 0 y una transferencia de la financiación a la cuenta donde llega, el día que llega (elegido por la persona). Se arma al crear la cuenta | Plan aparte dentro del Forecast (habría que borrarlo para no contar dos veces las cuotas) |
 | Primera cuota | Campo «Primera cuota» (mes) en toda financiación: guarda ese mes en `cuotasMes`; antes de ese mes no hay cuota ni bajan las que faltan | Campo nuevo aparte de `cuotasMes` |

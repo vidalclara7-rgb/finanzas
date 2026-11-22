@@ -65,7 +65,7 @@ La proyección usa el mismo ingreso todos los meses. Si la persona escribió un 
 
 ## Requisito: el resumen de la tarjeta en la proyección
 
-El resumen de cada tarjeta de crédito del mes en curso entra como gasto comprometido en el mes en que se paga: el de su fecha de pago o, sin fecha de pago, el mes siguiente al cierre. Es lo que hay que pagar de esa tarjeta al cierre menos los gastos fijos de esa tarjeta del periodo del resumen, que ya cuentan como gastos fijos; nunca es menos de 0 €. Los resúmenes de los meses que vienen no se estiman. Si el pago cae fuera de los 12 meses, no entra.
+El resumen de cada tarjeta de crédito del mes en curso entra como gasto comprometido en el mes en que se paga: el de su fecha de pago o, sin fecha de pago, el mes siguiente al cierre. Es lo que hay que pagar de esa tarjeta al cierre menos los gastos fijos de esa tarjeta del periodo del resumen, que ya cuentan como gastos fijos, y menos las cuotas de ese mes de sus compras en cuotas, que ya cuentan como cuotas; nunca es menos de 0 €. Los resúmenes de los meses que vienen no se estiman. Si el pago cae fuera de los 12 meses, no entra.
 
 ### Escenario: el resumen se paga el mes que viene
 - **Dado** que hoy es 2026-11-22, «Tarjeta Y» con cierre de noviembre el 2026-11-20, pago el 2026-12-05 y 400 € de gastos variables antes del cierre
@@ -82,6 +82,11 @@ El resumen de cada tarjeta de crédito del mes en curso entra como gasto comprom
 - **Dado** que hoy es 2026-11-22, «Tarjeta Y» con 400 € a pagar de noviembre, de los que 50 € son un gasto fijo del 2026-11-03 (y otro igual en octubre)
 - **Cuando** la persona abre Forecast
 - **Entonces** diciembre de 2026 dice «tarjeta 350 €» y los fijos siguen sumando 50 €
+
+### Escenario: las cuotas de la tarjeta no se cuentan dos veces
+- **Dado** que hoy es 2026-10-15 y «Tarjeta Y» con sólo una compra de 720 € en 3 cuotas de 240 € del 2026-10-05
+- **Cuando** la persona abre Forecast
+- **Entonces** noviembre de 2026 suma 240 € de cuotas y nada de tarjeta
 
 ### Escenario: tarjeta sin nada a pagar
 - **Dado** «Tarjeta Y» sin gastos este mes
